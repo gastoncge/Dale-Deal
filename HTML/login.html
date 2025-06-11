@@ -2,21 +2,26 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Iniciar Sesión - DALE DEAL</title>
 
-    <!-- Descripción para SEO -->
+    <!-- SEO Meta Tags -->
     <meta
       name="description"
-      content="Iniciá sesión en Dale Deal para comprar, vender y ofrecer servicios de forma rápida y segura. Conectá con miles de usuarios en nuestra plataforma."
+      content="Inicia sesión en Dale Deal para acceder a tu cuenta y disfrutar de la mejor experiencia de compra online."
     />
+    <meta
+      name="keywords"
+      content="login, iniciar sesión, dale deal, marketplace"
+    />
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
 
     <!-- Bootstrap CSS -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7"
-      crossorigin="anonymous"
     />
 
     <!-- Bootstrap Icons -->
@@ -25,42 +30,39 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
     />
 
-    <!-- Ícono del sitio -->
-    <link rel="shortcut icon" href="../img/LOGO.png" type="image/x-icon" />
-
-    <!-- AOS (Animaciones al hacer scroll) -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
-
-    <!-- Estilos personalizados -->
-    <link rel="stylesheet" href="../css/login.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../CSS/variables.css" />
+    <link rel="stylesheet" href="../CSS/components.css" />
+    <link rel="stylesheet" href="../CSS/pages/auth.css" />
   </head>
 
   <body>
-    <!-- Contenedor principal -->
+    <!-- Alert Container -->
+    <div
+      id="alertContainer"
+      class="position-fixed top-0 start-50 translate-middle-x"
+      style="z-index: 1060; margin-top: 20px"
+    ></div>
+
     <div class="main-container">
-      <!-- Panel izquierdo - Formulario -->
+      <!-- Left Panel - Form -->
       <div class="left-panel">
-        <div class="form-wrapper" data-aos="fade-up" data-aos-duration="800">
-          <!-- Logo -->
+        <div class="form-wrapper">
+          <!-- Logo Section -->
           <div class="logo-section">
-            <img src="../img/LOGO-2.png" alt="Dale Deal Logo" class="logo" />
+            <img src="../IMG/LOGO-2.png" alt="Dale Deal" class="logo" />
           </div>
 
-          <!-- Sección de bienvenida -->
+          <!-- Welcome Section -->
           <div class="welcome-section">
-            <h1 class="welcome-title">Bienvenido de vuelta</h1>
-            <h2 class="brand-name">DALE DEAL</h2>
-            <p class="welcome-subtitle">
-              Ingresá a tu cuenta para continuar comprando y vendiendo
-            </p>
+            <p class="welcome-title">Bienvenido a</p>
+            <h1 class="brand-name">DALE DEAL</h1>
+            <p class="welcome-subtitle">Inicia sesión para continuar</p>
           </div>
 
-          <!-- Contenedor de alertas -->
-          <div id="alertContainer"></div>
-
-          <!-- Formulario de inicio de sesión -->
-          <form id="loginForm" class="login-form" novalidate>
-            <!-- Campo de email -->
+          <!-- Login Form -->
+          <form class="login-form" id="loginForm" novalidate>
+            <!-- Email Field -->
             <div class="form-floating">
               <input
                 type="email"
@@ -69,28 +71,22 @@
                 name="email"
                 placeholder="tu@email.com"
                 required
-                autocomplete="email"
               />
-              <label for="email">
-                <i class="bi bi-envelope me-2"></i>Email
-              </label>
+              <label for="email">Email</label>
               <div class="invalid-feedback"></div>
             </div>
 
-            <!-- Campo de contraseña -->
+            <!-- Password Field -->
             <div class="form-floating password-container">
               <input
                 type="password"
                 class="form-control"
                 id="password"
                 name="password"
-                placeholder="Tu contraseña"
+                placeholder="Contraseña"
                 required
-                autocomplete="current-password"
               />
-              <label for="password">
-                <i class="bi bi-lock me-2"></i>Contraseña
-              </label>
+              <label for="password">Contraseña</label>
               <button
                 type="button"
                 class="password-toggle"
@@ -102,7 +98,7 @@
               <div class="invalid-feedback"></div>
             </div>
 
-            <!-- Opciones adicionales -->
+            <!-- Login Options -->
             <div class="login-options">
               <div class="remember-me">
                 <input
@@ -111,38 +107,35 @@
                   id="rememberMe"
                   name="rememberMe"
                 />
-                <label class="form-check-label" for="rememberMe">
-                  Recordarme
-                </label>
+                <label class="form-check-label" for="rememberMe"
+                  >Recordarme</label
+                >
               </div>
-              <a href="#" class="forgot-password-link">
-                ¿Olvidaste tu contraseña?
-              </a>
+              <a href="#" class="forgot-password-link"
+                >¿Olvidaste tu contraseña?</a
+              >
             </div>
 
-            <!-- Botón de inicio de sesión -->
-            <button type="submit" class="btn-login" id="loginBtn">
-              <span class="btn-text">
-                <i class="bi bi-box-arrow-in-right me-2"></i>
-                Iniciar Sesión
-              </span>
+            <!-- Login Button -->
+            <button
+              type="submit"
+              class="btn btn-primary btn-full btn-lg"
+              id="loginBtn"
+            >
+              <span class="btn-text">Iniciar Sesión</span>
               <span class="btn-loading d-none">
-                <span
-                  class="spinner-border spinner-border-sm me-2"
-                  role="status"
-                  aria-hidden="true"
-                ></span>
-                Iniciando sesión...
+                <div class="loading-spinner"></div>
+                Iniciando...
               </span>
             </button>
           </form>
 
           <!-- Divider -->
           <div class="divider-section">
-            <span class="divider-text">o continúa con</span>
+            <span class="divider-text">O continúa con</span>
           </div>
 
-          <!-- Botones sociales -->
+          <!-- Social Buttons -->
           <div class="social-buttons">
             <button type="button" class="social-btn google-btn">
               <i class="bi bi-google"></i>
@@ -154,13 +147,13 @@
             </button>
           </div>
 
-          <!-- Enlace de registro -->
+          <!-- Register Link -->
           <div class="register-link-section">
-            ¿No tenés una cuenta?
-            <a href="signup.html" class="register-link">Crear cuenta</a>
+            ¿No tienes cuenta?
+            <a href="./signup.html" class="register-link">Crear cuenta</a>
           </div>
 
-          <!-- Enlaces del footer -->
+          <!-- Footer Links -->
           <div class="footer-links">
             <a href="#">Términos de Servicio</a>
             <span>•</span>
@@ -171,69 +164,57 @@
         </div>
       </div>
 
-      <!-- Panel derecho - Información -->
+      <!-- Right Panel - Info -->
       <div class="right-panel">
-        <div
-          class="info-content"
-          data-aos="fade-left"
-          data-aos-duration="1000"
-          data-aos-delay="200"
-        >
-          <!-- Sección principal -->
+        <div class="info-content">
           <div class="info-section">
             <h2 class="info-title">Tu marketplace favorito</h2>
             <p class="info-description">
-              Accedé a miles de productos, servicios exclusivos y las mejores
-              ofertas del mercado.
+              Descubre miles de productos, conecta con vendedores de confianza y
+              disfruta de una experiencia de compra única.
             </p>
           </div>
 
-          <!-- Características -->
           <div class="features-section">
             <h3 class="features-title">¿Por qué elegir Dale Deal?</h3>
             <ul class="features-list">
               <li>
                 <i class="bi bi-shield-check"></i>
-                <span
-                  >Compras y ventas 100% seguras con protección
-                  garantizada</span
-                >
+                <span>Compras 100% seguras con protección al comprador</span>
               </li>
               <li>
-                <i class="bi bi-lightning"></i>
-                <span>Transacciones rápidas y pagos instantáneos</span>
+                <i class="bi bi-truck"></i>
+                <span>Envío gratis en miles de productos</span>
               </li>
               <li>
-                <i class="bi bi-people"></i>
-                <span>Comunidad activa de más de 50,000 usuarios</span>
+                <i class="bi bi-arrow-return-left"></i>
+                <span>Devoluciones fáciles hasta 30 días</span>
               </li>
               <li>
                 <i class="bi bi-headset"></i>
-                <span
-                  >Soporte técnico 24/7 para ayudarte cuando lo necesités</span
-                >
+                <span>Atención al cliente 24/7</span>
               </li>
             </ul>
           </div>
         </div>
 
-        <!-- Elementos decorativos -->
+        <!-- Decorative Elements -->
         <div class="decorative-elements">
           <div class="floating-element element-1">
-            <i class="bi bi-cart"></i>
+            <i class="bi bi-cart-check"></i>
           </div>
           <div class="floating-element element-2">
-            <i class="bi bi-tag"></i>
-          </div>
-          <div class="floating-element element-3">
             <i class="bi bi-heart"></i>
           </div>
-          <div class="floating-element element-4">
+          <div class="floating-element element-3">
             <i class="bi bi-star"></i>
+          </div>
+          <div class="floating-element element-4">
+            <i class="bi bi-gift"></i>
           </div>
         </div>
 
-        <!-- Formas de fondo -->
+        <!-- Background Shapes -->
         <div class="bg-shapes">
           <div class="shape shape-1"></div>
           <div class="shape shape-2"></div>
@@ -243,20 +224,9 @@
     </div>
 
     <!-- Scripts -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
-      crossorigin="anonymous"
-    ></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="../login.js"></script>
-    <script>
-      AOS.init({
-        duration: 800,
-        easing: "ease-out-cubic",
-        once: true,
-        offset: 50,
-      });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../JS/utils.js"></script>
+    <script src="../JS/auth.js"></script>
+    <script src="../JS/pages/login.js"></script>
   </body>
 </html>

@@ -2,21 +2,26 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>iPhone 14 Pro - DALE DEAL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>iPhone 15 Pro Max - DALE DEAL</title>
 
-    <!-- Descripción para SEO -->
+    <!-- SEO Meta Tags -->
     <meta
       name="description"
-      content="Comprá iPhone 14 Pro al mejor precio en Dale Deal. Envío gratis, garantía oficial y las mejores ofertas del mercado."
+      content="iPhone 15 Pro Max 256GB al mejor precio. Envío gratis, garantía oficial y 12 cuotas sin interés en Dale Deal."
     />
+    <meta
+      name="keywords"
+      content="iPhone 15 Pro Max, smartphone, Apple, celular, tecnología"
+    />
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
 
     <!-- Bootstrap CSS -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7"
-      crossorigin="anonymous"
     />
 
     <!-- Bootstrap Icons -->
@@ -25,154 +30,210 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
     />
 
-    <!-- Ícono del sitio -->
-    <link rel="shortcut icon" href="../img/LOGO.png" type="image/x-icon" />
-
-    <!-- AOS (Animaciones al hacer scroll) -->
+    <!-- AOS (Animate On Scroll) -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
 
-    <!-- Estilos personalizados -->
-    <link rel="stylesheet" href="../CSS/inicio.css" />
-    <link rel="stylesheet" href="../CSS/producto.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../CSS/variables.css" />
+    <link rel="stylesheet" href="../CSS/components.css" />
+    <link rel="stylesheet" href="../CSS/product-page.css" />
+    <link rel="stylesheet" href="../CSS/dropdown-fixes.css" />
   </head>
 
   <body>
-    <!-- Navbar (mismo que la página principal) -->
+    <!-- Navbar CORREGIDO -->
     <nav
       class="navbar navbar-expand-lg navbar-light bg-white sticky-top"
       id="mainNavbar"
     >
       <div class="container-fluid px-4">
         <!-- Logo -->
-        <a class="navbar-brand" href="../index.html" data-aos="fade-right">
-          <img src="../img/LOGO-2.png" alt="Dale Deal" class="logo-navbar" />
+        <a class="navbar-brand" href="../index.html">
+          <img src="../IMG/LOGO-2.png" alt="Dale Deal" class="logo-navbar" />
           <span class="brand-text">DALE DEAL</span>
         </a>
 
-        <!-- Barra de búsqueda -->
-        <div
-          class="search-container mx-auto"
-          data-aos="fade-up"
-          data-aos-delay="100"
-        >
+        <!-- Search Bar -->
+        <div class="search-container mx-auto">
           <div class="search-wrapper">
             <i class="bi bi-search search-icon"></i>
             <input
               type="text"
               class="search-input"
-              placeholder="¿Qué estás buscando hoy?"
+              placeholder="¿Qué estás buscando?"
               id="searchInput"
             />
           </div>
         </div>
 
-        <!-- Acciones del usuario -->
-        <div class="navbar-actions" data-aos="fade-left" data-aos-delay="200">
-          <!-- Notificaciones -->
-          <div class="action-item notification-container">
-            <button class="action-btn" id="notificationBtn">
+        <!-- User Actions CORREGIDO -->
+        <div class="navbar-actions">
+          <!-- Notifications -->
+          <div class="action-item">
+            <button
+              class="action-btn"
+              id="notificationBtn"
+              title="Notificaciones"
+            >
               <i class="bi bi-bell"></i>
               <span class="notification-badge" id="notificationBadge">3</span>
             </button>
           </div>
 
-          <!-- Carrito -->
-          <div class="action-item cart-container">
-            <button class="action-btn" id="cartBtn">
+          <!-- Cart -->
+          <div class="action-item">
+            <button class="action-btn" id="cartBtn" title="Carrito de compras">
               <i class="bi bi-cart3"></i>
-              <span class="cart-badge" id="cartBadge">2</span>
+              <span class="cart-badge" id="cartBadge">0</span>
             </button>
           </div>
 
-          <!-- Perfil -->
-          <div class="action-item profile-container">
-            <button class="action-btn profile-btn" id="profileBtn">
+          <!-- Profile -->
+          <div class="action-item dropdown">
+            <button
+              class="action-btn profile-btn dropdown-toggle"
+              id="profileDropdown"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              title="Mi cuenta"
+            >
               <img
                 src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
-                alt="Perfil"
+                alt="Usuario"
                 class="profile-image"
               />
-              <span class="profile-name">Juan Pérez</span>
+              <span class="profile-name">Usuario</span>
               <i class="bi bi-chevron-down profile-arrow"></i>
             </button>
+
+            <ul
+              class="dropdown-menu dropdown-menu-end"
+              aria-labelledby="profileDropdown"
+            >
+              <li class="dropdown-header">
+                <h6 class="mb-0">Mi Cuenta</h6>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <a class="dropdown-item" href="../index.html">
+                  <i class="bi bi-house me-2"></i>
+                  Inicio
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+                  <i class="bi bi-person me-2"></i>
+                  Mi Perfil
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+                  <i class="bi bi-bag me-2"></i>
+                  Mis Compras
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+                  <i class="bi bi-heart me-2"></i>
+                  Favoritos
+                </a>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <a
+                  class="dropdown-item"
+                  href="../HTML/login.html"
+                  id="loginLink"
+                >
+                  <i class="bi bi-box-arrow-in-right me-2"></i>
+                  Iniciar Sesión
+                </a>
+              </li>
+              <li>
+                <a
+                  class="dropdown-item text-danger"
+                  href="#"
+                  id="logoutBtn"
+                  style="display: none"
+                >
+                  <i class="bi bi-box-arrow-right me-2"></i>
+                  Cerrar Sesión
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
     </nav>
 
     <!-- Breadcrumb -->
-    <nav class="breadcrumb-nav" data-aos="fade-right">
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
       <div class="container">
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="../index.html">Inicio</a></li>
           <li class="breadcrumb-item"><a href="#">Electrónicos</a></li>
-          <li class="breadcrumb-item"><a href="#">Celulares</a></li>
-          <li class="breadcrumb-item active">iPhone 14 Pro</li>
+          <li class="breadcrumb-item"><a href="#">Smartphones</a></li>
+          <li class="breadcrumb-item active">iPhone 15 Pro Max</li>
         </ol>
       </div>
     </nav>
 
-    <!-- Contenido Principal -->
+    <!-- Main Content -->
     <main class="main-content">
-      <!-- Producto Principal -->
+      <!-- Product Hero Section -->
       <section class="product-hero">
         <div class="container">
           <div class="row">
-            <!-- Galería de Imágenes -->
+            <!-- Product Gallery -->
             <div class="col-lg-6" data-aos="fade-right">
               <div class="product-gallery">
+                <!-- Main Image -->
                 <div class="main-image-container">
-                  <div class="product-badges">
-                    <span class="badge badge-new">Nuevo</span>
-                    <span class="badge badge-free-shipping">Envío Gratis</span>
-                  </div>
                   <img
                     src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=600&fit=crop"
-                    alt="iPhone 14 Pro"
+                    alt="iPhone 15 Pro Max"
                     class="main-product-image"
                     id="mainProductImage"
                   />
-                  <div class="image-zoom-overlay">
-                    <i class="bi bi-zoom-in"></i>
-                    <span>Hacer zoom</span>
-                  </div>
+                  <span class="product-badge sale">15% OFF</span>
                 </div>
+
+                <!-- Thumbnails -->
                 <div class="thumbnail-container">
-                  <div class="thumbnail-wrapper">
-                    <img
-                      src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=100&h=100&fit=crop"
-                      alt="iPhone 14 Pro - Vista 1"
-                      class="thumbnail active"
-                      data-full="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=600&fit=crop"
-                    />
-                    <img
-                      src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=100&h=100&fit=crop"
-                      alt="iPhone 14 Pro - Vista 2"
-                      class="thumbnail"
-                      data-full="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&h=600&fit=crop"
-                    />
-                    <img
-                      src="https://images.unsplash.com/photo-1605236453806-b25e7d3d4afa?w=100&h=100&fit=crop"
-                      alt="iPhone 14 Pro - Vista 3"
-                      class="thumbnail"
-                      data-full="https://images.unsplash.com/photo-1605236453806-b25e7d3d4afa?w=600&h=600&fit=crop"
-                    />
-                    <img
-                      src="https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?w=100&h=100&fit=crop"
-                      alt="iPhone 14 Pro - Vista 4"
-                      class="thumbnail"
-                      data-full="https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?w=600&h=600&fit=crop"
-                    />
-                  </div>
+                  <img
+                    src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=100&h=100&fit=crop"
+                    alt="iPhone 15 Pro Max"
+                    class="thumbnail active"
+                    data-full="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=600&fit=crop"
+                  />
+                  <img
+                    src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=100&h=100&fit=crop"
+                    alt="iPhone 15 Pro Max"
+                    class="thumbnail"
+                    data-full="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&h=600&fit=crop"
+                  />
+                  <img
+                    src="https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=100&h=100&fit=crop"
+                    alt="iPhone 15 Pro Max"
+                    class="thumbnail"
+                    data-full="https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=600&h=600&fit=crop"
+                  />
+                  <img
+                    src="https://images.unsplash.com/photo-1567581935884-3349723552ca?w=100&h=100&fit=crop"
+                    alt="iPhone 15 Pro Max"
+                    class="thumbnail"
+                    data-full="https://images.unsplash.com/photo-1567581935884-3349723552ca?w=600&h=600&fit=crop"
+                  />
                 </div>
               </div>
             </div>
 
-            <!-- Información del Producto -->
+            <!-- Product Info -->
             <div class="col-lg-6" data-aos="fade-left">
               <div class="product-info">
+                <!-- Product Header -->
                 <div class="product-header">
-                  <h1 class="product-title">iPhone 14 Pro 128GB</h1>
+                  <h1 class="product-title">iPhone 15 Pro Max 256GB</h1>
                   <div class="product-meta">
                     <div class="product-rating">
                       <div class="stars">
@@ -182,88 +243,117 @@
                         <i class="bi bi-star-fill"></i>
                         <i class="bi bi-star-half"></i>
                       </div>
-                      <span class="rating-text">4.5 (2,847 reseñas)</span>
+                      <span class="rating-text">4.8 (2,847 reseñas)</span>
                     </div>
                     <div class="product-sold">
-                      <i class="bi bi-check-circle-fill"></i>
-                      <span>Vendido 15.3K veces</span>
+                      <i class="bi bi-fire"></i>
+                      <span>+500 vendidos</span>
                     </div>
                   </div>
                 </div>
 
+                <!-- Price Section -->
                 <div class="price-section">
-                  <div class="current-price">$899.999</div>
+                  <div class="current-price">$1.299.999</div>
                   <div class="price-details">
-                    <span class="original-price">$1.199.999</span>
-                    <span class="discount-badge">25% OFF</span>
+                    <span class="original-price">$1.499.999</span>
+                    <span class="discount-badge">15% OFF</span>
                   </div>
                   <div class="installments">
-                    Hasta 12 cuotas sin interés de <strong>$74.999</strong>
+                    Hasta <strong>12 cuotas sin interés</strong> de $108.333
                   </div>
                 </div>
 
+                <!-- Product Options -->
                 <div class="product-options">
+                  <!-- Color Selection -->
                   <div class="option-group">
                     <label class="option-label">Color</label>
                     <div class="color-options">
                       <div
                         class="color-option active"
-                        data-color="space-black"
-                        style="background: #2c2c2c"
+                        data-color="natural"
+                        style="background: #f5f5dc"
+                        title="Titanio Natural"
                       ></div>
                       <div
                         class="color-option"
-                        data-color="silver"
-                        style="background: #e8e8e8"
+                        data-color="blue"
+                        style="background: #1e3a8a"
+                        title="Titanio Azul"
                       ></div>
                       <div
                         class="color-option"
-                        data-color="gold"
-                        style="background: #fad5a5"
+                        data-color="white"
+                        style="background: #f8fafc"
+                        title="Titanio Blanco"
                       ></div>
                       <div
                         class="color-option"
-                        data-color="deep-purple"
-                        style="background: #5f2c82"
+                        data-color="black"
+                        style="background: #1f2937"
+                        title="Titanio Negro"
                       ></div>
                     </div>
                   </div>
 
+                  <!-- Storage Selection -->
                   <div class="option-group">
                     <label class="option-label">Almacenamiento</label>
                     <div class="storage-options">
-                      <button class="storage-option active" data-storage="128">
+                      <div class="storage-option" data-storage="128">
                         128GB
-                      </button>
-                      <button class="storage-option" data-storage="256">
-                        256GB <span class="extra-cost">+$200.000</span>
-                      </button>
-                      <button class="storage-option" data-storage="512">
-                        512GB <span class="extra-cost">+$400.000</span>
-                      </button>
+                        <span class="extra-cost">Base</span>
+                      </div>
+                      <div class="storage-option active" data-storage="256">
+                        256GB
+                        <span class="extra-cost">+$100.000</span>
+                      </div>
+                      <div class="storage-option" data-storage="512">
+                        512GB
+                        <span class="extra-cost">+$200.000</span>
+                      </div>
+                      <div class="storage-option" data-storage="1024">
+                        1TB
+                        <span class="extra-cost">+$400.000</span>
+                      </div>
                     </div>
                   </div>
 
+                  <!-- Quantity -->
                   <div class="option-group">
                     <label class="option-label">Cantidad</label>
                     <div class="quantity-selector">
-                      <button class="quantity-btn" id="decreaseBtn">-</button>
+                      <button
+                        type="button"
+                        class="quantity-btn"
+                        id="decreaseBtn"
+                      >
+                        -
+                      </button>
                       <input
                         type="number"
                         class="quantity-input"
+                        id="quantityInput"
                         value="1"
                         min="1"
                         max="10"
-                        id="quantityInput"
                       />
-                      <button class="quantity-btn" id="increaseBtn">+</button>
+                      <button
+                        type="button"
+                        class="quantity-btn"
+                        id="increaseBtn"
+                      >
+                        +
+                      </button>
                     </div>
-                    <span class="stock-info"
-                      >Stock disponible: 27 unidades</span
+                    <small class="stock-info"
+                      >Stock disponible: 15 unidades</small
                     >
                   </div>
                 </div>
 
+                <!-- Purchase Actions -->
                 <div class="purchase-actions">
                   <button class="btn-buy-now">
                     <i class="bi bi-lightning-fill me-2"></i>
@@ -273,45 +363,50 @@
                     <i class="bi bi-cart-plus me-2"></i>
                     Agregar al Carrito
                   </button>
-                  <button class="btn-wishlist">
+                  <button class="btn-wishlist" title="Agregar a favoritos">
                     <i class="bi bi-heart"></i>
                   </button>
                 </div>
 
+                <!-- Shipping Info -->
                 <div class="shipping-info">
                   <div class="shipping-item">
                     <i class="bi bi-truck"></i>
                     <div>
                       <strong>Envío gratis</strong>
-                      <p>Llegada estimada: 2-4 días hábiles</p>
+                      <p>Llega mañana si pedís en las próximas 3 horas</p>
                     </div>
                   </div>
                   <div class="shipping-item">
                     <i class="bi bi-shield-check"></i>
                     <div>
-                      <strong>Garantía oficial</strong>
-                      <p>12 meses de garantía del fabricante</p>
+                      <strong>Compra protegida</strong>
+                      <p>Garantía oficial Apple de 1 año</p>
                     </div>
                   </div>
                   <div class="shipping-item">
-                    <i class="bi bi-arrow-repeat"></i>
+                    <i class="bi bi-arrow-return-left"></i>
                     <div>
-                      <strong>Devolución gratuita</strong>
-                      <p>30 días para cambios y devoluciones</p>
+                      <strong>Devolución gratis</strong>
+                      <p>Tenés 30 días desde que lo recibís</p>
                     </div>
                   </div>
                 </div>
 
+                <!-- Payment Methods -->
                 <div class="payment-methods">
                   <h6>Medios de pago</h6>
                   <div class="payment-icons">
                     <i
-                      class="bi bi-credit-card-2-front"
+                      class="bi bi-credit-card"
                       title="Tarjetas de crédito"
                     ></i>
-                    <i class="bi bi-credit-card" title="Tarjetas de débito"></i>
+                    <i
+                      class="bi bi-credit-card-2-front"
+                      title="Tarjetas de débito"
+                    ></i>
                     <i class="bi bi-bank" title="Transferencia bancaria"></i>
-                    <i class="bi bi-wallet2" title="Billeteras digitales"></i>
+                    <i class="bi bi-cash" title="Efectivo"></i>
                   </div>
                 </div>
               </div>
@@ -320,88 +415,62 @@
         </div>
       </section>
 
-      <!-- Tabs de Información -->
+      <!-- Product Details Section -->
       <section class="product-details-section">
         <div class="container">
-          <div class="product-tabs" data-aos="fade-up">
-            <ul class="nav nav-tabs" id="productTabs">
+          <div class="product-tabs">
+            <!-- Tabs Navigation -->
+            <ul class="nav nav-tabs" role="tablist">
               <li class="nav-item">
-                <button
+                <a
                   class="nav-link active"
                   data-bs-toggle="tab"
-                  data-bs-target="#description"
+                  href="#description"
+                  >Descripción</a
                 >
-                  Descripción
-                </button>
               </li>
               <li class="nav-item">
-                <button
-                  class="nav-link"
-                  data-bs-toggle="tab"
-                  data-bs-target="#specifications"
+                <a class="nav-link" data-bs-toggle="tab" href="#specifications"
+                  >Especificaciones</a
                 >
-                  Especificaciones
-                </button>
               </li>
               <li class="nav-item">
-                <button
-                  class="nav-link"
-                  data-bs-toggle="tab"
-                  data-bs-target="#reviews"
+                <a class="nav-link" data-bs-toggle="tab" href="#reviews"
+                  >Reseñas</a
                 >
-                  Reseñas (2,847)
-                </button>
               </li>
               <li class="nav-item">
-                <button
-                  class="nav-link"
-                  data-bs-toggle="tab"
-                  data-bs-target="#questions"
+                <a class="nav-link" data-bs-toggle="tab" href="#questions"
+                  >Preguntas</a
                 >
-                  Preguntas (143)
-                </button>
               </li>
             </ul>
 
-            <div class="tab-content" id="productTabsContent">
-              <!-- Descripción -->
+            <!-- Tabs Content -->
+            <div class="tab-content">
+              <!-- Description Tab -->
               <div class="tab-pane fade show active" id="description">
                 <div class="description-content">
-                  <h3>iPhone 14 Pro - Tecnología Pro</h3>
+                  <h3>iPhone 15 Pro Max - La evolución de la innovación</h3>
                   <p>
-                    Conocé el iPhone 14 Pro. Con la Dynamic Island, una nueva
-                    forma mágica de interactuar con el iPhone. La cámara
-                    principal de 48 MP con un rango focal 2x te da tres cámaras
-                    Pro en una sola. Y el chip A16 Bionic alimenta funciones Pro
-                    avanzadas como el modo Cine de nueva generación.
+                    El iPhone 15 Pro Max redefine lo que es posible en un
+                    smartphone. Con el revolucionario chip A17 Pro, el primer
+                    chip de 3 nanómetros en un smartphone, experimentarás un
+                    rendimiento sin precedentes y una eficiencia energética
+                    excepcional.
                   </p>
 
-                  <h4>Características destacadas:</h4>
+                  <h4>Características destacadas</h4>
                   <ul>
                     <li>
-                      <strong>Dynamic Island</strong> - Una nueva experiencia
-                      interactiva que se adapta a lo que haces
+                      Chip A17 Pro con GPU de 6 núcleos para gráficos de nivel
+                      profesional
                     </li>
-                    <li>
-                      <strong>Cámara principal de 48 MP</strong> - Captura
-                      detalles impresionantes con ProRAW
-                    </li>
-                    <li>
-                      <strong>Sistema de cámaras Pro</strong> - Ultra gran
-                      angular, Principal y Teleobjetivo
-                    </li>
-                    <li>
-                      <strong>Modo Cine avanzado</strong> - Graba videos con
-                      profundidad de campo cinematográfica
-                    </li>
-                    <li>
-                      <strong>Chip A16 Bionic</strong> - El chip más rápido en
-                      un smartphone
-                    </li>
-                    <li>
-                      <strong>Pantalla Super Retina XDR</strong> - Siempre
-                      activa y hasta 2000 nits de brillo máximo
-                    </li>
+                    <li>Sistema de cámaras Pro con teleobjetivo de 120mm</li>
+                    <li>Pantalla Super Retina XDR de 6.7" con ProMotion</li>
+                    <li>Diseño en titanio de grado aeroespacial</li>
+                    <li>Botón de Acción personalizable</li>
+                    <li>USB-C con velocidades de transferencia hasta 10Gb/s</li>
                   </ul>
 
                   <div class="feature-grid">
@@ -409,100 +478,103 @@
                       <i class="bi bi-camera"></i>
                       <h5>Sistema de cámaras Pro</h5>
                       <p>
-                        Captura fotos y videos profesionales con el sistema de
-                        tres cámaras más avanzado.
+                        Captura fotos y videos con calidad profesional gracias
+                        al sistema de tres cámaras avanzado.
                       </p>
                     </div>
                     <div class="feature-card">
-                      <i class="bi bi-display"></i>
-                      <h5>Dynamic Island</h5>
+                      <i class="bi bi-cpu"></i>
+                      <h5>Chip A17 Pro</h5>
                       <p>
-                        Una experiencia completamente nueva que transforma las
-                        notificaciones y actividades.
+                        El chip más avanzado jamás creado para un smartphone,
+                        con rendimiento de nivel desktop.
                       </p>
                     </div>
                     <div class="feature-card">
-                      <i class="bi bi-lightning"></i>
-                      <h5>Chip A16 Bionic</h5>
+                      <i class="bi bi-battery-charging"></i>
+                      <h5>Batería todo el día</h5>
                       <p>
-                        Rendimiento y eficiencia energética de siguiente nivel
-                        para todo lo que haces.
+                        Hasta 29 horas de reproducción de video con carga rápida
+                        y carga inalámbrica MagSafe.
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Especificaciones -->
+              <!-- Specifications Tab -->
               <div class="tab-pane fade" id="specifications">
                 <div class="specifications-content">
                   <div class="spec-group">
-                    <h4>Display</h4>
+                    <h4>Pantalla</h4>
                     <div class="spec-item">
-                      <span class="spec-label">Tamaño:</span>
-                      <span class="spec-value">6.1 pulgadas</span>
+                      <span class="spec-label">Tamaño</span>
+                      <span class="spec-value">6.7 pulgadas</span>
                     </div>
                     <div class="spec-item">
-                      <span class="spec-label">Tipo:</span>
+                      <span class="spec-label">Tecnología</span>
                       <span class="spec-value">Super Retina XDR OLED</span>
                     </div>
                     <div class="spec-item">
-                      <span class="spec-label">Resolución:</span>
-                      <span class="spec-value"
-                        >2556 x 1179 píxeles a 460 ppp</span
-                      >
-                    </div>
-                  </div>
-
-                  <div class="spec-group">
-                    <h4>Cámara</h4>
-                    <div class="spec-item">
-                      <span class="spec-label">Principal:</span>
-                      <span class="spec-value">48 MP, f/1.78, 24mm</span>
+                      <span class="spec-label">Resolución</span>
+                      <span class="spec-value">2796 x 1290 píxeles</span>
                     </div>
                     <div class="spec-item">
-                      <span class="spec-label">Ultra gran angular:</span>
-                      <span class="spec-value">12 MP, f/2.2, 13mm</span>
-                    </div>
-                    <div class="spec-item">
-                      <span class="spec-label">Teleobjetivo:</span>
-                      <span class="spec-value">12 MP, f/2.8, 77mm</span>
+                      <span class="spec-label">Densidad</span>
+                      <span class="spec-value">460 ppi</span>
                     </div>
                   </div>
 
                   <div class="spec-group">
                     <h4>Rendimiento</h4>
                     <div class="spec-item">
-                      <span class="spec-label">Chip:</span>
-                      <span class="spec-value">A16 Bionic</span>
+                      <span class="spec-label">Chip</span>
+                      <span class="spec-value">A17 Pro</span>
                     </div>
                     <div class="spec-item">
-                      <span class="spec-label">Almacenamiento:</span>
-                      <span class="spec-value">128GB, 256GB, 512GB, 1TB</span>
+                      <span class="spec-label">CPU</span>
+                      <span class="spec-value">6 núcleos</span>
+                    </div>
+                    <div class="spec-item">
+                      <span class="spec-label">GPU</span>
+                      <span class="spec-value">6 núcleos</span>
+                    </div>
+                    <div class="spec-item">
+                      <span class="spec-label">Neural Engine</span>
+                      <span class="spec-value">16 núcleos</span>
                     </div>
                   </div>
 
                   <div class="spec-group">
-                    <h4>Batería</h4>
+                    <h4>Cámara</h4>
                     <div class="spec-item">
-                      <span class="spec-label">Duración:</span>
-                      <span class="spec-value">Hasta 23 horas de video</span>
+                      <span class="spec-label">Principal</span>
+                      <span class="spec-value">48MP f/1.78</span>
                     </div>
                     <div class="spec-item">
-                      <span class="spec-label">Carga:</span>
-                      <span class="spec-value">MagSafe, Qi, Lightning</span>
+                      <span class="spec-label">Ultra gran angular</span>
+                      <span class="spec-value">12MP f/2.2</span>
+                    </div>
+                    <div class="spec-item">
+                      <span class="spec-label">Teleobjetivo</span>
+                      <span class="spec-value">12MP f/2.8</span>
+                    </div>
+                    <div class="spec-item">
+                      <span class="spec-label">Zoom óptico</span>
+                      <span class="spec-value">5x</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Reseñas -->
+              <!-- Reviews Tab -->
               <div class="tab-pane fade" id="reviews">
                 <div class="reviews-content">
+                  <!-- Reviews Summary -->
                   <div class="reviews-summary">
                     <div class="rating-overview">
                       <div class="overall-rating">
-                        <span class="rating-number">4.5</span>
+                        <span class="rating-number">4.8</span>
                         <div class="rating-stars">
                           <i class="bi bi-star-fill"></i>
                           <i class="bi bi-star-fill"></i>
@@ -510,80 +582,130 @@
                           <i class="bi bi-star-fill"></i>
                           <i class="bi bi-star-half"></i>
                         </div>
-                        <span class="rating-count">2,847 reseñas</span>
+                        <div class="rating-count">2,847 reseñas</div>
                       </div>
                       <div class="rating-breakdown">
                         <div class="rating-bar">
-                          <span>5★</span>
+                          <span>5</span>
                           <div class="progress">
-                            <div class="progress-bar" style="width: 65%"></div>
+                            <div class="progress-bar" style="width: 75%"></div>
                           </div>
-                          <span>65%</span>
+                          <span>75%</span>
                         </div>
                         <div class="rating-bar">
-                          <span>4★</span>
+                          <span>4</span>
                           <div class="progress">
-                            <div class="progress-bar" style="width: 20%"></div>
+                            <div class="progress-bar" style="width: 15%"></div>
                           </div>
-                          <span>20%</span>
+                          <span>15%</span>
                         </div>
                         <div class="rating-bar">
-                          <span>3★</span>
+                          <span>3</span>
                           <div class="progress">
-                            <div class="progress-bar" style="width: 10%"></div>
+                            <div class="progress-bar" style="width: 7%"></div>
                           </div>
-                          <span>10%</span>
+                          <span>7%</span>
                         </div>
                         <div class="rating-bar">
-                          <span>2★</span>
-                          <div class="progress">
-                            <div class="progress-bar" style="width: 3%"></div>
-                          </div>
-                          <span>3%</span>
-                        </div>
-                        <div class="rating-bar">
-                          <span>1★</span>
+                          <span>2</span>
                           <div class="progress">
                             <div class="progress-bar" style="width: 2%"></div>
                           </div>
                           <span>2%</span>
                         </div>
+                        <div class="rating-bar">
+                          <span>1</span>
+                          <div class="progress">
+                            <div class="progress-bar" style="width: 1%"></div>
+                          </div>
+                          <span>1%</span>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <div class="reviews-filters">
-                    <button class="filter-btn active">Todos</button>
-                    <button class="filter-btn">5 estrellas</button>
-                    <button class="filter-btn">4 estrellas</button>
-                    <button class="filter-btn">Con fotos</button>
-                    <button class="filter-btn">Verificados</button>
-                  </div>
-
-                  <div class="reviews-list" id="reviewsList">
-                    <!-- Las reseñas se cargarán dinámicamente -->
+                  <!-- Sample Reviews -->
+                  <div class="review-item">
+                    <div class="review-header">
+                      <img
+                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=48&h=48&fit=crop&crop=face"
+                        alt="Usuario"
+                        class="review-avatar"
+                      />
+                      <div class="review-info">
+                        <h6>Carlos M.</h6>
+                        <div class="review-meta">
+                          <div class="review-rating">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                          </div>
+                          <span class="review-date">Hace 2 días</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="review-content">
+                      <h6 class="review-title">
+                        Excelente calidad y rendimiento
+                      </h6>
+                      <p class="review-text">
+                        El iPhone 15 Pro Max superó todas mis expectativas. La
+                        cámara es increíble, especialmente en condiciones de
+                        poca luz. La batería dura todo el día sin problemas.
+                      </p>
+                    </div>
                   </div>
 
                   <button class="btn-load-more-reviews">Ver más reseñas</button>
                 </div>
               </div>
 
-              <!-- Preguntas -->
+              <!-- Questions Tab -->
               <div class="tab-pane fade" id="questions">
                 <div class="questions-content">
+                  <!-- Ask Question Form -->
                   <div class="ask-question">
-                    <h4>¿Tenés alguna pregunta?</h4>
-                    <div class="question-form">
+                    <h4>Hacer una pregunta</h4>
+                    <form class="question-form">
                       <textarea
-                        placeholder="Escribí tu pregunta aquí..."
-                        rows="3"
+                        placeholder="Escribe tu pregunta sobre este producto..."
+                        required
                       ></textarea>
-                      <button class="btn-ask">Hacer pregunta</button>
-                    </div>
+                      <button type="submit" class="btn-ask">
+                        Enviar pregunta
+                      </button>
+                    </form>
                   </div>
 
-                  <div class="questions-list" id="questionsList">
-                    <!-- Las preguntas se cargarán dinámicamente -->
+                  <!-- Sample Questions -->
+                  <div class="question-item">
+                    <div class="question-header">
+                      <div class="question-icon">P</div>
+                      <div class="question-content">
+                        <h6>¿Incluye cargador en la caja?</h6>
+                        <div class="question-meta">
+                          <span>Por María L.</span>
+                          <span>•</span>
+                          <span>Hace 1 día</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="answer-section">
+                      <div class="answer-header">
+                        <div class="answer-icon">R</div>
+                        <div class="answer-meta">
+                          <strong>Dale Deal</strong> • Hace 1 día
+                        </div>
+                      </div>
+                      <p class="answer-text">
+                        Hola María, el iPhone 15 Pro Max incluye cable USB-C a
+                        USB-C, pero no incluye adaptador de corriente. Puedes
+                        usar cualquier cargador USB-C o adquirir uno por
+                        separado.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -591,59 +713,131 @@
           </div>
         </div>
       </section>
-
-      <!-- Productos Relacionados -->
-      <section class="related-products-section">
-        <div class="container">
-          <div class="section-header" data-aos="fade-up">
-            <h2>Productos similares</h2>
-            <p>También te pueden interesar estos productos</p>
-          </div>
-          <div
-            class="related-products-grid"
-            id="relatedProductsGrid"
-            data-aos="fade-up"
-            data-aos-delay="200"
-          >
-            <!-- Los productos relacionados se cargarán dinámicamente -->
-          </div>
-        </div>
-      </section>
     </main>
 
-    <!-- Modal de Imagen Ampliada -->
-    <div class="modal fade" id="imageModal" tabindex="-1">
-      <div class="modal-dialog modal-xl">
+    <!-- Cart Modal -->
+    <div class="modal fade" id="cartModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">
-          <div class="modal-body p-0">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-cart3 me-2"></i>Mi Carrito
+            </h5>
             <button
               type="button"
-              class="btn-close-image"
+              class="btn-close"
               data-bs-dismiss="modal"
-            >
-              <i class="bi bi-x-lg"></i>
+            ></button>
+          </div>
+          <div class="modal-body" id="cartModalBody">
+            <!-- Cart content will be loaded dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification Modal -->
+    <div
+      class="modal fade"
+      id="notificationsModal"
+      tabindex="-1"
+      aria-labelledby="notificationsModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="notificationsModalLabel">
+              <i class="bi bi-bell me-2"></i>
+              Notificaciones
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body" id="notificationsModalBody">
+            <div class="notification-item">
+              <div class="notification-icon bg-success">
+                <i class="bi bi-check-circle text-white"></i>
+              </div>
+              <div class="notification-content">
+                <h6>Pedido confirmado</h6>
+                <p class="text-muted small">
+                  Tu pedido #12345 ha sido confirmado
+                </p>
+                <small class="text-muted">Hace 2 horas</small>
+              </div>
+            </div>
+            <div class="notification-item">
+              <div class="notification-icon bg-info">
+                <i class="bi bi-truck text-white"></i>
+              </div>
+              <div class="notification-content">
+                <h6>Envío en camino</h6>
+                <p class="text-muted small">Tu pedido está siendo preparado</p>
+                <small class="text-muted">Hace 1 día</small>
+              </div>
+            </div>
+            <div class="notification-item">
+              <div class="notification-icon bg-warning">
+                <i class="bi bi-star text-white"></i>
+              </div>
+              <div class="notification-content">
+                <h6>Nueva oferta disponible</h6>
+                <p class="text-muted small">20% de descuento en electrónicos</p>
+                <small class="text-muted">Hace 2 días</small>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary btn-sm">
+              Ver todas
             </button>
-            <img src="" alt="" class="modal-image" id="modalImage" />
+            <button
+              type="button"
+              class="btn btn-primary btn-sm"
+              data-action="mark-read"
+            >
+              Marcar como leídas
+            </button>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Scripts -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
-      crossorigin="anonymous"
-    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="../producto.js"></script>
+    <script src="../JS/utils.js"></script>
+    <script src="../JS/auth.js"></script>
+    <script src="../JS/cart.js"></script>
+    <script src="../JS/notifications.js"></script>
+    <script src="../JS/product-page.js"></script>
+    <script src="../JS/dropdown-fix.js"></script>
+
     <script>
-      // Inicializar AOS
+      // Initialize AOS
       AOS.init({
         duration: 800,
         easing: "ease-out-cubic",
         once: true,
         offset: 50,
+      });
+
+      // Initialize notifications button
+      document.addEventListener("DOMContentLoaded", () => {
+        const notificationBtn = document.getElementById("notificationBtn");
+        if (notificationBtn) {
+          notificationBtn.addEventListener("click", () => {
+            const notificationsModal = new bootstrap.Modal(
+              document.getElementById("notificationsModal")
+            );
+            notificationsModal.show();
+          });
+        }
       });
     </script>
   </body>
