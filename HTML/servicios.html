@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Servicios Profesionales - DALE DEAL</title>
+
+    <!-- SEO Meta Tags -->
+    <meta
+      name="description"
+      content="Descubre nuestros servicios profesionales: instalación técnica, reparaciones, gastronomía, construcción y más. Calidad garantizada en Dale Deal."
+    />
+    <meta
+      name="keywords"
+      content="servicios profesionales, instalación, reparación, chef, repostería, albañilería, jardinería, plomería, limpieza"
+    />
+    <meta name="author" content="Dale Deal" />
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    />
+
+    <!-- AOS (Animate On Scroll) -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../CSS/variables.css" />
+    <link rel="stylesheet" href="../CSS/components.css" />
+    <link rel="stylesheet" href="../CSS/pages/home.css" />
+    <link rel="stylesheet" href="../CSS/pages/services.css" />
+  </head>
+
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
+      <div class="container-fluid px-4">
+        <!-- Logo -->
+        <a class="navbar-brand" href="../index.html" data-aos="fade-right">
+          <img src="../IMG/LOGO-2.png" alt="Dale Deal" class="logo-navbar" />
+          <span class="brand-text">DALE DEAL</span>
+        </a>
+
+        <!-- Search Bar -->
+        <div class="search-container mx-auto" data-aos="fade-up" data-aos-delay="100">
+          <div class="search-wrapper">
+            <i class="bi bi-search search-icon"></i>
+            <input
+              type="text"
+              class="search-input"
+              placeholder="¿Qué servicio necesitas hoy?"
+              id="searchInput"
+            />
+          </div>
+        </div>
+
+        <!-- User Actions -->
+        <div class="navbar-actions" data-aos="fade-left" data-aos-delay="200">
+          <!-- Notifications -->
+          <div class="action-item dropdown">
+            <button
+              class="action-btn"
+              id="notificationBtn"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              title="Notificaciones"
+            >
+              <i class="bi bi-bell"></i>
+              <span class="notification-badge" id="notificationBadge">3</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end notifications-dropdown" aria-labelledby="notificationBtn">
+              <div class="notifications-header">
+                <h6 class="mb-0">
+                  <i class="bi bi-bell me-2"></i>
+                  Notificaciones
+                  <span class="notifications-count" id="notificationsCount">3</span>
+                </h6>
+              </div>
+              <div class="notifications-body" id="notificationsDropdownBody">
+                <!-- Notifications will be loaded dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Cart -->
+          <div class="action-item dropdown">
+            <button class="action-btn" id="cartBtn" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" title="Carrito de compras">
+              <i class="bi bi-cart3"></i>
+              <span class="cart-badge" id="cartBadge">0</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end cart-dropdown" aria-labelledby="cartBtn">
+              <div class="cart-header">
+                <h6 class="mb-0">
+                  <i class="bi bi-cart3 me-2"></i>
+                  Mi Carrito
+                  <span class="cart-count" id="cartCount">0</span>
+                </h6>
+              </div>
+              <div class="cart-body" id="cartDropdownBody">
+                <!-- Cart items will be loaded dynamically -->
+              </div>
+              <div class="cart-footer">
+                <div class="cart-total mb-3">
+                  <div class="cart-total-row cart-total-final">
+                    <span class="cart-total-label">Total:</span>
+                    <span class="cart-total-value" id="cartTotal">$0</span>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-outline-secondary btn-sm w-100 mb-2" id="viewFullCart">
+                  <i class="bi bi-eye me-2"></i>Ver carrito completo
+                </button>
+                <button type="button" class="btn btn-primary btn-sm w-100" id="proceedToCheckout">
+                  <i class="bi bi-credit-card me-2"></i>Finalizar compra
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile -->
+          <div class="action-item dropdown">
+            <button
+              class="action-btn profile-btn"
+              id="profileDropdown"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              title="Mi cuenta"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                alt="Perfil"
+                class="profile-image"
+              />
+              <span class="profile-name">Usuario</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+              <li class="dropdown-header">
+                <h6 class="mb-0">Mi Cuenta</h6>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <a class="dropdown-item" href="#">
+                  <i class="bi bi-person me-2"></i>Mi Perfil
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+                  <i class="bi bi-bag me-2"></i>Mis Compras
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#" id="favoritesLink">
+                  <i class="bi bi-heart me-2"></i>Favoritos
+                </a>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <a class="dropdown-item" href="./login.html" id="loginLink">
+                  <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item text-danger" href="#" id="logoutBtn" style="display: none">
+                  <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Hero Section for Services -->
+      <section class="services-hero-section">
+        <div class="container">
+          <div class="row align-items-center min-vh-50">
+            <div class="col-lg-6">
+              <div class="services-hero-content" data-aos="fade-right">
+                <span class="hero-badge services-badge">
+                  <i class="bi bi-tools me-2"></i>Servicios Profesionales
+                </span>
+                <h1 class="services-hero-title">
+                  Conectamos tu necesidad con el <span class="text-primary">profesional perfecto</span>
+                </h1>
+                <p class="services-hero-subtitle">
+                  Encuentra profesionales verificados en tu zona. Desde técnicos especializados hasta servicios gastronómicos y construcción. Miles de proveedores listos para ayudarte.
+                </p>
+                <div class="services-hero-stats">
+                  <div class="stat-item">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">Profesionales</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-number">12</span>
+                    <span class="stat-label">Categorías</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-number">4.8★</span>
+                    <span class="stat-label">Calificación</span>
+                  </div>
+                </div>
+                <div class="services-hero-actions">
+                  <button class="btn btn-primary btn-lg" id="exploreServicesBtn">
+                    <i class="bi bi-search me-2"></i>Buscar profesionales
+                  </button>
+                  <button class="btn btn-outline-primary btn-lg" id="becomeProviderBtn">
+                    <i class="bi bi-person-plus me-2"></i>Ofrecer mis servicios
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="services-hero-image" data-aos="fade-left">
+                <img 
+                  src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&h=500&fit=crop" 
+                  alt="Servicios Profesionales" 
+                  class="img-fluid rounded-3xl"
+                />
+                <div class="floating-cards">
+                  <div class="floating-card" data-aos="zoom-in" data-aos-delay="300">
+                    <i class="bi bi-tools"></i>
+                    <span>Instalación</span>
+                  </div>
+                  <div class="floating-card" data-aos="zoom-in" data-aos-delay="400">
+                    <i class="bi bi-wrench"></i>
+                    <span>Reparación</span>
+                  </div>
+                  <div class="floating-card" data-aos="zoom-in" data-aos-delay="500">
+                    <i class="bi bi-brush"></i>
+                    <span>Limpieza</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Services Categories Overview -->
+      <section class="services-categories-section">
+        <div class="container">
+          <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title">Categorías de Servicios</h2>
+            <p class="section-subtitle">Encuentra profesionales verificados en cada categoría especializada</p>
+          </div>
+          
+          <div class="categories-grid" data-aos="fade-up" data-aos-delay="100">
+            <div class="category-card" data-category="installation">
+              <div class="category-icon">
+                <i class="bi bi-tools"></i>
+              </div>
+              <h3 class="category-title">Instalación</h3>
+              <p class="category-description">Técnicos especializados en instalación de equipos y sistemas</p>
+              <span class="category-count">45 profesionales</span>
+            </div>
+
+            <div class="category-card" data-category="repair">
+              <div class="category-icon">
+                <i class="bi bi-wrench"></i>
+              </div>
+              <h3 class="category-title">Reparación</h3>
+              <p class="category-description">Profesionales en reparaciones con garantía y experiencia certificada</p>
+              <span class="category-count">68 profesionales</span>
+            </div>
+
+            <div class="category-card" data-category="maintenance">
+              <div class="category-icon">
+                <i class="bi bi-gear"></i>
+              </div>
+              <h3 class="category-title">Mantenimiento</h3>
+              <p class="category-description">Especialistas en mantenimiento preventivo y correctivo</p>
+              <span class="category-count">52 profesionales</span>
+            </div>
+
+            <div class="category-card" data-category="consultation">
+              <div class="category-icon">
+                <i class="bi bi-chat-dots"></i>
+              </div>
+              <h3 class="category-title">Consultoría</h3>
+              <p class="category-description">Consultores y asesores expertos en tecnología</p>
+              <span class="category-count">23 profesionales</span>
+            </div>
+
+            <div class="category-card" data-category="catering">
+              <div class="category-icon">
+                <i class="bi bi-cake"></i>
+              </div>
+              <h3 class="category-title">Gastronomía</h3>
+              <p class="category-description">Chefs, reposteros y profesionales gastronómicos</p>
+              <span class="category-count">34 profesionales</span>
+            </div>
+
+            <div class="category-card" data-category="construction">
+              <div class="category-icon">
+                <i class="bi bi-hammer"></i>
+              </div>
+              <h3 class="category-title">Construcción</h3>
+              <p class="category-description">Albañiles, constructores y profesionales de la construcción</p>
+              <span class="category-count">89 profesionales</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main Services Section -->
+      <section class="services-section">
+        <div class="container">
+          <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title">Todos Nuestros Servicios</h2>
+          </div>
+
+          <!-- Filtros de servicios -->
+          <div class="services-filters">
+            <div class="services-filters-container">
+              <div class="service-filter-tabs">
+                <button class="service-filter-tab active" data-service-category="all">
+                  Todos
+                </button>
+                <button class="service-filter-tab" data-service-category="installation">
+                  Instalación
+                </button>
+                <button class="service-filter-tab" data-service-category="repair">
+                  Reparación
+                </button>
+                <button class="service-filter-tab" data-service-category="maintenance">
+                  Mantenimiento
+                </button>
+                <button class="service-filter-tab" data-service-category="consultation">
+                  Consultoría
+                </button>
+                <button class="service-filter-tab" data-service-category="catering">
+                  Gastronomía
+                </button>
+                <button class="service-filter-tab" data-service-category="construction">
+                  Construcción
+                </button>
+              </div>
+              <div class="service-filter-options">
+                <button class="service-filter-btn" id="serviceSortBtn">
+                  <i class="bi bi-sort-down me-2"></i>Ordenar
+                </button>
+                <button class="service-filter-btn" id="serviceFilterBtn">
+                  <i class="bi bi-funnel me-2"></i>Filtros
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="services-grid" id="servicesGrid">
+            <!-- Servicio 1 - Instalación Técnica -->
+            <div class="service-card" data-aos="fade-up" data-aos-delay="0" data-service-category="installation" data-service-price="15000" data-id="installation-tech">
+              <div class="service-image-container">
+                <img
+                  src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=400&h=300&fit=crop"
+                  alt="Instalación Técnica"
+                  class="service-image"
+                />
+                <div class="service-badges">
+                  <span class="badge-certified">Certificado</span>
+                  <span class="badge-warranty">Garantía 1 año</span>
+                </div>
+                <div class="service-actions">
+                  <button class="action-heart" title="Agregar a favoritos" data-service-id="installation-tech">
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="service-info">
+                <h3 class="service-title">Instalación Técnica Profesional</h3>
+                <p class="service-description">
+                  Instalación y configuración profesional de todos tus dispositivos por técnicos certificados.
+                </p>
+                <div class="service-meta">
+                  <div class="service-rating">
+                    <div class="stars">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                    </div>
+                    <span class="service-rating-text">4.9 (127)</span>
+                  </div>
+                  <div class="service-info-row">
+                    <div class="service-location">
+                      <i class="bi bi-geo-alt-fill"></i>
+                      <span>Córdoba Capital</span>
+                    </div>
+                    <span class="service-price-badge">Desde $15.999</span>
+                  </div>
+                </div>
+                <button class="btn-contact-service">
+                  <i class="bi bi-chat-dots me-2"></i>Ver más
+                </button>
+              </div>
+            </div>
+
+            <!-- Servicio 2 - Soporte Técnico -->
+            <div class="service-card" data-aos="fade-up" data-aos-delay="100" data-service-category="consultation" data-service-price="8000" data-id="tech-support">
+              <div class="service-image-container">
+                <img
+                  src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop"
+                  alt="Soporte Técnico"
+                  class="service-image"
+                />
+                <div class="service-badges">
+                  <span class="badge-24h">24/7 Disponible</span>
+                  <span class="badge-remote">Remoto</span>
+                </div>
+                <div class="service-actions">
+                  <button class="action-heart" title="Agregar a favoritos" data-service-id="tech-support">
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="service-info">
+                <h3 class="service-title">Soporte Técnico Especializado</h3>
+                <p class="service-description">
+                  Asistencia técnica 24/7 para resolver cualquier problema con tus dispositivos.
+                </p>
+                <div class="service-meta">
+                  <div class="service-rating">
+                    <div class="stars">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-half"></i>
+                    </div>
+                    <span class="service-rating-text">4.6 (89)</span>
+                  </div>
+                  <div class="service-info-row">
+                    <div class="service-location">
+                      <i class="bi bi-geo-alt-fill"></i>
+                      <span>Todo el país</span>
+                    </div>
+                    <span class="service-price-badge">$8.999/mes</span>
+                  </div>
+                </div>
+                <button class="btn-contact-service">
+                  <i class="bi bi-chat-dots me-2"></i>Ver más
+                </button>
+              </div>
+            </div>
+
+            <!-- Repostería Profesional -->
+            <div class="service-card" data-aos="fade-up" data-aos-delay="200" data-service-category="catering" data-service-price="25000" data-id="pastry-service">
+              <div class="service-image-container">
+                <img
+                  src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop"
+                  alt="Repostería Profesional"
+                  class="service-image"
+                />
+                <div class="service-badges">
+                  <span class="badge-artisan">Artesanal</span>
+                  <span class="badge-custom">Personalizado</span>
+                </div>
+                <div class="service-actions">
+                  <button class="action-heart" title="Agregar a favoritos" data-service-id="pastry-service">
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="service-info">
+                <h3 class="service-title">Repostería & Pastelería Profesional</h3>
+                <p class="service-description">
+                  Creamos tortas, postres y dulces personalizados para todo tipo de eventos y celebraciones especiales.
+                </p>
+                <div class="service-meta">
+                  <div class="service-rating">
+                    <div class="stars">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                    </div>
+                    <span class="service-rating-text">5.0 (234)</span>
+                  </div>
+                  <div class="service-info-row">
+                    <div class="service-location">
+                      <i class="bi bi-geo-alt-fill"></i>
+                      <span>Buenos Aires</span>
+                    </div>
+                    <span class="service-price-badge">Desde $35.999</span>
+                  </div>
+                </div>
+                <button class="btn-contact-service">
+                  <i class="bi bi-chat-dots me-2"></i>Ver más
+                </button>
+              </div>
+            </div>
+
+            <!-- Chef a Domicilio -->
+            <div class="service-card" data-aos="fade-up" data-aos-delay="300" data-service-category="catering" data-service-price="45000" data-id="home-chef">
+              <div class="service-image-container">
+                <img
+                  src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=400&h=300&fit=crop"
+                  alt="Chef a Domicilio"
+                  class="service-image"
+                />
+                <div class="service-badges">
+                  <span class="badge-premium">Premium</span>
+                  <span class="badge-certified">Chef certificado</span>
+                </div>
+                <div class="service-actions">
+                  <button class="action-heart" title="Agregar a favoritos" data-service-id="home-chef">
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="service-info">
+                <h3 class="service-title">Chef Profesional a Domicilio</h3>
+                <p class="service-description">
+                  Chef profesional cocina en tu hogar para cenas íntimas, eventos familiares o celebraciones especiales.
+                </p>
+                <div class="service-meta">
+                  <div class="service-rating">
+                    <div class="stars">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                    </div>
+                    <span class="service-rating-text">4.8 (156)</span>
+                  </div>
+                  <div class="service-info-row">
+                    <div class="service-location">
+                      <i class="bi bi-geo-alt-fill"></i>
+                      <span>Capital Federal</span>
+                    </div>
+                    <span class="service-price-badge">Desde $75.999</span>
+                  </div>
+                </div>
+                <button class="btn-contact-service">
+                  <i class="bi bi-chat-dots me-2"></i>Ver más
+                </button>
+              </div>
+            </div>
+
+            <!-- Construcción -->
+            <div class="service-card" data-aos="fade-up" data-aos-delay="400" data-service-category="construction" data-service-price="30000" data-id="construction-service">
+              <div class="service-image-container">
+                <img
+                  src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=400&h=300&fit=crop"
+                  alt="Albañilería y Construcción"
+                  class="service-image"
+                />
+                <div class="service-badges">
+                  <span class="badge-professional">Profesional</span>
+                  <span class="badge-warranty">Garantía obra</span>
+                </div>
+                <div class="service-actions">
+                  <button class="action-heart" title="Agregar a favoritos" data-service-id="construction-service">
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="service-info">
+                <h3 class="service-title">Albañilería & Construcción</h3>
+                <p class="service-description">
+                  Servicios de albañilería, reformas, ampliaciones y construcción con materiales de calidad y acabados profesionales.
+                </p>
+                <div class="service-meta">
+                  <div class="service-rating">
+                    <div class="stars">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-half"></i>
+                    </div>
+                    <span class="service-rating-text">4.7 (203)</span>
+                  </div>
+                  <div class="service-info-row">
+                    <div class="service-location">
+                      <i class="bi bi-geo-alt-fill"></i>
+                      <span>Zona Sur GBA</span>
+                    </div>
+                    <span class="service-price-badge">Desde $45.999/m²</span>
+                  </div>
+                </div>
+                <button class="btn-contact-service">
+                  <i class="bi bi-chat-dots me-2"></i>Ver más
+                </button>
+              </div>
+            </div>
+
+            <!-- Plomería -->
+            <div class="service-card" data-aos="fade-up" data-aos-delay="500" data-service-category="repair" data-service-price="15000" data-id="plumbing-service">
+              <div class="service-image-container">
+                <img
+                  src="https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=400&h=300&fit=crop"
+                  alt="Plomería y Gasfitería"
+                  class="service-image"
+                />
+                <div class="service-badges">
+                  <span class="badge-emergency">Emergencias 24h</span>
+                  <span class="badge-certified">Matriculado</span>
+                </div>
+                <div class="service-actions">
+                  <button class="action-heart" title="Agregar a favoritos" data-service-id="plumbing-service">
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="service-info">
+                <h3 class="service-title">Plomería & Gasfitería</h3>
+                <p class="service-description">
+                  Instalación, reparación y mantenimiento de sistemas de agua, gas y desagües con técnicos matriculados.
+                </p>
+                <div class="service-meta">
+                  <div class="service-rating">
+                    <div class="stars">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                    </div>
+                    <span class="service-rating-text">4.9 (312)</span>
+                  </div>
+                  <div class="service-info-row">
+                    <div class="service-location">
+                      <i class="bi bi-geo-alt-fill"></i>
+                      <span>CABA y GBA</span>
+                    </div>
+                    <span class="service-price-badge">Desde $18.999</span>
+                  </div>
+                </div>
+                <button class="btn-contact-service">
+                  <i class="bi bi-chat-dots me-2"></i>Ver más
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="services-cta text-center">
+            <h3>¿No encontraste lo que buscas?</h3>
+            <p>Publica tu solicitud y recibe ofertas de profesionales calificados en tu área</p>
+            <button class="btn btn-primary btn-lg">
+              <i class="bi bi-megaphone me-2"></i>
+              Publicar solicitud
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- How It Works Section -->
+      <section class="how-it-works-section">
+        <div class="container">
+          <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title">¿Cómo Funciona?</h2>
+            <p class="section-subtitle">Conectar con el profesional ideal es muy sencillo</p>
+          </div>
+          
+          <div class="steps-container">
+            <div class="step-item" data-aos="fade-up" data-aos-delay="0">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h3 class="step-title">Busca el servicio</h3>
+                <p class="step-description">Explora las categorías y encuentra profesionales en tu zona</p>
+              </div>
+            </div>
+            
+            <div class="step-item" data-aos="fade-up" data-aos-delay="100">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h3 class="step-title">Contacta al profesional</h3>
+                <p class="step-description">Revisa perfiles, calificaciones y contacta directamente con el proveedor</p>
+              </div>
+            </div>
+            
+            <div class="step-item" data-aos="fade-up" data-aos-delay="200">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <h3 class="step-title">Acuerda los detalles</h3>
+                <p class="step-description">Negocia precio, fecha y condiciones directamente con el profesional</p>
+              </div>
+            </div>
+            
+            <div class="step-item" data-aos="fade-up" data-aos-delay="300">
+              <div class="step-number">4</div>
+              <div class="step-content">
+                <h3 class="step-title">Califica la experiencia</h3>
+                <p class="step-description">Una vez completado el trabajo, califica al profesional para ayudar a otros usuarios</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Testimonials Section -->
+      <section class="testimonials-section">
+        <div class="container">
+          <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title">Lo Que Dicen Nuestros Clientes</h2>
+          </div>
+          
+          <div class="testimonials-grid">
+            <div class="testimonial-card" data-aos="fade-up" data-aos-delay="0">
+              <div class="testimonial-rating">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+              </div>
+              <p class="testimonial-text">
+                "Encontré a María a través de Dale Deal y fue la mejor decisión. Su servicio de repostería superó todas mis expectativas para el cumpleaños."
+              </p>
+              <div class="testimonial-author">
+                <img src="https://images.unsplash.com/photo-1494790108755-2616b332c108?w=60&h=60&fit=crop&crop=face" alt="María González" class="author-image">
+                <div class="author-info">
+                  <h4 class="author-name">Laura Mendez</h4>
+                  <p class="author-service">Cliente verificado</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="testimonial-card" data-aos="fade-up" data-aos-delay="100">
+              <div class="testimonial-rating">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+              </div>
+              <p class="testimonial-text">
+                "Necesitaba un plomero urgente y a través de la plataforma encontré a Carlos. Llegó rápido, solucionó todo perfectamente."
+              </p>
+              <div class="testimonial-author">
+                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&h=60&fit=crop&crop=face" alt="Carlos Ruiz" class="author-image">
+                <div class="author-info">
+                  <h4 class="author-name">Roberto Silva</h4>
+                  <p class="author-service">Cliente verificado</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="testimonial-card" data-aos="fade-up" data-aos-delay="200">
+              <div class="testimonial-rating">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+              </div>
+              <p class="testimonial-text">
+                "La plataforma me ayudó a encontrar el servicio de limpieza perfecto. Ana fue muy profesional y dejó todo impecable."
+              </p>
+              <div class="testimonial-author">
+                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&h=60&fit=crop&crop=face" alt="Ana Torres" class="author-image">
+                <div class="author-info">
+                  <h4 class="author-name">Ana Torres</h4>
+                  <p class="author-service">Cliente verificada</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="../JS/utils.js"></script>
+    <script src="../JS/auth.js"></script>
+    <script src="../JS/cart.js"></script>
+    <script src="../JS/notifications.js"></script>
+    <script src="../JS/dropdown-fix.js"></script>
+    <script src="../JS/pages/services.js"></script>
+
+    <script>
+      // Initialize AOS
+      AOS.init({
+        duration: 800,
+        easing: "ease-out-cubic",
+        once: true,
+        offset: 50,
+      });
+
+      // Services page specific functionality
+      document.addEventListener("DOMContentLoaded", () => {
+        // Category cards click handlers
+        document.querySelectorAll('.category-card').forEach(card => {
+          card.addEventListener('click', () => {
+            const category = card.dataset.category;
+            // Scroll to services section and filter
+            document.querySelector('.services-section').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+              // Activate the corresponding filter tab
+              document.querySelectorAll('.service-filter-tab').forEach(tab => tab.classList.remove('active'));
+              document.querySelector(`[data-service-category="${category}"]`).classList.add('active');
+              // Filter services logic would go here
+            }, 800);
+          });
+        });
+
+        // Hero actions
+        document.getElementById('exploreServicesBtn')?.addEventListener('click', () => {
+          document.querySelector('.services-section').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        document.getElementById('becomeProviderBtn')?.addEventListener('click', () => {
+          // Logic for becoming a service provider
+          console.log('Become provider functionality - To implement');
+        });
+      });
+    </script>
+  </body>
+</html>

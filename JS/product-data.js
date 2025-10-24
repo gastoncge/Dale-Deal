@@ -1,0 +1,409 @@
+// Product data for DALE DEAL
+const PRODUCTS_DATA = {
+  1: {
+    id: 1,
+    title: "iPhone 15 Pro Max 256GB",
+    category: "Electrónicos",
+    subcategory: "Smartphones",
+    description: "El iPhone 15 Pro Max redefine lo que es posible en un smartphone. Con el revolucionario chip A17 Pro, el primer chip de 3 nanómetros en un smartphone, experimentarás un rendimiento sin precedentes y una eficiencia energética excepcional.",
+    features: [
+      "Chip A17 Pro con GPU de 6 núcleos para gráficos de nivel profesional",
+      "Sistema de cámaras Pro con teleobjetivo de 120mm", 
+      "Pantalla Super Retina XDR de 6.7\" con ProMotion",
+      "Diseño en titanio de grado aeroespacial",
+      "Botón de Acción personalizable",
+      "USB-C con velocidades de transferencia hasta 10Gb/s"
+    ],
+    price: 1299999,
+    originalPrice: 1529999,
+    discount: 15,
+    rating: 4.8,
+    reviewCount: 2847,
+    soldCount: 500,
+    stock: 15,
+    images: {
+      main: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=600&fit=crop",
+      gallery: [
+        "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&h=600&fit=crop", 
+        "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=600&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1567581935884-3349723552ca?w=600&h=600&fit=crop"
+      ],
+      thumbnails: [
+        "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=100&h=100&fit=crop",
+        "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=100&h=100&fit=crop",
+        "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=100&h=100&fit=crop", 
+        "https://images.unsplash.com/photo-1567581935884-3349723552ca?w=100&h=100&fit=crop"
+      ]
+    },
+    colors: [
+      { name: "Titanio Natural", value: "natural", color: "#f5f5dc" },
+      { name: "Titanio Azul", value: "blue", color: "#1e3a8a" },
+      { name: "Titanio Blanco", value: "white", color: "#f8fafc" },
+      { name: "Titanio Negro", value: "black", color: "#1f2937" }
+    ],
+    storage: [
+      { size: "128GB", price: 0, label: "Base" },
+      { size: "256GB", price: 100000, label: "+$100.000" },
+      { size: "512GB", price: 200000, label: "+$200.000" },
+      { size: "1TB", price: 400000, label: "+$400.000" }
+    ],
+    specifications: {
+      screen: {
+        size: "6.7 pulgadas",
+        technology: "Super Retina XDR OLED",
+        resolution: "2796 x 1290 píxeles",
+        density: "460 ppi"
+      },
+      performance: {
+        chip: "A17 Pro",
+        cpu: "6 núcleos",
+        gpu: "6 núcleos",
+        neuralEngine: "16 núcleos"
+      },
+      camera: {
+        main: "48MP f/1.78",
+        ultraWide: "12MP f/2.2",
+        telephoto: "12MP f/2.8",
+        opticalZoom: "5x"
+      }
+    },
+    badges: ["15% OFF", "Envío Gratis"]
+  },
+  
+  2: {
+    id: 2,
+    title: "Samsung Galaxy S24 Ultra 512GB",
+    category: "Electrónicos",
+    subcategory: "Smartphones",
+    description: "El Samsung Galaxy S24 Ultra combina la potencia del procesador Snapdragon 8 Gen 3 con un sistema de cámaras profesional y la versatilidad del S Pen integrado.",
+    features: [
+      "Procesador Snapdragon 8 Gen 3 for Galaxy",
+      "Sistema de cámaras cuádruple con teleobjetivo de 200MP",
+      "Pantalla Dynamic AMOLED 2X de 6.8\" con S Pen",
+      "Construcción en aluminio Armor con Gorilla Glass Victus 2",
+      "Batería de 5000mAh con carga rápida de 45W",
+      "Resistencia IP68 al agua y polvo"
+    ],
+    price: 1159999,
+    originalPrice: null,
+    discount: null,
+    rating: 5.0,
+    reviewCount: 1534,
+    soldCount: 320,
+    stock: 23,
+    images: {
+      main: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=600&h=600&fit=crop",
+      gallery: [
+        "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=600&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=600&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1585060544812-6b45742d762f?w=600&h=600&fit=crop"
+      ],
+      thumbnails: [
+        "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=100&h=100&fit=crop",
+        "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=100&h=100&fit=crop",
+        "https://images.unsplash.com/photo-1585060544812-6b45742d762f?w=100&h=100&fit=crop"
+      ]
+    },
+    colors: [
+      { name: "Titanium Gray", value: "gray", color: "#6b7280" },
+      { name: "Titanium Black", value: "black", color: "#111827" },
+      { name: "Titanium Violet", value: "violet", color: "#7c3aed" }
+    ],
+    storage: [
+      { size: "256GB", price: 0, label: "Base" },
+      { size: "512GB", price: 150000, label: "+$150.000" },
+      { size: "1TB", price: 350000, label: "+$350.000" }
+    ],
+    specifications: {
+      screen: {
+        size: "6.8 pulgadas",
+        technology: "Dynamic AMOLED 2X",
+        resolution: "3120 x 1440 píxeles", 
+        density: "501 ppi"
+      },
+      performance: {
+        chip: "Snapdragon 8 Gen 3",
+        cpu: "Octa-core",
+        gpu: "Adreno 750",
+        ram: "12GB"
+      },
+      camera: {
+        main: "200MP f/1.7",
+        ultraWide: "12MP f/2.2",
+        telephoto1: "10MP f/2.4",
+        telephoto2: "50MP f/3.4"
+      }
+    },
+    badges: ["Nuevo", "Más vendido"]
+  },
+
+  3: {
+    id: 3,
+    title: "MacBook Air M2 13\" 256GB",
+    category: "Electrónicos",
+    subcategory: "Laptops",
+    description: "El MacBook Air M2 ofrece un rendimiento excepcional con el chip M2 de Apple, en un diseño ultradelgado y liviano. Perfecto para productividad, creatividad y entretenimiento.",
+    features: [
+      "Chip M2 de Apple con CPU de 8 núcleos",
+      "GPU hasta 10 núcleos para gráficos avanzados",
+      "Pantalla Liquid Retina de 13.6\" con True Tone",
+      "Diseño sin ventilador, completamente silencioso",
+      "Hasta 18 horas de autonomía de batería",
+      "MagSafe 3, dos puertos Thunderbolt y conector para auriculares"
+    ],
+    price: 1839999,
+    originalPrice: 2299999,
+    discount: 20,
+    rating: 4.7,
+    reviewCount: 987,
+    soldCount: 150,
+    stock: 8,
+    images: {
+      main: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=600&h=600&fit=crop",
+      gallery: [
+        "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=600&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1484788984921-03950022c9ef?w=600&h=600&fit=crop"
+      ],
+      thumbnails: [
+        "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=100&h=100&fit=crop",
+        "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=100&h=100&fit=crop", 
+        "https://images.unsplash.com/photo-1484788984921-03950022c9ef?w=100&h=100&fit=crop"
+      ]
+    },
+    colors: [
+      { name: "Plata", value: "silver", color: "#e5e7eb" },
+      { name: "Gris espacial", value: "space-gray", color: "#4b5563" },
+      { name: "Dorado", value: "gold", color: "#f59e0b" },
+      { name: "Azul medianoche", value: "midnight", color: "#1e40af" }
+    ],
+    storage: [
+      { size: "256GB", price: 0, label: "Base" },
+      { size: "512GB", price: 200000, label: "+$200.000" },
+      { size: "1TB", price: 400000, label: "+$400.000" },
+      { size: "2TB", price: 800000, label: "+$800.000" }
+    ],
+    specifications: {
+      screen: {
+        size: "13.6 pulgadas",
+        technology: "Liquid Retina",
+        resolution: "2560 x 1664 píxeles",
+        density: "224 ppi"
+      },
+      performance: {
+        chip: "Apple M2",
+        cpu: "8 núcleos",
+        gpu: "8-10 núcleos",
+        neuralEngine: "16 núcleos"
+      },
+      memory: {
+        ram: "8GB-24GB",
+        storage: "256GB-2TB SSD"
+      }
+    },
+    badges: ["20% OFF", "Premium"]
+  },
+
+  4: {
+    id: 4,
+    title: "PlayStation 5 Standard Edition",
+    category: "Electrónicos", 
+    subcategory: "Gaming",
+    description: "La PlayStation 5 redefine los videojuegos con gráficos increíbles, tiempos de carga ultrarrápidos y características innovadoras como el feedback háptico y los gatillos adaptativos del control DualSense.",
+    features: [
+      "Procesador AMD Ryzen Zen 2 de 8 núcleos",
+      "GPU AMD RDNA 2 personalizada",
+      "SSD ultrarrápido de 825GB con compresión",
+      "Audio 3D Tempest para experiencia inmersiva",
+      "Control DualSense con feedback háptico",
+      "Compatibilidad con juegos de PS4"
+    ],
+    price: 799999,
+    originalPrice: null,
+    discount: null,
+    rating: 5.0,
+    reviewCount: 3421,
+    soldCount: 890,
+    stock: 5,
+    images: {
+      main: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=600&h=600&fit=crop",
+      gallery: [
+        "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=600&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1607853202273-797f1c22a38e?w=600&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1561261086-8eb9aac8d4d6?w=600&h=600&fit=crop"
+      ],
+      thumbnails: [
+        "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=100&h=100&fit=crop",
+        "https://images.unsplash.com/photo-1607853202273-797f1c22a38e?w=100&h=100&fit=crop",
+        "https://images.unsplash.com/photo-1561261086-8eb9aac8d4d6?w=100&h=100&fit=crop"
+      ]
+    },
+    colors: [
+      { name: "Blanco", value: "white", color: "#ffffff" }
+    ],
+    storage: [
+      { size: "825GB", price: 0, label: "SSD interno" }
+    ],
+    specifications: {
+      performance: {
+        cpu: "AMD Ryzen Zen 2",
+        gpu: "AMD RDNA 2",
+        memory: "16GB GDDR6",
+        storage: "825GB SSD"
+      },
+      video: {
+        resolution: "Hasta 8K",
+        frameRate: "Hasta 120fps",
+        rayTracing: "Sí",
+        hdr: "HDR10, HDR10+"
+      },
+      audio: {
+        technology: "Tempest 3D AudioTech",
+        output: "7.1 surround"
+      }
+    },
+    badges: ["Hot", "Stock limitado"]
+  },
+
+  5: {
+    id: 5,
+    title: "AirPods Pro (2da generación)",
+    category: "Electrónicos",
+    subcategory: "Audio",
+    description: "Los AirPods Pro de segunda generación ofrecen cancelación activa de ruido mejorada, audio espacial personalizado y hasta 6 horas de escucha con una sola carga.",
+    features: [
+      "Cancelación activa de ruido hasta 2x mejor",
+      "Modo ambiente adaptativo",
+      "Audio espacial personalizado con seguimiento dinámico de cabeza",
+      "Chip H2 para audio de alta calidad",
+      "Hasta 30 horas de batería con estuche",
+      "Resistencia al sudor y agua IPX4"
+    ],
+    price: 299999,
+    originalPrice: 399999,
+    discount: 25,
+    rating: 4.6,
+    reviewCount: 4256,
+    soldCount: 750,
+    stock: 20,
+    images: {
+      main: "https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=600&h=600&fit=crop",
+      gallery: [
+        "https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=600&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?w=600&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1588423771073-b8903fbb85b5?w=600&h=600&fit=crop"
+      ],
+      thumbnails: [
+        "https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=100&h=100&fit=crop",
+        "https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?w=100&h=100&fit=crop",
+        "https://images.unsplash.com/photo-1588423771073-b8903fbb85b5?w=100&h=100&fit=crop"
+      ]
+    },
+    colors: [
+      { name: "Blanco", value: "white", color: "#ffffff" }
+    ],
+    storage: [
+      { size: "32GB", price: 0, label: "Memoria interna" }
+    ],
+    specifications: {
+      audio: {
+        drivers: "Controlador personalizado de Apple",
+        frequency: "20Hz a 20,000Hz",
+        impedance: "16 ohms",
+        sensitivity: "109 dB SPL/mW"
+      },
+      battery: {
+        listening: "Hasta 6 horas",
+        withCase: "Hasta 30 horas",
+        talkTime: "Hasta 4.5 horas",
+        charging: "5 min = 1 hora"
+      },
+      connectivity: {
+        bluetooth: "Bluetooth 5.3",
+        chip: "Apple H2",
+        compatibility: "iPhone, iPad, Mac, Apple TV"
+      }
+    },
+    badges: ["25% OFF", "Envío Gratis"]
+  },
+
+  6: {
+    id: 6,
+    title: "Smart TV Samsung 65\" 4K UHD",
+    category: "Electrónicos",
+    subcategory: "TV y Audio",
+    description: "Smart TV Samsung de 65 pulgadas con tecnología 4K UHD, HDR10+ y sistema operativo Tizen para acceso a todas tus aplicaciones favoritas de streaming.",
+    features: [
+      "Pantalla 4K UHD de 65 pulgadas",
+      "Tecnología HDR10+ para colores vibrantes",
+      "Smart TV con Tizen OS",
+      "Procesador Crystal 4K para upscaling inteligente",
+      "Compatible con Alexa y Google Assistant",
+      "3 puertos HDMI y 2 puertos USB"
+    ],
+    price: 899999,
+    originalPrice: 1285999,
+    discount: 30,
+    rating: 4.2,
+    reviewCount: 1789,
+    soldCount: 230,
+    stock: 12,
+    images: {
+      main: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=600&h=600&fit=crop",
+      gallery: [
+        "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=600&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1567690187548-f07b1d7bf5a9?w=600&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=600&h=600&fit=crop"
+      ],
+      thumbnails: [
+        "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=100&h=100&fit=crop",
+        "https://images.unsplash.com/photo-1567690187548-f07b1d7bf5a9?w=100&h=100&fit=crop",
+        "https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=100&h=100&fit=crop"
+      ]
+    },
+    colors: [
+      { name: "Negro", value: "black", color: "#1f2937" },
+      { name: "Plata", value: "silver", color: "#e5e7eb" }
+    ],
+    storage: [
+      { size: "8GB", price: 0, label: "Memoria interna" }
+    ],
+    specifications: {
+      display: {
+        size: "65 pulgadas",
+        resolution: "3840 x 2160 (4K UHD)",
+        technology: "LED",
+        hdr: "HDR10+"
+      },
+      smart: {
+        os: "Tizen",
+        wifi: "Wi-Fi 5",
+        bluetooth: "Bluetooth 5.2",
+        apps: "Netflix, Prime Video, Disney+, YouTube"
+      },
+      connectivity: {
+        hdmi: "3 puertos HDMI 2.1",
+        usb: "2 puertos USB",
+        ethernet: "1 puerto LAN",
+        audio: "Salida óptica digital"
+      }
+    },
+    badges: ["30% OFF", "Instalación gratis"]
+  }
+};
+
+// Function to get product by ID
+function getProductById(id) {
+  return PRODUCTS_DATA[id] || null;
+}
+
+// Function to get all products
+function getAllProducts() {
+  return Object.values(PRODUCTS_DATA);
+}
+
+// Make available globally
+window.PRODUCTS_DATA = PRODUCTS_DATA;
+window.getProductById = getProductById;
+window.getAllProducts = getAllProducts;

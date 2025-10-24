@@ -36,62 +36,171 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../CSS/variables.css" />
     <link rel="stylesheet" href="../CSS/components.css" />
-    <link rel="stylesheet" href="../CSS/product-page.css" />
-    <link rel="stylesheet" href="../CSS/dropdown-fixes.css" />
+    <link rel="stylesheet" href="../CSS/pages/product.css" />
   </head>
 
   <body>
     <!-- Navbar CORREGIDO -->
     <nav
-      class="navbar navbar-expand-lg navbar-light bg-white sticky-top"
+      class="navbar navbar-expand-lg sticky-top"
       id="mainNavbar"
     >
       <div class="container-fluid px-4">
         <!-- Logo -->
-        <a class="navbar-brand" href="../index.html">
+        <a class="navbar-brand" href="../index.html" data-aos="fade-right">
           <img src="../IMG/LOGO-2.png" alt="Dale Deal" class="logo-navbar" />
           <span class="brand-text">DALE DEAL</span>
         </a>
 
         <!-- Search Bar -->
-        <div class="search-container mx-auto">
+        <div
+          class="search-container mx-auto"
+          data-aos="fade-up"
+          data-aos-delay="100"
+        >
           <div class="search-wrapper">
             <i class="bi bi-search search-icon"></i>
             <input
               type="text"
               class="search-input"
-              placeholder="¿Qué estás buscando?"
+              placeholder="¿Qué estás buscando hoy?"
               id="searchInput"
             />
           </div>
         </div>
 
         <!-- User Actions CORREGIDO -->
-        <div class="navbar-actions">
+        <div class="navbar-actions" data-aos="fade-left" data-aos-delay="200">
           <!-- Notifications -->
-          <div class="action-item">
+          <div class="action-item dropdown">
             <button
               class="action-btn"
               id="notificationBtn"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
               title="Notificaciones"
             >
               <i class="bi bi-bell"></i>
               <span class="notification-badge" id="notificationBadge">3</span>
             </button>
+            <div class="dropdown-menu dropdown-menu-end notifications-dropdown" aria-labelledby="notificationBtn">
+              <!-- Header con contador -->
+              <div class="notifications-header">
+                <h6 class="mb-0">
+                  <i class="bi bi-bell me-2"></i>
+                  Notificaciones
+                  <span class="notifications-count" id="notificationsCount">3</span>
+                </h6>
+              </div>
+
+              <!-- Filtros -->
+              <div class="notifications-filter">
+                <button class="filter-chip active" data-filter="all">Todas</button>
+                <button class="filter-chip" data-filter="unread">No leídas</button>
+                <button class="filter-chip" data-filter="orders">Pedidos</button>
+                <button class="filter-chip" data-filter="offers">Ofertas</button>
+              </div>
+
+              <!-- Cuerpo de notificaciones -->
+              <div class="notifications-body" id="notificationsDropdownBody">
+                <div class="notification-item unread" data-id="1" data-type="orders">
+                  <div class="notification-icon bg-success">
+                    <i class="bi bi-check-circle text-white"></i>
+                  </div>
+                  <div class="notification-content">
+                    <h6>Pedido confirmado</h6>
+                    <p>Tu pedido #12345 ha sido confirmado</p>
+                    <small>Hace 2 horas</small>
+                  </div>
+                  <button class="notification-close" data-action="dismiss">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+
+                <div class="notification-item unread" data-id="2" data-type="orders">
+                  <div class="notification-icon bg-info">
+                    <i class="bi bi-truck text-white"></i>
+                  </div>
+                  <div class="notification-content">
+                    <h6>Envío en camino</h6>
+                    <p>Tu pedido #12340 está siendo preparado</p>
+                    <small>Hace 1 día</small>
+                  </div>
+                  <button class="notification-close" data-action="dismiss">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+
+                <div class="notification-item unread" data-id="3" data-type="offers">
+                  <div class="notification-icon bg-warning">
+                    <i class="bi bi-star text-white"></i>
+                  </div>
+                  <div class="notification-content">
+                    <h6>Nueva oferta disponible</h6>
+                    <p>20% de descuento en electrónicos</p>
+                    <small>Hace 2 días</small>
+                  </div>
+                  <button class="notification-close" data-action="dismiss">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Footer con acciones -->
+              <div class="notifications-footer">
+                <button type="button" class="btn btn-outline-secondary btn-sm w-100 mb-2" id="viewAllNotifications">
+                  <i class="bi bi-list me-2"></i>Ver todas
+                </button>
+                <button type="button" class="btn btn-primary btn-sm w-100" id="markAllAsRead">
+                  <i class="bi bi-check-all me-2"></i>Marcar todas como leídas
+                </button>
+              </div>
+            </div>
           </div>
 
           <!-- Cart -->
-          <div class="action-item">
-            <button class="action-btn" id="cartBtn" title="Carrito de compras">
+          <div class="action-item dropdown">
+            <button class="action-btn" id="cartBtn" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" title="Carrito de compras">
               <i class="bi bi-cart3"></i>
               <span class="cart-badge" id="cartBadge">0</span>
             </button>
+            <div class="dropdown-menu dropdown-menu-end cart-dropdown" aria-labelledby="cartBtn">
+              <!-- Header del carrito -->
+              <div class="cart-header">
+                <h6 class="mb-0">
+                  <i class="bi bi-cart3 me-2"></i>
+                  Mi Carrito
+                  <span class="cart-count" id="cartCount">0</span>
+                </h6>
+              </div>
+
+              <!-- Cuerpo del carrito -->
+              <div class="cart-body" id="cartDropdownBody">
+                <!-- Los items del carrito se cargarán dinámicamente -->
+              </div>
+
+              <!-- Footer del carrito -->
+              <div class="cart-footer">
+                <div class="cart-total mb-3">
+                  <div class="cart-total-row cart-total-final">
+                    <span class="cart-total-label">Total:</span>
+                    <span class="cart-total-value" id="cartTotal">$0</span>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-outline-secondary btn-sm w-100 mb-2" id="viewFullCart">
+                  <i class="bi bi-eye me-2"></i>Ver carrito completo
+                </button>
+                <button type="button" class="btn btn-primary btn-sm w-100" id="proceedToCheckout">
+                  <i class="bi bi-credit-card me-2"></i>Finalizar compra
+                </button>
+              </div>
+            </div>
           </div>
 
           <!-- Profile -->
           <div class="action-item dropdown">
             <button
-              class="action-btn profile-btn dropdown-toggle"
+              class="action-btn profile-btn"
               id="profileDropdown"
               data-bs-toggle="dropdown"
               aria-expanded="false"
@@ -103,7 +212,6 @@
                 class="profile-image"
               />
               <span class="profile-name">Usuario</span>
-              <i class="bi bi-chevron-down profile-arrow"></i>
             </button>
 
             <ul
@@ -133,7 +241,7 @@
                 </a>
               </li>
               <li>
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="#" id="favoritesLink">
                   <i class="bi bi-heart me-2"></i>
                   Favoritos
                 </a>
@@ -368,6 +476,23 @@
                   </button>
                 </div>
 
+                <!-- Payment Methods -->
+                <div class="payment-methods">
+                  <h6>Medios de pago</h6>
+                  <div class="payment-icons">
+                    <i
+                      class="bi bi-credit-card"
+                      title="Tarjetas de crédito"
+                    ></i>
+                    <i
+                      class="bi bi-credit-card-2-front"
+                      title="Tarjetas de débito"
+                    ></i>
+                    <i class="bi bi-bank" title="Transferencia bancaria"></i>
+                    <i class="bi bi-cash" title="Efectivo"></i>
+                  </div>
+                </div>
+
                 <!-- Shipping Info -->
                 <div class="shipping-info">
                   <div class="shipping-item">
@@ -392,23 +517,6 @@
                     </div>
                   </div>
                 </div>
-
-                <!-- Payment Methods -->
-                <div class="payment-methods">
-                  <h6>Medios de pago</h6>
-                  <div class="payment-icons">
-                    <i
-                      class="bi bi-credit-card"
-                      title="Tarjetas de crédito"
-                    ></i>
-                    <i
-                      class="bi bi-credit-card-2-front"
-                      title="Tarjetas de débito"
-                    ></i>
-                    <i class="bi bi-bank" title="Transferencia bancaria"></i>
-                    <i class="bi bi-cash" title="Efectivo"></i>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -418,33 +526,62 @@
       <!-- Product Details Section -->
       <section class="product-details-section">
         <div class="container">
+          <!-- Section Header -->
+          <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title">Información Detallada</h2>
+            <p class="section-subtitle">Todo lo que necesitas saber sobre este producto</p>
+          </div>
+
           <div class="product-tabs">
             <!-- Tabs Navigation -->
-            <ul class="nav nav-tabs" role="tablist">
-              <li class="nav-item">
-                <a
-                  class="nav-link active"
-                  data-bs-toggle="tab"
-                  href="#description"
-                  >Descripción</a
-                >
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#specifications"
-                  >Especificaciones</a
-                >
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#reviews"
-                  >Reseñas</a
-                >
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#questions"
-                  >Preguntas</a
-                >
-              </li>
-            </ul>
+            <div class="tabs-nav-wrapper">
+              <ul class="nav nav-tabs custom-tabs" role="tablist">
+                <li class="nav-item">
+                  <a
+                    class="nav-link active"
+                    data-bs-toggle="tab"
+                    href="#description"
+                    role="tab"
+                  >
+                    <i class="bi bi-file-text me-2"></i>
+                    <span>Descripción</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a 
+                    class="nav-link" 
+                    data-bs-toggle="tab" 
+                    href="#specifications"
+                    role="tab"
+                  >
+                    <i class="bi bi-list-ul me-2"></i>
+                    <span>Especificaciones</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a 
+                    class="nav-link" 
+                    data-bs-toggle="tab" 
+                    href="#reviews"
+                    role="tab"
+                  >
+                    <i class="bi bi-star me-2"></i>
+                    <span>Reseñas</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a 
+                    class="nav-link" 
+                    data-bs-toggle="tab" 
+                    href="#questions"
+                    role="tab"
+                  >
+                    <i class="bi bi-question-circle me-2"></i>
+                    <span>Preguntas</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
 
             <!-- Tabs Content -->
             <div class="tab-content">
@@ -713,96 +850,145 @@
           </div>
         </div>
       </section>
-    </main>
 
-    <!-- Cart Modal -->
-    <div class="modal fade" id="cartModal" tabindex="-1">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">
-              <i class="bi bi-cart3 me-2"></i>Mi Carrito
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            ></button>
+      <!-- Similar Products Section -->
+      <section class="similar-products-section">
+        <div class="container">
+          <!-- Section Header -->
+          <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title">Productos Similares</h2>
+            <p class="section-subtitle">Otros productos que también te pueden interesar</p>
           </div>
-          <div class="modal-body" id="cartModalBody">
-            <!-- Cart content will be loaded dynamically -->
+
+          <!-- Similar Products Carousel -->
+          <div class="similar-products-carousel-container" data-aos="fade-up" data-aos-delay="200">
+            <div id="similarProductsCarousel" class="carousel slide" data-bs-ride="false">
+              <div class="carousel-inner" id="similarProductsGrid">
+                <!-- Los productos similares se cargarán dinámicamente aquí -->
+                <div class="carousel-item active">
+                  <div class="loading-similar-products">
+                    <div class="spinner-border text-primary" role="status">
+                      <span class="visually-hidden">Cargando productos similares...</span>
+                    </div>
+                    <p class="mt-3 text-muted">Buscando productos similares...</p>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Carousel Controls -->
+              <button class="carousel-control-prev" type="button" data-bs-target="#similarProductsCarousel" data-bs-slide="prev">
+                <div class="carousel-control-icon">
+                  <i class="bi bi-chevron-left"></i>
+                </div>
+                <span class="visually-hidden">Anterior</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#similarProductsCarousel" data-bs-slide="next">
+                <div class="carousel-control-icon">
+                  <i class="bi bi-chevron-right"></i>
+                </div>
+                <span class="visually-hidden">Siguiente</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- View More Button -->
+          <div class="text-center mt-5" data-aos="fade-up">
+            <button class="btn btn-outline-primary btn-lg" id="viewMoreSimilarBtn">
+              <i class="bi bi-grid-3x3-gap me-2"></i>
+              Ver todos los productos de esta categoría
+            </button>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
 
-    <!-- Notification Modal -->
-    <div
-      class="modal fade"
-      id="notificationsModal"
-      tabindex="-1"
-      aria-labelledby="notificationsModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
+      <!-- Recently Viewed Section -->
+      <section class="recently-viewed-section">
+        <div class="container">
+          <!-- Section Header -->
+          <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title">Productos Vistos Recientemente</h2>
+            <p class="section-subtitle">Continúa explorando donde lo dejaste</p>
+          </div>
+
+          <!-- Recently Viewed Carousel -->
+          <div class="recently-viewed-carousel-container" data-aos="fade-up" data-aos-delay="200">
+            <div id="recentlyViewedCarousel" class="carousel slide" data-bs-ride="false">
+              <div class="carousel-inner" id="recentlyViewedGrid">
+                <!-- Los productos vistos recientemente se cargarán dinámicamente aquí -->
+                <div class="carousel-item active">
+                  <div class="no-recent-products text-center py-5">
+                    <i class="bi bi-clock-history display-4 text-muted mb-3"></i>
+                    <h5 class="text-muted">No hay productos vistos recientemente</h5>
+                    <p class="text-muted">Los productos que veas aparecerán aquí</p>
+                    <a href="../index.html" class="btn btn-primary">
+                      <i class="bi bi-house me-2"></i>
+                      Ir al inicio
+                    </a>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Carousel Controls -->
+              <button class="carousel-control-prev" type="button" data-bs-target="#recentlyViewedCarousel" data-bs-slide="prev">
+                <div class="carousel-control-icon">
+                  <i class="bi bi-chevron-left"></i>
+                </div>
+                <span class="visually-hidden">Anterior</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#recentlyViewedCarousel" data-bs-slide="next">
+                <div class="carousel-control-icon">
+                  <i class="bi bi-chevron-right"></i>
+                </div>
+                <span class="visually-hidden">Siguiente</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Favorites Modal -->
+    <div class="modal fade" id="favoritesModal" tabindex="-1" aria-labelledby="favoritesModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="notificationsModalLabel">
-              <i class="bi bi-bell me-2"></i>
-              Notificaciones
+            <h5 class="modal-title" id="favoritesModalLabel">
+              <i class="bi bi-heart-fill me-2 text-danger"></i>
+              Mis Favoritos
             </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <div class="modal-body" id="notificationsModalBody">
-            <div class="notification-item">
-              <div class="notification-icon bg-success">
-                <i class="bi bi-check-circle text-white"></i>
+          <div class="modal-body">
+            <!-- Favorites content will be loaded dynamically -->
+            <div id="favoritesContent">
+              <div class="favorites-empty text-center py-5" id="favoritesEmpty">
+                <i class="bi bi-heart display-1 text-muted mb-3"></i>
+                <h4 class="text-muted">No tienes favoritos aún</h4>
+                <p class="text-muted">Agrega productos a tus favoritos para verlos aquí</p>
+                <button class="btn btn-primary" data-bs-dismiss="modal" id="exploreProductsBtn">
+                  <i class="bi bi-bag me-2"></i>Explorar productos
+                </button>
               </div>
-              <div class="notification-content">
-                <h6>Pedido confirmado</h6>
-                <p class="text-muted small">
-                  Tu pedido #12345 ha sido confirmado
-                </p>
-                <small class="text-muted">Hace 2 horas</small>
-              </div>
-            </div>
-            <div class="notification-item">
-              <div class="notification-icon bg-info">
-                <i class="bi bi-truck text-white"></i>
-              </div>
-              <div class="notification-content">
-                <h6>Envío en camino</h6>
-                <p class="text-muted small">Tu pedido está siendo preparado</p>
-                <small class="text-muted">Hace 1 día</small>
-              </div>
-            </div>
-            <div class="notification-item">
-              <div class="notification-icon bg-warning">
-                <i class="bi bi-star text-white"></i>
-              </div>
-              <div class="notification-content">
-                <h6>Nueva oferta disponible</h6>
-                <p class="text-muted small">20% de descuento en electrónicos</p>
-                <small class="text-muted">Hace 2 días</small>
+              
+              <div id="favoritesGrid" class="favorites-grid" style="display: none;">
+                <!-- Favorites items will be loaded here -->
               </div>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-outline-secondary btn-sm">
-              Ver todas
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary btn-sm"
-              data-action="mark-read"
-            >
-              Marcar como leídas
-            </button>
+            <div class="d-flex justify-content-between w-100">
+              <div class="favorites-count">
+                <span class="text-muted">Total: <span id="favoritesTotal">0</span> productos</span>
+              </div>
+              <div class="favorites-actions">
+                <button type="button" class="btn btn-outline-danger" id="clearAllFavorites">
+                  <i class="bi bi-trash me-2"></i>Limpiar todo
+                </button>
+                <button type="button" class="btn btn-primary" id="addAllToCart">
+                  <i class="bi bi-cart-plus me-2"></i>Agregar todo al carrito
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -815,6 +1001,8 @@
     <script src="../JS/auth.js"></script>
     <script src="../JS/cart.js"></script>
     <script src="../JS/notifications.js"></script>
+    <script src="../JS/favorites.js"></script>
+    <script src="../JS/product-data.js"></script>
     <script src="../JS/product-page.js"></script>
     <script src="../JS/dropdown-fix.js"></script>
 
@@ -827,17 +1015,25 @@
         offset: 50,
       });
 
-      // Initialize notifications button
+      // Initialize notifications dropdown
       document.addEventListener("DOMContentLoaded", () => {
+        // El dropdown ahora se maneja automáticamente por Bootstrap
+        // Solo necesitamos cargar las notificaciones cuando se abre
         const notificationBtn = document.getElementById("notificationBtn");
         if (notificationBtn) {
-          notificationBtn.addEventListener("click", () => {
-            const notificationsModal = new bootstrap.Modal(
-              document.getElementById("notificationsModal")
-            );
-            notificationsModal.show();
+          notificationBtn.addEventListener("shown.bs.dropdown", () => {
+            if (window.notificationManager) {
+              window.notificationManager.renderNotifications();
+            }
           });
         }
+
+        // Actualizar el botón de favoritos después de que todo esté cargado
+        setTimeout(() => {
+          if (window.favoritesManager) {
+            window.favoritesManager.updateWishlistButton();
+          }
+        }, 300);
       });
     </script>
   </body>

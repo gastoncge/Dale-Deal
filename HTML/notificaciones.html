@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Centro de Notificaciones - DALE DEAL</title>
+
+    <!-- SEO Meta Tags -->
+    <meta
+      name="description"
+      content="Mantenete al día con tus pedidos, servicios y mensajes en Dale Deal"
+    />
+    <meta
+      name="keywords"
+      content="notificaciones, pedidos, servicios, dale deal, marketplace"
+    />
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    />
+
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../CSS/variables.css" />
+    <link rel="stylesheet" href="../CSS/components.css" />
+    <link rel="stylesheet" href="../CSS/pages/notifications.css" />
+  </head>
+
+  <body>
+    <!-- Alert Container -->
+    <div
+      id="alertContainer"
+      class="position-fixed top-0 start-50 translate-middle-x"
+      style="z-index: 1060; margin-top: 20px"
+    ></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
+      <div class="container">
+        <a class="navbar-brand" href="../index.html">
+          <img src="../IMG/LOGO-2.png" alt="Dale Deal" height="40" />
+        </a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item">
+              <a class="nav-link" href="../index.html">
+                <i class="bi bi-house-door me-1"></i>Inicio
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../HTML/productos.html">
+                <i class="bi bi-grid me-1"></i>Productos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../HTML/servicios.html">
+                <i class="bi bi-tools me-1"></i>Servicios
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link position-relative" href="#" id="cartLink">
+                <i class="bi bi-cart3 me-1"></i>Carrito
+                <span
+                  id="cartBadge"
+                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill"
+                  style="display: none"
+                >
+                  0
+                </span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="../HTML/notificaciones.html">
+                <i class="bi bi-bell-fill me-1"></i>Notificaciones
+              </a>
+            </li>
+            <li class="nav-item dropdown" id="userDropdownContainer">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="userDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+              >
+                <i class="bi bi-person-circle me-1"></i>
+                <span id="userNameDisplay">Mi Cuenta</span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item" href="#" id="logoutBtn">
+                    <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="notifications-page">
+      <!-- Header Section -->
+      <section class="notifications-header" data-aos="fade-down">
+        <div class="container">
+          <div class="row align-items-center">
+            <div class="col-lg-6 col-md-6">
+              <div class="header-content">
+                <h1 class="page-title">Centro de notificaciones</h1>
+                <p class="page-subtitle">
+                  Mantenete al día con tus pedidos, servicios y mensajes.
+                </p>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-6">
+              <div class="header-actions">
+                <div class="filter-dropdown">
+                  <button
+                    class="btn btn-outline-secondary dropdown-toggle"
+                    type="button"
+                    id="filterDropdown"
+                    data-bs-toggle="dropdown"
+                  >
+                    <i class="bi bi-funnel me-2"></i>
+                    <span id="currentFilterLabel">Todas</span>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <button class="dropdown-item filter-option active" data-filter="all">
+                        Todas
+                      </button>
+                    </li>
+                    <li>
+                      <button class="dropdown-item filter-option" data-filter="orders">
+                        Pedidos
+                      </button>
+                    </li>
+                    <li>
+                      <button class="dropdown-item filter-option" data-filter="services">
+                        Servicios
+                      </button>
+                    </li>
+                    <li>
+                      <button class="dropdown-item filter-option" data-filter="messages">
+                        Mensajes
+                      </button>
+                    </li>
+                    <li>
+                      <button class="dropdown-item filter-option" data-filter="payments">
+                        Pagos
+                      </button>
+                    </li>
+                    <li>
+                      <button class="dropdown-item filter-option" data-filter="system">
+                        Sistema
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+                <button class="btn btn-primary" id="markAllReadBtn">
+                  <i class="bi bi-check-all me-2"></i>Marcar todas como leídas
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Filter Chips Section (Mobile/Tablet) -->
+      <section class="filter-chips-section d-lg-none" data-aos="fade-up">
+        <div class="container">
+          <div class="filter-chips-container">
+            <button class="filter-chip active" data-filter="all">
+              Todas
+            </button>
+            <button class="filter-chip" data-filter="orders">
+              Pedidos
+            </button>
+            <button class="filter-chip" data-filter="services">
+              Servicios
+            </button>
+            <button class="filter-chip" data-filter="messages">
+              Mensajes
+            </button>
+            <button class="filter-chip" data-filter="payments">
+              Pagos
+            </button>
+            <button class="filter-chip" data-filter="system">
+              Sistema
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Notifications List Section -->
+      <section class="notifications-list-section">
+        <div class="container">
+          <div class="row">
+            <!-- Sidebar Filters (Desktop) -->
+            <aside class="col-lg-3 d-none d-lg-block" data-aos="fade-right">
+              <div class="sidebar-filters">
+                <h5 class="sidebar-title">Filtros</h5>
+                <div class="filter-list">
+                  <button class="filter-item active" data-filter="all">
+                    <i class="bi bi-inbox-fill me-2"></i>
+                    <span>Todas</span>
+                    <span class="filter-count" id="countAll">0</span>
+                  </button>
+                  <button class="filter-item" data-filter="orders">
+                    <i class="bi bi-box-seam me-2"></i>
+                    <span>Pedidos</span>
+                    <span class="filter-count" id="countOrders">0</span>
+                  </button>
+                  <button class="filter-item" data-filter="services">
+                    <i class="bi bi-tools me-2"></i>
+                    <span>Servicios</span>
+                    <span class="filter-count" id="countServices">0</span>
+                  </button>
+                  <button class="filter-item" data-filter="messages">
+                    <i class="bi bi-chat-dots me-2"></i>
+                    <span>Mensajes</span>
+                    <span class="filter-count" id="countMessages">0</span>
+                  </button>
+                  <button class="filter-item" data-filter="payments">
+                    <i class="bi bi-credit-card me-2"></i>
+                    <span>Pagos</span>
+                    <span class="filter-count" id="countPayments">0</span>
+                  </button>
+                  <button class="filter-item" data-filter="system">
+                    <i class="bi bi-gear me-2"></i>
+                    <span>Sistema</span>
+                    <span class="filter-count" id="countSystem">0</span>
+                  </button>
+                </div>
+              </div>
+            </aside>
+
+            <!-- Notifications List -->
+            <div class="col-lg-9">
+              <div class="notifications-container" id="notificationsContainer" data-aos="fade-up">
+                <!-- Las notificaciones se cargarán dinámicamente aquí -->
+              </div>
+
+              <!-- Load More Button -->
+              <div class="load-more-container" id="loadMoreContainer" style="display: none;">
+                <button class="btn btn-outline-primary btn-lg" id="loadMoreBtn">
+                  <i class="bi bi-arrow-down-circle me-2"></i>Cargar más notificaciones
+                </button>
+              </div>
+
+              <!-- Loading State -->
+              <div class="loading-state" id="loadingState" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p>Cargando notificaciones...</p>
+              </div>
+
+              <!-- Empty State -->
+              <div class="empty-state" id="emptyState" style="display: none;">
+                <i class="bi bi-bell-slash"></i>
+                <h3>No hay notificaciones</h3>
+                <p>Te notificaremos cuando tengas nuevas actualizaciones.</p>
+                <a href="../index.html" class="btn btn-primary mt-3">
+                  <i class="bi bi-house-door me-2"></i>Volver al inicio
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-white py-5 mt-5">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4 mb-4">
+            <img src="../IMG/LOGO.png" alt="Dale Deal" height="40" class="mb-3" />
+            <p class="text-muted">
+              Tu marketplace de confianza para productos y servicios de calidad.
+            </p>
+          </div>
+          <div class="col-md-4 mb-4">
+            <h5>Enlaces rápidos</h5>
+            <ul class="list-unstyled">
+              <li><a href="../index.html" class="text-muted">Inicio</a></li>
+              <li><a href="../HTML/productos.html" class="text-muted">Productos</a></li>
+              <li><a href="../HTML/servicios.html" class="text-muted">Servicios</a></li>
+            </ul>
+          </div>
+          <div class="col-md-4 mb-4">
+            <h5>Contacto</h5>
+            <p class="text-muted">
+              <i class="bi bi-envelope me-2"></i>info@daledeal.com<br />
+              <i class="bi bi-phone me-2"></i>+54 11 1234-5678
+            </p>
+          </div>
+        </div>
+        <hr class="border-secondary" />
+        <div class="text-center text-muted">
+          <p>&copy; 2025 Dale Deal. Todos los derechos reservados.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- AOS Animation -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Custom JS -->
+    <script src="../JS/utils.js"></script>
+    <script src="../JS/auth.js"></script>
+    <script src="../JS/cart.js"></script>
+    <script src="../JS/pages/notifications.js"></script>
+
+    <script>
+      // Inicializar AOS
+      AOS.init({
+        duration: 800,
+        once: true,
+        offset: 100,
+      });
+    </script>
+  </body>
+</html>

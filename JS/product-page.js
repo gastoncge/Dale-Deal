@@ -24,42 +24,66 @@ class ProductPage {
     this.setupEventListeners();
     this.setupImageGallery();
     this.updatePrice();
+    this.updateFavoriteButton();
+    this.loadSimilarProducts();
+    this.loadRecentlyViewed();
+    this.saveToRecentlyViewed();
   }
 
   loadProductData() {
-    // Datos del producto (normalmente vendrían de una API)
+    // Get product ID from localStorage (set from index.html)
+    const productId = parseInt(localStorage.getItem('selectedProductId')) || 1;
+    
+    // Load product data from the global PRODUCTS_DATA
+    const productData = window.getProductById ? window.getProductById(productId) : null;
+    
+    if (!productData) {
+      console.error('Product not found:', productId);
+      // Redirect back to home page
+      window.location.href = '../index.html';
+      return;
+    }
+    
     this.currentProduct = {
-      id: 1,
-      title: "iPhone 15 Pro Max 256GB",
-      basePrice: 1299999,
-      originalPrice: 1499999,
-      rating: 4.8,
-      reviewCount: 2847,
-      salesCount: 500,
-      description:
-        "El iPhone 15 Pro Max redefine lo que es posible en un smartphone. Con el revolucionario chip A17 Pro, el primer chip de 3 nanómetros en un smartphone, experimentarás un rendimiento sin precedentes y una eficiencia energética excepcional.",
-      features: [
-        "Chip A17 Pro con GPU de 6 núcleos para gráficos de nivel profesional",
-        "Sistema de cámaras Pro con teleobjetivo de 120mm",
-        'Pantalla Super Retina XDR de 6.7" con ProMotion',
-        "Diseño en titanio de grado aeroespacial",
-        "Botón de Acción personalizable",
-        "USB-C con velocidades de transferencia hasta 10Gb/s",
-      ],
-      colors: {
-        gold: { name: "Titanio Natural", price: 0 },
-        blue: { name: "Titanio Azul", price: 0 },
-        silver: { name: "Titanio Blanco", price: 0 },
-        black: { name: "Titanio Negro", price: 0 },
-      },
-      storage: {
-        "128GB": { name: "128GB", price: -100000 },
-        "256GB": { name: "256GB", price: 0 },
-        "512GB": { name: "512GB", price: 200000 },
-        "1TB": { name: "1TB", price: 400000 },
-      },
-      stock: 15,
+      id: productData.id,
+      title: productData.title,
+      category: productData.category,
+      subcategory: productData.subcategory,
+      basePrice: productData.price,
+      originalPrice: productData.originalPrice,
+      discount: productData.discount,
+      rating: productData.rating,
+      reviewCount: productData.reviewCount,
+      salesCount: productData.soldCount,
+      stock: productData.stock,
+      description: productData.description,
+      features: productData.features,
+      specifications: productData.specifications,
+      badges: productData.badges,
+      colors: {},
+      storage: {},
+      images: productData.images
     };
+
+    // Convert colors format
+    productData.colors.forEach(color => {
+      this.currentProduct.colors[color.value] = {
+        name: color.name,
+        price: 0,
+        color: color.color
+      };
+    });
+
+    // Convert storage format
+    productData.storage.forEach(storage => {
+      this.currentProduct.storage[storage.size] = {
+        name: storage.size,
+        price: storage.price
+      };
+    });
+
+    // Update the page content
+    this.updatePageContent();
   }
 
   setupEventListeners() {
@@ -78,16 +102,16 @@ class ProductPage {
     });
 
     // Controles de cantidad
-    document.querySelector(".quantity-minus")?.addEventListener("click", () => {
+    document.getElementById("decreaseBtn")?.addEventListener("click", () => {
       this.changeQuantity(-1);
     });
 
-    document.querySelector(".quantity-plus")?.addEventListener("click", () => {
+    document.getElementById("increaseBtn")?.addEventListener("click", () => {
       this.changeQuantity(1);
     });
 
     document
-      .querySelector(".quantity-input")
+      .getElementById("quantityInput")
       ?.addEventListener("change", (e) => {
         this.setQuantity(Number.parseInt(e.target.value) || 1);
       });
@@ -101,34 +125,288 @@ class ProductPage {
       this.addToCart();
     });
 
-    document.querySelector(".btn-favorite")?.addEventListener("click", () => {
-      this.toggleFavorite();
-    });
+    // El botón de wishlist se maneja ahora por el FavoritesManager
+    // No necesitamos agregar un listener aquí ya que usa event delegation
 
-    // Navegación de imágenes
-    document.querySelectorAll(".thumbnail-item").forEach((thumb, index) => {
-      thumb.addEventListener("click", () => {
-        this.changeMainImage(index);
-      });
+    // Botón ver más productos similares
+    document.getElementById('viewMoreSimilarBtn')?.addEventListener('click', () => {
+      this.goToCategory();
     });
   }
 
-  setupImageGallery() {
-    const mainImage = document.querySelector(".main-product-image");
-    const thumbnails = document.querySelectorAll(".thumbnail-image");
+  updatePageContent() {
+    // Update title
+    const titleEl = document.querySelector('.product-title');
+    if (titleEl) titleEl.textContent = this.currentProduct.title;
 
-    if (mainImage) {
-      mainImage.src = this.images[0];
+    // Update breadcrumb
+    const breadcrumbCategory = document.querySelector('.breadcrumb-item:nth-child(2) a');
+    const breadcrumbSubcategory = document.querySelector('.breadcrumb-item:nth-child(3) a');
+    const breadcrumbProduct = document.querySelector('.breadcrumb-item.active');
+    if (breadcrumbCategory) breadcrumbCategory.textContent = this.currentProduct.category;
+    if (breadcrumbSubcategory) breadcrumbSubcategory.textContent = this.currentProduct.subcategory;
+    if (breadcrumbProduct) breadcrumbProduct.textContent = this.currentProduct.title;
+
+    // Update meta title
+    document.title = `${this.currentProduct.title} - DALE DEAL`;
+
+    // Update rating
+    const ratingText = document.querySelector('.rating-text');
+    if (ratingText) {
+      ratingText.textContent = `${this.currentProduct.rating} (${this.currentProduct.reviewCount.toLocaleString()} reseñas)`;
     }
 
-    thumbnails.forEach((thumb, index) => {
-      if (this.images[index]) {
-        thumb.src = this.images[index];
+    // Update sold count
+    const soldCount = document.querySelector('.product-sold span');
+    if (soldCount) {
+      soldCount.textContent = `+${this.currentProduct.salesCount} vendidos`;
+    }
+
+    // Update prices
+    const currentPriceEl = document.querySelector('.current-price');
+    const originalPriceEl = document.querySelector('.original-price');
+    const discountBadgeEl = document.querySelector('.discount-badge');
+    
+    if (currentPriceEl) currentPriceEl.textContent = this.formatPrice(this.currentProduct.basePrice);
+    
+    if (this.currentProduct.originalPrice && originalPriceEl) {
+      originalPriceEl.textContent = this.formatPrice(this.currentProduct.originalPrice);
+      originalPriceEl.style.display = 'inline';
+    } else if (originalPriceEl) {
+      originalPriceEl.style.display = 'none';
+    }
+
+    if (this.currentProduct.discount && discountBadgeEl) {
+      discountBadgeEl.textContent = `${this.currentProduct.discount}% OFF`;
+      discountBadgeEl.style.display = 'inline';
+    } else if (discountBadgeEl) {
+      discountBadgeEl.style.display = 'none';
+    }
+
+    // Update installments
+    const installmentPrice = this.currentProduct.basePrice / 12;
+    const installmentsEl = document.querySelector('.installments strong');
+    if (installmentsEl) {
+      installmentsEl.textContent = this.formatPrice(installmentPrice);
+    }
+
+    // Update stock info
+    const stockInfo = document.querySelector('.stock-info');
+    if (stockInfo) {
+      stockInfo.textContent = `Stock disponible: ${this.currentProduct.stock} unidades`;
+    }
+
+    // Update color options
+    this.updateColorOptions();
+
+    // Update storage options
+    this.updateStorageOptions();
+
+    // Update description and features
+    this.updateDescriptionTab();
+    
+    // Update specifications
+    this.updateSpecificationsTab();
+  }
+
+  updateColorOptions() {
+    const colorContainer = document.querySelector('.color-options');
+    if (!colorContainer) return;
+
+    colorContainer.innerHTML = '';
+    Object.keys(this.currentProduct.colors).forEach((colorKey, index) => {
+      const color = this.currentProduct.colors[colorKey];
+      const colorDiv = document.createElement('div');
+      colorDiv.className = `color-option ${index === 0 ? 'active' : ''}`;
+      colorDiv.dataset.color = colorKey;
+      colorDiv.style.background = color.color;
+      colorDiv.title = color.name;
+      
+      colorContainer.appendChild(colorDiv);
+      
+      if (index === 0) {
+        this.selectedColor = colorKey;
       }
     });
+  }
 
-    // Marcar primera miniatura como activa
-    document.querySelector(".thumbnail-item")?.classList.add("active");
+  updateStorageOptions() {
+    const storageContainer = document.querySelector('.storage-options');
+    if (!storageContainer) return;
+
+    storageContainer.innerHTML = '';
+    Object.keys(this.currentProduct.storage).forEach((storageKey, index) => {
+      const storage = this.currentProduct.storage[storageKey];
+      const storageDiv = document.createElement('div');
+      storageDiv.className = `storage-option ${index === 1 ? 'active' : ''}`; // Make second option active by default
+      storageDiv.dataset.storage = storageKey;
+      
+      const priceText = storage.price === 0 ? 'Base' : 
+                       storage.price > 0 ? `+${this.formatPrice(storage.price)}` : 
+                       this.formatPrice(storage.price);
+      
+      storageDiv.innerHTML = `
+        ${storageKey}
+        <span class="extra-cost">${priceText}</span>
+      `;
+      
+      storageContainer.appendChild(storageDiv);
+      
+      if (index === 1) { // Select second option by default
+        this.selectedStorage = storageKey;
+      }
+    });
+  }
+
+  updateDescriptionTab() {
+    // Update main description
+    const descriptionEl = document.querySelector('.description-content p');
+    if (descriptionEl) {
+      descriptionEl.textContent = this.currentProduct.description;
+    }
+
+    // Update features list
+    const featuresList = document.querySelector('.description-content ul');
+    if (featuresList && this.currentProduct.features) {
+      featuresList.innerHTML = '';
+      this.currentProduct.features.forEach(feature => {
+        const li = document.createElement('li');
+        li.textContent = feature;
+        featuresList.appendChild(li);
+      });
+    }
+  }
+
+  updateSpecificationsTab() {
+    const specsContainer = document.querySelector('.specifications-content');
+    if (!specsContainer || !this.currentProduct.specifications) return;
+
+    specsContainer.innerHTML = '';
+    
+    Object.keys(this.currentProduct.specifications).forEach(groupKey => {
+      const group = this.currentProduct.specifications[groupKey];
+      const groupDiv = document.createElement('div');
+      groupDiv.className = 'spec-group';
+      
+      const groupTitle = document.createElement('h4');
+      groupTitle.textContent = this.getSpecGroupTitle(groupKey);
+      groupDiv.appendChild(groupTitle);
+      
+      Object.keys(group).forEach(specKey => {
+        const specDiv = document.createElement('div');
+        specDiv.className = 'spec-item';
+        specDiv.innerHTML = `
+          <span class="spec-label">${this.getSpecLabel(specKey)}</span>
+          <span class="spec-value">${group[specKey]}</span>
+        `;
+        groupDiv.appendChild(specDiv);
+      });
+      
+      specsContainer.appendChild(groupDiv);
+    });
+  }
+
+  getSpecGroupTitle(key) {
+    const titles = {
+      screen: 'Pantalla',
+      display: 'Pantalla',
+      performance: 'Rendimiento',
+      camera: 'Cámara',
+      memory: 'Memoria',
+      audio: 'Audio',
+      battery: 'Batería',
+      connectivity: 'Conectividad',
+      video: 'Video',
+      smart: 'Smart TV'
+    };
+    return titles[key] || key.charAt(0).toUpperCase() + key.slice(1);
+  }
+
+  getSpecLabel(key) {
+    const labels = {
+      size: 'Tamaño',
+      technology: 'Tecnología',
+      resolution: 'Resolución',
+      density: 'Densidad',
+      chip: 'Chip',
+      cpu: 'CPU',
+      gpu: 'GPU',
+      neuralEngine: 'Neural Engine',
+      ram: 'RAM',
+      storage: 'Almacenamiento',
+      main: 'Principal',
+      ultraWide: 'Ultra gran angular',
+      telephoto: 'Teleobjetivo',
+      opticalZoom: 'Zoom óptico',
+      telephoto1: 'Teleobjetivo 1',
+      telephoto2: 'Teleobjetivo 2',
+      drivers: 'Controladores',
+      frequency: 'Frecuencia',
+      impedance: 'Impedancia',
+      sensitivity: 'Sensibilidad',
+      listening: 'Escucha',
+      withCase: 'Con estuche',
+      talkTime: 'Tiempo de llamada',
+      charging: 'Carga rápida',
+      bluetooth: 'Bluetooth',
+      compatibility: 'Compatibilidad',
+      memory: 'Memoria',
+      frameRate: 'Tasa de frames',
+      rayTracing: 'Ray Tracing',
+      hdr: 'HDR',
+      output: 'Salida',
+      os: 'Sistema operativo',
+      wifi: 'Wi-Fi',
+      apps: 'Aplicaciones',
+      hdmi: 'HDMI',
+      usb: 'USB',
+      ethernet: 'Ethernet'
+    };
+    return labels[key] || key.charAt(0).toUpperCase() + key.slice(1);
+  }
+
+  setupImageGallery() {
+    if (!this.currentProduct.images) return;
+
+    const mainImage = document.querySelector(".main-product-image");
+    const thumbnailContainer = document.querySelector(".thumbnail-container");
+
+    // Update main image
+    if (mainImage && this.currentProduct.images.main) {
+      mainImage.src = this.currentProduct.images.main;
+    }
+
+    // Update thumbnails
+    if (thumbnailContainer && this.currentProduct.images.thumbnails) {
+      thumbnailContainer.innerHTML = '';
+      
+      this.currentProduct.images.thumbnails.forEach((thumb, index) => {
+        const imgEl = document.createElement('img');
+        imgEl.src = thumb;
+        imgEl.alt = `${this.currentProduct.title} - Vista ${index + 1}`;
+        imgEl.className = `thumbnail ${index === 0 ? 'active' : ''}`;
+        imgEl.dataset.full = this.currentProduct.images.gallery[index];
+        
+        imgEl.addEventListener('click', () => {
+          // Update main image
+          mainImage.src = this.currentProduct.images.gallery[index];
+          
+          // Update active thumbnail
+          thumbnailContainer.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+          imgEl.classList.add('active');
+        });
+        
+        thumbnailContainer.appendChild(imgEl);
+      });
+    }
+
+    // Update product badge if there's a discount
+    const badgeEl = document.querySelector('.product-badge');
+    if (badgeEl && this.currentProduct.discount) {
+      badgeEl.textContent = `${this.currentProduct.discount}% OFF`;
+    } else if (badgeEl) {
+      badgeEl.style.display = 'none';
+    }
   }
 
   selectColor(color) {
@@ -175,7 +453,7 @@ class ProductPage {
     const maxQuantity = Math.min(this.currentProduct.stock, 10);
     this.quantity = Math.max(1, Math.min(quantity, maxQuantity));
 
-    const input = document.querySelector(".quantity-input");
+    const input = document.getElementById("quantityInput");
     if (input) {
       input.value = this.quantity;
     }
@@ -272,9 +550,7 @@ class ProductPage {
 
       // En una app real, aquí redirigirías al checkout
       setTimeout(() => {
-        alert(
-          "¡Gracias por tu compra! En una implementación real, aquí se procesaría el pago."
-        );
+        console.log("¡Gracias por tu compra! En una implementación real, aquí se procesaría el pago.");
       }, 1000);
     } catch (error) {
       console.error("Error en compra:", error);
@@ -284,19 +560,13 @@ class ProductPage {
     }
   }
 
-  toggleFavorite() {
-    const button = document.querySelector(".btn-favorite");
-    const isActive = button.classList.contains("active");
-
-    button.classList.toggle("active");
-
-    if (isActive) {
-      button.innerHTML = '<i class="bi bi-heart"></i>';
-      this.showNotification("Eliminado de favoritos", "info");
-    } else {
-      button.innerHTML = '<i class="bi bi-heart-fill"></i>';
-      this.showNotification("Agregado a favoritos", "success");
-    }
+  updateFavoriteButton() {
+    // Esperar a que el FavoritesManager esté disponible
+    setTimeout(() => {
+      if (window.favoritesManager) {
+        window.favoritesManager.updateWishlistButton();
+      }
+    }, 100);
   }
 
   calculateUnitPrice() {
@@ -308,6 +578,12 @@ class ProductPage {
   }
 
   formatPrice(price) {
+    // Usar la función global de utils si está disponible
+    if (window.DaleDeal?.utils?.formatPrice) {
+      return window.DaleDeal.utils.formatPrice(price);
+    }
+    
+    // Fallback
     return new Intl.NumberFormat("es-AR", {
       style: "currency",
       currency: "ARS",
@@ -329,50 +605,300 @@ class ProductPage {
   }
 
   showNotification(message, type = "info") {
-    // Crear contenedor si no existe
-    let container = document.getElementById("notificationContainer");
-    if (!container) {
-      container = document.createElement("div");
-      container.id = "notificationContainer";
-      container.className = "position-fixed top-0 end-0 p-3";
-      container.style.zIndex = "1070";
-      document.body.appendChild(container);
+    // Usar el sistema de notificaciones global si está disponible
+    if (window.DaleDeal?.utils?.showNotification) {
+      window.DaleDeal.utils.showNotification(message, type);
+      return;
     }
 
-    const notification = document.createElement("div");
-    notification.className = `toast align-items-center text-bg-${
-      type === "error" ? "danger" : type
-    } border-0`;
-    notification.setAttribute("role", "alert");
-
-    notification.innerHTML = `
-      <div class="d-flex">
-        <div class="toast-body">
-          <i class="bi bi-${this.getNotificationIcon(type)} me-2"></i>
-          ${message}
-        </div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-      </div>
-    `;
-
-    container.appendChild(notification);
-
-    const toast = new bootstrap.Toast(notification, { delay: 3000 });
-    toast.show();
-
-    notification.addEventListener("hidden.bs.toast", () => {
-      notification.remove();
-    });
+    // Fallback simple
+    console.log(`[${type.toUpperCase()}] ${message}`);
+    
+    // Mostrar en consola como último recurso
+    if (type === "error") {
+      console.error(`Error: ${message}`);
+    }
   }
 
-  getNotificationIcon(type) {
-    const icons = {
-      success: "check-circle-fill",
-      error: "exclamation-triangle-fill",
-      info: "info-circle-fill",
-      warning: "exclamation-triangle-fill",
-    };
-    return icons[type] || "info-circle-fill";
+  // Cargar productos similares
+  async loadSimilarProducts() {
+    const similarGrid = document.getElementById('similarProductsGrid');
+    if (!similarGrid || !this.currentProduct) return;
+
+    try {
+      // Simular delay de carga
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Obtener productos de la misma categoría
+      const allProducts = window.getAllProducts ? window.getAllProducts() : [];
+      const similarProducts = allProducts
+        .filter(product => 
+          product.category === this.currentProduct.category && 
+          product.id !== this.currentProduct.id
+        )
+        .slice(0, 4); // Mostrar máximo 4 productos
+
+      if (similarProducts.length === 0) {
+        // Si no hay productos de la misma categoría, mostrar productos aleatorios
+        const randomProducts = allProducts
+          .filter(product => product.id !== this.currentProduct.id)
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 4);
+        
+        this.renderSimilarProducts(randomProducts, true);
+      } else {
+        this.renderSimilarProducts(similarProducts, false);
+      }
+    } catch (error) {
+      console.error('Error cargando productos similares:', error);
+      similarGrid.innerHTML = `
+        <div class="error-similar-products text-center py-5">
+          <i class="bi bi-exclamation-triangle display-4 text-warning mb-3"></i>
+          <h5 class="text-muted">Error cargando productos similares</h5>
+          <p class="text-muted">Inténtalo de nuevo más tarde</p>
+        </div>
+      `;
+    }
+  }
+
+  renderSimilarProducts(products, isRandom = false) {
+    const similarGrid = document.getElementById('similarProductsGrid');
+    if (!similarGrid) return;
+
+    // Crear slides de carrusel - cada slide muestra múltiples productos
+    const productsPerSlide = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 4;
+    const slides = [];
+    
+    for (let i = 0; i < products.length; i += productsPerSlide) {
+      const slideProducts = products.slice(i, i + productsPerSlide);
+      const slideHTML = `
+        <div class="carousel-item ${i === 0 ? 'active' : ''}">
+          <div class="row justify-content-center">
+            ${slideProducts.map(product => `
+              <div class="col-12 col-md-6 col-lg-3 mb-4 d-flex">
+                <div class="product-card similar-product-card w-100" data-id="${product.id}" data-clickable="true">
+                  <div class="product-image-container">
+                    <img 
+                      src="${product.images.main}" 
+                      alt="${product.title}" 
+                      class="product-image"
+                    />
+                    ${product.discount ? `<div class="product-badges"><span class="badge-offer">-${product.discount}%</span></div>` : ''}
+                    <div class="product-actions">
+                      <button class="action-heart" title="Agregar a favoritos">
+                        <i class="bi bi-heart"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="product-info">
+                    <h5 class="product-title">${product.title}</h5>
+                    <div class="product-pricing">
+                      <span class="product-current-price">${this.formatPrice(product.price)}</span>
+                      ${product.originalPrice ? `<span class="product-original-price">${this.formatPrice(product.originalPrice)}</span>` : ''}
+                    </div>
+                    <div class="product-rating">
+                      <div class="stars">
+                        ${this.renderProductStars(product.rating)}
+                      </div>
+                      <span class="rating-count">(${product.reviewCount.toLocaleString()})</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          ${isRandom && i === 0 ? `
+            <div class="random-products-notice text-center mt-4">
+              <small class="text-muted">
+                <i class="bi bi-info-circle me-1"></i>
+                Mostrando productos recomendados ya que no hay productos similares disponibles
+              </small>
+            </div>
+          ` : ''}
+        </div>
+      `;
+      slides.push(slideHTML);
+    }
+
+    similarGrid.innerHTML = slides.join('');
+
+    // Mostrar/ocultar controles según la cantidad de slides
+    const carousel = document.getElementById('similarProductsCarousel');
+    const prevBtn = carousel.querySelector('.carousel-control-prev');
+    const nextBtn = carousel.querySelector('.carousel-control-next');
+    
+    if (slides.length <= 1) {
+      prevBtn.style.display = 'none';
+      nextBtn.style.display = 'none';
+    } else {
+      prevBtn.style.display = 'flex';
+      nextBtn.style.display = 'flex';
+    }
+
+    // Actualizar botones de favoritos
+    setTimeout(() => {
+      if (window.favoritesManager) {
+        window.favoritesManager.updateFavoriteButtons();
+      }
+    }, 100);
+  }
+
+  renderProductStars(rating) {
+    let stars = '';
+    for (let i = 1; i <= 5; i++) {
+      if (i <= rating) {
+        stars += '<i class="bi bi-star-fill"></i>';
+      } else if (i - 0.5 <= rating) {
+        stars += '<i class="bi bi-star-half"></i>';
+      } else {
+        stars += '<i class="bi bi-star"></i>';
+      }
+    }
+    return stars;
+  }
+
+  // Cargar productos vistos recientemente
+  loadRecentlyViewed() {
+    const recentlyViewedGrid = document.getElementById('recentlyViewedGrid');
+    if (!recentlyViewedGrid) return;
+
+    try {
+      const recentProducts = this.getRecentlyViewed()
+        .filter(productId => productId !== this.currentProduct.id.toString()) // Excluir el producto actual
+        .slice(0, 4); // Mostrar máximo 4 productos
+
+      if (recentProducts.length === 0) {
+        return; // Mantener el mensaje por defecto
+      }
+
+      const productsData = recentProducts
+        .map(productId => window.getProductById ? window.getProductById(parseInt(productId)) : null)
+        .filter(product => product !== null);
+
+      if (productsData.length === 0) return;
+
+      this.renderRecentlyViewed(productsData);
+    } catch (error) {
+      console.error('Error cargando productos vistos recientemente:', error);
+    }
+  }
+
+  renderRecentlyViewed(products) {
+    const recentlyViewedGrid = document.getElementById('recentlyViewedGrid');
+    if (!recentlyViewedGrid) return;
+
+    // Crear slides de carrusel - cada slide muestra múltiples productos
+    const productsPerSlide = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 4;
+    const slides = [];
+    
+    for (let i = 0; i < products.length; i += productsPerSlide) {
+      const slideProducts = products.slice(i, i + productsPerSlide);
+      const slideHTML = `
+        <div class="carousel-item ${i === 0 ? 'active' : ''}">
+          <div class="row justify-content-center">
+            ${slideProducts.map(product => `
+              <div class="col-12 col-md-6 col-lg-3 mb-4 d-flex">
+                <div class="product-card recent-product-card w-100" data-id="${product.id}" data-clickable="true">
+                  <div class="product-image-container">
+                    <img 
+                      src="${product.images.main}" 
+                      alt="${product.title}" 
+                      class="product-image"
+                    />
+                    <div class="recently-viewed-badge">
+                      <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div class="product-actions">
+                      <button class="action-heart" title="Agregar a favoritos">
+                        <i class="bi bi-heart"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="product-info">
+                    <h5 class="product-title">${product.title}</h5>
+                    <div class="product-pricing">
+                      <span class="product-current-price">${this.formatPrice(product.price)}</span>
+                      ${product.originalPrice ? `<span class="product-original-price">${this.formatPrice(product.originalPrice)}</span>` : ''}
+                    </div>
+                    <div class="product-rating">
+                      <div class="stars">
+                        ${this.renderProductStars(product.rating)}
+                      </div>
+                      <span class="rating-count">(${product.reviewCount.toLocaleString()})</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      slides.push(slideHTML);
+    }
+
+    recentlyViewedGrid.innerHTML = slides.join('');
+
+    // Mostrar/ocultar controles según la cantidad de slides
+    const carousel = document.getElementById('recentlyViewedCarousel');
+    const prevBtn = carousel.querySelector('.carousel-control-prev');
+    const nextBtn = carousel.querySelector('.carousel-control-next');
+    
+    if (slides.length <= 1) {
+      prevBtn.style.display = 'none';
+      nextBtn.style.display = 'none';
+    } else {
+      prevBtn.style.display = 'flex';
+      nextBtn.style.display = 'flex';
+    }
+
+    // Actualizar botones de favoritos
+    setTimeout(() => {
+      if (window.favoritesManager) {
+        window.favoritesManager.updateFavoriteButtons();
+      }
+    }, 100);
+  }
+
+  // Guardar producto actual en productos vistos recientemente
+  saveToRecentlyViewed() {
+    if (!this.currentProduct) return;
+
+    try {
+      const productId = this.currentProduct.id.toString();
+      let recentProducts = this.getRecentlyViewed();
+      
+      // Remover el producto si ya existe
+      recentProducts = recentProducts.filter(id => id !== productId);
+      
+      // Agregar al inicio
+      recentProducts.unshift(productId);
+      
+      // Mantener solo los últimos 10 productos
+      recentProducts = recentProducts.slice(0, 10);
+      
+      localStorage.setItem('daledealt_recently_viewed', JSON.stringify(recentProducts));
+    } catch (error) {
+      console.error('Error guardando producto en vistos recientemente:', error);
+    }
+  }
+
+  // Obtener productos vistos recientemente
+  getRecentlyViewed() {
+    try {
+      const recent = localStorage.getItem('daledealt_recently_viewed');
+      return recent ? JSON.parse(recent) : [];
+    } catch (error) {
+      console.error('Error cargando productos vistos recientemente:', error);
+      return [];
+    }
+  }
+
+  // Ir a la página de categoría
+  goToCategory() {
+    // En una implementación real, esto navegar a una página de categoría
+    // Por ahora, vamos al inicio y podríamos filtrar por categoría
+    localStorage.setItem('filterCategory', this.currentProduct.category);
+    window.location.href = '../index.html';
   }
 }
 

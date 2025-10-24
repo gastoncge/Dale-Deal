@@ -47,6 +47,7 @@ class CartManager {
           id: product.id,
           title: product.title,
           price: product.price,
+          priceText: product.priceText,
           image: product.image,
           quantity: product.quantity || 1,
           addedAt: new Date().toISOString(),
@@ -70,7 +71,7 @@ class CartManager {
       if (itemIndex > -1) {
         const removedItem = this.items.splice(itemIndex, 1)[0];
         this.saveCart();
-        this.updateCartModal();
+        this.updateCartDropdown();
         this.showNotification(
           `${removedItem.title} eliminado del carrito`,
           "info"
@@ -89,9 +90,14 @@ class CartManager {
     try {
       const item = this.items.find((item) => item.id === productId);
       if (item && newQuantity > 0) {
+        const oldQuantity = item.quantity;
         item.quantity = newQuantity;
         this.saveCart();
-        this.updateCartModal();
+        this.updateCartDropdown();
+        
+        // Log para debug
+        console.log(`Cantidad actualizada para ${item.title}: ${oldQuantity} → ${newQuantity}`);
+        
         return true;
       } else if (newQuantity <= 0) {
         return this.removeItem(productId);
@@ -107,7 +113,7 @@ class CartManager {
   clearCart() {
     this.items = [];
     this.saveCart();
-    this.updateCartModal();
+    this.updateCartDropdown();
     this.showNotification("Carrito vaciado", "info");
   }
 
@@ -119,10 +125,20 @@ class CartManager {
   // Obtener total del precio
   getTotalPrice() {
     return this.items.reduce((total, item) => {
-      const price = Number.parseFloat(
-        item.price.toString().replace(/[^0-9.-]+/g, "")
-      );
-      return total + price * item.quantity;
+      // Si item.price es un número, usarlo directamente
+      let price = item.price;
+      
+      // Si es string, intentar parsearlo
+      if (typeof price === 'string') {
+        price = parseFloat(price.replace(/[^0-9.-]+/g, "")) || 0;
+      }
+      
+      // Si no es un número válido, usar 0
+      if (typeof price !== 'number' || isNaN(price)) {
+        price = 0;
+      }
+      
+      return total + (price * item.quantity);
     }, 0);
   }
 
@@ -136,23 +152,49 @@ class CartManager {
     }
   }
 
-  // Actualizar modal del carrito
-  updateCartModal() {
-    const cartModalBody = document.getElementById("cartModalBody");
-    if (!cartModalBody) return;
+  // Actualizar dropdown del carrito
+  updateCartDropdown() {
+    const cartDropdownBody = document.getElementById("cartDropdownBody");
+    const cartCount = document.getElementById("cartCount");
+    const cartTotal = document.getElementById("cartTotal");
+    
+    if (!cartDropdownBody) return;
+
+    // Actualizar contador
+    if (cartCount) {
+      const totalItems = this.getTotalItems();
+      cartCount.textContent = totalItems;
+      cartCount.style.display = totalItems > 0 ? 'inline' : 'none';
+    }
+
+    // Actualizar total
+    if (cartTotal) {
+      const totalPrice = this.getTotalPrice();
+      console.log('Total calculado:', totalPrice); // Debug
+      cartTotal.textContent = this.formatPrice(totalPrice);
+    }
 
     if (this.items.length === 0) {
-      cartModalBody.innerHTML = `
-        <div class="cart-empty">
+      cartDropdownBody.innerHTML = `
+        <div class="cart-empty-dropdown">
           <i class="bi bi-cart-x"></i>
-          <h5>Tu carrito está vacío</h5>
-          <p>¡Descubre productos increíbles y comienza a comprar!</p>
-          <button class="btn btn-primary" data-bs-dismiss="modal">
-            Seguir comprando
-          </button>
+          <h6>Tu carrito está vacío</h6>
+          <p>¡Descubre productos increíbles!</p>
         </div>
       `;
+      
+      // Ocultar footer del carrito cuando está vacío
+      const cartFooter = document.querySelector('.cart-footer');
+      if (cartFooter) {
+        cartFooter.style.display = 'none';
+      }
       return;
+    }
+
+    // Mostrar footer del carrito cuando hay items
+    const cartFooter = document.querySelector('.cart-footer');
+    if (cartFooter) {
+      cartFooter.style.display = 'block';
     }
 
     const cartItemsHTML = this.items
@@ -162,22 +204,16 @@ class CartManager {
         <img src="${item.image}" alt="${item.title}" class="cart-item-image">
         <div class="cart-item-info">
           <h6 class="cart-item-title">${item.title}</h6>
-          <div class="cart-item-price">${this.formatPrice(item.price)}</div>
+          <div class="cart-item-price">${item.priceText || this.formatPrice(item.price)}</div>
           <div class="cart-item-controls">
             <div class="quantity-control">
-              <button class="quantity-btn" onclick="cartManager.updateQuantity('${
-                item.id
-              }', ${item.quantity - 1})">-</button>
+              <button class="quantity-btn btn-decrease" data-product-id="${item.id}" data-action="decrease" type="button">-</button>
               <span class="quantity-display">${item.quantity}</span>
-              <button class="quantity-btn" onclick="cartManager.updateQuantity('${
-                item.id
-              }', ${item.quantity + 1})">+</button>
+              <button class="quantity-btn btn-increase" data-product-id="${item.id}" data-action="increase" type="button">+</button>
             </div>
           </div>
         </div>
-        <button class="remove-item" onclick="cartManager.removeItem('${
-          item.id
-        }')" title="Eliminar">
+        <button class="remove-item" data-product-id="${item.id}" data-action="remove" type="button" title="Eliminar">
           <i class="bi bi-trash"></i>
         </button>
       </div>
@@ -189,40 +225,24 @@ class CartManager {
     const shipping = totalPrice > 50000 ? 0 : 5000;
     const finalTotal = totalPrice + shipping;
 
-    cartModalBody.innerHTML = `
+    cartDropdownBody.innerHTML = `
       <div class="cart-items">
         ${cartItemsHTML}
-      </div>
-      <div class="cart-total">
-        <div class="cart-total-row">
-          <span class="cart-total-label">Subtotal:</span>
-          <span class="cart-total-value">${this.formatPrice(totalPrice)}</span>
-        </div>
-        <div class="cart-total-row">
-          <span class="cart-total-label">Envío:</span>
-          <span class="cart-total-value">${
-            shipping === 0 ? "Gratis" : this.formatPrice(shipping)
-          }</span>
-        </div>
-        <div class="cart-total-row cart-total-final">
-          <span class="cart-total-label">Total:</span>
-          <span class="cart-total-value">${this.formatPrice(finalTotal)}</span>
-        </div>
-        <div class="cart-actions">
-          <button class="btn-checkout">
-            <i class="bi bi-credit-card me-2"></i>
-            Finalizar Compra
-          </button>
-          <button class="btn-continue" data-bs-dismiss="modal">
-            Seguir Comprando
-          </button>
-        </div>
       </div>
     `;
   }
 
   // Formatear precio
   formatPrice(price) {
+    // Usar la función global de utils si está disponible
+    if (window.DaleDeal?.utils?.formatPrice) {
+      const numPrice = typeof price === "string" 
+        ? Number.parseFloat(price.replace(/[^0-9.-]+/g, "")) 
+        : price;
+      return window.DaleDeal.utils.formatPrice(numPrice);
+    }
+
+    // Fallback
     const numPrice =
       typeof price === "string"
         ? Number.parseFloat(price.replace(/[^0-9.-]+/g, ""))
@@ -241,14 +261,71 @@ class CartManager {
     // Botón del carrito
     const cartBtn = document.getElementById("cartBtn");
     if (cartBtn) {
-      cartBtn.addEventListener("click", () => {
-        this.updateCartModal();
-        const cartModal = new bootstrap.Modal(
-          document.getElementById("cartModal")
-        );
-        cartModal.show();
+      cartBtn.addEventListener("shown.bs.dropdown", () => {
+        this.updateCartDropdown();
       });
     }
+
+    // Eventos para botones del dropdown del carrito
+    document.getElementById('viewFullCart')?.addEventListener('click', () => {
+      // Aquí podrías redirigir a una página completa del carrito
+      console.log('Ver carrito completo');
+    });
+
+    document.getElementById('proceedToCheckout')?.addEventListener('click', () => {
+      if (this.items.length === 0) {
+        console.log('Carrito vacío');
+        return;
+      }
+      // Aquí podrías redirigir al checkout
+      console.log('Proceder al checkout');
+    });
+
+    // Manejar clics en el dropdown del carrito
+    document.addEventListener('click', (e) => {
+      // Si el clic es dentro del dropdown del carrito
+      if (e.target.closest('.cart-dropdown')) {
+        const target = e.target.closest('[data-action]');
+        
+        if (target) {
+          e.stopPropagation();
+          e.preventDefault();
+          
+          const productId = target.dataset.productId;
+          const action = target.dataset.action;
+          
+          switch (action) {
+            case 'increase':
+              const currentItem = this.items.find(item => item.id === productId);
+              if (currentItem) {
+                console.log(`Incrementando cantidad para ${currentItem.title}: ${currentItem.quantity} → ${currentItem.quantity + 1}`);
+                this.updateQuantity(productId, currentItem.quantity + 1);
+              }
+              break;
+              
+            case 'decrease':
+              const currentItemDec = this.items.find(item => item.id === productId);
+              if (currentItemDec && currentItemDec.quantity > 1) {
+                console.log(`Decrementando cantidad para ${currentItemDec.title}: ${currentItemDec.quantity} → ${currentItemDec.quantity - 1}`);
+                this.updateQuantity(productId, currentItemDec.quantity - 1);
+              } else if (currentItemDec && currentItemDec.quantity === 1) {
+                // Si la cantidad es 1, preguntar si quiere eliminar
+                this.removeItem(productId);
+              }
+              break;
+              
+            case 'remove':
+              this.removeItem(productId);
+              break;
+          }
+        }
+        
+        // Prevenir cierre para cualquier clic en el cuerpo del carrito
+        if (e.target.closest('.cart-body')) {
+          e.stopPropagation();
+        }
+      }
+    });
 
     // Botones de agregar al carrito en productos
     document.addEventListener("click", (e) => {
@@ -274,16 +351,24 @@ class CartManager {
       const title = productCard
         .querySelector(".product-title")
         ?.textContent?.trim();
-      const price = productCard
+      const priceText = productCard
         .querySelector(".product-current-price")
         ?.textContent?.trim();
-      const image = productCard.querySelector(".product-image")?.src;
+      let image = productCard.querySelector(".product-image")?.src;
 
-      if (!title || !price || !image) {
+      // Imagen por defecto si no hay imagen
+      if (!image || image === '') {
+        image = './IMG/LOGO.png'; // Usar logo como imagen por defecto
+      }
+
+      if (!title || !priceText) {
         throw new Error("Datos del producto incompletos");
       }
 
-      return { id, title, price, image, quantity: 1 };
+      // Convertir precio a número
+      const price = parseFloat(priceText.replace(/[^0-9]/g, '')) || 0;
+
+      return { id, title, price: price, priceText: priceText, image, quantity: 1 };
     } catch (error) {
       console.error("Error extrayendo datos del producto:", error);
       return null;
@@ -292,50 +377,57 @@ class CartManager {
 
   // Mostrar notificación
   showNotification(message, type = "info") {
-    // Crear contenedor de notificaciones si no existe
-    let notificationContainer = document.getElementById(
-      "notificationContainer"
-    );
-    if (!notificationContainer) {
-      notificationContainer = document.createElement("div");
-      notificationContainer.id = "notificationContainer";
-      notificationContainer.className = "position-fixed top-0 end-0 p-3";
-      notificationContainer.style.zIndex = "1070";
-      document.body.appendChild(notificationContainer);
+    try {
+      // Usar el sistema de notificaciones global si está disponible
+      if (window.DaleDeal?.utils?.showNotification) {
+        window.DaleDeal.utils.showNotification(message, type);
+        return;
+      }
+
+      // Fallback con toast de Bootstrap si está disponible
+      if (window.bootstrap?.Toast) {
+        this.showBootstrapToast(message, type);
+        return;
+      }
+
+      // Fallback simple para consola
+      console.log(`[CART ${type.toUpperCase()}] ${message}`);
+    } catch (error) {
+      console.error('Error mostrando notificación:', error);
+      console.log(`[CART ${type.toUpperCase()}] ${message}`);
     }
+  }
 
-    const notificationId = `notification-${Date.now()}`;
-    const iconMap = {
-      success: "check-circle-fill",
-      error: "exclamation-triangle-fill",
-      info: "info-circle-fill",
-    };
-
-    const notification = document.createElement("div");
-    notification.id = notificationId;
-    notification.className = `toast align-items-center text-bg-${
-      type === "error" ? "danger" : type
-    } border-0`;
-    notification.setAttribute("role", "alert");
-    notification.innerHTML = `
+  // Crear toast de Bootstrap como fallback
+  showBootstrapToast(message, type) {
+    const toastContainer = document.querySelector('.toast-container') || this.createToastContainer();
+    
+    const toast = document.createElement('div');
+    toast.className = `toast align-items-center text-white bg-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'primary'} border-0`;
+    toast.setAttribute('role', 'alert');
+    toast.innerHTML = `
       <div class="d-flex">
-        <div class="toast-body">
-          <i class="bi bi-${iconMap[type]} me-2"></i>
-          ${message}
-        </div>
+        <div class="toast-body">${message}</div>
         <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
       </div>
     `;
-
-    notificationContainer.appendChild(notification);
-
-    const toast = new bootstrap.Toast(notification, { delay: 3000 });
-    toast.show();
-
-    // Limpiar después de que se oculte
-    notification.addEventListener("hidden.bs.toast", () => {
-      notification.remove();
+    
+    toastContainer.appendChild(toast);
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+    
+    // Remover después de ocultar
+    toast.addEventListener('hidden.bs.toast', () => {
+      toast.remove();
     });
+  }
+
+  // Crear contenedor de toasts si no existe
+  createToastContainer() {
+    const container = document.createElement('div');
+    container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+    document.body.appendChild(container);
+    return container;
   }
 }
 
