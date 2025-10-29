@@ -2123,16 +2123,6 @@
   box-shadow: var(--shadow-xl);
 }
 
-.service-card-hover {
-  cursor: pointer;
-}
-
-.service-card-hover:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-xl);
-  border-color: var(--primary-red-light);
-}
-
 .service-highlighted {
   border: 2px solid var(--primary-red);
   box-shadow: var(--shadow-2xl);

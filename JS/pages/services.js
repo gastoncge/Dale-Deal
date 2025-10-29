@@ -29,18 +29,11 @@ class ServicesNavigation {
         if (e.target.closest('.service-cta')) {
           return;
         }
-        
+
         const category = card.dataset.serviceCategory;
         const serviceId = card.dataset.id || null;
-        
+
         this.navigateToServices(category, serviceId);
-      });
-      
-      // Add hover effect to indicate clickability
-      card.addEventListener('mouseenter', () => {
-        if (!card.classList.contains('service-card-hover')) {
-          card.classList.add('service-card-hover');
-        }
       });
     });
   }
