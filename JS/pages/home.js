@@ -96,10 +96,10 @@ function renderProductCard(product) {
   // Determinar si tiene envío gratis (productos con descuento o precio > 50000)
   const hasFreeShipping = product.freeShipping || hasDiscount || product.price > 50000;
 
-  // Renderizar descripción corta (primeras 120 caracteres)
+  // Renderizar descripción corta (primeras 80 caracteres)
   const shortDescription = product.description
-    ? (product.description.length > 120
-        ? product.description.substring(0, 120) + '...'
+    ? (product.description.length > 80
+        ? product.description.substring(0, 80) + '...'
         : product.description)
     : '';
 
@@ -116,31 +116,32 @@ function renderProductCard(product) {
       </div>
       <div class="product-info">
         <h3 class="product-title">${product.title}</h3>
-        ${shortDescription ? `<p class="product-description">${shortDescription}</p>` : ''}
-        <div class="product-meta">
-          <div class="product-rating-location-row">
-            <div class="product-rating">
-              <div class="stars">
-                ${renderStars(product.rating)}
-              </div>
-              <span class="rating-text">${product.rating}</span>
-              <span class="reviews-count">(${product.reviewCount.toLocaleString('es-AR')})</span>
+
+        <p class="product-description">${shortDescription}</p>
+
+        <div class="product-meta-group">
+          <div class="product-rating">
+            <div class="stars">
+              ${renderStars(product.rating)}
             </div>
-            <div class="product-location">
-              <i class="bi bi-geo-alt-fill"></i>
-              <span>CABA</span>
-            </div>
+            <span class="reviews-count">(${product.reviewCount.toLocaleString('es-AR')})</span>
           </div>
-          <div class="product-info-row">
-            <div class="product-pricing">
-              ${priceHTML}
-            </div>
-            ${hasFreeShipping ? `
-              <div class="product-free-shipping">
-                <i class="bi bi-truck"></i>
-                <span>Envío gratis</span>
-              </div>
-            ` : ''}
+          <div class="product-location">
+            <i class="bi bi-geo-alt-fill"></i>
+            <span>CABA</span>
+          </div>
+        </div>
+
+        ${hasFreeShipping ? `
+          <div class="product-shipping">
+            <i class="bi bi-truck"></i>
+            Envío gratis
+          </div>
+        ` : ''}
+
+        <div class="product-pricing-wrapper">
+          <div class="product-pricing">
+            ${priceHTML}
           </div>
         </div>
       </div>
