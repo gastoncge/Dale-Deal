@@ -61,6 +61,8 @@
   max-width: 500px;
 }
 
+/* Hero stats específicos para services (con colores personalizados) */
+/* Los estilos base están en components.css como .hero-stats */
 .services-hero-stats {
   display: flex;
   gap: var(--spacing-8);
@@ -76,13 +78,13 @@
   display: block;
   font-size: var(--font-size-3xl);
   font-weight: 800;
-  color: var(--primary-red);
+  color: var(--primary-red);  /* Color diferente al hero-stats estándar */
   margin-bottom: var(--spacing-1);
 }
 
 .services-hero-stats .stat-label {
   font-size: var(--font-size-sm);
-  color: var(--gray-600);
+  color: var(--gray-600);  /* Color diferente al hero-stats estándar */
   font-weight: 500;
 }
 
@@ -122,7 +124,7 @@
   align-items: center;
   gap: var(--spacing-1);
   min-width: 80px;
-  animation: float 3s ease-in-out infinite;
+  animation: floating 3s ease-in-out infinite;  /* Usa la animación común de components.css */
 }
 
 .floating-card:nth-child(1) {
@@ -154,10 +156,7 @@
   color: var(--gray-700);
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
+/* Animación float movida a components.css como .floating */
 
 /* ===== SERVICES CATEGORIES SECTION ===== */
 .services-categories-section {

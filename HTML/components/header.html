@@ -1,0 +1,218 @@
+<!-- Navbar Component -->
+<nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
+  <div class="container-fluid px-4">
+    <!-- Logo -->
+    <a class="navbar-brand" href="./index.html" id="homeLink" data-aos="fade-right">
+      <img src="./IMG/LOGO-2.png" alt="Dale Deal" class="logo-navbar" id="logoImage" />
+      <span class="brand-text">DALE DEAL</span>
+    </a>
+
+    <!-- Search Bar -->
+    <div class="search-container mx-auto" data-aos="fade-up" data-aos-delay="100">
+      <div class="search-wrapper">
+        <i class="bi bi-search search-icon"></i>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="¿Qué estás buscando hoy?"
+          id="searchInput"
+        />
+      </div>
+    </div>
+
+    <!-- User Actions -->
+    <div class="navbar-actions" data-aos="fade-left" data-aos-delay="200">
+      <!-- Products Link -->
+      <div class="action-item">
+        <a href="./productos.html" class="action-link" title="Productos">
+          <i class="bi bi-bag me-1"></i>
+          <span class="action-text">Productos</span>
+        </a>
+      </div>
+
+      <!-- Services Link -->
+      <div class="action-item">
+        <a href="./servicios.html" class="action-link" title="Servicios Profesionales">
+          <i class="bi bi-tools me-1"></i>
+          <span class="action-text">Servicios</span>
+        </a>
+      </div>
+
+      <!-- Notifications -->
+      <div class="action-item dropdown">
+        <button
+          class="action-btn"
+          id="notificationBtn"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          title="Notificaciones"
+        >
+          <i class="bi bi-bell"></i>
+          <span class="notification-badge" id="notificationBadge">3</span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-end notifications-dropdown" aria-labelledby="notificationBtn">
+          <!-- Header con contador -->
+          <div class="notifications-header">
+            <h6 class="mb-0">
+              <i class="bi bi-bell me-2"></i>
+              Notificaciones
+              <span class="notifications-count" id="notificationsCount">3</span>
+            </h6>
+          </div>
+
+          <!-- Filtros -->
+          <div class="notifications-filter">
+            <button class="filter-chip active" data-filter="all">Todas</button>
+            <button class="filter-chip" data-filter="unread">No leídas</button>
+            <button class="filter-chip" data-filter="orders">Pedidos</button>
+            <button class="filter-chip" data-filter="offers">Ofertas</button>
+          </div>
+
+          <!-- Cuerpo de notificaciones -->
+          <div class="notifications-body" id="notificationsDropdownBody">
+            <div class="notification-item unread" data-id="1" data-type="orders">
+              <div class="notification-icon bg-success">
+                <i class="bi bi-check-circle text-white"></i>
+              </div>
+              <div class="notification-content">
+                <h6>Pedido confirmado</h6>
+                <p>Tu pedido #12345 ha sido confirmado</p>
+                <small>Hace 2 horas</small>
+              </div>
+              <button class="notification-close" data-action="dismiss">
+                <i class="bi bi-x"></i>
+              </button>
+            </div>
+
+            <div class="notification-item unread" data-id="2" data-type="orders">
+              <div class="notification-icon bg-info">
+                <i class="bi bi-truck text-white"></i>
+              </div>
+              <div class="notification-content">
+                <h6>Envío en camino</h6>
+                <p>Tu pedido #12340 está siendo preparado</p>
+                <small>Hace 1 día</small>
+              </div>
+              <button class="notification-close" data-action="dismiss">
+                <i class="bi bi-x"></i>
+              </button>
+            </div>
+
+            <div class="notification-item unread" data-id="3" data-type="offers">
+              <div class="notification-icon bg-warning">
+                <i class="bi bi-star text-white"></i>
+              </div>
+              <div class="notification-content">
+                <h6>Nueva oferta disponible</h6>
+                <p>20% de descuento en electrónicos</p>
+                <small>Hace 2 días</small>
+              </div>
+              <button class="notification-close" data-action="dismiss">
+                <i class="bi bi-x"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Footer con acciones -->
+          <div class="notifications-footer">
+            <button type="button" class="btn btn-outline-secondary btn-sm w-100 mb-2" id="viewAllNotifications">
+              <i class="bi bi-list me-2"></i>Ver todas
+            </button>
+            <button type="button" class="btn btn-primary btn-sm w-100" id="markAllAsRead">
+              <i class="bi bi-check-all me-2"></i>Marcar todas como leídas
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cart -->
+      <div class="action-item dropdown">
+        <button class="action-btn" id="cartBtn" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" title="Carrito de compras">
+          <i class="bi bi-cart3"></i>
+          <span class="cart-badge" id="cartBadge">0</span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-end cart-dropdown" aria-labelledby="cartBtn">
+          <!-- Header del carrito -->
+          <div class="cart-header">
+            <h6 class="mb-0">
+              <i class="bi bi-cart3 me-2"></i>
+              Mi Carrito
+              <span class="cart-count" id="cartCount">0</span>
+            </h6>
+          </div>
+
+          <!-- Cuerpo del carrito -->
+          <div class="cart-body" id="cartDropdownBody">
+            <!-- Los items del carrito se cargarán dinámicamente -->
+          </div>
+
+          <!-- Footer del carrito -->
+          <div class="cart-footer">
+            <div class="cart-total mb-3">
+              <div class="cart-total-row cart-total-final">
+                <span class="cart-total-label">Total:</span>
+                <span class="cart-total-value" id="cartTotal">$0</span>
+              </div>
+            </div>
+            <button type="button" class="btn btn-outline-secondary btn-sm w-100 mb-2" id="viewFullCart">
+              <i class="bi bi-eye me-2"></i>Ver carrito completo
+            </button>
+            <button type="button" class="btn btn-primary btn-sm w-100" id="proceedToCheckout">
+              <i class="bi bi-credit-card me-2"></i>Finalizar compra
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile -->
+      <div class="action-item dropdown">
+        <button
+          class="action-btn profile-btn"
+          id="profileDropdown"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          title="Mi cuenta"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+            alt="Perfil"
+            class="profile-image"
+          />
+          <span class="profile-name">Usuario</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+          <li class="dropdown-header">
+            <h6 class="mb-0">Mi Cuenta</h6>
+          </li>
+          <li><hr class="dropdown-divider" /></li>
+          <li>
+            <a class="dropdown-item" href="#">
+              <i class="bi bi-person me-2"></i>Mi Perfil
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="#">
+              <i class="bi bi-bag me-2"></i>Mis Compras
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="#" id="favoritesLink">
+              <i class="bi bi-heart me-2"></i>Favoritos
+            </a>
+          </li>
+          <li><hr class="dropdown-divider" /></li>
+          <li>
+            <a class="dropdown-item" href="./login.html" id="loginLink">
+              <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item text-danger" href="#" id="logoutBtn" style="display: none">
+              <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>

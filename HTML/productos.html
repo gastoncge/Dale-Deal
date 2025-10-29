@@ -45,36 +45,28 @@
     <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
       <div class="container-fluid px-4">
         <!-- Logo -->
-        <a class="navbar-brand" href="../index.html">
+        <a class="navbar-brand" href="../index.html" data-aos="fade-right">
           <img src="../IMG/LOGO-2.png" alt="Dale Deal" class="logo-navbar" />
           <span class="brand-text">DALE DEAL</span>
         </a>
 
         <!-- Search Bar -->
-        <div class="search-container mx-auto">
+        <div class="search-container mx-auto" data-aos="fade-up" data-aos-delay="100">
           <div class="search-wrapper">
             <i class="bi bi-search search-icon"></i>
             <input
               type="text"
               class="search-input"
-              placeholder="Buscar productos..."
+              placeholder="¿Qué estás buscando hoy?"
               id="searchInput"
             />
           </div>
         </div>
 
         <!-- User Actions -->
-        <div class="navbar-actions">
-          <!-- Home Link -->
-          <div class="action-item">
-            <a href="../index.html" class="action-link" title="Inicio">
-              <i class="bi bi-house me-1"></i>
-              <span class="action-text">Inicio</span>
-            </a>
-          </div>
-
-          <!-- Products Link -->
-          <div class="action-item">
+        <div class="navbar-actions" data-aos="fade-left" data-aos-delay="200">
+          <!-- Products Link - Hidden on products page -->
+          <div class="action-item" style="display: none;">
             <a href="./productos.html" class="action-link" title="Productos">
               <i class="bi bi-bag me-1"></i>
               <span class="action-text">Productos</span>
@@ -83,43 +75,31 @@
 
           <!-- Services Link -->
           <div class="action-item">
-            <a href="./servicios.html" class="action-link" title="Servicios">
+            <a href="./servicios.html" class="action-link" title="Servicios Profesionales">
               <i class="bi bi-tools me-1"></i>
               <span class="action-text">Servicios</span>
             </a>
           </div>
-          
+
           <!-- Notifications -->
           <div class="action-item dropdown">
-            <button
-              class="action-btn"
-              id="notificationBtn"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-              title="Notificaciones"
-            >
+            <button class="action-btn" id="notificationBtn" data-bs-toggle="dropdown" aria-expanded="false" title="Notificaciones">
               <i class="bi bi-bell"></i>
               <span class="notification-badge" id="notificationBadge">3</span>
             </button>
             <div class="dropdown-menu dropdown-menu-end notifications-dropdown" aria-labelledby="notificationBtn">
-              <!-- Header con contador -->
               <div class="notifications-header">
                 <h6 class="mb-0">
-                  <i class="bi bi-bell me-2"></i>
-                  Notificaciones
+                  <i class="bi bi-bell me-2"></i>Notificaciones
                   <span class="notifications-count" id="notificationsCount">3</span>
                 </h6>
               </div>
-
-              <!-- Filtros -->
               <div class="notifications-filter">
                 <button class="filter-chip active" data-filter="all">Todas</button>
                 <button class="filter-chip" data-filter="unread">No leídas</button>
                 <button class="filter-chip" data-filter="orders">Pedidos</button>
                 <button class="filter-chip" data-filter="offers">Ofertas</button>
               </div>
-
-              <!-- Cuerpo de notificaciones -->
               <div class="notifications-body" id="notificationsDropdownBody">
                 <div class="notification-item unread" data-id="1" data-type="orders">
                   <div class="notification-icon bg-success">
@@ -134,7 +114,6 @@
                     <i class="bi bi-x"></i>
                   </button>
                 </div>
-
                 <div class="notification-item unread" data-id="2" data-type="orders">
                   <div class="notification-icon bg-info">
                     <i class="bi bi-truck text-white"></i>
@@ -148,7 +127,6 @@
                     <i class="bi bi-x"></i>
                   </button>
                 </div>
-
                 <div class="notification-item unread" data-id="3" data-type="offers">
                   <div class="notification-icon bg-warning">
                     <i class="bi bi-star text-white"></i>
@@ -163,12 +141,10 @@
                   </button>
                 </div>
               </div>
-
-              <!-- Footer con acciones -->
               <div class="notifications-footer">
-                <button type="button" class="btn btn-outline-secondary btn-sm w-100 mb-2" id="viewAllNotifications">
+                <a href="./notificaciones.html" class="btn btn-outline-secondary btn-sm w-100 mb-2">
                   <i class="bi bi-list me-2"></i>Ver todas
-                </button>
+                </a>
                 <button type="button" class="btn btn-primary btn-sm w-100" id="markAllAsRead">
                   <i class="bi bi-check-all me-2"></i>Marcar todas como leídas
                 </button>
@@ -178,21 +154,18 @@
 
           <!-- Cart -->
           <div class="action-item dropdown">
-            <button class="action-btn" id="cartBtn" data-bs-toggle="dropdown" aria-expanded="false" title="Carrito">
+            <button class="action-btn" id="cartBtn" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" title="Carrito de compras">
               <i class="bi bi-cart3"></i>
               <span class="cart-badge" id="cartBadge">0</span>
             </button>
             <div class="dropdown-menu dropdown-menu-end cart-dropdown" aria-labelledby="cartBtn">
               <div class="cart-header">
                 <h6 class="mb-0">
-                  <i class="bi bi-cart3 me-2"></i>
-                  Mi Carrito
+                  <i class="bi bi-cart3 me-2"></i>Mi Carrito
                   <span class="cart-count" id="cartCount">0</span>
                 </h6>
               </div>
-              <div class="cart-body" id="cartDropdownBody">
-                <!-- Cart items will be loaded here -->
-              </div>
+              <div class="cart-body" id="cartDropdownBody"></div>
               <div class="cart-footer">
                 <div class="cart-total mb-3">
                   <div class="cart-total-row cart-total-final">
@@ -200,6 +173,9 @@
                     <span class="cart-total-value" id="cartTotal">$0</span>
                   </div>
                 </div>
+                <button type="button" class="btn btn-outline-secondary btn-sm w-100 mb-2" id="viewFullCart">
+                  <i class="bi bi-eye me-2"></i>Ver carrito completo
+                </button>
                 <button type="button" class="btn btn-primary btn-sm w-100" id="proceedToCheckout">
                   <i class="bi bi-credit-card me-2"></i>Finalizar compra
                 </button>
@@ -209,24 +185,11 @@
 
           <!-- Profile -->
           <div class="action-item dropdown">
-            <button
-              class="action-btn profile-btn"
-              id="profileDropdown"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-              title="Mi cuenta"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
-                alt="Perfil"
-                class="profile-image"
-              />
+            <button class="action-btn profile-btn" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Mi cuenta">
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" alt="Perfil" class="profile-image" />
               <span class="profile-name">Usuario</span>
             </button>
-            <ul
-              class="dropdown-menu dropdown-menu-end"
-              aria-labelledby="profileDropdown"
-            >
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
               <li class="dropdown-header">
                 <h6 class="mb-0">Mi Cuenta</h6>
               </li>
@@ -248,21 +211,12 @@
               </li>
               <li><hr class="dropdown-divider" /></li>
               <li>
-                <a
-                  class="dropdown-item"
-                  href="./login.html"
-                  id="loginLink"
-                >
+                <a class="dropdown-item" href="./login.html">
                   <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
                 </a>
               </li>
               <li>
-                <a
-                  class="dropdown-item text-danger"
-                  href="#"
-                  id="logoutBtn"
-                  style="display: none"
-                >
+                <a class="dropdown-item text-danger" href="#" id="logoutBtn" style="display: none">
                   <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
                 </a>
               </li>
@@ -410,175 +364,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-content">
-          <div class="row">
-            <!-- Company Info -->
-            <div class="col-lg-4 col-md-6 mb-4">
-              <div class="footer-section">
-                <div class="footer-logo">
-                  <img src="../IMG/LOGO-2.png" alt="Dale Deal" class="footer-logo-img" />
-                  <span class="footer-brand-text">DALE DEAL</span>
-                </div>
-                <p class="footer-description">
-                  Tu marketplace de productos y servicios en Argentina.
-                  Compra, vende productos y contrata servicios profesionales de calidad.
-                </p>
-                <div class="footer-social">
-                  <a href="#" class="social-link" title="Facebook">
-                    <i class="bi bi-facebook"></i>
-                  </a>
-                  <a href="#" class="social-link" title="Instagram">
-                    <i class="bi bi-instagram"></i>
-                  </a>
-                  <a href="#" class="social-link" title="Twitter">
-                    <i class="bi bi-twitter"></i>
-                  </a>
-                  <a href="#" class="social-link" title="LinkedIn">
-                    <i class="bi bi-linkedin"></i>
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <!-- Quick Links -->
-            <div class="col-lg-2 col-md-6 mb-4">
-              <div class="footer-section">
-                <h5 class="footer-title">Plataforma</h5>
-                <ul class="footer-links">
-                  <li><a href="./servicios.html">Buscar servicios</a></li>
-                  <li><a href="#" id="registerProviderLink">Ofrecer servicios</a></li>
-                  <li><a href="#">Cómo funciona</a></li>
-                  <li><a href="#" id="businessLink">Soy una empresa</a></li>
-                  <li><a href="#" id="sellProductsLink">Publicar productos</a></li>
-                  <li><a href="#" id="advertiseLink">Publicidad en el sitio</a></li>
-                </ul>
-              </div>
-            </div>
-
-            <!-- Categories -->
-            <div class="col-lg-2 col-md-6 mb-4">
-              <div class="footer-section">
-                <h5 class="footer-title">Categorías</h5>
-                <ul class="footer-links">
-                  <li><a href="./productos.html">Productos</a></li>
-                  <li><a href="./servicios.html">Servicios</a></li>
-                  <li><a href="./productos.html?category=electronics">Electrónica</a></li>
-                  <li><a href="./productos.html?category=home">Hogar y Jardín</a></li>
-                  <li><a href="./productos.html?category=fashion">Moda y Belleza</a></li>
-                </ul>
-              </div>
-            </div>
-
-            <!-- Support -->
-            <div class="col-lg-2 col-md-6 mb-4">
-              <div class="footer-section">
-                <h5 class="footer-title">Soporte</h5>
-                <ul class="footer-links">
-                  <li><a href="#">Centro de ayuda</a></li>
-                  <li><a href="#">Contacto</a></li>
-                  <li><a href="#">Reportar problema</a></li>
-                  <li><a href="#">Estado del servicio</a></li>
-                  <li><a href="#">Seguridad</a></li>
-                </ul>
-              </div>
-            </div>
-
-            <!-- Contact & Download -->
-            <div class="col-lg-2 col-md-6 mb-4">
-              <div class="footer-section">
-                <h5 class="footer-title">Contacto</h5>
-                <div class="footer-contact">
-                  <div class="contact-item">
-                    <i class="bi bi-telephone"></i>
-                    <span>0800-DALEDEAL</span>
-                  </div>
-                  <div class="contact-item">
-                    <i class="bi bi-envelope"></i>
-                    <span>hola@daledeal.com</span>
-                  </div>
-                  <div class="contact-item">
-                    <i class="bi bi-geo-alt"></i>
-                    <span>Buenos Aires, Argentina</span>
-                  </div>
-                </div>
-
-                <div class="footer-apps mt-3">
-                  <p class="footer-apps-title">Descarga la app</p>
-                  <div class="app-links">
-                    <a href="#" class="app-link">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" class="app-badge">
-                    </a>
-                    <a href="#" class="app-link">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" class="app-badge">
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Newsletter Signup -->
-          <div class="footer-newsletter">
-            <div class="row align-items-center">
-              <div class="col-md-6">
-                <h5 class="newsletter-title">
-                  <i class="bi bi-bell me-2"></i>
-                  Mantente actualizado
-                </h5>
-                <p class="newsletter-subtitle">Recibe las mejores ofertas y novedades de Dale Deal</p>
-              </div>
-              <div class="col-md-6">
-                <form class="newsletter-form" id="newsletterForm">
-                  <div class="input-group">
-                    <input
-                      type="email"
-                      class="form-control newsletter-input"
-                      placeholder="Ingresa tu email"
-                      id="newsletterEmail"
-                      required
-                    >
-                    <button class="btn btn-primary newsletter-btn" type="submit">
-                      <i class="bi bi-arrow-right"></i>
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-
-          <!-- Footer Bottom -->
-          <div class="footer-bottom">
-            <div class="footer-bottom-content">
-              <div class="row align-items-center">
-                <div class="col-md-8">
-                  <div class="footer-copyright">
-                    <div class="copyright-main">
-                      <span class="copyright-year">© 2025</span>
-                      <span class="copyright-brand">Dale Deal</span>
-                      <span class="copyright-text">Todos los derechos reservados.</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="footer-legal">
-                    <div class="legal-links-group">
-                      <a href="#" class="legal-link">Términos y Condiciones</a>
-                      <span class="text-muted mx-2">•</span>
-                      <a href="#" class="legal-link">Política de Privacidad</a>
-                      <span class="text-muted mx-2">•</span>
-                      <a href="#" class="legal-link">Política de Cookies</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-    </footer>
+    <div id="footer-placeholder"></div>
 
     <!-- Favorites Modal -->
     <div class="modal fade" id="favoritesModal" tabindex="-1" aria-labelledby="favoritesModalLabel" aria-hidden="true">
@@ -643,6 +429,14 @@
     <script src="../JS/quick-view.js"></script>
     <script src="../JS/product-carousel.js"></script>
     <script src="../JS/dropdown-fix.js"></script>
+    <script src="../JS/component-loader.js" defer></script>
+
+    <!-- Product loaders TEMPORALMENTE DESHABILITADOS
+    <script src="../JS/api.js"></script>
+    <script src="../JS/search.js"></script>
+    <script src="../JS/pages/home.js"></script>
+    <script src="../JS/pages/products.js"></script>
+    -->
 
     <style>
       /* Products page specific styles */
@@ -1545,6 +1339,83 @@
         100% { transform: scale(1); }
       }
 
+      /* ===== SKELETON LOADING CARDS ===== */
+      .skeleton-card {
+        pointer-events: none;
+        cursor: default;
+      }
+
+      .skeleton-card:hover {
+        transform: none;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .skeleton {
+        background: linear-gradient(
+          90deg,
+          var(--gray-200) 0%,
+          var(--gray-100) 50%,
+          var(--gray-200) 100%
+        );
+        background-size: 200% 100%;
+        animation: skeleton-loading 1.5s ease-in-out infinite;
+        border-radius: var(--radius-md);
+      }
+
+      @keyframes skeleton-loading {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+
+      .skeleton-image {
+        width: 100%;
+        height: 200px;
+        border-radius: 0;
+      }
+
+      .skeleton-badge {
+        position: absolute;
+        top: var(--spacing-2);
+        right: var(--spacing-2);
+        width: 60px;
+        height: 24px;
+        border-radius: var(--radius-md);
+      }
+
+      .skeleton-title {
+        height: 20px;
+        margin-bottom: var(--spacing-2);
+        width: 100%;
+      }
+
+      .skeleton-stars {
+        height: 16px;
+        width: 100px;
+      }
+
+      .skeleton-text {
+        height: 14px;
+        border-radius: var(--radius-sm);
+      }
+
+      .skeleton-price {
+        height: 24px;
+        width: 120px;
+      }
+
+      /* Disable hover effects on skeleton cards */
+      .skeleton-card .product-image-container {
+        pointer-events: none;
+      }
+
+      .skeleton-card .skeleton-image {
+        transform: none !important;
+      }
+
     </style>
 
     <script>
@@ -1579,307 +1450,160 @@
         }
       });
 
-      // Products data
-      const allProducts = [
-        {
-          id: 1,
-          title: 'iPhone 15 Pro Max 256GB',
-          price: 1299999,
-          originalPrice: 1529999,
-          discount: 15,
-          category: 'electronics',
-          images: [
-            'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=500&h=500&fit=crop&crop=center',
-            'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&h=500&fit=crop&crop=center',
-            'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=500&h=500&fit=crop&crop=center'
-          ],
-          rating: 4.9,
-          reviews: 2847,
-          featured: true,
-          isOffer: true
-        },
-        {
-          id: 2,
-          title: 'MacBook Pro 14" M3 Pro',
-          price: 2199999,
-          category: 'electronics',
-          images: [
-            'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=500&h=500&fit=crop&crop=center',
-            'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500&h=500&fit=crop&crop=center',
-            'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&h=500&fit=crop&crop=center'
-          ],
-          rating: 4.8,
-          reviews: 1534,
-          featured: true
-        },
-        {
-          id: 3,
-          title: 'Samsung Galaxy S24 Ultra 512GB',
-          price: 1099999,
-          originalPrice: 1249999,
-          discount: 12,
-          category: 'electronics',
-          image: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=500&h=500&fit=crop&crop=center',
-          rating: 4.7,
-          reviews: 987,
-          isOffer: true
-        },
-        {
-          id: 4,
-          title: 'AirPods Pro 2da Generación',
-          price: 349999,
-          category: 'electronics',
-          image: 'https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=500&h=500&fit=crop&crop=center',
-          rating: 4.6,
-          reviews: 2145
-        },
-        {
-          id: 5,
-          title: 'Sony WH-1000XM5 Headphones',
-          price: 449999,
-          originalPrice: 499999,
-          discount: 10,
-          category: 'electronics',
-          image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=500&h=500&fit=crop&crop=center',
-          rating: 4.8,
-          reviews: 756,
-          isOffer: true
-        },
-        {
-          id: 6,
-          title: 'PlayStation 5 Console',
-          price: 899999,
-          category: 'electronics',
-          image: 'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=500&h=500&fit=crop&crop=center',
-          rating: 4.9,
-          reviews: 3421,
-          featured: true
-        },
-        {
-          id: 7,
-          title: 'Smart TV Samsung 65" QLED',
-          price: 1299999,
-          originalPrice: 1499999,
-          discount: 13,
-          category: 'electronics',
-          image: 'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=500&h=500&fit=crop&crop=center',
-          rating: 4.5,
-          reviews: 892,
-          isOffer: true
-        },
-        {
-          id: 8,
-          title: 'Zapatillas Nike Air Max 270',
-          price: 159999,
-          category: 'fashion',
-          images: [
-            'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop&crop=center',
-            'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=500&h=500&fit=crop&crop=center',
-            'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500&h=500&fit=crop&crop=center'
-          ],
-          rating: 4.5,
-          reviews: 1876
-        },
-        {
-          id: 9,
-          title: 'Campera de Cuero Premium',
-          price: 189999,
-          originalPrice: 249999,
-          discount: 24,
-          category: 'fashion',
-          image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&h=500&fit=crop&crop=center',
-          rating: 4.4,
-          reviews: 543,
-          isOffer: true
-        },
-        {
-          id: 10,
-          title: 'Vestido Elegante de Noche',
-          price: 89999,
-          category: 'fashion',
-          image: 'https://images.unsplash.com/photo-1566479179817-82bae3fd90b1?w=500&h=500&fit=crop&crop=center',
-          rating: 4.3,
-          reviews: 324
-        },
-        {
-          id: 11,
-          title: 'Jean Levi\'s 501 Original',
-          price: 79999,
-          category: 'fashion',
-          images: [
-            'https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&h=500&fit=crop&crop=center',
-            'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=500&h=500&fit=crop&crop=center',
-            'https://images.unsplash.com/photo-1582552938357-32b906df40cb?w=500&h=500&fit=crop&crop=center'
-          ],
-          rating: 4.7,
-          reviews: 1234
-        },
-        {
-          id: 12,
-          title: 'Cafetera Espresso Breville',
-          price: 189999,
-          category: 'home',
-          images: [
-            'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=500&h=500&fit=crop&crop=center',
-            'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=500&h=500&fit=crop&crop=center',
-            'https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?w=500&h=500&fit=crop&crop=center'
-          ],
-          rating: 4.7,
-          reviews: 892
-        },
-        {
-          id: 13,
-          title: 'Juego de Sábanas King Size',
-          price: 79999,
-          originalPrice: 119999,
-          discount: 33,
-          category: 'home',
-          image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500&h=500&fit=crop&crop=center',
-          rating: 4.6,
-          reviews: 1234,
-          isOffer: true
-        },
-        {
-          id: 14,
-          title: 'Sofá Modular de 3 Cuerpos',
-          price: 399999,
-          category: 'home',
-          image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500&h=500&fit=crop&crop=center',
-          rating: 4.4,
-          reviews: 567
-        },
-        {
-          id: 15,
-          title: 'Lámpara LED Inteligente Philips',
-          price: 49999,
-          category: 'home',
-          image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=500&h=500&fit=crop&crop=center',
-          rating: 4.5,
-          reviews: 667
-        },
-        {
-          id: 16,
-          title: 'Bicicleta Mountain Bike Trek',
-          price: 459999,
-          originalPrice: 529999,
-          discount: 13,
-          category: 'sports',
-          image: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=500&h=500&fit=crop&crop=center',
-          rating: 4.8,
-          reviews: 445,
-          isOffer: true
-        },
-        {
-          id: 17,
-          title: 'Set de Pesas Bowflex',
-          price: 199999,
-          category: 'sports',
-          image: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=500&h=500&fit=crop&crop=center',
-          rating: 4.4,
-          reviews: 398
-        },
-        {
-          id: 18,
-          title: 'Yoga Mat Manduka PRO',
-          price: 39999,
-          category: 'sports',
-          image: 'https://images.unsplash.com/photo-1506629905607-d9c8b9a24e82?w=500&h=500&fit=crop&crop=center',
-          rating: 4.6,
-          reviews: 756
-        },
-        {
-          id: 19,
-          title: 'Cinta de Correr NordicTrack',
-          price: 899999,
-          originalPrice: 1099999,
-          discount: 18,
-          category: 'sports',
-          image: 'https://images.unsplash.com/photo-1571019613914-85f342c6a11e?w=500&h=500&fit=crop&crop=center',
-          rating: 4.7,
-          reviews: 234,
-          isOffer: true
-        },
-        {
-          id: 20,
-          title: '"Sapiens" por Yuval Harari',
-          price: 18999,
-          category: 'books',
-          image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=500&h=500&fit=crop&crop=center',
-          rating: 4.9,
-          reviews: 2341
-        },
-        {
-          id: 21,
-          title: 'Curso de Programación Full Stack',
-          price: 149999,
-          originalPrice: 249999,
-          discount: 40,
-          category: 'books',
-          image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500&h=500&fit=crop&crop=center',
-          rating: 4.8,
-          reviews: 1876,
-          isOffer: true,
-          featured: true
-        },
-        {
-          id: 22,
-          title: '"Clean Code" por Robert Martin',
-          price: 24999,
-          category: 'books',
-          image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=500&fit=crop&crop=center',
-          rating: 4.7,
-          reviews: 987
-        },
-        {
-          id: 23,
-          title: 'Curso de Design UX/UI',
-          price: 119999,
-          originalPrice: 179999,
-          discount: 33,
-          category: 'books',
-          image: 'https://images.unsplash.com/photo-1609921212029-bb5a28e60960?w=500&h=500&fit=crop&crop=center',
-          rating: 4.6,
-          reviews: 654,
-          isOffer: true
-        },
-        {
-          id: 24,
-          title: 'Reloj Apple Watch Series 9',
-          price: 549999,
-          category: 'electronics',
-          image: 'https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=500&h=500&fit=crop&crop=center',
-          rating: 4.8,
-          reviews: 1987,
-          featured: true
-        }
-      ];
-
       class ProductCatalog {
         constructor() {
-          this.products = allProducts;
+          this.products = [];
           this.currentPage = 1;
           this.productsPerPage = 12;
           this.displayedProducts = [];
-          
+          this.isLoading = false;
+
           this.init();
         }
 
-        init() {
-          this.createProductCards();
-          this.updateResultsCount();
-          
-          // Wait for ProductFilters to initialize, then override its render method
-          setTimeout(() => {
-            if (window.productFilters) {
-              // Override the renderProducts method to use our grid layout
-              window.productFilters.originalRenderProducts = window.productFilters.renderProducts;
-              window.productFilters.renderProducts = () => this.renderFilteredProducts();
-              
-              // Load products into the filter system
-              window.productFilters.products = this.createFilterableProducts();
-              window.productFilters.originalProducts = [...window.productFilters.products];
-            }
-          }, 100);
+        async init() {
+          try {
+            // Show loading state
+            this.showLoading(true);
+
+            // Fetch products from API
+            const productsData = await window.DaleDeal.api.fetchProducts();
+
+            // Transform API data to match expected format
+            this.products = this.transformProductsData(productsData);
+
+            // Hide loading and render products
+            this.showLoading(false);
+            this.createProductCards();
+            this.updateResultsCount();
+
+            // Wait for ProductFilters to initialize, then override its render method
+            setTimeout(() => {
+              if (window.productFilters) {
+                // Override the renderProducts method to use our grid layout
+                window.productFilters.originalRenderProducts = window.productFilters.renderProducts;
+                window.productFilters.renderProducts = () => this.renderFilteredProducts();
+
+                // Load products into the filter system
+                window.productFilters.products = this.createFilterableProducts();
+                window.productFilters.originalProducts = [...window.productFilters.products];
+              }
+            }, 100);
+
+          } catch (error) {
+            console.error('Error loading products:', error);
+            this.showLoading(false);
+            this.showError('Error al cargar los productos. Por favor, intenta nuevamente.');
+          }
+        }
+
+        transformProductsData(apiProducts) {
+          return apiProducts.map(product => ({
+            id: product.id,
+            title: product.title,
+            price: product.price,
+            originalPrice: product.originalPrice,
+            discount: product.discount,
+            category: this.mapCategory(product.category),
+            images: product.images?.gallery || [product.images?.main],
+            image: product.images?.main,
+            rating: product.rating,
+            reviews: product.reviewCount || 0,
+            featured: product.badges?.includes('Premium') || false,
+            isOffer: product.discount > 0
+          }));
+        }
+
+        mapCategory(category) {
+          const categoryMap = {
+            'Electrónicos': 'electronics',
+            'Moda': 'fashion',
+            'Hogar': 'home',
+            'Deportes': 'sports',
+            'Libros': 'books'
+          };
+          return categoryMap[category] || category.toLowerCase();
+        }
+
+        showLoading(show) {
+          const loading = document.getElementById('loadingContainer');
+          const grid = document.getElementById('productsGrid');
+          const noResults = document.getElementById('noResults');
+
+          if (show) {
+            // Hide default loading container
+            loading.style.display = 'none';
+            noResults.style.display = 'none';
+
+            // Show grid with skeleton cards
+            grid.style.display = 'grid';
+            this.renderSkeletonCards();
+            this.isLoading = true;
+          } else {
+            loading.style.display = 'none';
+            grid.style.display = 'grid';
+            this.isLoading = false;
+          }
+        }
+
+        renderSkeletonCards() {
+          const grid = document.getElementById('productsGrid');
+          grid.innerHTML = '';
+
+          // Render 9 skeleton cards
+          for (let i = 0; i < 9; i++) {
+            const skeletonCard = this.createSkeletonCard(i);
+            grid.appendChild(skeletonCard);
+          }
+        }
+
+        createSkeletonCard(index) {
+          const card = document.createElement('div');
+          card.className = 'product-card skeleton-card';
+          card.setAttribute('data-aos', 'fade-up');
+          card.setAttribute('data-aos-delay', index * 50);
+
+          card.innerHTML = `
+            <div class="product-image-container">
+              <div class="skeleton skeleton-image"></div>
+              <div class="skeleton skeleton-badge"></div>
+            </div>
+            <div class="product-info">
+              <div class="skeleton skeleton-title"></div>
+              <div class="skeleton skeleton-title" style="width: 60%;"></div>
+              <div class="product-rating">
+                <div class="skeleton skeleton-stars"></div>
+                <div class="skeleton skeleton-text" style="width: 80px;"></div>
+              </div>
+              <div class="skeleton skeleton-text" style="width: 120px; margin-bottom: var(--spacing-3);"></div>
+              <div class="product-pricing">
+                <div class="skeleton skeleton-price"></div>
+                <div class="skeleton skeleton-text" style="width: 80px;"></div>
+              </div>
+            </div>
+          `;
+
+          return card;
+        }
+
+        showError(message) {
+          const grid = document.getElementById('productsGrid');
+          const noResults = document.getElementById('noResults');
+
+          grid.style.display = 'none';
+          noResults.style.display = 'block';
+
+          const errorHtml = `
+            <div class="text-center py-5">
+              <i class="bi bi-exclamation-triangle display-1 text-danger mb-3"></i>
+              <h4 class="text-muted">${message}</h4>
+              <button class="btn btn-primary mt-3" onclick="location.reload()">
+                <i class="bi bi-arrow-clockwise me-2"></i>Reintentar
+              </button>
+            </div>
+          `;
+
+          noResults.innerHTML = errorHtml;
         }
 
         createFilterableProducts() {

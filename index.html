@@ -305,11 +305,8 @@
   </head>
 
   <body>
-    <!-- Navbar CORREGIDO -->
-    <nav
-      class="navbar navbar-expand-lg sticky-top"
-      id="mainNavbar"
-    >
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
       <div class="container-fluid px-4">
         <!-- Logo -->
         <a class="navbar-brand" href="./index.html" data-aos="fade-right">
@@ -318,11 +315,7 @@
         </a>
 
         <!-- Search Bar -->
-        <div
-          class="search-container mx-auto"
-          data-aos="fade-up"
-          data-aos-delay="100"
-        >
+        <div class="search-container mx-auto" data-aos="fade-up" data-aos-delay="100">
           <div class="search-wrapper">
             <i class="bi bi-search search-icon"></i>
             <input
@@ -334,7 +327,7 @@
           </div>
         </div>
 
-        <!-- User Actions CORREGIDO -->
+        <!-- User Actions -->
         <div class="navbar-actions" data-aos="fade-left" data-aos-delay="200">
           <!-- Products Link -->
           <div class="action-item">
@@ -351,7 +344,7 @@
               <span class="action-text">Servicios</span>
             </a>
           </div>
-          
+
           <!-- Notifications -->
           <div class="action-item dropdown">
             <button
@@ -365,7 +358,6 @@
               <span class="notification-badge" id="notificationBadge">3</span>
             </button>
             <div class="dropdown-menu dropdown-menu-end notifications-dropdown" aria-labelledby="notificationBtn">
-              <!-- Header con contador -->
               <div class="notifications-header">
                 <h6 class="mb-0">
                   <i class="bi bi-bell me-2"></i>
@@ -373,16 +365,12 @@
                   <span class="notifications-count" id="notificationsCount">3</span>
                 </h6>
               </div>
-
-              <!-- Filtros -->
               <div class="notifications-filter">
                 <button class="filter-chip active" data-filter="all">Todas</button>
                 <button class="filter-chip" data-filter="unread">No leídas</button>
                 <button class="filter-chip" data-filter="orders">Pedidos</button>
                 <button class="filter-chip" data-filter="offers">Ofertas</button>
               </div>
-
-              <!-- Cuerpo de notificaciones -->
               <div class="notifications-body" id="notificationsDropdownBody">
                 <div class="notification-item unread" data-id="1" data-type="orders">
                   <div class="notification-icon bg-success">
@@ -397,7 +385,6 @@
                     <i class="bi bi-x"></i>
                   </button>
                 </div>
-
                 <div class="notification-item unread" data-id="2" data-type="orders">
                   <div class="notification-icon bg-info">
                     <i class="bi bi-truck text-white"></i>
@@ -411,7 +398,6 @@
                     <i class="bi bi-x"></i>
                   </button>
                 </div>
-
                 <div class="notification-item unread" data-id="3" data-type="offers">
                   <div class="notification-icon bg-warning">
                     <i class="bi bi-star text-white"></i>
@@ -426,12 +412,10 @@
                   </button>
                 </div>
               </div>
-
-              <!-- Footer con acciones -->
               <div class="notifications-footer">
-                <button type="button" class="btn btn-outline-secondary btn-sm w-100 mb-2" id="viewAllNotifications">
+                <a href="./HTML/notificaciones.html" class="btn btn-outline-secondary btn-sm w-100 mb-2">
                   <i class="bi bi-list me-2"></i>Ver todas
-                </button>
+                </a>
                 <button type="button" class="btn btn-primary btn-sm w-100" id="markAllAsRead">
                   <i class="bi bi-check-all me-2"></i>Marcar todas como leídas
                 </button>
@@ -446,7 +430,6 @@
               <span class="cart-badge" id="cartBadge">0</span>
             </button>
             <div class="dropdown-menu dropdown-menu-end cart-dropdown" aria-labelledby="cartBtn">
-              <!-- Header del carrito -->
               <div class="cart-header">
                 <h6 class="mb-0">
                   <i class="bi bi-cart3 me-2"></i>
@@ -454,13 +437,7 @@
                   <span class="cart-count" id="cartCount">0</span>
                 </h6>
               </div>
-
-              <!-- Cuerpo del carrito -->
-              <div class="cart-body" id="cartDropdownBody">
-                <!-- Los items del carrito se cargarán dinámicamente -->
-              </div>
-
-              <!-- Footer del carrito -->
+              <div class="cart-body" id="cartDropdownBody"></div>
               <div class="cart-footer">
                 <div class="cart-total mb-3">
                   <div class="cart-total-row cart-total-final">
@@ -468,9 +445,6 @@
                     <span class="cart-total-value" id="cartTotal">$0</span>
                   </div>
                 </div>
-                <button type="button" class="btn btn-outline-secondary btn-sm w-100 mb-2" id="viewFullCart">
-                  <i class="bi bi-eye me-2"></i>Ver carrito completo
-                </button>
                 <button type="button" class="btn btn-primary btn-sm w-100" id="proceedToCheckout">
                   <i class="bi bi-credit-card me-2"></i>Finalizar compra
                 </button>
@@ -478,7 +452,7 @@
             </div>
           </div>
 
-          <!-- Profile CORREGIDO -->
+          <!-- Profile -->
           <div class="action-item dropdown">
             <button
               class="action-btn profile-btn"
@@ -494,10 +468,7 @@
               />
               <span class="profile-name">Usuario</span>
             </button>
-            <ul
-              class="dropdown-menu dropdown-menu-end"
-              aria-labelledby="profileDropdown"
-            >
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
               <li class="dropdown-header">
                 <h6 class="mb-0">Mi Cuenta</h6>
               </li>
@@ -519,21 +490,12 @@
               </li>
               <li><hr class="dropdown-divider" /></li>
               <li>
-                <a
-                  class="dropdown-item"
-                  href="./HTML/login.html"
-                  id="loginLink"
-                >
+                <a class="dropdown-item" href="./HTML/login.html">
                   <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
                 </a>
               </li>
               <li>
-                <a
-                  class="dropdown-item text-danger"
-                  href="#"
-                  id="logoutBtn"
-                  style="display: none"
-                >
+                <a class="dropdown-item text-danger" href="#" id="logoutBtn" style="display: none">
                   <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
                 </a>
               </li>
@@ -1766,176 +1728,7 @@
       </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-content">
-          <div class="row">
-            <!-- Company Info -->
-            <div class="col-lg-4 col-md-6 mb-4">
-              <div class="footer-section">
-                <div class="footer-logo">
-                  <img src="./IMG/LOGO-2.png" alt="Dale Deal" class="footer-logo-img" />
-                  <span class="footer-brand-text">DALE DEAL</span>
-                </div>
-                <p class="footer-description">
-                  Tu marketplace de productos y servicios en Argentina. 
-                  Compra, vende productos y contrata servicios profesionales de calidad.
-                </p>
-                <div class="footer-social">
-                  <a href="#" class="social-link" title="Facebook">
-                    <i class="bi bi-facebook"></i>
-                  </a>
-                  <a href="#" class="social-link" title="Instagram">
-                    <i class="bi bi-instagram"></i>
-                  </a>
-                  <a href="#" class="social-link" title="Twitter">
-                    <i class="bi bi-twitter"></i>
-                  </a>
-                  <a href="#" class="social-link" title="LinkedIn">
-                    <i class="bi bi-linkedin"></i>
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <!-- Quick Links -->
-            <div class="col-lg-2 col-md-6 mb-4">
-              <div class="footer-section">
-                <h5 class="footer-title">Plataforma</h5>
-                <ul class="footer-links">
-                  <li><a href="./HTML/servicios.html">Buscar servicios</a></li>
-                  <li><a href="#" id="registerProviderLink">Ofrecer servicios</a></li>
-                  <li><a href="#">Cómo funciona</a></li>
-                  <li><a href="#" id="businessLink">Soy una empresa</a></li>
-                  <li><a href="#" id="sellProductsLink">Publicar productos</a></li>
-                  <li><a href="#" id="advertiseLink">Publicidad en el sitio</a></li>
-                </ul>
-              </div>
-            </div>
-
-            <!-- Categories -->
-            <div class="col-lg-2 col-md-6 mb-4">
-              <div class="footer-section">
-                <h5 class="footer-title">Categorías</h5>
-                <ul class="footer-links">
-                  <li><a href="#productos">Productos</a></li>
-                  <li><a href="./HTML/servicios.html">Servicios</a></li>
-                  <li><a href="#electronica">Electrónica</a></li>
-                  <li><a href="#hogar">Hogar y Jardín</a></li>
-                  <li><a href="#moda">Moda y Belleza</a></li>
-                </ul>
-              </div>
-            </div>
-
-            <!-- Support -->
-            <div class="col-lg-2 col-md-6 mb-4">
-              <div class="footer-section">
-                <h5 class="footer-title">Soporte</h5>
-                <ul class="footer-links">
-                  <li><a href="#">Centro de ayuda</a></li>
-                  <li><a href="#">Contacto</a></li>
-                  <li><a href="#">Reportar problema</a></li>
-                  <li><a href="#">Estado del servicio</a></li>
-                  <li><a href="#">Seguridad</a></li>
-                </ul>
-              </div>
-            </div>
-
-            <!-- Contact & Download -->
-            <div class="col-lg-2 col-md-6 mb-4">
-              <div class="footer-section">
-                <h5 class="footer-title">Contacto</h5>
-                <div class="footer-contact">
-                  <div class="contact-item">
-                    <i class="bi bi-telephone"></i>
-                    <span>0800-DALEDEAL</span>
-                  </div>
-                  <div class="contact-item">
-                    <i class="bi bi-envelope"></i>
-                    <span>hola@daledeal.com</span>
-                  </div>
-                  <div class="contact-item">
-                    <i class="bi bi-geo-alt"></i>
-                    <span>Buenos Aires, Argentina</span>
-                  </div>
-                </div>
-                
-                <div class="footer-apps mt-3">
-                  <p class="footer-apps-title">Descarga la app</p>
-                  <div class="app-links">
-                    <a href="#" class="app-link">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" class="app-badge">
-                    </a>
-                    <a href="#" class="app-link">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" class="app-badge">
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Newsletter Signup -->
-          <div class="footer-newsletter">
-            <div class="row align-items-center">
-              <div class="col-md-6">
-                <h5 class="newsletter-title">
-                  <i class="bi bi-bell me-2"></i>
-                  Mantente actualizado
-                </h5>
-                <p class="newsletter-subtitle">Recibe las mejores ofertas y novedades de Dale Deal</p>
-              </div>
-              <div class="col-md-6">
-                <form class="newsletter-form" id="newsletterForm">
-                  <div class="input-group">
-                    <input 
-                      type="email" 
-                      class="form-control newsletter-input" 
-                      placeholder="Ingresa tu email"
-                      id="newsletterEmail"
-                      required
-                    >
-                    <button class="btn btn-primary newsletter-btn" type="submit">
-                      <i class="bi bi-arrow-right"></i>
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-
-          <!-- Footer Bottom -->
-          <div class="footer-bottom">
-            <div class="footer-bottom-content">
-              <div class="row align-items-center">
-                <div class="col-md-8">
-                  <div class="footer-copyright">
-                    <div class="copyright-main">
-                      <span class="copyright-year">© 2025</span>
-                      <span class="copyright-brand">Dale Deal</span>
-                      <span class="copyright-text">Todos los derechos reservados.</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="footer-legal">
-                    <div class="legal-links-group">
-                      <a href="#" class="legal-link">Términos y Condiciones</a>
-                      <span class="text-muted mx-2">•</span>
-                      <a href="#" class="legal-link">Política de Privacidad</a>
-                      <span class="text-muted mx-2">•</span>
-                      <a href="#" class="legal-link">Política de Cookies</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-            </div>
-          </div>
-        </div>
-      </div>
-    </footer>
+    <!-- Footer temporalmente removido, se agregará después -->
 
     <!-- Favorites Modal -->
     <div class="modal fade" id="favoritesModal" tabindex="-1" aria-labelledby="favoritesModalLabel" aria-hidden="true">
@@ -1997,6 +1790,13 @@
     <script src="./JS/product-carousel.js"></script>
     <script src="./JS/dropdown-fix.js"></script>
     <script src="./JS/pages/services.js"></script>
+
+    <!-- API y Product Loader -->
+    <!-- TEMPORALMENTE DESHABILITADOS PARA DEBUG
+    <script src="./JS/api.js"></script>
+    <script src="./JS/search.js"></script>
+    <script src="./JS/pages/home.js"></script>
+    -->
 
     <script>
       // Product navigation function
@@ -2213,5 +2013,9 @@
         new ServiceFilters();
       });
     </script>
+
+    <!-- Component Loader - DESHABILITADO
+    <script src="./JS/component-loader.js" defer></script>
+    -->
   </body>
 </html>

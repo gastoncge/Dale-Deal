@@ -257,21 +257,100 @@ DaleDeal.utils.storage = {
 };
 
 // ===== UTILIDADES DE NOTIFICACIONES =====
-DaleDeal.utils.showNotification = (message, type = "info", duration = 5000) => {
+/**
+ * Sistema unificado de notificaciones para toda la aplicación
+ * Soporta dos estilos: 'alert' (alertas en la esquina) y 'toast' (toasts de Bootstrap)
+ *
+ * @param {string} message - Mensaje a mostrar
+ * @param {string} type - Tipo de notificación: 'success', 'error', 'warning', 'info'
+ * @param {number} duration - Duración en ms (0 para persistente)
+ * @param {object} options - Opciones adicionales: { style: 'alert'|'toast', position: 'top-right'|'top-left'|'bottom-right'|'bottom-left' }
+ */
+DaleDeal.utils.showNotification = (message, type = "info", duration = 3000, options = {}) => {
+  // Normalizar el tipo para compatibilidad
+  const normalizedType = type === 'danger' ? 'error' : type;
+
+  // Configuración por defecto
+  const config = {
+    style: options.style || 'toast', // 'alert' o 'toast'
+    position: options.position || 'bottom-right',
+    duration: duration,
+    ...options
+  };
+
+  // Decidir qué estilo usar
+  if (config.style === 'toast' && window.bootstrap?.Toast) {
+    return DaleDeal.utils.showToast(message, normalizedType, config);
+  } else {
+    return DaleDeal.utils.showAlert(message, normalizedType, config);
+  }
+};
+
+/**
+ * Mostrar notificación estilo Toast (Bootstrap)
+ */
+DaleDeal.utils.showToast = (message, type, config) => {
+  const toastId = 'toast_' + Date.now();
+  const bgClass = DaleDeal.utils.getBootstrapBgClass(type);
+  const icon = DaleDeal.utils.getNotificationIcon(type);
+
+  const toastHTML = `
+    <div class="toast align-items-center text-white ${bgClass} border-0"
+         role="alert" aria-live="assertive" aria-atomic="true" id="${toastId}">
+      <div class="d-flex">
+        <div class="toast-body">
+          <i class="bi bi-${icon} me-2"></i>
+          ${message}
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+      </div>
+    </div>
+  `;
+
+  // Obtener o crear contenedor de toasts
+  let toastContainer = document.getElementById('toast-container');
+  if (!toastContainer) {
+    toastContainer = DaleDeal.utils.createToastContainer(config.position);
+  }
+
+  toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+
+  const toastElement = document.getElementById(toastId);
+  const toast = new bootstrap.Toast(toastElement, {
+    delay: config.duration,
+    autohide: config.duration > 0
+  });
+
+  toast.show();
+
+  toastElement.addEventListener('hidden.bs.toast', () => {
+    toastElement.remove();
+  });
+
+  return toastElement;
+};
+
+/**
+ * Mostrar notificación estilo Alert (custom)
+ */
+DaleDeal.utils.showAlert = (message, type, config) => {
   const container =
     document.getElementById("notificationContainer") ||
-    DaleDeal.utils.createNotificationContainer();
+    DaleDeal.utils.createNotificationContainer(config.position);
+
+  const alertClass = DaleDeal.utils.getBootstrapAlertClass(type);
+  const icon = DaleDeal.utils.getNotificationIcon(type);
 
   const notification = DaleDeal.utils.createElement(
     "div",
-    `alert alert-${type} alert-dismissible fade show notification-item`,
+    `alert ${alertClass} alert-dismissible fade show notification-item`,
     `
       <div class="d-flex align-items-center">
-        <i class="bi bi-${DaleDeal.utils.getNotificationIcon(type)} me-2"></i>
+        <i class="bi bi-${icon} me-2"></i>
         <div class="flex-grow-1">
           <div>${message}</div>
         </div>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
       </div>
     `
   );
@@ -279,41 +358,82 @@ DaleDeal.utils.showNotification = (message, type = "info", duration = 5000) => {
   notification.style.cssText = `
     margin-bottom: 10px;
     animation: slideInRight 0.3s ease-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   `;
 
   container.appendChild(notification);
 
   // Auto-dismiss
-  if (duration > 0) {
+  if (config.duration > 0) {
     setTimeout(() => {
       if (notification.parentNode) {
-        notification.classList.add("fade");
+        notification.classList.remove("show");
         setTimeout(() => {
           if (notification.parentNode) {
             notification.remove();
           }
         }, 150);
       }
-    }, duration);
+    }, config.duration);
   }
+
+  return notification;
 };
 
-DaleDeal.utils.createNotificationContainer = () => {
+/**
+ * Crear contenedor de notificaciones tipo Alert
+ */
+DaleDeal.utils.createNotificationContainer = (position = 'top-right') => {
   const container = DaleDeal.utils.createElement(
     "div",
     "notification-container position-fixed"
   );
   container.id = "notificationContainer";
+
+  // Configurar posición
+  const positions = {
+    'top-right': 'top: 20px; right: 20px;',
+    'top-left': 'top: 20px; left: 20px;',
+    'bottom-right': 'bottom: 20px; right: 20px;',
+    'bottom-left': 'bottom: 20px; left: 20px;'
+  };
+
   container.style.cssText = `
-    top: 20px;
-    right: 20px;
+    ${positions[position] || positions['top-right']}
     z-index: 1055;
     max-width: 350px;
   `;
+
   document.body.appendChild(container);
   return container;
 };
 
+/**
+ * Crear contenedor de toasts
+ */
+DaleDeal.utils.createToastContainer = (position = 'bottom-right') => {
+  const container = document.createElement('div');
+  container.id = 'toast-container';
+  container.className = 'toast-container position-fixed p-3';
+  container.style.zIndex = '9999';
+
+  // Configurar posición
+  const positionClasses = {
+    'top-right': 'top-0 end-0',
+    'top-left': 'top-0 start-0',
+    'bottom-right': 'bottom-0 end-0',
+    'bottom-left': 'bottom-0 start-0'
+  };
+
+  container.className += ' ' + (positionClasses[position] || positionClasses['bottom-right']);
+
+  document.body.appendChild(container);
+  return container;
+};
+
+/**
+ * Obtener icono según tipo
+ */
 DaleDeal.utils.getNotificationIcon = (type) => {
   const icons = {
     success: "check-circle-fill",
@@ -322,6 +442,32 @@ DaleDeal.utils.getNotificationIcon = (type) => {
     info: "info-circle-fill",
   };
   return icons[type] || "info-circle-fill";
+};
+
+/**
+ * Obtener clase de Bootstrap para background (toasts)
+ */
+DaleDeal.utils.getBootstrapBgClass = (type) => {
+  const classes = {
+    success: "bg-success",
+    error: "bg-danger",
+    warning: "bg-warning",
+    info: "bg-primary",
+  };
+  return classes[type] || "bg-primary";
+};
+
+/**
+ * Obtener clase de Bootstrap para alertas
+ */
+DaleDeal.utils.getBootstrapAlertClass = (type) => {
+  const classes = {
+    success: "alert-success",
+    error: "alert-danger",
+    warning: "alert-warning",
+    info: "alert-info",
+  };
+  return classes[type] || "alert-info";
 };
 
 // ===== UTILIDADES DE FORMULARIOS =====
@@ -501,8 +647,8 @@ DaleDeal.utils.init = () => {
     );
   });
 
-  // Crear contenedor de notificaciones
-  DaleDeal.utils.createNotificationContainer();
+  // Crear contenedor de toasts (preferido)
+  DaleDeal.utils.createToastContainer();
 
   console.log("🚀 Dale Deal Utils inicializados correctamente");
 };

@@ -375,59 +375,15 @@ class CartManager {
     }
   }
 
-  // Mostrar notificación
+  // Mostrar notificación usando el sistema centralizado
   showNotification(message, type = "info") {
-    try {
-      // Usar el sistema de notificaciones global si está disponible
-      if (window.DaleDeal?.utils?.showNotification) {
-        window.DaleDeal.utils.showNotification(message, type);
-        return;
-      }
-
-      // Fallback con toast de Bootstrap si está disponible
-      if (window.bootstrap?.Toast) {
-        this.showBootstrapToast(message, type);
-        return;
-      }
-
-      // Fallback simple para consola
-      console.log(`[CART ${type.toUpperCase()}] ${message}`);
-    } catch (error) {
-      console.error('Error mostrando notificación:', error);
+    // Usar el sistema de notificaciones global de DaleDeal.utils
+    if (window.DaleDeal?.utils?.showNotification) {
+      window.DaleDeal.utils.showNotification(message, type);
+    } else {
+      // Fallback si utils no está disponible
       console.log(`[CART ${type.toUpperCase()}] ${message}`);
     }
-  }
-
-  // Crear toast de Bootstrap como fallback
-  showBootstrapToast(message, type) {
-    const toastContainer = document.querySelector('.toast-container') || this.createToastContainer();
-    
-    const toast = document.createElement('div');
-    toast.className = `toast align-items-center text-white bg-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'primary'} border-0`;
-    toast.setAttribute('role', 'alert');
-    toast.innerHTML = `
-      <div class="d-flex">
-        <div class="toast-body">${message}</div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-      </div>
-    `;
-    
-    toastContainer.appendChild(toast);
-    const bsToast = new bootstrap.Toast(toast);
-    bsToast.show();
-    
-    // Remover después de ocultar
-    toast.addEventListener('hidden.bs.toast', () => {
-      toast.remove();
-    });
-  }
-
-  // Crear contenedor de toasts si no existe
-  createToastContainer() {
-    const container = document.createElement('div');
-    container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-    document.body.appendChild(container);
-    return container;
   }
 }
 
