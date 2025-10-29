@@ -2254,17 +2254,42 @@
   color: var(--white);
 }
 
-/* Overlay del servicio - Completamente oculto */
+/* Overlay del servicio - Idéntico a productos */
 .service-overlay {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+  z-index: 3;
+}
+
+.service-card:hover .service-overlay {
+  opacity: 1;
 }
 
 .service-cta {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
+  padding: var(--spacing-3) var(--spacing-6);
+  background: var(--white);
+  color: var(--gray-900);
+  border: none;
+  border-radius: var(--radius-3xl);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.service-cta:hover {
+  background: var(--primary-red);
+  color: var(--white);
+  transform: scale(1.05);
 }
 
 /* Acciones del servicio (icono de favoritos) */
@@ -2276,7 +2301,12 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-2);
+  opacity: 0;
   transition: all var(--transition-base);
+}
+
+.service-card:hover .service-actions {
+  opacity: 1;
 }
 
 .service-actions .action-heart {
