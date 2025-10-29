@@ -93,6 +93,16 @@ function renderProductCard(product) {
     <span class="product-current-price">${window.DaleDeal.utils.formatCurrency(product.price)}</span>
   `;
 
+  // Determinar si tiene envío gratis (productos con descuento o precio > 50000)
+  const hasFreeShipping = product.freeShipping || hasDiscount || product.price > 50000;
+
+  // Renderizar descripción corta (primeras 120 caracteres)
+  const shortDescription = product.description
+    ? (product.description.length > 120
+        ? product.description.substring(0, 120) + '...'
+        : product.description)
+    : '';
+
   return `
     <div class="product-card ${hasDiscount ? 'has-offer' : ''}" data-id="${product.id}" data-clickable="true">
       <div class="product-image-container">
@@ -106,22 +116,31 @@ function renderProductCard(product) {
       </div>
       <div class="product-info">
         <h3 class="product-title">${product.title}</h3>
-        <div class="product-rating">
-          <div class="stars">
-            ${renderStars(product.rating)}
-          </div>
-          <span class="rating-text">${product.rating}</span>
-          <span class="reviews-count">(${product.reviewCount.toLocaleString('es-AR')})</span>
-        </div>
+        ${shortDescription ? `<p class="product-description">${shortDescription}</p>` : ''}
         <div class="product-meta">
-          <div class="product-info-row">
+          <div class="product-rating-location-row">
+            <div class="product-rating">
+              <div class="stars">
+                ${renderStars(product.rating)}
+              </div>
+              <span class="rating-text">${product.rating}</span>
+              <span class="reviews-count">(${product.reviewCount.toLocaleString('es-AR')})</span>
+            </div>
             <div class="product-location">
               <i class="bi bi-geo-alt-fill"></i>
               <span>CABA</span>
             </div>
+          </div>
+          <div class="product-info-row">
             <div class="product-pricing">
               ${priceHTML}
             </div>
+            ${hasFreeShipping ? `
+              <div class="product-free-shipping">
+                <i class="bi bi-truck"></i>
+                <span>Envío gratis</span>
+              </div>
+            ` : ''}
           </div>
         </div>
       </div>
