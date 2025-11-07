@@ -678,29 +678,46 @@ class ProductPage {
               <div class="col-12 col-md-6 col-lg-3 mb-4 d-flex">
                 <div class="product-card similar-product-card w-100" data-id="${product.id}" data-clickable="true">
                   <div class="product-image-container">
-                    <img 
-                      src="${product.images.main}" 
-                      alt="${product.title}" 
+                    <img
+                      src="${product.images.main}"
+                      alt="${product.title}"
                       class="product-image"
                     />
                     ${product.discount ? `<div class="product-badges"><span class="badge-offer">-${product.discount}%</span></div>` : ''}
                     <div class="product-actions">
-                      <button class="action-heart" title="Agregar a favoritos">
+                      <button class="action-heart" title="Agregar a favoritos" data-product-id="${product.id}">
                         <i class="bi bi-heart"></i>
                       </button>
                     </div>
                   </div>
                   <div class="product-info">
-                    <h5 class="product-title">${product.title}</h5>
-                    <div class="product-pricing">
-                      <span class="product-current-price">${this.formatPrice(product.price)}</span>
-                      ${product.originalPrice ? `<span class="product-original-price">${this.formatPrice(product.originalPrice)}</span>` : ''}
-                    </div>
-                    <div class="product-rating">
-                      <div class="stars">
-                        ${this.renderProductStars(product.rating)}
+                    <h3 class="product-title">${product.title}</h3>
+
+                    <p class="product-description">${product.description ? (product.description.length > 80 ? product.description.substring(0, 80) + '...' : product.description) : 'Producto de alta calidad con excelentes características.'}</p>
+
+                    <div class="product-meta-group">
+                      <div class="product-rating">
+                        <div class="stars">
+                          ${this.renderProductStars(product.rating)}
+                        </div>
+                        <span class="reviews-count">(${product.reviewCount.toLocaleString('es-AR')})</span>
                       </div>
-                      <span class="rating-count">(${product.reviewCount.toLocaleString()})</span>
+                      <div class="product-location">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <span>CABA</span>
+                      </div>
+                    </div>
+
+                    <div class="product-shipping">
+                      <i class="bi bi-truck"></i>
+                      Envío gratis
+                    </div>
+
+                    <div class="product-pricing-wrapper">
+                      <div class="product-pricing">
+                        <span class="product-current-price">${this.formatPrice(product.price)}</span>
+                        ${product.originalPrice ? `<span class="product-original-price">${this.formatPrice(product.originalPrice)}</span>` : ''}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -800,31 +817,48 @@ class ProductPage {
               <div class="col-12 col-md-6 col-lg-3 mb-4 d-flex">
                 <div class="product-card recent-product-card w-100" data-id="${product.id}" data-clickable="true">
                   <div class="product-image-container">
-                    <img 
-                      src="${product.images.main}" 
-                      alt="${product.title}" 
+                    <img
+                      src="${product.images.main}"
+                      alt="${product.title}"
                       class="product-image"
                     />
                     <div class="recently-viewed-badge">
                       <i class="bi bi-clock-history"></i>
                     </div>
                     <div class="product-actions">
-                      <button class="action-heart" title="Agregar a favoritos">
+                      <button class="action-heart" title="Agregar a favoritos" data-product-id="${product.id}">
                         <i class="bi bi-heart"></i>
                       </button>
                     </div>
                   </div>
                   <div class="product-info">
-                    <h5 class="product-title">${product.title}</h5>
-                    <div class="product-pricing">
-                      <span class="product-current-price">${this.formatPrice(product.price)}</span>
-                      ${product.originalPrice ? `<span class="product-original-price">${this.formatPrice(product.originalPrice)}</span>` : ''}
-                    </div>
-                    <div class="product-rating">
-                      <div class="stars">
-                        ${this.renderProductStars(product.rating)}
+                    <h3 class="product-title">${product.title}</h3>
+
+                    <p class="product-description">${product.description ? (product.description.length > 80 ? product.description.substring(0, 80) + '...' : product.description) : 'Producto de alta calidad con excelentes características.'}</p>
+
+                    <div class="product-meta-group">
+                      <div class="product-rating">
+                        <div class="stars">
+                          ${this.renderProductStars(product.rating)}
+                        </div>
+                        <span class="reviews-count">(${product.reviewCount.toLocaleString('es-AR')})</span>
                       </div>
-                      <span class="rating-count">(${product.reviewCount.toLocaleString()})</span>
+                      <div class="product-location">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <span>CABA</span>
+                      </div>
+                    </div>
+
+                    <div class="product-shipping">
+                      <i class="bi bi-truck"></i>
+                      Envío gratis
+                    </div>
+
+                    <div class="product-pricing-wrapper">
+                      <div class="product-pricing">
+                        <span class="product-current-price">${this.formatPrice(product.price)}</span>
+                        ${product.originalPrice ? `<span class="product-original-price">${this.formatPrice(product.originalPrice)}</span>` : ''}
+                      </div>
                     </div>
                   </div>
                 </div>
