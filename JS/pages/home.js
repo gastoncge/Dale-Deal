@@ -30,6 +30,44 @@ function renderStars(rating) {
 }
 
 /**
+ * Renderiza los badges de envío según los datos del producto
+ */
+function renderShippingBadges(shipping) {
+  if (!shipping) return '';
+
+  let badgesHTML = '';
+
+  // Badge de envío gratis
+  if (shipping.free) {
+    badgesHTML += `
+      <div class="shipping-badge shipping-free">
+        <i class="bi bi-truck"></i>
+        <span>Envío gratis</span>
+      </div>
+    `;
+  }
+
+  // Badge de velocidad de entrega
+  if (shipping.speed === 'today') {
+    badgesHTML += `
+      <div class="shipping-badge shipping-fast">
+        <i class="bi bi-lightning-charge-fill"></i>
+        <span>Llega hoy</span>
+      </div>
+    `;
+  } else if (shipping.speed === 'tomorrow') {
+    badgesHTML += `
+      <div class="shipping-badge shipping-fast">
+        <i class="bi bi-clock-fill"></i>
+        <span>Llega mañana</span>
+      </div>
+    `;
+  }
+
+  return badgesHTML ? `<div class="shipping-badges">${badgesHTML}</div>` : '';
+}
+
+/**
  * Renderiza una tarjeta de producto
  */
 function renderProductCard(product) {
@@ -93,9 +131,6 @@ function renderProductCard(product) {
     <span class="product-current-price">${window.DaleDeal.utils.formatCurrency(product.price)}</span>
   `;
 
-  // Determinar si tiene envío gratis (productos con descuento o precio > 50000)
-  const hasFreeShipping = product.freeShipping || hasDiscount || product.price > 50000;
-
   // Renderizar descripción corta (primeras 80 caracteres)
   const shortDescription = product.description
     ? (product.description.length > 80
@@ -116,28 +151,21 @@ function renderProductCard(product) {
       </div>
       <div class="product-info">
         <h3 class="product-title">${product.title}</h3>
-
         <p class="product-description">${shortDescription}</p>
 
         <div class="product-meta-group">
           <div class="product-rating">
-            <div class="stars">
-              ${renderStars(product.rating)}
-            </div>
+            <div class="stars">${renderStars(product.rating)}</div>
             <span class="reviews-count">(${product.reviewCount.toLocaleString('es-AR')})</span>
+            ${product.shipping?.free ? `<span class="shipping-badge"><i class="bi bi-truck"></i> Envío gratis</span>` : ''}
           </div>
           <div class="product-location">
             <i class="bi bi-geo-alt-fill"></i>
             <span>CABA</span>
+            ${product.shipping?.speed === 'today' ? `<span class="shipping-badge"><i class="bi bi-lightning-charge-fill"></i> Llega hoy</span>` : ''}
+            ${product.shipping?.speed === 'tomorrow' ? `<span class="shipping-badge"><i class="bi bi-clock-fill"></i> Llega mañana</span>` : ''}
           </div>
         </div>
-
-        ${hasFreeShipping ? `
-          <div class="product-shipping">
-            <i class="bi bi-truck"></i>
-            Envío gratis
-          </div>
-        ` : ''}
 
         <div class="product-pricing-wrapper">
           <div class="product-pricing">
@@ -272,6 +300,8 @@ if (typeof window !== 'undefined') {
   window.HomePageLoader = {
     loadProducts,
     renderProductCard,
-    initializeProductListeners
+    initializeProductListeners,
+    renderStars,
+    renderShippingBadges
   };
 }

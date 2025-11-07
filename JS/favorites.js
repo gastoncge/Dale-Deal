@@ -341,23 +341,23 @@ class FavoritesManager {
           <div class="product-info">
             <h3 class="product-title">${favorite.title}</h3>
 
-            <div class="product-rating">
-              <div class="stars">
-                ${this.renderStars(favorite.rating)}
+            <div class="product-meta-group">
+              <div class="product-rating">
+                <div class="stars">${this.renderStars(favorite.rating)}</div>
+                <span class="reviews-count">${favorite.ratingCount}</span>
               </div>
-              <span class="rating-text">${favorite.rating}</span>
-              <span class="reviews-count">${favorite.ratingCount}</span>
             </div>
 
-            <div class="product-pricing">
-              <span class="product-current-price">${favorite.priceText}</span>
-              ${favorite.originalPriceText ? `<span class="product-original-price">${favorite.originalPriceText}</span>` : ''}
-            </div>
-
-            <div class="favorite-actions-buttons">
-              <button class="btn-add-to-cart" onclick="event.stopPropagation(); window.favoritesManager.addToCartFromFavorites('${favorite.id}')">
-                <i class="bi bi-cart-plus me-2"></i>Agregar al carrito
-              </button>
+            <div class="product-pricing-wrapper">
+              <div class="product-pricing">
+                <span class="product-current-price">${favorite.priceText}</span>
+                ${favorite.originalPriceText ? `<span class="product-original-price">${favorite.originalPriceText}</span>` : ''}
+              </div>
+              <div class="favorite-actions-buttons">
+                <button class="btn-add-to-cart" onclick="event.stopPropagation(); window.favoritesManager.addToCartFromFavorites('${favorite.id}')">
+                  <i class="bi bi-cart-plus me-2"></i>Agregar al carrito
+                </button>
+              </div>
             </div>
           </div>
         </div>

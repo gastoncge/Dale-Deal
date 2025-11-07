@@ -110,12 +110,7 @@
   letter-spacing: -0.02em;
 }
 
-.product-meta {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-6);
-  flex-wrap: wrap;
-}
+/* .product-meta eliminada - ahora se usa .product-meta-group de components.css */
 
 .product-rating {
   display: flex;
@@ -1472,73 +1467,7 @@
   transform: scale(1.1);
 }
 
-.similar-product-card .product-info {
-  padding: var(--spacing-3);
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  min-height: 160px;
-}
-
-.similar-product-card .product-title {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--gray-900);
-  margin-bottom: var(--spacing-2);
-  line-height: 1.3;
-  min-height: 2.6em;
-  max-height: 2.6em;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.similar-product-card .product-rating {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  margin-bottom: 0;
-  min-height: 20px;
-  height: 20px;
-}
-
-.similar-product-card .stars {
-  display: flex;
-  gap: 1px;
-}
-
-.similar-product-card .stars i {
-  font-size: var(--font-size-sm);
-  color: var(--primary-yellow);
-}
-
-.similar-product-card .rating-count {
-  font-size: var(--font-size-xs);
-  color: var(--gray-500);
-}
-
-.similar-product-card .product-pricing {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  flex-wrap: wrap;
-  margin-bottom: var(--spacing-2);
-  min-height: 28px;
-}
-
-.similar-product-card .product-current-price {
-  font-size: var(--font-size-lg);
-  font-weight: 700;
-  color: var(--primary-red);
-}
-
-.similar-product-card .product-original-price {
-  font-size: var(--font-size-base);
-  color: var(--gray-500);
-  text-decoration: line-through;
-}
+/* Estilos específicos de .product-info, .product-title, .product-rating, etc. ahora heredan de components.css */
 
 .random-products-notice {
   background: var(--primary-yellow-light);
@@ -1759,86 +1688,7 @@
   z-index: 2;
 }
 
-.recent-product-card .product-info {
-  padding: var(--spacing-3);
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  min-height: 160px;
-}
-
-.recent-product-card .product-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-
-.recent-product-card .product-pricing {
-  margin-top: auto;
-  padding-top: var(--spacing-3);
-  flex-shrink: 0;
-}
-
-.recent-product-card .product-title {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--gray-900);
-  margin-bottom: var(--spacing-2);
-  line-height: 1.3;
-  min-height: 2.6em;
-  max-height: 2.6em;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.recent-product-card .product-rating {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  margin-bottom: 0;
-  min-height: 20px;
-  height: 20px;
-}
-
-.recent-product-card .stars {
-  display: flex;
-  gap: 1px;
-}
-
-.recent-product-card .stars i {
-  font-size: var(--font-size-sm);
-  color: var(--primary-yellow);
-}
-
-.recent-product-card .rating-count {
-  font-size: var(--font-size-xs);
-  color: var(--gray-500);
-}
-
-.recent-product-card .product-pricing {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  flex-wrap: wrap;
-  margin-bottom: var(--spacing-2);
-  min-height: 28px;
-}
-
-.recent-product-card .product-current-price {
-  font-size: var(--font-size-lg);
-  font-weight: 700;
-  color: var(--primary-red);
-}
-
-.recent-product-card .product-original-price {
-  font-size: var(--font-size-base);
-  color: var(--gray-500);
-  text-decoration: line-through;
-}
+/* Estilos específicos de .product-info, .product-title, .product-rating, etc. ahora heredan de components.css */
 
 /* ===== RESPONSIVE ADICIONAL ===== */
 @media (max-width: 768px) {
@@ -1895,10 +1745,6 @@
 
   .recent-product-card .product-image-container {
     height: 180px;
-  }
-
-  .recent-product-card .product-info {
-    min-height: 150px;
   }
 }
 
@@ -1961,9 +1807,5 @@
 
   .recent-product-card .product-image-container {
     height: 160px;
-  }
-
-  .recent-product-card .product-info {
-    min-height: 140px;
   }
 }

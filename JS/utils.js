@@ -45,6 +45,7 @@ DaleDeal.utils.formatPrice = (price) => {
 
 // Alias para compatibilidad
 DaleDeal.formatCurrency = DaleDeal.utils.formatPrice;
+DaleDeal.utils.formatCurrency = DaleDeal.utils.formatPrice;
 
 DaleDeal.utils.formatDate = (date) => {
   return new Intl.DateTimeFormat("es-AR", {

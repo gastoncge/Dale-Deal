@@ -692,25 +692,20 @@ class ProductPage {
                   </div>
                   <div class="product-info">
                     <h3 class="product-title">${product.title}</h3>
-
                     <p class="product-description">${product.description ? (product.description.length > 80 ? product.description.substring(0, 80) + '...' : product.description) : 'Producto de alta calidad con excelentes características.'}</p>
 
                     <div class="product-meta-group">
                       <div class="product-rating">
-                        <div class="stars">
-                          ${this.renderProductStars(product.rating)}
-                        </div>
+                        <div class="stars">${this.renderProductStars(product.rating)}</div>
                         <span class="reviews-count">(${product.reviewCount.toLocaleString('es-AR')})</span>
+                        ${product.shipping?.free ? `<span class="shipping-badge"><i class="bi bi-truck"></i> Envío gratis</span>` : ''}
                       </div>
                       <div class="product-location">
                         <i class="bi bi-geo-alt-fill"></i>
                         <span>CABA</span>
+                        ${product.shipping?.speed === 'today' ? `<span class="shipping-badge"><i class="bi bi-lightning-charge-fill"></i> Llega hoy</span>` : ''}
+                        ${product.shipping?.speed === 'tomorrow' ? `<span class="shipping-badge"><i class="bi bi-clock-fill"></i> Llega mañana</span>` : ''}
                       </div>
-                    </div>
-
-                    <div class="product-shipping">
-                      <i class="bi bi-truck"></i>
-                      Envío gratis
                     </div>
 
                     <div class="product-pricing-wrapper">
@@ -774,6 +769,41 @@ class ProductPage {
     return stars;
   }
 
+  renderShippingBadges(shipping) {
+    if (!shipping) return '';
+
+    let badgesHTML = '';
+
+    // Badge de envío gratis
+    if (shipping.free) {
+      badgesHTML += `
+        <div class="shipping-badge shipping-free">
+          <i class="bi bi-truck"></i>
+          <span>Envío gratis</span>
+        </div>
+      `;
+    }
+
+    // Badge de velocidad de entrega
+    if (shipping.speed === 'today') {
+      badgesHTML += `
+        <div class="shipping-badge shipping-fast">
+          <i class="bi bi-lightning-charge-fill"></i>
+          <span>Llega hoy</span>
+        </div>
+      `;
+    } else if (shipping.speed === 'tomorrow') {
+      badgesHTML += `
+        <div class="shipping-badge shipping-fast">
+          <i class="bi bi-clock-fill"></i>
+          <span>Llega mañana</span>
+        </div>
+      `;
+    }
+
+    return badgesHTML ? `<div class="shipping-badges">${badgesHTML}</div>` : '';
+  }
+
   // Cargar productos vistos recientemente
   loadRecentlyViewed() {
     const recentlyViewedGrid = document.getElementById('recentlyViewedGrid');
@@ -833,25 +863,20 @@ class ProductPage {
                   </div>
                   <div class="product-info">
                     <h3 class="product-title">${product.title}</h3>
-
                     <p class="product-description">${product.description ? (product.description.length > 80 ? product.description.substring(0, 80) + '...' : product.description) : 'Producto de alta calidad con excelentes características.'}</p>
 
                     <div class="product-meta-group">
                       <div class="product-rating">
-                        <div class="stars">
-                          ${this.renderProductStars(product.rating)}
-                        </div>
+                        <div class="stars">${this.renderProductStars(product.rating)}</div>
                         <span class="reviews-count">(${product.reviewCount.toLocaleString('es-AR')})</span>
+                        ${product.shipping?.free ? `<span class="shipping-badge"><i class="bi bi-truck"></i> Envío gratis</span>` : ''}
                       </div>
                       <div class="product-location">
                         <i class="bi bi-geo-alt-fill"></i>
                         <span>CABA</span>
+                        ${product.shipping?.speed === 'today' ? `<span class="shipping-badge"><i class="bi bi-lightning-charge-fill"></i> Llega hoy</span>` : ''}
+                        ${product.shipping?.speed === 'tomorrow' ? `<span class="shipping-badge"><i class="bi bi-clock-fill"></i> Llega mañana</span>` : ''}
                       </div>
-                    </div>
-
-                    <div class="product-shipping">
-                      <i class="bi bi-truck"></i>
-                      Envío gratis
                     </div>
 
                     <div class="product-pricing-wrapper">

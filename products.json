@@ -67,7 +67,11 @@
         "opticalZoom": "5x"
       }
     },
-    "badges": ["15% OFF", "Envío Gratis"]
+    "badges": ["15% OFF"],
+    "shipping": {
+      "free": true,
+      "speed": "tomorrow"
+    }
   },
   "2": {
     "id": 2,
@@ -133,7 +137,11 @@
         "telephoto2": "50MP f/3.4"
       }
     },
-    "badges": ["Nuevo", "Más vendido"]
+    "badges": ["Más vendido"],
+    "shipping": {
+      "free": true,
+      "speed": "today"
+    }
   },
   "3": {
     "id": 3,
@@ -199,7 +207,11 @@
         "storage": "256GB-2TB SSD"
       }
     },
-    "badges": ["20% OFF", "Premium"]
+    "badges": ["20% OFF"],
+    "shipping": {
+      "free": true,
+      "speed": "tomorrow"
+    }
   },
   "4": {
     "id": 4,
@@ -259,7 +271,11 @@
         "output": "7.1 surround"
       }
     },
-    "badges": ["Hot", "Stock limitado"]
+    "badges": ["Destacado"],
+    "shipping": {
+      "free": false,
+      "speed": "standard"
+    }
   },
   "5": {
     "id": 5,
@@ -320,7 +336,11 @@
         "compatibility": "iPhone, iPad, Mac, Apple TV"
       }
     },
-    "badges": ["25% OFF", "Envío Gratis"]
+    "badges": ["25% OFF"],
+    "shipping": {
+      "free": true,
+      "speed": "today"
+    }
   },
   "6": {
     "id": 6,
@@ -383,6 +403,10 @@
         "audio": "Salida óptica digital"
       }
     },
-    "badges": ["30% OFF", "Instalación gratis"]
+    "badges": ["30% OFF"],
+    "shipping": {
+      "free": true,
+      "speed": "tomorrow"
+    }
   }
 }

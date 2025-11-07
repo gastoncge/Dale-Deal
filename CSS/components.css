@@ -770,8 +770,8 @@
 }
 
 .product-card:hover {
-  /* transform: translateY(-8px); */
-  box-shadow: var(--shadow-xl) !important;
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-xl);
 }
 
 .product-image-container {
@@ -923,7 +923,8 @@
   font-size: var(--font-size-sm);
   color: var(--gray-600);
   line-height: 1.4;
-  margin-bottom: var(--spacing-3);
+  margin-bottom: var(--spacing-2);
+  margin-top: var(--spacing-1);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -944,6 +945,7 @@
   align-items: center;
   gap: var(--spacing-2);
   margin-bottom: 0;
+  flex-wrap: wrap;
 }
 
 .product-stars,
@@ -972,6 +974,7 @@
   gap: var(--spacing-1);
   font-size: var(--font-size-xs);
   color: var(--gray-600);
+  flex-wrap: wrap;
 }
 
 .product-location i {
@@ -1756,6 +1759,11 @@
   transition: all var(--transition-base);
 }
 
+/* Cuando hay badge de oferta, mover el corazón hacia la izquierda */
+.product-card.has-offer .product-actions {
+  right: calc(var(--spacing-3) + 90px) !important ;
+}
+
 .product-card:hover .product-actions {
   opacity: 1;
 }
@@ -2146,8 +2154,8 @@
 }
 
 .service-card:hover {
-  /* transform: translateY(-8px); */
-  box-shadow: var(--shadow-xl) !important;
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-xl);
 }
 
 .service-highlighted {
@@ -3327,4 +3335,41 @@
     font-size: var(--font-size-xs);
     padding: var(--spacing-2) var(--spacing-4);
   }
+}
+
+/* --- Estilo Adicional para Favoritos --- */
+/* En la modal de favoritos, el wrapper de precio es diferente */
+.favorite-product-card .product-pricing-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+/* --- Badges de Envío --- */
+.shipping-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--gray-600);
+  white-space: nowrap;
+}
+
+.shipping-badge i {
+  font-size: var(--font-size-sm);
+  color: var(--gray-600);
+}
+
+/* Separación cuando está dentro de rating o location */
+.product-rating .shipping-badge {
+  margin-left: var(--spacing-2);
+  padding-left: var(--spacing-2);
+  border-left: 1px solid var(--gray-300);
+}
+
+.product-location .shipping-badge {
+  margin-left: var(--spacing-2);
+  padding-left: var(--spacing-2);
+  border-left: 1px solid var(--gray-300);
 }
