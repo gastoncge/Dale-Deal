@@ -40,9 +40,11 @@ Marketplace argentino "DALE DEAL" con productos y servicios profesionales.
 
 ## Commits Recientes (Últimos 10)
 
-1. **e33c1f8** - Mejorar diseño responsive de dropdowns y modals en móviles ⭐ NUEVO
-2. **bf79724** - Actualizar PROGRESS.md con optimizaciones responsive
-3. **1fc1f11** - Optimizar diseño responsive para móviles y tablets
+1. **648c5bc** - Fix: Corregir z-index de dropdowns y overflow del modal ⭐ NUEVO
+2. **a485cdb** - Actualizar PROGRESS.md con mejoras de dropdowns móviles
+3. **e33c1f8** - Mejorar diseño responsive de dropdowns y modals en móviles
+4. **bf79724** - Actualizar PROGRESS.md con optimizaciones responsive
+5. **1fc1f11** - Optimizar diseño responsive para móviles y tablets
 4. **aae7c18** - Fix: Agregar !important al hover de service-card
 5. **1f61cdf** - Actualizar PROGRESS.md con cambios de efecto scale
 4. **e2d8ce8** - Agregar efecto scale al hover de product-card y service-card
@@ -61,7 +63,41 @@ Marketplace argentino "DALE DEAL" con productos y servicios profesionales.
 
 ---
 
-## Último Commit: "Mejorar dropdowns y modals móviles" (e33c1f8)
+## Último Commit: "Fix z-index y overflow modal" (648c5bc)
+
+### Archivos Modificados:
+- `CSS/components.css` - +36 líneas, -1 línea
+
+**Cambios totales:** +35 líneas
+
+### Cambios Principales:
+- ✅ **Fix crítico de z-index en dropdowns**
+  - Problema: Navbar (z-index: 1050) tapaba los dropdowns (z-index: 1000)
+  - Solución: Aumentado z-index de dropdowns a 1060 !important
+  - Ahora carrito y notificaciones aparecen sobre la barra de búsqueda
+
+- ✅ **Fix overflow horizontal del modal de favoritos**
+  - Agregado overflow-x: hidden al modal
+  - modal-content con max-width: 100%
+  - modal-body con overflow-x: hidden
+  - Previene que el modal rompa el diseño de la página
+
+- ✅ **Modal responsive mejorado**
+  - Desktop: max-width 1200px con margin auto
+  - Tablet (768px): max-width 95vw
+  - Móvil (480px): max-width calc(100vw - spacing-4)
+  - Margins optimizados por breakpoint: spacing-4 → spacing-2
+  - Border-radius reducido en móviles (lg)
+
+### Problemas Resueltos:
+1. ✅ Dropdowns de carrito y notificaciones ya no quedan detrás de búsqueda
+2. ✅ Modal de favoritos no causa scroll horizontal
+3. ✅ Mejor adaptación a diferentes tamaños de pantalla
+4. ✅ Sin overflow no deseado en ningún breakpoint
+
+---
+
+## Commit Anterior: "Mejorar dropdowns y modals móviles" (e33c1f8)
 
 ### Archivos Modificados:
 - `CSS/components.css` - +206 líneas (responsive dropdowns/modals)
@@ -291,6 +327,7 @@ Marketplace argentino "DALE DEAL" con productos y servicios profesionales.
 - [x] Optimizar diseño responsive para móviles ✅ COMPLETADO (2025-11-10)
 - [x] Agregar hover effect a service-cards ✅ COMPLETADO (2025-11-10)
 - [x] Mejorar dropdowns y modals en móviles ✅ COMPLETADO (2025-11-10)
+- [x] Corregir z-index de dropdowns y overflow de modal ✅ COMPLETADO (2025-11-10)
 - [ ] Documentar los cambios específicos de los commits "alpha" y "alpha 1"
 
 ### Prioridad Media
