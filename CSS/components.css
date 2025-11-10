@@ -3373,3 +3373,319 @@
   padding-left: var(--spacing-2);
   border-left: 1px solid var(--gray-300);
 }
+
+/* =====================================================
+   RESPONSIVE OPTIMIZATIONS
+   ===================================================== */
+
+/* Ajustes para tablets */
+@media (max-width: 992px) {
+  /* Secciones generales */
+  .products-section,
+  .services-section {
+    padding: var(--spacing-12) 0;
+  }
+
+  .section-title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .section-subtitle {
+    font-size: var(--font-size-base);
+  }
+
+  /* Tarjetas de servicios */
+  .services-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-5);
+  }
+
+  .service-card {
+    min-height: 400px;
+  }
+
+  .service-title {
+    font-size: var(--font-size-lg);
+  }
+
+  .service-description {
+    font-size: var(--font-size-sm);
+  }
+}
+
+/* Ajustes para móviles */
+@media (max-width: 768px) {
+  /* Espaciado general */
+  .container {
+    padding-left: var(--spacing-4);
+    padding-right: var(--spacing-4);
+  }
+
+  /* Secciones */
+  .products-section,
+  .services-section {
+    padding: var(--spacing-10) 0;
+  }
+
+  .section-header {
+    margin-bottom: var(--spacing-8);
+  }
+
+  .section-title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .section-subtitle {
+    font-size: var(--font-size-sm);
+  }
+
+  /* Grid de servicios */
+  .services-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-4);
+    margin-bottom: var(--spacing-12);
+  }
+
+  .service-card {
+    min-height: 380px;
+  }
+
+  .service-image-container {
+    height: 220px;
+  }
+
+  .service-info {
+    padding: var(--spacing-3);
+  }
+
+  .service-title {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--spacing-2);
+  }
+
+  .service-description {
+    font-size: var(--font-size-sm);
+    -webkit-line-clamp: 2;
+  }
+
+  .service-rating {
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-2);
+  }
+
+  .service-location {
+    font-size: var(--font-size-sm);
+  }
+
+  .service-price-badge {
+    font-size: var(--font-size-sm);
+  }
+
+  .btn-contact-service {
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-2) var(--spacing-4);
+  }
+
+  /* Botones generales */
+  .btn-lg {
+    font-size: var(--font-size-base);
+    padding: var(--spacing-3) var(--spacing-5);
+  }
+
+  /* Navbar - Ajustes adicionales */
+  .navbar-brand {
+    gap: var(--spacing-2);
+  }
+
+  .action-text,
+  .profile-name {
+    display: none;
+  }
+
+  .action-item {
+    margin: 0;
+  }
+
+  /* Dropdown menus en móviles */
+  .dropdown-menu {
+    max-width: 90vw;
+  }
+
+  .cart-dropdown,
+  .notifications-dropdown {
+    width: 90vw;
+    max-width: 350px;
+  }
+}
+
+/* Ajustes para pantallas muy pequeñas */
+@media (max-width: 480px) {
+  /* Container muy pequeño */
+  .container {
+    padding-left: var(--spacing-3);
+    padding-right: var(--spacing-3);
+  }
+
+  /* Secciones */
+  .products-section,
+  .services-section {
+    padding: var(--spacing-8) 0;
+  }
+
+  .section-header {
+    margin-bottom: var(--spacing-6);
+  }
+
+  .section-title {
+    font-size: var(--font-size-xl);
+  }
+
+  .section-subtitle {
+    font-size: var(--font-size-xs);
+  }
+
+  /* Servicios */
+  .services-grid {
+    gap: var(--spacing-3);
+  }
+
+  .service-card {
+    min-height: 360px;
+  }
+
+  .service-image-container {
+    height: 200px;
+  }
+
+  .service-badges {
+    top: var(--spacing-2);
+    left: var(--spacing-2);
+    gap: var(--spacing-1);
+  }
+
+  .service-badges [class^="badge-"] {
+    font-size: 9px;
+    padding: var(--spacing-1) var(--spacing-2);
+  }
+
+  .service-info {
+    padding: var(--spacing-3);
+  }
+
+  .service-title {
+    font-size: var(--font-size-sm);
+  }
+
+  .service-description {
+    font-size: 12px;
+  }
+
+  .service-meta {
+    gap: var(--spacing-2);
+  }
+
+  .service-rating .stars i {
+    font-size: 12px;
+  }
+
+  .service-rating-text,
+  .service-location span,
+  .service-price-badge {
+    font-size: 11px;
+  }
+
+  .btn-contact-service {
+    font-size: 12px;
+    padding: var(--spacing-2) var(--spacing-3);
+  }
+
+  /* Botones */
+  .btn-lg {
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-2) var(--spacing-4);
+  }
+
+  /* Navbar */
+  .logo-navbar {
+    height: 24px;
+  }
+
+  .brand-text {
+    font-size: var(--font-size-sm);
+  }
+
+  .navbar-actions {
+    gap: var(--spacing-1);
+  }
+
+  .action-btn {
+    width: 36px;
+    height: 36px;
+    font-size: var(--font-size-sm);
+  }
+
+  .cart-badge,
+  .notification-badge {
+    width: 16px;
+    height: 16px;
+    font-size: 10px;
+  }
+
+  /* Modal y dropdowns */
+  .modal-dialog {
+    margin: var(--spacing-3);
+  }
+
+  .modal-header {
+    padding: var(--spacing-3);
+  }
+
+  .modal-body {
+    padding: var(--spacing-3);
+  }
+
+  .modal-footer {
+    padding: var(--spacing-3);
+  }
+
+  .cart-dropdown,
+  .notifications-dropdown {
+    width: 95vw;
+    max-width: 320px;
+  }
+
+  .cart-item,
+  .notification-item {
+    padding: var(--spacing-2);
+  }
+
+  /* Footer ajustes adicionales */
+  .footer {
+    padding: var(--spacing-10) 0 0;
+  }
+
+  .footer-section {
+    margin-bottom: var(--spacing-5);
+  }
+
+  .footer-title {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--spacing-3);
+  }
+
+  .footer-links a {
+    font-size: var(--font-size-sm);
+  }
+
+  .footer-newsletter {
+    padding: var(--spacing-5);
+  }
+
+  .newsletter-title {
+    font-size: var(--font-size-base);
+  }
+
+  .newsletter-subtitle {
+    font-size: var(--font-size-xs);
+  }
+}

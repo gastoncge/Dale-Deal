@@ -300,6 +300,54 @@
         .products-section .products-row .product-card {
           max-width: 100%;
         }
+
+        /* Optimizaciones adicionales para móviles */
+        .products-section .product-card {
+          min-height: 380px;
+        }
+
+        .products-section .product-image-container {
+          height: 220px;
+        }
+
+        .products-section .product-info {
+          padding: var(--spacing-3);
+        }
+
+        .products-section .product-title {
+          font-size: var(--font-size-base);
+          margin-bottom: var(--spacing-2);
+        }
+
+        .products-section .product-current-price {
+          font-size: var(--font-size-lg);
+        }
+      }
+
+      @media (max-width: 480px) {
+        .products-section .products-row {
+          gap: var(--spacing-4);
+          margin-bottom: var(--spacing-4);
+        }
+
+        .products-section .product-card {
+          min-height: 360px;
+        }
+
+        .products-section .product-image-container {
+          height: 200px;
+        }
+
+        .products-section .badge-featured,
+        .products-section .badge-offer {
+          padding: var(--spacing-1) var(--spacing-2);
+          font-size: 10px;
+        }
+
+        .products-section .action-heart {
+          width: 36px;
+          height: 36px;
+        }
       }
     </style>
   </head>
