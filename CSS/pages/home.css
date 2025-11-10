@@ -222,7 +222,8 @@
 
 /* Controles del carrusel */
 .carousel-indicators {
-  bottom: var(--spacing-4);
+  bottom: var(--spacing-6);
+  z-index: 3;
 }
 
 .carousel-indicators button {
@@ -365,6 +366,10 @@
     transform: perspective(1000px) rotateY(0deg);
   }
 
+  .carousel-indicators {
+    bottom: var(--spacing-4);
+  }
+
   .carousel-control-prev,
   .carousel-control-next {
     width: 48px;
@@ -438,25 +443,20 @@
     font-size: 10px;
   }
 
+  /* Ocultar controles del carrusel en móviles */
   .carousel-control-prev,
   .carousel-control-next {
-    width: 40px;
-    height: 40px;
-  }
-
-  .carousel-control-prev-icon,
-  .carousel-control-next-icon {
-    width: 16px;
-    height: 16px;
+    display: none !important;
   }
 
   .carousel-indicators {
-    bottom: var(--spacing-2);
+    bottom: var(--spacing-3);
   }
 
   .carousel-indicators button {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
+    margin: 0 var(--spacing-1);
   }
 }
 

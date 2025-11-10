@@ -3031,8 +3031,9 @@
 .legal-links-group {
   display: flex;
   align-items: center;
-  flex-wrap: nowrap;
-  white-space: nowrap;
+  flex-wrap: wrap;
+  gap: var(--spacing-1);
+  justify-content: center;
 }
 
 .legal-link {
@@ -3112,7 +3113,18 @@
 
   .legal-links-group {
     justify-content: center;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+
+  .legal-link {
+    font-size: var(--font-size-xs);
+  }
+
+  /* Ocultar separadores en móviles */
+  .legal-links-group .text-muted {
+    display: none;
   }
 
   .footer-bottom {
