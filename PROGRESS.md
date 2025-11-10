@@ -1,6 +1,6 @@
 # PROGRESS LOG - DALE DEAL Marketplace
 
-**Última actualización:** 2025-11-10 (Sesión de trabajo: Footer y verificación)
+**Última actualización:** 2025-11-10 (Sesión de trabajo: Responsive Design Mobile-First)
 
 ## Estado Actual del Proyecto
 
@@ -40,10 +40,13 @@ Marketplace argentino "DALE DEAL" con productos y servicios profesionales.
 
 ## Commits Recientes (Últimos 10)
 
-1. **e2d8ce8** - Agregar efecto scale al hover de product-card y service-card ⭐ NUEVO
-2. **e972cb2** - Actualizar PROGRESS.md con sesión de trabajo actual
-3. **6be9967** - Agregar footer completo a index.html y crear archivo de seguimiento
-4. **da7f900** - alpha 1
+1. **1fc1f11** - Optimizar diseño responsive para móviles y tablets ⭐ NUEVO
+2. **aae7c18** - Fix: Agregar !important al hover de service-card
+3. **1f61cdf** - Actualizar PROGRESS.md con cambios de efecto scale
+4. **e2d8ce8** - Agregar efecto scale al hover de product-card y service-card
+5. **e972cb2** - Actualizar PROGRESS.md con sesión de trabajo actual
+6. **6be9967** - Agregar footer completo a index.html y crear archivo de seguimiento
+7. **da7f900** - alpha 1
 3. **45d3b14** - alpha
 4. **7277ed1** - Finalizar unificación de estilos de product-card
 4. **aeeb6d9** - Estandarizar diseño de product-card con estructura de service-card
@@ -56,7 +59,63 @@ Marketplace argentino "DALE DEAL" con productos y servicios profesionales.
 
 ---
 
-## Último Commit: "Agregar efecto scale al hover" (e2d8ce8)
+## Último Commit: "Optimizar diseño responsive" (1fc1f11)
+
+### Archivos Modificados:
+- `index.html` - +40 líneas (estilos responsive productos)
+- `CSS/pages/home.css` - +187 líneas (responsive hero/carousel)
+- `CSS/components.css` - +317 líneas (responsive global)
+
+**Cambios totales:** +544 líneas
+
+### Cambios Principales:
+- ✅ **Diseño completamente responsive Mobile-First**
+  - Breakpoints: 992px (tablets), 768px (móviles landscape), 480px (móviles portrait)
+
+- ✅ **Hero Carousel optimizado**
+  - Altura adaptativa: 650px → 500px → 450px
+  - Títulos con clamp() para escalar fluidamente
+  - Botones full-width en móviles
+  - Controles más pequeños: 60px → 48px → 40px
+  - Features grid: 2 columnas → 1 columna
+
+- ✅ **Productos responsive**
+  - Cards adaptativas: min-height 420px → 380px → 360px
+  - Imágenes escaladas: 250px → 220px → 200px
+  - Badges y botones reducidos
+  - Fuentes y padding ajustados
+
+- ✅ **Servicios responsive**
+  - Grid: auto-fit → 1 columna en móvil
+  - Altura: 420px → 380px → 360px
+  - Imágenes: 250px → 220px → 200px
+  - Tipografía y spacing reducidos
+
+- ✅ **Navbar móvil**
+  - Textos ocultos en móviles (action-text, profile-name)
+  - Logo más pequeño: 32px → 28px → 24px
+  - Botones compactos: 40px → 36px
+  - Badges reducidos: 18px → 16px
+
+- ✅ **Footer móvil**
+  - Padding reducido
+  - Fuentes más pequeñas
+  - Newsletter compacto
+
+- ✅ **Dropdowns y Modals**
+  - Ancho máximo: 90vw en tablets, 95vw en móviles
+  - Padding reducido
+  - Mejor usabilidad táctil
+
+### Optimizaciones de Performance:
+- Container padding: spacing-4 → spacing-3 en móviles
+- Secciones: spacing-16 → spacing-10 → spacing-8
+- Títulos escalados con font-size variables
+- Grid auto-ajustable con minmax()
+
+---
+
+## Commit Anterior: "Agregar efecto scale al hover" (e2d8ce8)
 
 ### Archivos Modificados:
 - `CSS/components.css` - 2 líneas modificadas
@@ -183,6 +242,8 @@ Marketplace argentino "DALE DEAL" con productos y servicios profesionales.
 - [x] Verificar funcionalidad después de la refactorización ✅ COMPLETADO (2025-11-10)
 - [x] Testing de favoritos después de cambios en `favorites.js` ✅ COMPLETADO (2025-11-10)
 - [x] Testing de carga de productos después de cambios en `home.js` ✅ COMPLETADO (2025-11-10)
+- [x] Optimizar diseño responsive para móviles ✅ COMPLETADO (2025-11-10)
+- [x] Agregar hover effect a service-cards ✅ COMPLETADO (2025-11-10)
 - [ ] Documentar los cambios específicos de los commits "alpha" y "alpha 1"
 
 ### Prioridad Media
