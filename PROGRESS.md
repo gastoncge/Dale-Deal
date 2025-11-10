@@ -40,9 +40,11 @@ Marketplace argentino "DALE DEAL" con productos y servicios profesionales.
 
 ## Commits Recientes (Últimos 10)
 
-1. **1fc1f11** - Optimizar diseño responsive para móviles y tablets ⭐ NUEVO
-2. **aae7c18** - Fix: Agregar !important al hover de service-card
-3. **1f61cdf** - Actualizar PROGRESS.md con cambios de efecto scale
+1. **e33c1f8** - Mejorar diseño responsive de dropdowns y modals en móviles ⭐ NUEVO
+2. **bf79724** - Actualizar PROGRESS.md con optimizaciones responsive
+3. **1fc1f11** - Optimizar diseño responsive para móviles y tablets
+4. **aae7c18** - Fix: Agregar !important al hover de service-card
+5. **1f61cdf** - Actualizar PROGRESS.md con cambios de efecto scale
 4. **e2d8ce8** - Agregar efecto scale al hover de product-card y service-card
 5. **e972cb2** - Actualizar PROGRESS.md con sesión de trabajo actual
 6. **6be9967** - Agregar footer completo a index.html y crear archivo de seguimiento
@@ -59,7 +61,51 @@ Marketplace argentino "DALE DEAL" con productos y servicios profesionales.
 
 ---
 
-## Último Commit: "Optimizar diseño responsive" (1fc1f11)
+## Último Commit: "Mejorar dropdowns y modals móviles" (e33c1f8)
+
+### Archivos Modificados:
+- `CSS/components.css` - +206 líneas (responsive dropdowns/modals)
+
+**Cambios totales:** +206 líneas
+
+### Cambios Principales:
+- ✅ **Modal de Favoritos mejorado**
+  - Footer apilado verticalmente en móviles (480px)
+  - Contador centrado con fondo gris destacado
+  - Botones full-width con mejor área táctil
+  - Layout horizontal mantenido en tablets (768px)
+  - Fuentes y padding reducidos apropiadamente
+
+- ✅ **Dropdown de Carrito optimizado**
+  - Botones full-width en móviles
+  - Total destacado con background gris
+  - Items más compactos (imágenes 60px)
+  - Controles de cantidad reducidos (28px)
+  - Mejor legibilidad de textos
+
+- ✅ **Dropdown de Notificaciones mejorado**
+  - Altura máxima 50vh para mejor scroll
+  - Header y footer con padding reducido
+  - Filter chips más pequeños
+  - Items compactos con fuentes optimizadas
+  - Mejor uso del espacio vertical
+
+- ✅ **Cart Items responsive**
+  - Imágenes 60px × 60px en móviles
+  - Títulos limitados a 2 líneas
+  - Controles de cantidad compactos
+  - Gap reducido entre elementos
+
+### Mejoras UX/UI:
+- Mejor usabilidad táctil en todos los elementos
+- Padding consistente (spacing-3)
+- Backgrounds para destacar secciones
+- Transición suave entre breakpoints
+- Optimización de espacio vertical
+
+---
+
+## Commit Anterior: "Optimizar diseño responsive" (1fc1f11)
 
 ### Archivos Modificados:
 - `index.html` - +40 líneas (estilos responsive productos)
@@ -244,6 +290,7 @@ Marketplace argentino "DALE DEAL" con productos y servicios profesionales.
 - [x] Testing de carga de productos después de cambios en `home.js` ✅ COMPLETADO (2025-11-10)
 - [x] Optimizar diseño responsive para móviles ✅ COMPLETADO (2025-11-10)
 - [x] Agregar hover effect a service-cards ✅ COMPLETADO (2025-11-10)
+- [x] Mejorar dropdowns y modals en móviles ✅ COMPLETADO (2025-11-10)
 - [ ] Documentar los cambios específicos de los commits "alpha" y "alpha 1"
 
 ### Prioridad Media
