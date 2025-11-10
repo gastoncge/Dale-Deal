@@ -2154,8 +2154,8 @@
 }
 
 .service-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: var(--shadow-xl);
+  transform: translateY(-8px) scale(1.02) !important;
+  box-shadow: var(--shadow-xl) !important;
 }
 
 .service-highlighted {
