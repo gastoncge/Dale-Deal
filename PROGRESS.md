@@ -40,8 +40,10 @@ Marketplace argentino "DALE DEAL" con productos y servicios profesionales.
 
 ## Commits Recientes (Últimos 10)
 
-1. **6be9967** - Agregar footer completo a index.html y crear archivo de seguimiento ⭐ NUEVO
-2. **da7f900** - alpha 1
+1. **e2d8ce8** - Agregar efecto scale al hover de product-card y service-card ⭐ NUEVO
+2. **e972cb2** - Actualizar PROGRESS.md con sesión de trabajo actual
+3. **6be9967** - Agregar footer completo a index.html y crear archivo de seguimiento
+4. **da7f900** - alpha 1
 3. **45d3b14** - alpha
 4. **7277ed1** - Finalizar unificación de estilos de product-card
 4. **aeeb6d9** - Estandarizar diseño de product-card con estructura de service-card
@@ -54,7 +56,24 @@ Marketplace argentino "DALE DEAL" con productos y servicios profesionales.
 
 ---
 
-## Último Commit: "Agregar footer completo" (6be9967)
+## Último Commit: "Agregar efecto scale al hover" (e2d8ce8)
+
+### Archivos Modificados:
+- `CSS/components.css` - 2 líneas modificadas
+
+**Cambios totales:** +2 / -2 líneas
+
+### Cambios Principales:
+- ✅ **Efecto scale agregado al hover de tarjetas**
+  - `product-card:hover` ahora usa `transform: translateY(-8px) scale(1.02)`
+  - `service-card:hover` ahora usa `transform: translateY(-8px) scale(1.02)`
+  - Efecto combinado más dinámico: elevación + zoom sutil
+  - Mantiene consistencia visual entre productos y servicios
+  - Mejora la percepción de interactividad
+
+---
+
+## Commit Anterior: "Agregar footer completo" (6be9967)
 
 ### Archivos Modificados:
 - `index.html` - +171 líneas (footer HTML completo)
