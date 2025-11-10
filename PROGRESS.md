@@ -40,30 +40,57 @@ Marketplace argentino "DALE DEAL" con productos y servicios profesionales.
 
 ## Commits Recientes (Últimos 10)
 
-1. **648c5bc** - Fix: Corregir z-index de dropdowns y overflow del modal ⭐ NUEVO
-2. **a485cdb** - Actualizar PROGRESS.md con mejoras de dropdowns móviles
-3. **e33c1f8** - Mejorar diseño responsive de dropdowns y modals en móviles
-4. **bf79724** - Actualizar PROGRESS.md con optimizaciones responsive
-5. **1fc1f11** - Optimizar diseño responsive para móviles y tablets
-4. **aae7c18** - Fix: Agregar !important al hover de service-card
-5. **1f61cdf** - Actualizar PROGRESS.md con cambios de efecto scale
-4. **e2d8ce8** - Agregar efecto scale al hover de product-card y service-card
-5. **e972cb2** - Actualizar PROGRESS.md con sesión de trabajo actual
-6. **6be9967** - Agregar footer completo a index.html y crear archivo de seguimiento
-7. **da7f900** - alpha 1
-3. **45d3b14** - alpha
-4. **7277ed1** - Finalizar unificación de estilos de product-card
-4. **aeeb6d9** - Estandarizar diseño de product-card con estructura de service-card
-5. **57e2639** - Habilitar carga de productos y actualizar estructura de tarjetas
-6. **3476641** - Mejorar tarjetas de productos con descripción, rating+ubicación y envío gratis
-7. **9d370a5** - Activar transform hover en tarjetas de productos
-8. **c435097** - Eliminar reglas conflictivas de hover en tarjetas de servicios
-9. **c7dcb59** - Limpiar y formatear código CSS de componentes
-10. **a673833** - Revertir overlay de servicios y mantener solo animaciones de botones
+1. **fe5074a** - Fix: Corregir footer responsive y controles del carrusel en móviles ⭐ NUEVO
+2. **648c5bc** - Fix: Corregir z-index de dropdowns y overflow del modal
+3. **a485cdb** - Actualizar PROGRESS.md con mejoras de dropdowns móviles
+4. **e33c1f8** - Mejorar diseño responsive de dropdowns y modals en móviles
+5. **bf79724** - Actualizar PROGRESS.md con optimizaciones responsive
+6. **1fc1f11** - Optimizar diseño responsive para móviles y tablets
+7. **aae7c18** - Fix: Agregar !important al hover de service-card
+8. **1f61cdf** - Actualizar PROGRESS.md con cambios de efecto scale
+9. **e2d8ce8** - Agregar efecto scale al hover de product-card y service-card
+10. **e972cb2** - Actualizar PROGRESS.md con sesión de trabajo actual
 
 ---
 
-## Último Commit: "Fix z-index y overflow modal" (648c5bc)
+## Último Commit: "Fix footer responsive y controles del carrusel" (fe5074a)
+
+### Archivos Modificados:
+- `CSS/components.css` - +18 líneas, -3 líneas
+- `CSS/pages/home.css` - +24 líneas, -12 líneas
+
+**Cambios totales:** +27 insertions, -15 deletions
+
+### Cambios Principales:
+- ✅ **Fix footer responsive - Enlaces legales**
+  - Problema: Enlaces de términos y condiciones rompían el diseño en móviles
+  - Solución en `.legal-links-group`: cambiado `flex-wrap: nowrap` → `wrap`
+  - Layout vertical en móviles (576px) con `flex-direction: column`
+  - Separadores "•" ocultos en móviles con `display: none`
+  - Font-size reducido a `var(--font-size-xs)` en móviles
+
+- ✅ **Controles del carrusel optimizados**
+  - Flechas completamente ocultas en móviles (480px) con `display: none !important`
+  - Indicadores bajados: `bottom: spacing-6` (desktop) → `spacing-4` (tablet) → `spacing-3` (mobile)
+  - Z-index agregado a indicadores (z-index: 3) para visibilidad
+  - Tamaño de indicadores reducido: 12px → 10px en móviles
+  - Controles reducidos: 60px → 48px en tablets
+
+- ✅ **Mejoras UX en móviles**
+  - Sin overflow horizontal en footer
+  - Mejor usabilidad táctil del carrusel (sin flechas confusas)
+  - Indicadores más accesibles y visibles
+  - Diseño completamente responsive en todos los breakpoints
+
+### Problemas Resueltos:
+1. ✅ Footer legal links ya no causan scroll horizontal
+2. ✅ Enlaces legales se apilan verticalmente en móviles
+3. ✅ Flechas del carrusel eliminadas en pantallas pequeñas
+4. ✅ Indicadores del carrusel mejor posicionados y más visibles
+
+---
+
+## Commit Anterior: "Fix z-index y overflow modal" (648c5bc)
 
 ### Archivos Modificados:
 - `CSS/components.css` - +36 líneas, -1 línea
@@ -328,6 +355,7 @@ Marketplace argentino "DALE DEAL" con productos y servicios profesionales.
 - [x] Agregar hover effect a service-cards ✅ COMPLETADO (2025-11-10)
 - [x] Mejorar dropdowns y modals en móviles ✅ COMPLETADO (2025-11-10)
 - [x] Corregir z-index de dropdowns y overflow de modal ✅ COMPLETADO (2025-11-10)
+- [x] Corregir footer responsive y controles del carrusel móviles ✅ COMPLETADO (2025-11-10)
 - [ ] Documentar los cambios específicos de los commits "alpha" y "alpha 1"
 
 ### Prioridad Media
