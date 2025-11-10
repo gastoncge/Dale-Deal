@@ -133,6 +133,25 @@
   overflow-y: auto;
 }
 
+#favoritesModal .modal-dialog {
+  max-width: 1200px;
+  margin: var(--spacing-4) auto;
+}
+
+/* Prevenir overflow horizontal del modal */
+.modal {
+  overflow-x: hidden !important;
+}
+
+.modal-content {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.modal-body {
+  overflow-x: hidden;
+}
+
 /* ===== NAVBAR ===== */
 .navbar {
   background: var(--gray-50) !important;
@@ -336,7 +355,7 @@
   padding: var(--spacing-2);
   margin-top: var(--spacing-2);
   min-width: 220px;
-  z-index: var(--z-dropdown);
+  z-index: 1060 !important; /* Por encima del navbar (1050) */
 }
 
 .dropdown-header {
@@ -3422,6 +3441,11 @@
   }
 
   /* Modal de Favoritos - Tablet */
+  #favoritesModal .modal-dialog {
+    max-width: 95vw !important;
+    margin: var(--spacing-4) auto;
+  }
+
   .modal-footer {
     padding: var(--spacing-4);
   }
@@ -3674,6 +3698,12 @@
   /* Modal y dropdowns */
   .modal-dialog {
     margin: var(--spacing-3);
+    max-width: calc(100vw - var(--spacing-6)) !important;
+  }
+
+  #favoritesModal .modal-dialog {
+    margin: var(--spacing-2);
+    max-width: calc(100vw - var(--spacing-4)) !important;
   }
 
   .modal-header {
@@ -3682,10 +3712,15 @@
 
   .modal-body {
     padding: var(--spacing-3);
+    max-width: 100%;
   }
 
   .modal-footer {
     padding: var(--spacing-3);
+  }
+
+  .modal-content {
+    border-radius: var(--radius-lg);
   }
 
   .cart-dropdown,
