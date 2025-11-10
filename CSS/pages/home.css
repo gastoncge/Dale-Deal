@@ -9,8 +9,8 @@
 }
 
 .hero-slide {
-  min-height: 650px;
-  height: 650px;
+  min-height: 750px;
+  height: 750px;
   display: flex;
   align-items: center;
   position: relative;
@@ -280,8 +280,8 @@
 /* Responsive */
 @media (max-width: 992px) {
   .hero-slide {
-    min-height: 550px;
-    height: auto;
+    min-height: 750px;
+    height: 750px;
     padding: var(--spacing-12) 0;
   }
 
@@ -301,8 +301,8 @@
 
 @media (max-width: 768px) {
   .hero-slide {
-    min-height: 500px;
-    height: auto;
+    min-height: 750px;
+    height: 750px;
     padding: var(--spacing-10) 0;
   }
 
@@ -393,7 +393,8 @@
 
 @media (max-width: 480px) {
   .hero-slide {
-    min-height: 450px;
+    min-height: 750px;
+    height: 750px;
     padding: var(--spacing-8) 0;
   }
 
