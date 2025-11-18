@@ -25,8 +25,8 @@ class ServicesNavigation {
       card.style.cursor = 'pointer';
       
       card.addEventListener('click', (e) => {
-        // Don't trigger if clicking on CTA buttons
-        if (e.target.closest('.service-cta')) {
+        // Don't trigger if clicking on CTA buttons or favorite button
+        if (e.target.closest('.service-cta') || e.target.closest('.action-heart')) {
           return;
         }
 
