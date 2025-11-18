@@ -38,14 +38,14 @@ class FavoritesManager {
 
   // Vincular eventos
   bindEvents() {
-    // Event delegation para botones de corazón
+    // Event delegation para botones de corazón (productos y servicios)
     document.addEventListener('click', (e) => {
       if (e.target.closest('.action-heart')) {
         e.preventDefault();
         e.stopPropagation();
         this.handleFavoriteClick(e);
       }
-      
+
       // Botón de wishlist en página de producto
       if (e.target.closest('.btn-wishlist')) {
         e.preventDefault();
@@ -85,31 +85,47 @@ class FavoritesManager {
     });
   }
 
-  // Manejar clic en favorito
+  // Manejar clic en favorito (productos y servicios)
   handleFavoriteClick(e) {
     // Prevenir que se ejecute el onclick de la card
     e.preventDefault();
     e.stopPropagation();
     e.stopImmediatePropagation();
-    
+
     const button = e.target.closest('.action-heart');
     const productCard = button.closest('.product-card');
-    
-    if (!productCard) return;
+    const serviceCard = button.closest('.service-card');
 
-    const productId = productCard.dataset.id;
-    const productData = this.extractProductData(productCard);
+    // Determinar si es producto o servicio
+    if (productCard) {
+      const productId = productCard.dataset.id;
+      const productData = this.extractProductData(productCard);
 
-    if (this.isFavorite(productId)) {
-      this.removeFromFavorites(productId);
-      this.showToast(`${productData.title} eliminado de favoritos`, 'info');
-    } else {
-      this.addToFavorites(productData);
-      this.showToast(`${productData.title} agregado a favoritos`, 'success');
+      if (this.isFavorite(productId)) {
+        this.removeFromFavorites(productId);
+        this.showToast(`${productData.title} eliminado de favoritos`, 'info');
+      } else {
+        this.addToFavorites(productData);
+        this.showToast(`${productData.title} agregado a favoritos`, 'success');
+      }
+
+      this.updateFavoriteButton(button, this.isFavorite(productId));
+      this.animateHeart(button);
+    } else if (serviceCard) {
+      const serviceId = serviceCard.dataset.id;
+      const serviceData = this.extractServiceData(serviceCard);
+
+      if (this.isFavorite(serviceId)) {
+        this.removeFromFavorites(serviceId);
+        this.showToast(`${serviceData.title} eliminado de favoritos`, 'info');
+      } else {
+        this.addToFavorites(serviceData);
+        this.showToast(`${serviceData.title} agregado a favoritos`, 'success');
+      }
+
+      this.updateFavoriteButton(button, this.isFavorite(serviceId));
+      this.animateHeart(button);
     }
-
-    this.updateFavoriteButton(button, this.isFavorite(productId));
-    this.animateHeart(button);
   }
 
   // Manejar clic en wishlist de producto
@@ -126,6 +142,7 @@ class FavoritesManager {
 
     const favoriteData = {
       id: productData.id.toString(),
+      type: 'product',
       title: productData.title,
       priceText: this.formatPrice(productData.price),
       originalPriceText: productData.originalPrice ? this.formatPrice(productData.originalPrice) : '',
@@ -167,13 +184,14 @@ class FavoritesManager {
   // Extraer datos del producto
   extractProductData(productCard) {
     const id = productCard.dataset.id;
-    
+
     // Obtener datos reales del producto si está disponible
     if (window.getProductById) {
       const productData = window.getProductById(parseInt(id));
       if (productData) {
         return {
           id: id,
+          type: 'product',
           title: productData.title,
           priceText: this.formatPrice(productData.price),
           originalPriceText: productData.originalPrice ? this.formatPrice(productData.originalPrice) : '',
@@ -195,12 +213,37 @@ class FavoritesManager {
 
     return {
       id,
+      type: 'product',
       title,
       priceText,
       originalPriceText,
       imageUrl,
       rating,
       ratingCount,
+      dateAdded: Date.now()
+    };
+  }
+
+  // Extraer datos del servicio
+  extractServiceData(serviceCard) {
+    const id = serviceCard.dataset.id;
+    const title = serviceCard.querySelector('.service-title')?.textContent?.trim() || '';
+    const priceText = serviceCard.querySelector('.service-price-badge')?.textContent?.trim() || '';
+    const imageUrl = serviceCard.querySelector('.service-image')?.src || '';
+    const rating = this.extractRating(serviceCard);
+    const ratingText = serviceCard.querySelector('.service-rating-text')?.textContent?.trim() || '0 (0)';
+    const location = serviceCard.querySelector('.service-location span')?.textContent?.trim() || '';
+
+    return {
+      id: id || `service-${Date.now()}`,
+      type: 'service',
+      title,
+      priceText,
+      originalPriceText: '',
+      imageUrl,
+      rating,
+      ratingCount: ratingText,
+      location,
       dateAdded: Date.now()
     };
   }
@@ -231,13 +274,18 @@ class FavoritesManager {
     this.saveFavorites();
   }
 
-  // Actualizar todos los botones de favoritos
+  // Actualizar todos los botones de favoritos (productos y servicios)
   updateFavoriteButtons() {
     document.querySelectorAll('.action-heart').forEach(button => {
       const productCard = button.closest('.product-card');
+      const serviceCard = button.closest('.service-card');
+
       if (productCard) {
         const productId = productCard.dataset.id;
         this.updateFavoriteButton(button, this.isFavorite(productId));
+      } else if (serviceCard) {
+        const serviceId = serviceCard.dataset.id;
+        this.updateFavoriteButton(button, this.isFavorite(serviceId));
       }
     });
   }
@@ -325,7 +373,46 @@ class FavoritesManager {
     favoritesGrid.style.display = 'block';
     favoritesTotal.textContent = this.favorites.length;
 
-    const favoritesHTML = this.favorites.map(favorite => `
+    // Separar productos y servicios
+    const products = this.favorites.filter(fav => fav.type === 'product');
+    const services = this.favorites.filter(fav => fav.type === 'service');
+
+    let contentHTML = '';
+
+    // Renderizar productos
+    if (products.length > 0) {
+      const productsHTML = products.map(favorite => this.renderFavoriteProduct(favorite)).join('');
+      contentHTML += `
+        <div class="favorites-section">
+          <h3 class="favorites-section-title">
+            <i class="bi bi-box-seam me-2"></i>
+            Productos (${products.length})
+          </h3>
+          <div class="row">${productsHTML}</div>
+        </div>
+      `;
+    }
+
+    // Renderizar servicios
+    if (services.length > 0) {
+      const servicesHTML = services.map(favorite => this.renderFavoriteService(favorite)).join('');
+      contentHTML += `
+        <div class="favorites-section ${products.length > 0 ? 'mt-4' : ''}">
+          <h3 class="favorites-section-title">
+            <i class="bi bi-tools me-2"></i>
+            Servicios (${services.length})
+          </h3>
+          <div class="row">${servicesHTML}</div>
+        </div>
+      `;
+    }
+
+    favoritesGrid.innerHTML = contentHTML;
+  }
+
+  // Renderizar tarjeta de producto favorito
+  renderFavoriteProduct(favorite) {
+    return `
       <div class="col-md-6 col-lg-4 mb-4">
         <div class="product-card favorite-product-card" data-id="${favorite.id}">
           <div class="product-image-container">
@@ -362,9 +449,52 @@ class FavoritesManager {
           </div>
         </div>
       </div>
-    `).join('');
+    `;
+  }
 
-    favoritesGrid.innerHTML = `<div class="row">${favoritesHTML}</div>`;
+  // Renderizar tarjeta de servicio favorito
+  renderFavoriteService(favorite) {
+    return `
+      <div class="col-md-6 col-lg-4 mb-4">
+        <div class="service-card favorite-service-card" data-id="${favorite.id}">
+          <div class="service-image-container">
+            <img src="${favorite.imageUrl}" alt="${favorite.title}" class="service-image">
+
+            <div class="product-actions-favorite">
+              <button class="action-remove-favorite" title="Eliminar de favoritos" onclick="event.stopPropagation(); window.favoritesManager.removeFromFavoritesModal('${favorite.id}')">
+                <i class="bi bi-x"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="service-info">
+            <h3 class="service-title">${favorite.title}</h3>
+
+            <div class="service-meta">
+              <div class="service-rating">
+                <div class="stars">${this.renderStars(favorite.rating)}</div>
+                <span class="service-rating-text">${favorite.ratingCount}</span>
+              </div>
+              <div class="service-info-row">
+                ${favorite.location ? `
+                  <div class="service-location">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    <span>${favorite.location}</span>
+                  </div>
+                ` : ''}
+                <span class="service-price-badge">${favorite.priceText}</span>
+              </div>
+            </div>
+
+            <div class="favorite-actions-buttons">
+              <button class="btn-contact-service" onclick="event.stopPropagation();">
+                <i class="bi bi-chat-dots me-2"></i>Ver más
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   // Remover desde el modal
@@ -715,6 +845,175 @@ favoritesStyle.textContent = `
     }
 
     .favorite-product-card .product-image-container {
+      height: 200px;
+    }
+  }
+
+  /* Estilos para secciones de favoritos */
+  .favorites-section {
+    width: 100%;
+  }
+
+  .favorites-section-title {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: var(--spacing-4);
+    padding-bottom: var(--spacing-3);
+    border-bottom: 2px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+  }
+
+  .favorites-section-title i {
+    color: var(--primary-red);
+  }
+
+  /* Estilos para service-card en favoritos */
+  .favorite-service-card {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--white);
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-100);
+    position: relative;
+    cursor: pointer;
+    height: auto;
+    min-height: 420px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .favorite-service-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-2xl);
+  }
+
+  .favorite-service-card .service-image-container {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+  }
+
+  .favorite-service-card .service-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+  }
+
+  .favorite-service-card:hover .service-image {
+    transform: scale(1.05);
+  }
+
+  .favorite-service-card .service-info {
+    padding: var(--spacing-4);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+  }
+
+  .favorite-service-card .service-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--gray-900);
+    margin-bottom: 0;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .favorite-service-card .service-meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+
+  .favorite-service-card .service-rating {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-size: var(--font-size-sm);
+  }
+
+  .favorite-service-card .service-rating .stars {
+    display: flex;
+    gap: 1px;
+  }
+
+  .favorite-service-card .service-rating .stars i {
+    font-size: var(--font-size-sm);
+    color: var(--primary-yellow);
+  }
+
+  .favorite-service-card .service-rating-text {
+    font-size: var(--font-size-xs);
+    color: var(--gray-600);
+    font-weight: 600;
+  }
+
+  .favorite-service-card .service-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+  }
+
+  .favorite-service-card .service-location {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    color: var(--gray-600);
+    font-size: var(--font-size-sm);
+  }
+
+  .favorite-service-card .service-location i {
+    color: var(--primary-red);
+  }
+
+  .favorite-service-card .service-price-badge {
+    background: var(--gradient-primary);
+    color: var(--white);
+    padding: var(--spacing-1) var(--spacing-3);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+  }
+
+  .favorite-service-card .btn-contact-service {
+    width: 100%;
+    background: var(--gradient-primary);
+    color: var(--white);
+    border: none;
+    padding: var(--spacing-2) var(--spacing-3);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: auto;
+  }
+
+  .favorite-service-card .btn-contact-service:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  @media (max-width: 768px) {
+    .favorite-service-card {
+      min-height: 380px;
+    }
+
+    .favorite-service-card .service-image-container {
       height: 200px;
     }
   }
