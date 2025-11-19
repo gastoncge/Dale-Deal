@@ -355,7 +355,7 @@
   padding: var(--spacing-2);
   margin-top: var(--spacing-2);
   min-width: 220px;
-  z-index: 1055 !important; /* Z-index de Modal - Superior a navbar (1050) */
+  z-index: 9999 !important; /* Z-index sobre TODO - navbar, header, barra búsqueda */
   position: absolute;
   will-change: transform; /* Optimización de rendering */
   isolation: isolate; /* Crea nuevo contexto de apilamiento */
@@ -363,7 +363,7 @@
 
 /* Forzar z-index cuando dropdown está visible (.show de Bootstrap) */
 .dropdown-menu.show {
-  z-index: 1055 !important; /* Mismo z-index que modales de Bootstrap */
+  z-index: 9999 !important; /* Sobre TODO absolutamente */
   display: block !important;
 }
 
@@ -1176,7 +1176,7 @@
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-2xl);
   background: var(--white);
-  z-index: 1055 !important; /* Z-index de Modal - Superior a navbar */
+  z-index: 9999 !important; /* Z-index sobre TODO */
 }
 
 .notifications-dropdown .notifications-header {
@@ -1227,7 +1227,7 @@
     max-width: 400px !important;
     max-height: 75vh !important;
     margin: 0 !important;
-    z-index: 1055 !important;
+    z-index: 9999 !important;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
     backdrop-filter: blur(10px);
   }
@@ -1239,41 +1239,38 @@
 }
 
 /* ========================================================================
-   MÓVIL: DROPDOWNS CONVERTIDOS EN MODALES (< 576px)
-   Comportamiento idéntico al modal de Favoritos
+   MÓVIL: DROPDOWNS COMO MODALES COMPLETOS (< 576px)
+   Especificaciones exactas para comportamiento modal
    ======================================================================== */
 @media (max-width: 576px) {
 
-  /* NOTIFICACIONES: Comportamiento de Modal Completo */
+  /* NOTIFICACIONES: Modal Completo con Backdrop */
   .notifications-dropdown {
-    /* Posicionamiento tipo Modal */
+    /* ROMPER EL FLUJO - Obligatorio para estar sobre barra de búsqueda */
     position: fixed !important;
-    top: 50% !important;                     /* Centrado vertical */
-    left: 50% !important;                    /* Centrado horizontal */
-    transform: translate(-50%, -50%) !important; /* Centrado perfecto bidimensional */
 
-    /* Dimensiones tipo Modal */
-    width: 92% !important;
-    max-width: 500px !important;
+    /* CENTRADO Y TAMAÑO - Estilo Modal */
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 90vw !important;                  /* 90% del ancho de la ventana */
     max-height: 85vh !important;
-
-    /* Reset completo de posicionamiento */
     margin: 0 !important;
-    right: auto !important;
-    bottom: auto !important;
 
-    /* Z-index tipo Modal (superior a navbar 1050) */
-    z-index: 1055 !important;                /* Mismo z-index que modales de Bootstrap */
+    /* CAPAS - Z-Index sobre TODO */
+    z-index: 9999 !important;                /* Tapa absolutamente todo */
 
-    /* Estilos visuales tipo Modal */
+    /* ESTÉTICA - Backdrop oscuro simulado */
+    box-shadow: 0 0 0 100vh rgba(0, 0, 0, 0.5) !important; /* Fondo oscuro modal */
+
+    /* Estilos visuales adicionales */
     border-radius: var(--radius-3xl) !important;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5) !important;
     border: none !important;
     overflow: hidden !important;
 
-    /* Aislamiento del stacking context */
-    isolation: isolate !important;
-    will-change: transform !important;
+    /* Reset completo */
+    right: auto !important;
+    bottom: auto !important;
   }
 
   .notifications-dropdown .notifications-body {
@@ -1306,7 +1303,7 @@
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-2xl);
   background: var(--white);
-  z-index: 1055 !important; /* Z-index de Modal - Superior a navbar */
+  z-index: 9999 !important; /* Z-index sobre TODO */
 }
 
 .cart-dropdown .cart-header {
@@ -1425,7 +1422,7 @@
     max-width: 400px !important;
     max-height: 75vh !important;
     margin: 0 !important;
-    z-index: 1055 !important;
+    z-index: 9999 !important;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
     backdrop-filter: blur(10px);
   }
@@ -1439,36 +1436,33 @@
 /* ===== MÓVIL: CARRITO COMO MODAL (< 576px) ===== */
 @media (max-width: 576px) {
 
-  /* CARRITO: Comportamiento de Modal Completo */
+  /* CARRITO: Modal Completo con Backdrop */
   .cart-dropdown {
-    /* Posicionamiento tipo Modal */
+    /* ROMPER EL FLUJO - Obligatorio para estar sobre barra de búsqueda */
     position: fixed !important;
-    top: 50% !important;                     /* Centrado vertical */
-    left: 50% !important;                    /* Centrado horizontal */
-    transform: translate(-50%, -50%) !important; /* Centrado perfecto bidimensional */
 
-    /* Dimensiones tipo Modal */
-    width: 92% !important;
-    max-width: 500px !important;
+    /* CENTRADO Y TAMAÑO - Estilo Modal */
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 90vw !important;                  /* 90% del ancho de la ventana */
     max-height: 85vh !important;
-
-    /* Reset completo de posicionamiento */
     margin: 0 !important;
-    right: auto !important;
-    bottom: auto !important;
 
-    /* Z-index tipo Modal (superior a navbar 1050) */
-    z-index: 1055 !important;                /* Mismo z-index que modales de Bootstrap */
+    /* CAPAS - Z-Index sobre TODO */
+    z-index: 9999 !important;                /* Tapa absolutamente todo */
 
-    /* Estilos visuales tipo Modal */
+    /* ESTÉTICA - Backdrop oscuro simulado */
+    box-shadow: 0 0 0 100vh rgba(0, 0, 0, 0.5) !important; /* Fondo oscuro modal */
+
+    /* Estilos visuales adicionales */
     border-radius: var(--radius-3xl) !important;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5) !important;
     border: none !important;
     overflow: hidden !important;
 
-    /* Aislamiento del stacking context */
-    isolation: isolate !important;
-    will-change: transform !important;
+    /* Reset completo */
+    right: auto !important;
+    bottom: auto !important;
   }
 
   .cart-dropdown .cart-body {
@@ -3734,7 +3728,7 @@
     width: 320px !important;
     max-width: 90vw !important;
     margin: 0 !important;
-    z-index: 1055 !important;
+    z-index: 9999 !important;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
   }
 }
@@ -3742,41 +3736,39 @@
 /* ===== MÓVIL: PERFIL COMO MODAL (< 576px) ===== */
 @media (max-width: 576px) {
 
-  /* PERFIL (Usuario): Comportamiento de Modal Completo */
+  /* PERFIL (Usuario): Modal Completo con Backdrop */
   .dropdown-menu:not(.notifications-dropdown):not(.cart-dropdown) {
-    /* Posicionamiento tipo Modal */
+    /* ROMPER EL FLUJO - Obligatorio para estar sobre barra de búsqueda */
     position: fixed !important;
-    top: 50% !important;                     /* Centrado vertical */
-    left: 50% !important;                    /* Centrado horizontal */
-    transform: translate(-50%, -50%) !important; /* Centrado perfecto bidimensional */
 
-    /* Dimensiones tipo Modal */
-    width: 92% !important;
-    max-width: 380px !important;
+    /* CENTRADO Y TAMAÑO - Estilo Modal */
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 90vw !important;                  /* 90% del ancho de la ventana */
+    max-width: 380px !important;             /* Límite para perfil más pequeño */
     max-height: 85vh !important;
-
-    /* Reset completo de posicionamiento */
     margin: 0 !important;
-    right: auto !important;
-    bottom: auto !important;
 
-    /* Z-index tipo Modal (superior a navbar 1050) */
-    z-index: 1055 !important;                /* Mismo z-index que modales de Bootstrap */
+    /* CAPAS - Z-Index sobre TODO */
+    z-index: 9999 !important;                /* Tapa absolutamente todo */
 
-    /* Estilos visuales tipo Modal */
+    /* ESTÉTICA - Backdrop oscuro simulado */
+    box-shadow: 0 0 0 100vh rgba(0, 0, 0, 0.5) !important; /* Fondo oscuro modal */
+
+    /* Estilos visuales adicionales */
     border-radius: var(--radius-3xl) !important;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5) !important;
     border: none !important;
     overflow-y: auto !important;
 
-    /* Aislamiento del stacking context */
-    isolation: isolate !important;
-    will-change: transform !important;
+    /* Reset completo */
+    right: auto !important;
+    bottom: auto !important;
   }
 
   /* Asegurar que todos los dropdowns usen el z-index correcto */
   .dropdown-menu.show {
-    z-index: 1055 !important;
+    z-index: 9999 !important;
   }
 }
 
