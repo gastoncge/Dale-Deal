@@ -355,8 +355,42 @@
   padding: var(--spacing-2);
   margin-top: var(--spacing-2);
   min-width: 220px;
-  z-index: 1060 !important; /* Por encima del navbar (1050) */
+  z-index: 9999 !important; /* Z-index maestro - Flota sobre TODO */
   position: absolute;
+  will-change: transform; /* Optimización de rendering */
+  isolation: isolate; /* Crea nuevo contexto de apilamiento */
+}
+
+/* Forzar z-index cuando dropdown está visible (.show de Bootstrap) */
+.dropdown-menu.show {
+  z-index: 9999 !important;
+  display: block !important;
+}
+
+/* Backdrop opcional para dropdowns en móvil (activar con JS si se desea) */
+.dropdown-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 9998;
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.dropdown-backdrop.show {
+  display: block;
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .dropdown-backdrop {
+    display: block;
+  }
 }
 
 .dropdown-header {
@@ -1133,6 +1167,7 @@
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-2xl);
   background: var(--white);
+  z-index: 9999 !important; /* Asegurar máxima prioridad */
 }
 
 .notifications-dropdown .notifications-header {
@@ -1172,19 +1207,29 @@
   border-radius: 0 0 var(--radius-2xl) var(--radius-2xl);
 }
 
-/* Posicionamiento responsive del dropdown */
+/* ===== TABLET: Panel Flotante (< 768px) ===== */
 @media (max-width: 768px) {
   .notifications-dropdown {
-    width: 350px;
-    max-height: 450px;
+    position: fixed !important;
+    top: 60px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 90% !important;
+    max-width: 400px !important;
+    max-height: 75vh !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(10px);
   }
 
   .notifications-dropdown .notifications-body {
-    max-height: 280px;
+    max-height: calc(75vh - 180px);
+    overflow-y: auto;
   }
 }
 
-/* Mobile - Estrategia Fixed Centrado */
+/* ===== MÓVIL: Panel Flotante Full (< 576px) ===== */
 @media (max-width: 576px) {
   .notifications-dropdown {
     position: fixed !important;
@@ -1195,12 +1240,17 @@
     max-width: 95% !important;
     max-height: 80vh !important;
     margin: 0 !important;
-    z-index: 1060 !important;
+    right: auto !important;
+    bottom: auto !important;
+    z-index: 9999 !important;
+    border-radius: var(--radius-2xl) !important;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4) !important;
   }
 
   .notifications-dropdown .notifications-body {
     max-height: calc(80vh - 200px);
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .notifications-dropdown .notification-item {
@@ -1227,6 +1277,7 @@
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-2xl);
   background: var(--white);
+  z-index: 9999 !important; /* Asegurar máxima prioridad */
 }
 
 .cart-dropdown .cart-header {
@@ -1334,19 +1385,29 @@
   margin-bottom: 0;
 }
 
-/* Responsive para dropdown del carrito */
+/* ===== TABLET: Panel Flotante (< 768px) ===== */
 @media (max-width: 768px) {
   .cart-dropdown {
-    width: 350px;
-    max-height: 450px;
+    position: fixed !important;
+    top: 60px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 90% !important;
+    max-width: 400px !important;
+    max-height: 75vh !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(10px);
   }
 
   .cart-dropdown .cart-body {
-    max-height: 280px;
+    max-height: calc(75vh - 200px);
+    overflow-y: auto;
   }
 }
 
-/* Mobile - Estrategia Fixed Centrado */
+/* ===== MÓVIL: Panel Flotante Full (< 576px) ===== */
 @media (max-width: 576px) {
   .cart-dropdown {
     position: fixed !important;
@@ -1357,12 +1418,17 @@
     max-width: 95% !important;
     max-height: 80vh !important;
     margin: 0 !important;
-    z-index: 1060 !important;
+    right: auto !important;
+    bottom: auto !important;
+    z-index: 9999 !important;
+    border-radius: var(--radius-2xl) !important;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4) !important;
   }
 
   .cart-dropdown .cart-body {
     max-height: calc(80vh - 220px);
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .cart-dropdown .cart-item {
@@ -3610,6 +3676,37 @@
   /* Dropdown menus en móviles - ya configurados en secciones específicas */
   .dropdown-menu {
     max-width: 95vw;
+  }
+
+  /* Dropdown de Perfil - Panel Flotante en Tablet */
+  .dropdown-menu:not(.notifications-dropdown):not(.cart-dropdown) {
+    position: fixed !important;
+    top: 60px !important;
+    right: 5% !important;
+    left: auto !important;
+    transform: none !important;
+    width: 320px !important;
+    max-width: 90vw !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+  }
+}
+
+/* Ajustes adicionales para móvil < 576px */
+@media (max-width: 576px) {
+  /* Dropdown de Perfil - Más compacto en móvil */
+  .dropdown-menu:not(.notifications-dropdown):not(.cart-dropdown) {
+    position: fixed !important;
+    top: 60px !important;
+    right: 2.5% !important;
+    left: auto !important;
+    transform: none !important;
+    width: 280px !important;
+    max-width: 95vw !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4) !important;
   }
 }
 
