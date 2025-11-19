@@ -1231,26 +1231,28 @@
 
 /* ===== MÓVIL: Panel Flotante Full (< 576px) ===== */
 @media (max-width: 576px) {
+  /* NOTIFICACIONES: Panel Flotante Centrado */
   .notifications-dropdown {
     position: fixed !important;
-    top: 60px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 95% !important;
-    max-width: 95% !important;
-    max-height: 80vh !important;
-    margin: 0 !important;
-    right: auto !important;
-    bottom: auto !important;
-    z-index: 9999 !important;
+    top: 70px !important;                    /* Justo debajo del header */
+    left: 50% !important;                    /* Centrado horizontal */
+    transform: translateX(-50%) !important;  /* Centrado perfecto */
+    width: 94% !important;                   /* Casi todo el ancho */
+    max-width: 94% !important;               /* Forzar ancho */
+    max-height: 80vh !important;             /* Máximo 80% del viewport */
+    margin: 0 !important;                    /* Limpiar márgenes negativos */
+    right: auto !important;                  /* Resetear right de Bootstrap */
+    bottom: auto !important;                 /* Resetear bottom */
+    z-index: 9999 !important;                /* Por encima de TODO */
     border-radius: var(--radius-2xl) !important;
-    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4) !important;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5) !important;
+    overflow: hidden !important;
   }
 
   .notifications-dropdown .notifications-body {
-    max-height: calc(80vh - 200px);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    max-height: calc(80vh - 220px) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;       /* Scroll suave en iOS */
   }
 
   .notifications-dropdown .notification-item {
@@ -1409,26 +1411,28 @@
 
 /* ===== MÓVIL: Panel Flotante Full (< 576px) ===== */
 @media (max-width: 576px) {
+  /* CARRITO: Panel Flotante Centrado */
   .cart-dropdown {
     position: fixed !important;
-    top: 60px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 95% !important;
-    max-width: 95% !important;
-    max-height: 80vh !important;
-    margin: 0 !important;
-    right: auto !important;
-    bottom: auto !important;
-    z-index: 9999 !important;
+    top: 70px !important;                    /* Justo debajo del header */
+    left: 50% !important;                    /* Centrado horizontal */
+    transform: translateX(-50%) !important;  /* Centrado perfecto */
+    width: 94% !important;                   /* Casi todo el ancho */
+    max-width: 94% !important;               /* Forzar ancho */
+    max-height: 80vh !important;             /* Máximo 80% del viewport */
+    margin: 0 !important;                    /* Limpiar márgenes negativos */
+    right: auto !important;                  /* Resetear right de Bootstrap */
+    bottom: auto !important;                 /* Resetear bottom */
+    z-index: 9999 !important;                /* Por encima de TODO */
     border-radius: var(--radius-2xl) !important;
-    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4) !important;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5) !important;
+    overflow: hidden !important;
   }
 
   .cart-dropdown .cart-body {
-    max-height: calc(80vh - 220px);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    max-height: calc(80vh - 240px) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;       /* Scroll suave en iOS */
   }
 
   .cart-dropdown .cart-item {
@@ -3695,18 +3699,26 @@
 
 /* Ajustes adicionales para móvil < 576px */
 @media (max-width: 576px) {
-  /* Dropdown de Perfil - Más compacto en móvil */
+  /* PERFIL: Panel Flotante Centrado */
   .dropdown-menu:not(.notifications-dropdown):not(.cart-dropdown) {
     position: fixed !important;
-    top: 60px !important;
-    right: 2.5% !important;
-    left: auto !important;
-    transform: none !important;
-    width: 280px !important;
-    max-width: 95vw !important;
-    margin: 0 !important;
+    top: 70px !important;                    /* Justo debajo del header */
+    left: 50% !important;                    /* Centrado horizontal */
+    transform: translateX(-50%) !important;  /* Centrado perfecto */
+    width: 94% !important;                   /* Mismo ancho que otros */
+    max-width: 320px !important;             /* Límite de ancho */
+    max-height: 80vh !important;             /* Máximo 80% del viewport */
+    margin: 0 !important;                    /* Limpiar márgenes */
+    right: auto !important;                  /* Resetear right */
+    bottom: auto !important;                 /* Resetear bottom */
+    z-index: 9999 !important;                /* Por encima de TODO */
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5) !important;
+    overflow-y: auto !important;
+  }
+
+  /* Asegurar que todos los dropdowns usen el z-index correcto */
+  .dropdown-menu.show {
     z-index: 9999 !important;
-    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4) !important;
   }
 }
 
