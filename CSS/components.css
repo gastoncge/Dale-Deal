@@ -356,6 +356,7 @@
   margin-top: var(--spacing-2);
   min-width: 220px;
   z-index: 1060 !important; /* Por encima del navbar (1050) */
+  position: absolute;
 }
 
 .dropdown-header {
@@ -1174,20 +1175,32 @@
 /* Posicionamiento responsive del dropdown */
 @media (max-width: 768px) {
   .notifications-dropdown {
-    width: 320px;
-    max-height: 400px;
-    margin-right: -50px;
+    width: 350px;
+    max-height: 450px;
   }
 
   .notifications-dropdown .notifications-body {
-    max-height: 250px;
+    max-height: 280px;
   }
 }
 
+/* Mobile - Estrategia Fixed Centrado */
 @media (max-width: 576px) {
   .notifications-dropdown {
-    width: 280px;
-    margin-right: -100px;
+    position: fixed !important;
+    top: 60px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 95% !important;
+    max-width: 95% !important;
+    max-height: 80vh !important;
+    margin: 0 !important;
+    z-index: 1060 !important;
+  }
+
+  .notifications-dropdown .notifications-body {
+    max-height: calc(80vh - 200px);
+    overflow-y: auto;
   }
 
   .notifications-dropdown .notification-item {
@@ -1324,20 +1337,32 @@
 /* Responsive para dropdown del carrito */
 @media (max-width: 768px) {
   .cart-dropdown {
-    width: 320px;
-    max-height: 400px;
-    margin-right: -50px;
+    width: 350px;
+    max-height: 450px;
   }
 
   .cart-dropdown .cart-body {
-    max-height: 250px;
+    max-height: 280px;
   }
 }
 
+/* Mobile - Estrategia Fixed Centrado */
 @media (max-width: 576px) {
   .cart-dropdown {
-    width: 280px;
-    margin-right: -100px;
+    position: fixed !important;
+    top: 60px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 95% !important;
+    max-width: 95% !important;
+    max-height: 80vh !important;
+    margin: 0 !important;
+    z-index: 1060 !important;
+  }
+
+  .cart-dropdown .cart-body {
+    max-height: calc(80vh - 220px);
+    overflow-y: auto;
   }
 
   .cart-dropdown .cart-item {
@@ -3582,15 +3607,9 @@
     margin: 0;
   }
 
-  /* Dropdown menus en móviles */
+  /* Dropdown menus en móviles - ya configurados en secciones específicas */
   .dropdown-menu {
-    max-width: 90vw;
-  }
-
-  .cart-dropdown,
-  .notifications-dropdown {
-    width: 90vw;
-    max-width: 350px;
+    max-width: 95vw;
   }
 }
 
@@ -3735,16 +3754,7 @@
     border-radius: var(--radius-lg);
   }
 
-  .cart-dropdown,
-  .notifications-dropdown {
-    width: 95vw;
-    max-width: 320px;
-  }
-
-  .cart-item,
-  .notification-item {
-    padding: var(--spacing-2);
-  }
+  /* Dropdowns ya configurados en sus secciones específicas arriba */
 
   /* Footer ajustes adicionales */
   .footer {
