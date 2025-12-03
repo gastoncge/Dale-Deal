@@ -2764,6 +2764,7 @@
           noResults.style.display = 'none';
           container.innerHTML = '';
 
+          // Wait 2 seconds to show results for better UX
           setTimeout(() => {
             if (window.productFilters.products.length === 0) {
               // Show no results state
@@ -2812,7 +2813,7 @@
                 initializeProductCarousels();
               }
             }, 100);
-          }, 300);
+          }, 2000); // 2 seconds loading delay
         }
 
         findProductById(id) {
