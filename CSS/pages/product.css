@@ -1213,6 +1213,10 @@
   font-size: var(--font-size-sm);
   color: var(--white);
   transition: transform 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 #clearFilters:hover i {
