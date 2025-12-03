@@ -220,26 +220,39 @@
   font-weight: 600;
 }
 
-/* Controles del carrusel */
-.carousel-indicators {
-  bottom: var(--spacing-6);
-  z-index: 3;
+/* Controles del carrusel - HERO CAROUSEL CENTRADO */
+#heroCarousel .carousel-indicators {
+  position: absolute !important;
+  bottom: var(--spacing-6) !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: var(--spacing-2) !important;
+  z-index: 3 !important;
+  width: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-.carousel-indicators button {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  background: transparent;
-  margin: 0 var(--spacing-1);
-  transition: all var(--transition-base);
+#heroCarousel .carousel-indicators button {
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 50% !important;
+  border: 2px solid rgba(255, 255, 255, 0.5) !important;
+  background: transparent !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  transition: all var(--transition-base) !important;
+  flex-shrink: 0 !important;
 }
 
-.carousel-indicators button.active {
-  background: var(--primary-yellow);
-  border-color: var(--primary-yellow);
-  box-shadow: 0 0 0 2px var(--white);
+#heroCarousel .carousel-indicators button.active {
+  background: var(--primary-yellow) !important;
+  border-color: var(--primary-yellow) !important;
+  box-shadow: 0 0 0 2px var(--white) !important;
 }
 
 .carousel-control-prev,
@@ -366,8 +379,8 @@
     transform: perspective(1000px) rotateY(0deg);
   }
 
-  .carousel-indicators {
-    bottom: var(--spacing-4);
+  #heroCarousel .carousel-indicators {
+    bottom: var(--spacing-4) !important;
   }
 
   .carousel-control-prev,
@@ -450,14 +463,13 @@
     display: none !important;
   }
 
-  .carousel-indicators {
-    bottom: var(--spacing-3);
+  #heroCarousel .carousel-indicators {
+    bottom: var(--spacing-3) !important;
   }
 
-  .carousel-indicators button {
-    width: 10px;
-    height: 10px;
-    margin: 0 var(--spacing-1);
+  #heroCarousel .carousel-indicators button {
+    width: 10px !important;
+    height: 10px !important;
   }
 }
 

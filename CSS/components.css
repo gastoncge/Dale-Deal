@@ -875,27 +875,30 @@
   background: rgba(0, 0, 0, 0.6);
   color: var(--white);
   border: none;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  opacity: 0.7;
+  opacity: 0;
   transition: all var(--transition-base);
-  z-index: 2;
+  z-index: 10;
+  pointer-events: auto;
 }
 
 .carousel-prev {
-  left: 8px;
+  left: 12px;
 }
 
 .carousel-next {
-  right: 8px;
+  right: 12px;
 }
 
-.product-card:hover .carousel-control {
+.product-card:hover .carousel-control,
+.product-image-container:hover .carousel-control,
+.product-image-carousel:hover .carousel-control {
   opacity: 1;
 }
 
@@ -904,30 +907,103 @@
   transform: translateY(-50%) scale(1.1);
 }
 
-/* Indicadores del carrusel */
+/* Indicadores del carrusel - CENTRADO FORZADO */
 .carousel-indicators {
-  position: absolute;
-  bottom: 8px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-  z-index: 2;
+  position: absolute !important;
+  bottom: 12px !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  z-index: 10 !important;
+  width: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-.indicator {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  transition: all var(--transition-base);
+.indicator,
+.carousel-indicators .indicator,
+.carousel-indicators button {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.6) !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  flex-shrink: 0 !important;
+  opacity: 1 !important;
 }
 
-.indicator.active {
-  background: var(--white);
-  transform: scale(1.2);
+.indicator.active,
+.carousel-indicators .indicator.active,
+.carousel-indicators button.active {
+  background: var(--primary-red) !important;
+  transform: scale(1.3) !important;
+  border-color: var(--primary-red) !important;
+}
+
+.indicator:hover,
+.carousel-indicators .indicator:hover,
+.carousel-indicators button:hover {
+  background: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Carrusel de imágenes de productos */
+.product-image-carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Indicadores específicos para carrusel de productos */
+.product-image-carousel .carousel-indicators {
+  position: absolute !important;
+  bottom: 12px !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  z-index: 10 !important;
+  width: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.product-image-carousel .carousel-control {
+  z-index: 10 !important;
+  pointer-events: auto !important;
+}
+
+.product-image-carousel .carousel-indicators .indicator {
+  width: 8px !important;
+  height: 8px !important;
+  background: rgba(255, 255, 255, 0.6) !important;
+  border-radius: 50% !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+.product-image-carousel .carousel-indicators .indicator.active {
+  background: var(--primary-red) !important;
+  transform: scale(1.3) !important;
+}
+
+.product-image-carousel .carousel-indicators .indicator:hover {
+  background: rgba(255, 255, 255, 0.9) !important;
 }
 
 .product-badge {

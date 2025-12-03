@@ -28,11 +28,19 @@ class ProductCarousel {
     const prevBtn = carouselElement.querySelector('.carousel-prev');
     const nextBtn = carouselElement.querySelector('.carousel-next');
 
+    console.log(`🔧 Configurando carousel ${index}:`, {
+      images: images.length,
+      indicators: indicators.length,
+      prevBtn: !!prevBtn,
+      nextBtn: !!nextBtn
+    });
+
     if (images.length <= 1) {
       // Si hay solo una imagen, ocultar controles
       prevBtn?.style.setProperty('display', 'none');
       nextBtn?.style.setProperty('display', 'none');
       carouselElement.querySelector('.carousel-indicators')?.style.setProperty('display', 'none');
+      console.log(`ℹ️ Carousel ${index} tiene solo 1 imagen, controles ocultos`);
       return;
     }
 

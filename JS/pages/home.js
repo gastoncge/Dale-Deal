@@ -264,9 +264,15 @@ function initializeProductListeners() {
   });
 
   // Reinicializar carruseles de imágenes
-  if (typeof initializeProductCarousels === 'function') {
-    initializeProductCarousels();
-  }
+  setTimeout(() => {
+    if (window.productCarousel) {
+      window.productCarousel.reinitialize();
+      console.log('✅ Carruseles reinicializados en home');
+    } else if (window.ProductCarousel) {
+      window.productCarousel = new window.ProductCarousel();
+      console.log('✅ ProductCarousel creado en home');
+    }
+  }, 200);
 
   // Reinicializar favoritos
   if (window.favoriteManager) {
