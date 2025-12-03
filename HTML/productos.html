@@ -388,10 +388,6 @@
                         </div>
                       </div>
                     </div>
-                    <button class="btn-apply-price" id="applyPriceFilter">
-                      <i class="bi bi-check-lg me-2"></i>
-                      Aplicar
-                    </button>
                   </div>
                 </div>
               </div>
@@ -502,6 +498,14 @@
                     <option value="newest">🆕 Más nuevos</option>
                   </select>
                 </div>
+              </div>
+
+              <!-- Apply Filters Button -->
+              <div class="filters-actions">
+                <button class="btn-apply-all-filters" id="applyAllFilters">
+                  <i class="bi bi-check-circle me-2"></i>
+                  Aplicar filtros
+                </button>
               </div>
               </div>
             </aside>
@@ -1156,6 +1160,48 @@
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(214, 48, 49, 0.35);
         filter: brightness(1.05);
+      }
+
+      /* Filters Actions Container */
+      .filters-actions {
+        position: sticky;
+        bottom: 0;
+        background: var(--white);
+        padding: var(--spacing-5);
+        border-top: 2px solid var(--gray-100);
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+        margin-top: var(--spacing-6);
+      }
+
+      .btn-apply-all-filters {
+        width: 100%;
+        background: var(--gradient-primary);
+        color: var(--white);
+        border: none;
+        padding: var(--spacing-4) var(--spacing-6);
+        border-radius: var(--radius-xl);
+        font-size: var(--font-size-base);
+        font-weight: 700;
+        cursor: pointer;
+        transition: all var(--transition-base);
+        box-shadow: 0 4px 16px rgba(214, 48, 49, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--spacing-2);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .btn-apply-all-filters:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(214, 48, 49, 0.4);
+        filter: brightness(1.1);
+      }
+
+      .btn-apply-all-filters:active {
+        transform: translateY(-1px);
+        box-shadow: 0 3px 12px rgba(214, 48, 49, 0.35);
       }
 
       /* Modern Checkbox Filter */
@@ -3080,13 +3126,36 @@
             const category = e.target.value;
             if (window.productFilters) {
               window.productFilters.currentCategory = category;
-              window.productFilters.filterAndRender();
+              // Don't apply filters automatically - wait for "Apply filters" button
             }
-            // Close sidebar on mobile after selecting
+          });
+        });
+
+        // Apply all filters button
+        document.getElementById('applyAllFilters')?.addEventListener('click', () => {
+          if (window.productFilters) {
+            // Get all filter values
+            const selectedCategory = document.querySelector('input[name="category"]:checked')?.value || 'all';
+            const minPrice = document.getElementById('minPrice')?.value;
+            const maxPrice = document.getElementById('maxPrice')?.value;
+            const selectedRating = document.querySelector('input[name="rating"]:checked')?.value || 'all';
+            const selectedSort = document.getElementById('sortSelect')?.value || 'featured';
+
+            // Apply all filters at once
+            window.productFilters.currentCategory = selectedCategory;
+            window.productFilters.minPrice = minPrice ? parseFloat(minPrice) : null;
+            window.productFilters.maxPrice = maxPrice ? parseFloat(maxPrice) : null;
+            window.productFilters.currentRating = selectedRating;
+            window.productFilters.currentSort = selectedSort;
+
+            // Render with all filters applied
+            window.productFilters.filterAndRender();
+
+            // Close sidebar on mobile after applying
             if (window.innerWidth <= 992) {
               setTimeout(closeSidebar, 300);
             }
-          });
+          }
         });
 
         // Clear all filters button
