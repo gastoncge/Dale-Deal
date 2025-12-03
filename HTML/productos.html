@@ -2638,20 +2638,21 @@
         }
 
         showLoading(show) {
+          const emptyStateContainer = document.getElementById('emptyStateContainer');
           const loading = document.getElementById('loadingContainer');
           const grid = document.getElementById('productsGrid');
           const noResults = document.getElementById('noResults');
 
           if (show) {
-            // Hide default loading container
-            loading.style.display = 'none';
+            // Show loading state
+            grid.style.display = 'none';
+            emptyStateContainer.style.display = 'flex';
+            loading.style.display = 'block';
             noResults.style.display = 'none';
-
-            // Show grid with skeleton cards
-            grid.style.display = 'grid';
-            this.renderSkeletonCards();
             this.isLoading = true;
           } else {
+            // Hide loading and show grid
+            emptyStateContainer.style.display = 'none';
             loading.style.display = 'none';
             grid.style.display = 'grid';
             this.isLoading = false;
@@ -2699,17 +2700,24 @@
         }
 
         showError(message) {
+          const emptyStateContainer = document.getElementById('emptyStateContainer');
           const grid = document.getElementById('productsGrid');
+          const loading = document.getElementById('loadingContainer');
           const noResults = document.getElementById('noResults');
 
           grid.style.display = 'none';
+          emptyStateContainer.style.display = 'flex';
+          loading.style.display = 'none';
           noResults.style.display = 'block';
 
           const errorHtml = `
-            <div class="text-center py-5">
-              <i class="bi bi-exclamation-triangle display-1 text-danger mb-3"></i>
-              <h4 class="text-muted">${message}</h4>
-              <button class="btn btn-primary mt-3" onclick="location.reload()">
+            <div class="empty-state-icon">
+              <i class="bi bi-exclamation-triangle" style="color: var(--primary-red);"></i>
+            </div>
+            <h3 class="empty-state-title">Error al cargar</h3>
+            <p class="empty-state-text">${message}</p>
+            <div class="empty-state-actions">
+              <button class="btn btn-primary" onclick="location.reload()">
                 <i class="bi bi-arrow-clockwise me-2"></i>Reintentar
               </button>
             </div>
@@ -2742,26 +2750,37 @@
 
         renderFilteredProducts() {
           const container = document.getElementById('productsGrid');
+          const emptyStateContainer = document.getElementById('emptyStateContainer');
           const loading = document.getElementById('loadingContainer');
           const noResults = document.getElementById('noResults');
           const loadMore = document.getElementById('loadMoreContainer');
 
           if (!window.productFilters) return;
 
+          // Show loading state
+          container.style.display = 'none';
+          emptyStateContainer.style.display = 'flex';
           loading.style.display = 'block';
+          noResults.style.display = 'none';
           container.innerHTML = '';
 
           setTimeout(() => {
-            loading.style.display = 'none';
-
             if (window.productFilters.products.length === 0) {
+              // Show no results state
+              container.style.display = 'none';
+              emptyStateContainer.style.display = 'flex';
+              loading.style.display = 'none';
               noResults.style.display = 'block';
               loadMore.style.display = 'none';
               this.updateResultsCount();
               return;
             }
 
+            // Hide empty states and show products
+            emptyStateContainer.style.display = 'none';
+            loading.style.display = 'none';
             noResults.style.display = 'none';
+            container.style.display = 'grid';
             
             // Show products with pagination
             const startIndex = 0;
