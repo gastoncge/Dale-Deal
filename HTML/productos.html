@@ -289,9 +289,14 @@
                   <i class="bi bi-sliders sidebar-icon"></i>
                   <h3 class="sidebar-title">Filtrar</h3>
                 </div>
-                <button class="btn-clear-filters" id="clearAllFilters">
-                  <i class="bi bi-arrow-clockwise"></i>
-                </button>
+                <div class="sidebar-actions">
+                  <button class="btn-apply-filters-small" id="applyAllFilters" title="Aplicar filtros">
+                    <i class="bi bi-check-circle"></i>
+                  </button>
+                  <button class="btn-clear-filters" id="clearAllFilters" title="Limpiar filtros">
+                    <i class="bi bi-arrow-clockwise"></i>
+                  </button>
+                </div>
               </div>
 
               <div class="filters-content">
@@ -498,14 +503,6 @@
                     <option value="newest">🆕 Más nuevos</option>
                   </select>
                 </div>
-              </div>
-
-              <!-- Apply Filters Button -->
-              <div class="filters-actions">
-                <button class="btn-apply-all-filters" id="applyAllFilters">
-                  <i class="bi bi-check-circle me-2"></i>
-                  Aplicar filtros
-                </button>
               </div>
               </div>
             </aside>
@@ -1162,46 +1159,41 @@
         filter: brightness(1.05);
       }
 
-      /* Filters Actions Container */
-      .filters-actions {
-        position: sticky;
-        bottom: 0;
-        background: var(--white);
-        padding: var(--spacing-5);
-        border-top: 2px solid var(--gray-100);
-        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
-        margin-top: var(--spacing-6);
+      /* Sidebar Actions (Header Buttons) */
+      .sidebar-actions {
+        display: flex;
+        gap: var(--spacing-2);
+        align-items: center;
       }
 
-      .btn-apply-all-filters {
-        width: 100%;
-        background: var(--gradient-primary);
-        color: var(--white);
-        border: none;
-        padding: var(--spacing-4) var(--spacing-6);
-        border-radius: var(--radius-xl);
-        font-size: var(--font-size-base);
-        font-weight: 700;
-        cursor: pointer;
-        transition: all var(--transition-base);
-        box-shadow: 0 4px 16px rgba(214, 48, 49, 0.3);
+      .btn-apply-filters-small {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: var(--spacing-2);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        width: 36px;
+        height: 36px;
+        background: var(--gradient-primary);
+        color: var(--white);
+        border: none;
+        border-radius: var(--radius-lg);
+        cursor: pointer;
+        transition: all var(--transition-base);
+        box-shadow: 0 2px 8px rgba(214, 48, 49, 0.25);
       }
 
-      .btn-apply-all-filters:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(214, 48, 49, 0.4);
+      .btn-apply-filters-small:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(214, 48, 49, 0.35);
         filter: brightness(1.1);
       }
 
-      .btn-apply-all-filters:active {
-        transform: translateY(-1px);
-        box-shadow: 0 3px 12px rgba(214, 48, 49, 0.35);
+      .btn-apply-filters-small:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 6px rgba(214, 48, 49, 0.3);
+      }
+
+      .btn-apply-filters-small i {
+        font-size: 18px;
       }
 
       /* Modern Checkbox Filter */
