@@ -1212,14 +1212,16 @@
 }
 
 #clearFilters i {
-  font-size: var(--font-size-sm);
-  color: var(--white);
+  font-size: var(--font-size-sm) !important;
+  color: var(--white) !important;
   transition: transform 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  margin-top: 1px;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  margin-top: 2px !important;
+  margin-bottom: 0 !important;
+  vertical-align: middle !important;
 }
 
 #clearFilters:hover i {
