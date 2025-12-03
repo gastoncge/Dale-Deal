@@ -1183,10 +1183,12 @@
 #clearFilters {
   display: inline-flex !important;
   align-items: center !important;
+  justify-content: center !important;
   gap: var(--spacing-2) !important;
   padding: var(--spacing-3) var(--spacing-6) !important;
   font-size: var(--font-size-sm) !important;
   font-weight: 700 !important;
+  line-height: 1 !important;
   background: var(--gradient-primary) !important;
   color: var(--white) !important;
   border: none !important;
@@ -1213,10 +1215,11 @@
   font-size: var(--font-size-sm);
   color: var(--white);
   transition: transform 0.3s ease;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
+  margin-top: 1px;
 }
 
 #clearFilters:hover i {
