@@ -113,14 +113,17 @@ class ProductsPageLoader {
 
     // Ordenar
     switch (this.currentSort) {
-      case 'price-asc':
+      case 'price-low':
         filtered.sort((a, b) => a.price - b.price);
         break;
-      case 'price-desc':
+      case 'price-high':
         filtered.sort((a, b) => b.price - a.price);
         break;
       case 'rating':
         filtered.sort((a, b) => b.rating - a.rating);
+        break;
+      case 'name':
+        filtered.sort((a, b) => a.title.localeCompare(b.title));
         break;
       case 'newest':
         filtered.sort((a, b) => b.id - a.id);

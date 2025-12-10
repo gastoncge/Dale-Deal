@@ -2201,7 +2201,8 @@
   );
   padding: var(--spacing-16) 0;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;  /* Previene scroll horizontal de elementos decorativos */
+  overflow-y: visible; /* Permite que las cards sean visibles verticalmente */
 }
 
 .services-section::before {

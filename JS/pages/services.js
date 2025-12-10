@@ -1,184 +1,514 @@
-/**
- * DALE DEAL - Services Page Navigation
- * Handles navigation from home service cards to dedicated services page
- */
+// =====================================================
+// DALE DEAL - Services Page Loader with Filters
+// =====================================================
 
-class ServicesNavigation {
+class ServicesPageLoader {
   constructor() {
+    this.allServices = [];
+    this.filteredServices = [];
+    this.currentCategory = 'all';
+    this.currentSort = 'featured';
+    this.filters = {
+      priceMin: null,
+      priceMax: null,
+      rating: null,
+      certified: false,
+      verified: false,
+      warranty: false
+    };
     this.init();
   }
 
-  init() {
-    this.setupServiceCardClicks();
-    this.setupServicesCTAClick();
-    this.handleURLParams();
+  async init() {
+    try {
+      // Cargar servicios
+      await this.loadServices();
+
+      // Bind eventos
+      this.bindFilterEvents();
+
+      console.log('✓ Services page initialized');
+    } catch (error) {
+      console.error('Error initializing services page:', error);
+    }
   }
 
   /**
-   * Setup click handlers for service cards on home page
+   * Carga todos los servicios
    */
-  setupServiceCardClicks() {
-    const serviceCards = document.querySelectorAll('.service-card[data-service-category]');
-    
-    serviceCards.forEach(card => {
-      // Make the entire card clickable
-      card.style.cursor = 'pointer';
-      
-      card.addEventListener('click', (e) => {
-        // Don't trigger if clicking on CTA buttons or favorite button
-        if (e.target.closest('.service-cta') || e.target.closest('.action-heart')) {
-          return;
-        }
+  async loadServices() {
+    try {
+      const servicesGrid = document.getElementById('servicesGrid');
+      const loadingContainer = document.getElementById('loadingContainer');
 
-        const category = card.dataset.serviceCategory;
-        const serviceId = card.dataset.id || null;
+      if (!servicesGrid) {
+        console.warn('Services grid not found');
+        return;
+      }
 
-        this.navigateToServices(category, serviceId);
+      // Mostrar loading
+      if (loadingContainer) {
+        loadingContainer.style.display = 'flex';
+      }
+
+      // Simular delay de carga (2 segundos)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // Cargar desde servicesData
+      if (typeof servicesData !== 'undefined') {
+        this.allServices = servicesData;
+        this.filteredServices = [...this.allServices];
+      } else {
+        console.error('servicesData no está definido');
+        this.allServices = [];
+        this.filteredServices = [];
+      }
+
+      // Ocultar loading
+      if (loadingContainer) {
+        loadingContainer.style.display = 'none';
+      }
+
+      // Renderizar
+      this.renderServices();
+
+      console.log(`✓ ${this.allServices.length} servicios cargados`);
+
+    } catch (error) {
+      console.error('Error loading services:', error);
+      this.showError();
+    }
+  }
+
+  /**
+   * Bind eventos de filtros
+   */
+  bindFilterEvents() {
+    // Filtros de categoría (radio buttons)
+    document.querySelectorAll('input[name="category"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        this.currentCategory = e.target.value;
+        console.log('Category changed:', this.currentCategory);
       });
     });
-  }
 
-  /**
-   * Setup click handler for main services CTA
-   */
-  setupServicesCTAClick() {
-    const servicesCTA = document.querySelector('.services-cta .btn');
-    if (servicesCTA) {
-      servicesCTA.addEventListener('click', () => {
-        this.navigateToServices('all');
+    // Filtro de precio
+    const minPrice = document.getElementById('minPrice');
+    const maxPrice = document.getElementById('maxPrice');
+    if (minPrice) {
+      minPrice.addEventListener('input', (e) => {
+        this.filters.priceMin = e.target.value ? parseFloat(e.target.value) : null;
+        console.log('Min price changed:', this.filters.priceMin);
+      });
+    }
+    if (maxPrice) {
+      maxPrice.addEventListener('input', (e) => {
+        this.filters.priceMax = e.target.value ? parseFloat(e.target.value) : null;
+        console.log('Max price changed:', this.filters.priceMax);
       });
     }
 
-    // Handle "Ver todos los servicios" button if exists
-    const viewAllBtn = document.getElementById('viewAllServicesBtn');
-    if (viewAllBtn) {
-      viewAllBtn.addEventListener('click', () => {
-        this.navigateToServices('all');
+    // Filtro de rating
+    document.querySelectorAll('input[name="rating"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        this.filters.rating = e.target.value !== 'all' ? parseFloat(e.target.value) : null;
+        console.log('Rating changed:', this.filters.rating);
+      });
+    });
+
+    // Checkboxes adicionales
+    const certifiedCheckbox = document.getElementById('freeShipping');
+    const verifiedCheckbox = document.getElementById('conditionNew');
+    const warrantyCheckbox = document.getElementById('conditionUsed');
+
+    if (certifiedCheckbox) {
+      certifiedCheckbox.addEventListener('change', (e) => {
+        this.filters.certified = e.target.checked;
+        console.log('Certified changed:', this.filters.certified);
+      });
+    }
+    if (verifiedCheckbox) {
+      verifiedCheckbox.addEventListener('change', (e) => {
+        this.filters.verified = e.target.checked;
+        console.log('Verified changed:', this.filters.verified);
+      });
+    }
+    if (warrantyCheckbox) {
+      warrantyCheckbox.addEventListener('change', (e) => {
+        this.filters.warranty = e.target.checked;
+        console.log('Warranty changed:', this.filters.warranty);
+      });
+    }
+
+    // Ordenamiento
+    const sortSelect = document.getElementById('sortSelect');
+    if (sortSelect) {
+      sortSelect.addEventListener('change', (e) => {
+        this.currentSort = e.target.value;
+        console.log('Sort changed:', this.currentSort);
+        this.applyFilters();
+      });
+    }
+
+    // Botón aplicar filtros
+    const applyFiltersBtn = document.getElementById('applyFiltersBtn');
+    if (applyFiltersBtn) {
+      applyFiltersBtn.addEventListener('click', () => {
+        console.log('Apply filters clicked');
+        this.applyFilters();
+      });
+    }
+
+    // Botón limpiar filtros
+    const clearFiltersBtn = document.getElementById('clearFilters');
+    if (clearFiltersBtn) {
+      clearFiltersBtn.addEventListener('click', () => {
+        console.log('Clear filters clicked');
+        this.resetFilters();
+      });
+    }
+
+    // Botón toggle filtros (móvil)
+    const toggleFiltersBtn = document.getElementById('toggleFilters');
+    const sidebar = document.querySelector('.filters-sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    if (toggleFiltersBtn && sidebar) {
+      toggleFiltersBtn.addEventListener('click', () => {
+        sidebar.classList.add('active');
+        if (overlay) overlay.style.display = 'block';
+      });
+    }
+
+    if (overlay) {
+      overlay.addEventListener('click', () => {
+        if (sidebar) sidebar.classList.remove('active');
+        overlay.style.display = 'none';
       });
     }
   }
 
   /**
-   * Navigate to services page with optional category and service filtering
+   * Aplica los filtros seleccionados
    */
-  navigateToServices(category = 'all', serviceId = null) {
-    let url = './HTML/servicios.html';
-    const params = new URLSearchParams();
+  applyFilters() {
+    console.log('Applying filters:', {
+      category: this.currentCategory,
+      sort: this.currentSort,
+      filters: this.filters
+    });
 
-    if (category && category !== 'all') {
-      params.append('category', category);
+    // Filtrar por categoría
+    let filtered = this.currentCategory === 'all'
+      ? [...this.allServices]
+      : this.allServices.filter(s => s.category === this.currentCategory);
+
+    // Filtrar por precio
+    if (this.filters.priceMin !== null) {
+      filtered = filtered.filter(s => s.price >= this.filters.priceMin);
+    }
+    if (this.filters.priceMax !== null) {
+      filtered = filtered.filter(s => s.price <= this.filters.priceMax);
     }
 
-    if (serviceId) {
-      params.append('service', serviceId);
+    // Filtrar por rating
+    if (this.filters.rating !== null) {
+      filtered = filtered.filter(s => s.rating >= this.filters.rating);
     }
 
-    if (params.toString()) {
-      url += '?' + params.toString();
+    // Filtrar por certificaciones (checkboxes)
+    if (this.filters.certified) {
+      filtered = filtered.filter(s => s.badges?.some(b => b.includes('Certificado') || b.includes('Matriculado')));
+    }
+    if (this.filters.verified) {
+      filtered = filtered.filter(s => s.badges?.some(b => b.includes('Verificado')) || s.featured);
+    }
+    if (this.filters.warranty) {
+      filtered = filtered.filter(s => s.badges?.some(b => b.includes('Garantía')));
     }
 
-    // Navigate to services page
-    window.location.href = url;
+    // Ordenar
+    switch (this.currentSort) {
+      case 'price-low':
+        filtered.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-high':
+        filtered.sort((a, b) => b.price - a.price);
+        break;
+      case 'name':
+        filtered.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+      case 'newest':
+        // Por ahora, usar el orden inverso del array
+        filtered.reverse();
+        break;
+      case 'featured':
+      default:
+        // Destacados primero
+        filtered.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+        break;
+    }
+
+    this.filteredServices = filtered;
+    this.renderServices();
+
+    // Cerrar sidebar en móvil después de aplicar filtros
+    const sidebar = document.querySelector('.filters-sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    if (sidebar) sidebar.classList.remove('active');
+    if (overlay) overlay.style.display = 'none';
   }
 
   /**
-   * Handle URL parameters on services page
+   * Resetea todos los filtros
    */
-  handleURLParams() {
-    // Only run on services page
-    if (!window.location.pathname.includes('servicios.html')) {
+  resetFilters() {
+    this.currentCategory = 'all';
+    this.currentSort = 'featured';
+    this.filters = {
+      priceMin: null,
+      priceMax: null,
+      rating: null,
+      certified: false,
+      verified: false,
+      warranty: false
+    };
+
+    // Resetear UI
+    document.querySelectorAll('input[name="category"]').forEach(radio => {
+      radio.checked = radio.value === 'all';
+    });
+
+    const sortSelect = document.getElementById('sortSelect');
+    if (sortSelect) sortSelect.value = 'featured';
+
+    const minPrice = document.getElementById('minPrice');
+    const maxPrice = document.getElementById('maxPrice');
+    if (minPrice) minPrice.value = '';
+    if (maxPrice) maxPrice.value = '';
+
+    document.querySelectorAll('input[name="rating"]').forEach(radio => {
+      radio.checked = radio.value === 'all';
+    });
+
+    const certifiedCheckbox = document.getElementById('freeShipping');
+    const verifiedCheckbox = document.getElementById('conditionNew');
+    const warrantyCheckbox = document.getElementById('conditionUsed');
+    if (certifiedCheckbox) certifiedCheckbox.checked = false;
+    if (verifiedCheckbox) verifiedCheckbox.checked = false;
+    if (warrantyCheckbox) warrantyCheckbox.checked = false;
+
+    // Aplicar filtros
+    this.applyFilters();
+  }
+
+  /**
+   * Renderiza los servicios en el grid
+   */
+  renderServices() {
+    const servicesGrid = document.getElementById('servicesGrid');
+    const resultsCount = document.getElementById('resultsCount');
+    const emptyState = document.getElementById('emptyStateContainer');
+    const noResults = document.getElementById('noResults');
+
+    if (!servicesGrid) return;
+
+    // Actualizar contador
+    if (resultsCount) {
+      const count = this.filteredServices.length;
+      resultsCount.textContent = `${count} servicio${count !== 1 ? 's' : ''} encontrado${count !== 1 ? 's' : ''}`;
+    }
+
+    // Limpiar grid
+    servicesGrid.innerHTML = '';
+
+    // Si no hay servicios
+    if (this.filteredServices.length === 0) {
+      if (emptyState) emptyState.style.display = 'flex';
+      if (noResults) noResults.style.display = 'block';
       return;
     }
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const category = urlParams.get('category');
-    const serviceId = urlParams.get('service');
+    // Ocultar empty state
+    if (emptyState) emptyState.style.display = 'none';
+    if (noResults) noResults.style.display = 'none';
 
-    if (category) {
-      this.filterServicesByCategory(category);
+    // Renderizar cada servicio
+    this.filteredServices.forEach((service, index) => {
+      const card = this.createServiceCard(service, index);
+      servicesGrid.appendChild(card);
+    });
+
+    // Inicializar AOS para las nuevas cards
+    if (typeof AOS !== 'undefined') {
+      AOS.refresh();
     }
 
-    if (serviceId) {
-      this.highlightService(serviceId);
-    }
+    // Inicializar listeners de favoritos
+    this.initializeFavoritesListeners();
   }
 
   /**
-   * Filter services by category on services page
+   * Crea un elemento de card de servicio
    */
-  filterServicesByCategory(category) {
-    // Wait for DOM to be ready
-    setTimeout(() => {
-      const filterTabs = document.querySelectorAll('.service-filter-tab');
-      const targetTab = document.querySelector(`[data-service-category="${category}"]`);
-      
-      if (targetTab) {
-        // Remove active class from all tabs
-        filterTabs.forEach(tab => tab.classList.remove('active'));
-        
-        // Activate the target tab
-        targetTab.classList.add('active');
-        
-        // Filter the service cards
-        this.filterServices(category);
-        
-        // Scroll to services section
-        const servicesSection = document.querySelector('.services-section');
-        if (servicesSection) {
-          servicesSection.scrollIntoView({ behavior: 'smooth' });
-        }
-      }
-    }, 500);
+  createServiceCard(service, index) {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.setAttribute('data-aos', 'fade-up');
+    card.setAttribute('data-aos-delay', (index % 3) * 100);
+    card.setAttribute('data-id', service.id);
+
+    // Formatear precio
+    let priceText = window.DaleDeal.utils.formatCurrency(service.price);
+    if (service.priceType === 'monthly') priceText += '/mes';
+    else if (service.priceType === 'per_m2') priceText += '/m²';
+    else if (service.priceType === 'per_room') priceText += '/amb';
+
+    // Renderizar badges
+    const badgesHTML = service.badges.map((badge, badgeIndex) => {
+      const badgeClass = service.emergency || badge.includes('Premium') || badge.includes('Emergencia')
+        ? 'badge-offer'
+        : 'badge-featured';
+      return `<span class="${badgeClass}">${badge}</span>`;
+    }).join('\n          ');
+
+    // Renderizar estrellas
+    const starsHTML = this.renderStars(service.rating);
+
+    // Badges adicionales
+    let extraBadges = '';
+    if (service.topRated) {
+      extraBadges += '<span class="shipping-badge"><i class="bi bi-star-fill"></i> Top rated</span>';
+    }
+    if (service.emergency) {
+      extraBadges += ' <span class="shipping-badge"><i class="bi bi-lightning-charge-fill"></i> Urgencias</span>';
+    }
+    if (service.nationwide) {
+      extraBadges += ' <span class="shipping-badge"><i class="bi bi-truck"></i> Cobertura nacional</span>';
+    }
+
+    card.innerHTML = `
+      <div class="product-image-container">
+        <img
+          src="${service.image}"
+          alt="${service.title}"
+          class="product-image"
+          loading="lazy"
+        />
+        ${badgesHTML}
+        <div class="product-actions">
+          <button class="action-heart" title="Agregar a favoritos" data-product-id="${service.id}">
+            <i class="bi bi-heart"></i>
+          </button>
+        </div>
+      </div>
+      <div class="product-info">
+        <h3 class="product-title">${service.title}</h3>
+        <p class="product-description">${service.description.substring(0, 80)}${service.description.length > 80 ? '...' : ''}</p>
+
+        <div class="product-meta-group">
+          <div class="product-rating">
+            <div class="stars">${starsHTML}</div>
+            <span class="reviews-count">(${service.reviewCount})</span>
+            ${extraBadges}
+          </div>
+          <div class="product-location">
+            <i class="bi bi-geo-alt-fill"></i>
+            <span>${service.location}</span>
+          </div>
+        </div>
+
+        <div class="product-pricing-wrapper">
+          <div class="product-pricing">
+            <span class="product-current-price">${priceText}</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    return card;
   }
 
   /**
-   * Filter service cards based on category
+   * Renderiza las estrellas de rating
    */
-  filterServices(category) {
-    const serviceCards = document.querySelectorAll('.service-card');
-    
-    serviceCards.forEach(card => {
-      const cardCategory = card.dataset.serviceCategory;
-      
-      if (category === 'all' || cardCategory === category) {
-        card.style.display = 'block';
-        card.style.opacity = '1';
-        card.style.transform = 'translateY(0)';
-      } else {
-        card.style.display = 'none';
-      }
+  renderStars(rating) {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    let starsHTML = '';
+
+    for (let i = 0; i < fullStars; i++) {
+      starsHTML += '<i class="bi bi-star-fill"></i>';
+    }
+
+    if (hasHalfStar) {
+      starsHTML += '<i class="bi bi-star-half"></i>';
+    }
+
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+    for (let i = 0; i < emptyStars; i++) {
+      starsHTML += '<i class="bi bi-star"></i>';
+    }
+
+    return starsHTML;
+  }
+
+  /**
+   * Inicializa listeners de favoritos
+   */
+  initializeFavoritesListeners() {
+    document.querySelectorAll('.action-heart').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const serviceId = btn.dataset.productId;
+        this.toggleFavorite(serviceId, btn);
+      });
     });
   }
 
   /**
-   * Highlight a specific service card
+   * Toggle favorito
    */
-  highlightService(serviceId) {
-    setTimeout(() => {
-      const serviceCard = document.querySelector(`[data-id="${serviceId}"]`);
-      if (serviceCard) {
-        // Add highlight effect
-        serviceCard.classList.add('service-highlighted');
-        
-        // Scroll to the specific service
-        serviceCard.scrollIntoView({ 
-          behavior: 'smooth',
-          block: 'center'
-        });
-        
-        // Remove highlight after a few seconds
-        setTimeout(() => {
-          serviceCard.classList.remove('service-highlighted');
-        }, 3000);
-      }
-    }, 800);
+  toggleFavorite(serviceId, btn) {
+    const icon = btn.querySelector('i');
+    if (icon.classList.contains('bi-heart')) {
+      icon.classList.remove('bi-heart');
+      icon.classList.add('bi-heart-fill');
+      btn.classList.add('active');
+      console.log(`Servicio ${serviceId} añadido a favoritos`);
+    } else {
+      icon.classList.remove('bi-heart-fill');
+      icon.classList.add('bi-heart');
+      btn.classList.remove('active');
+      console.log(`Servicio ${serviceId} eliminado de favoritos`);
+    }
+  }
+
+  /**
+   * Muestra error al cargar servicios
+   */
+  showError() {
+    const servicesGrid = document.getElementById('servicesGrid');
+    const loadingContainer = document.getElementById('loadingContainer');
+
+    if (loadingContainer) {
+      loadingContainer.style.display = 'none';
+    }
+
+    if (servicesGrid) {
+      servicesGrid.innerHTML = `
+        <div class="col-12">
+          <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            Error al cargar los servicios. Por favor, intenta nuevamente más tarde.
+          </div>
+        </div>
+      `;
+    }
   }
 }
 
-// Initialize when DOM is loaded
+// Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
-  new ServicesNavigation();
+  new ServicesPageLoader();
 });
-
-// Export for use in other scripts
-window.ServicesNavigation = ServicesNavigation;

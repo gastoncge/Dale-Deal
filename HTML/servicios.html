@@ -39,6 +39,156 @@
     <link rel="stylesheet" href="../CSS/components.css" />
     <link rel="stylesheet" href="../CSS/pages/home.css" />
     <link rel="stylesheet" href="../CSS/pages/services.css" />
+
+    <!-- Services Page Grid Override - Must be after all CSS -->
+    <style>
+      /* Override home.css flex layout for services page */
+      .products-grid {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        flex-direction: initial !important;
+        gap: var(--spacing-6) !important;
+        width: 100% !important;
+        padding: 0 !important;
+      }
+
+      @media (max-width: 1400px) {
+        .products-grid {
+          grid-template-columns: repeat(3, 1fr) !important;
+          gap: var(--spacing-5) !important;
+        }
+      }
+
+      @media (max-width: 1200px) {
+        .filters-sidebar {
+          width: 260px;
+        }
+
+        .products-grid {
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: var(--spacing-5) !important;
+        }
+      }
+
+      @media (max-width: 992px) {
+        /* Header */
+        .header-title {
+          font-size: 24px;
+        }
+
+        .header-actions {
+          display: none;
+        }
+
+        /* Sidebar for mobile */
+        .products-layout {
+          flex-direction: column;
+        }
+
+        .filters-sidebar {
+          position: fixed;
+          top: 0;
+          left: -100%;
+          width: 85%;
+          max-width: 360px;
+          height: 100vh;
+          max-height: 100vh;
+          z-index: 1000;
+          transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 8px 0 24px rgba(0, 0, 0, 0.15);
+          border-radius: 0;
+        }
+
+        .filters-sidebar.active {
+          left: 0;
+        }
+
+        .sidebar-overlay {
+          display: block;
+        }
+
+        .btn-toggle-filters {
+          display: flex;
+          align-items: center;
+        }
+
+        .products-grid {
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: var(--spacing-4) !important;
+        }
+      }
+
+      @media (max-width: 768px) {
+        /* Header */
+        .header-content {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: var(--spacing-4);
+        }
+
+        .header-title {
+          font-size: 22px;
+        }
+
+        .badge-count {
+          font-size: 12px;
+          padding: var(--spacing-1) var(--spacing-3);
+        }
+
+        .breadcrumb-item a {
+          font-size: 12px;
+        }
+
+        .breadcrumb-item.active {
+          font-size: 12px;
+        }
+
+        /* Services Grid */
+        .products-grid {
+          grid-template-columns: 1fr !important;
+          gap: var(--spacing-4) !important;
+        }
+
+        /* Optimizaciones adicionales para móviles */
+        .product-card {
+          min-height: 380px;
+        }
+
+        .product-image-container {
+          height: 220px;
+        }
+
+        .product-info {
+          padding: var(--spacing-3);
+        }
+
+        .product-title {
+          font-size: var(--font-size-base);
+          margin-bottom: var(--spacing-2);
+        }
+
+        .product-current-price {
+          font-size: var(--font-size-lg);
+        }
+
+        /* Sidebar filters in mobile */
+        .filter-section-title {
+          font-size: var(--font-size-sm);
+        }
+
+        .option-text,
+        .checkbox-text {
+          font-size: 13px;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .products-grid {
+          grid-template-columns: 1fr !important;
+          gap: var(--spacing-4) !important;
+        }
+      }
+    </style>
   </head>
 
   <body>
@@ -224,479 +374,330 @@
 
     <!-- Main Content -->
     <main class="main-content">
-      <!-- Hero Section for Services -->
-      <section class="services-hero-section">
-        <div class="container">
-          <div class="row align-items-center min-vh-50">
-            <div class="col-lg-6">
-              <div class="services-hero-content" data-aos="fade-right">
-                <span class="hero-badge services-badge">
-                  <i class="bi bi-tools me-2"></i>Servicios Profesionales
-                </span>
-                <h1 class="services-hero-title">
-                  Conectamos tu necesidad con el <span class="text-primary">profesional perfecto</span>
-                </h1>
-                <p class="services-hero-subtitle">
-                  Encuentra profesionales verificados en tu zona. Desde técnicos especializados hasta servicios gastronómicos y construcción. Miles de proveedores listos para ayudarte.
-                </p>
-                <div class="services-hero-stats">
-                  <div class="stat-item">
-                    <span class="stat-number">500+</span>
-                    <span class="stat-label">Profesionales</span>
-                  </div>
-                  <div class="stat-item">
-                    <span class="stat-number">12</span>
-                    <span class="stat-label">Categorías</span>
-                  </div>
-                  <div class="stat-item">
-                    <span class="stat-number">4.8★</span>
-                    <span class="stat-label">Calificación</span>
-                  </div>
-                </div>
-                <div class="services-hero-actions">
-                  <button class="btn btn-primary btn-lg" id="exploreServicesBtn">
-                    <i class="bi bi-search me-2"></i>Buscar profesionales
-                  </button>
-                  <button class="btn btn-outline-primary btn-lg" id="becomeProviderBtn">
-                    <i class="bi bi-person-plus me-2"></i>Ofrecer mis servicios
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-6">
-              <div class="services-hero-image" data-aos="fade-left">
-                <img 
-                  src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&h=500&fit=crop" 
-                  alt="Servicios Profesionales" 
-                  class="img-fluid rounded-3xl"
-                />
-                <div class="floating-cards">
-                  <div class="floating-card" data-aos="zoom-in" data-aos-delay="300">
-                    <i class="bi bi-tools"></i>
-                    <span>Instalación</span>
-                  </div>
-                  <div class="floating-card" data-aos="zoom-in" data-aos-delay="400">
-                    <i class="bi bi-wrench"></i>
-                    <span>Reparación</span>
-                  </div>
-                  <div class="floating-card" data-aos="zoom-in" data-aos-delay="500">
-                    <i class="bi bi-brush"></i>
-                    <span>Limpieza</span>
-                  </div>
-                </div>
-              </div>
+      <!-- Page Header -->
+      <section class="page-header-new">
+        <div class="container-fluid px-4">
+          <!-- Breadcrumbs -->
+          <nav class="breadcrumb-nav" data-aos="fade-down">
+            <ol class="breadcrumb-list">
+              <li class="breadcrumb-item">
+                <a href="../index.html">
+                  <i class="bi bi-house-door-fill"></i>
+                  Inicio
+                </a>
+              </li>
+              <li class="breadcrumb-separator">
+                <i class="bi bi-chevron-right"></i>
+              </li>
+              <li class="breadcrumb-item active">
+                Servicios
+              </li>
+            </ol>
+          </nav>
+
+          <!-- Header Content -->
+          <div class="header-content" data-aos="fade-up">
+            <div class="header-left">
+              <h1 class="header-title">
+                Servicios Profesionales
+              </h1>
+              <p class="header-description">
+                <span class="badge-count" id="headerServiceCount">2000+ servicios profesionales</span>
+                <span class="separator">•</span>
+                <span class="text-muted">Profesionales verificados y calificados</span>
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Services Categories Overview -->
-      <section class="services-categories-section">
-        <div class="container">
-          <div class="section-header text-center mb-5" data-aos="fade-up">
-            <h2 class="section-title">Categorías de Servicios</h2>
-            <p class="section-subtitle">Encuentra profesionales verificados en cada categoría especializada</p>
-          </div>
-          
-          <div class="categories-grid" data-aos="fade-up" data-aos-delay="100">
-            <div class="category-card" data-category="installation">
-              <div class="category-icon">
-                <i class="bi bi-tools"></i>
-              </div>
-              <h3 class="category-title">Instalación</h3>
-              <p class="category-description">Técnicos especializados en instalación de equipos y sistemas</p>
-              <span class="category-count">45 profesionales</span>
-            </div>
+      <!-- Services Section with Sidebar -->
+      <section class="products-grid-section">
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-            <div class="category-card" data-category="repair">
-              <div class="category-icon">
-                <i class="bi bi-wrench"></i>
-              </div>
-              <h3 class="category-title">Reparación</h3>
-              <p class="category-description">Profesionales en reparaciones con garantía y experiencia certificada</p>
-              <span class="category-count">68 profesionales</span>
-            </div>
-
-            <div class="category-card" data-category="maintenance">
-              <div class="category-icon">
-                <i class="bi bi-gear"></i>
-              </div>
-              <h3 class="category-title">Mantenimiento</h3>
-              <p class="category-description">Especialistas en mantenimiento preventivo y correctivo</p>
-              <span class="category-count">52 profesionales</span>
-            </div>
-
-            <div class="category-card" data-category="consultation">
-              <div class="category-icon">
-                <i class="bi bi-chat-dots"></i>
-              </div>
-              <h3 class="category-title">Consultoría</h3>
-              <p class="category-description">Consultores y asesores expertos en tecnología</p>
-              <span class="category-count">23 profesionales</span>
-            </div>
-
-            <div class="category-card" data-category="catering">
-              <div class="category-icon">
-                <i class="bi bi-cake"></i>
-              </div>
-              <h3 class="category-title">Gastronomía</h3>
-              <p class="category-description">Chefs, reposteros y profesionales gastronómicos</p>
-              <span class="category-count">34 profesionales</span>
-            </div>
-
-            <div class="category-card" data-category="construction">
-              <div class="category-icon">
-                <i class="bi bi-hammer"></i>
-              </div>
-              <h3 class="category-title">Construcción</h3>
-              <p class="category-description">Albañiles, constructores y profesionales de la construcción</p>
-              <span class="category-count">89 profesionales</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Main Services Section -->
-      <section class="services-section">
-        <div class="container">
-          <div class="section-header text-center mb-5" data-aos="fade-up">
-            <h2 class="section-title">Todos Nuestros Servicios</h2>
-          </div>
-
-          <!-- Filtros de servicios -->
-          <div class="services-filters">
-            <div class="services-filters-container">
-              <div class="service-filter-tabs">
-                <button class="service-filter-tab active" data-service-category="all">
-                  Todos
-                </button>
-                <button class="service-filter-tab" data-service-category="installation">
-                  Instalación
-                </button>
-                <button class="service-filter-tab" data-service-category="repair">
-                  Reparación
-                </button>
-                <button class="service-filter-tab" data-service-category="maintenance">
-                  Mantenimiento
-                </button>
-                <button class="service-filter-tab" data-service-category="consultation">
-                  Consultoría
-                </button>
-                <button class="service-filter-tab" data-service-category="catering">
-                  Gastronomía
-                </button>
-                <button class="service-filter-tab" data-service-category="construction">
-                  Construcción
-                </button>
-              </div>
-              <div class="service-filter-options">
-                <button class="service-filter-btn" id="serviceSortBtn">
-                  <i class="bi bi-sort-down me-2"></i>Ordenar
-                </button>
-                <button class="service-filter-btn" id="serviceFilterBtn">
-                  <i class="bi bi-funnel me-2"></i>Filtros
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="services-grid" id="servicesGrid">
-            <!-- Servicio 1 - Instalación Técnica -->
-            <div class="service-card" data-aos="fade-up" data-aos-delay="0" data-service-category="installation" data-service-price="15000" data-id="installation-tech">
-              <div class="service-image-container">
-                <img
-                  src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=400&h=300&fit=crop"
-                  alt="Instalación Técnica"
-                  class="service-image"
-                />
-                <div class="service-badges">
-                  <span class="badge-certified">Certificado</span>
-                  <span class="badge-warranty">Garantía 1 año</span>
+        <div class="container-fluid px-4">
+          <div class="products-layout">
+            <!-- Sidebar Filters - Redesigned -->
+            <aside class="filters-sidebar" id="filtersSidebar">
+              <div class="sidebar-header">
+                <div class="sidebar-title-group">
+                  <i class="bi bi-sliders sidebar-icon"></i>
+                  <h3 class="sidebar-title">Filtrar</h3>
                 </div>
-                <div class="service-actions">
-                  <button class="action-heart" title="Agregar a favoritos" data-service-id="installation-tech">
-                    <i class="bi bi-heart"></i>
-                  </button>
-                </div>
+                <button class="btn-clear-filters" id="clearAllFilters">
+                  <i class="bi bi-arrow-clockwise"></i>
+                </button>
               </div>
-              <div class="service-info">
-                <h3 class="service-title">Instalación Técnica Profesional</h3>
-                <p class="service-description">
-                  Instalación y configuración profesional de todos tus dispositivos por técnicos certificados.
-                </p>
-                <div class="service-meta">
-                  <div class="service-rating">
-                    <div class="stars">
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                    </div>
-                    <span class="service-rating-text">4.9 (127)</span>
+
+              <div class="filters-content">
+                <!-- Categories Filter -->
+                <div class="filter-section">
+                <button class="filter-section-header" data-bs-toggle="collapse" data-bs-target="#categoriesCollapse">
+                  <div class="header-left">
+                    <i class="bi bi-grid-3x2-gap filter-icon"></i>
+                    <h4 class="filter-section-title">Categorías</h4>
                   </div>
-                  <div class="service-info-row">
-                    <div class="service-location">
-                      <i class="bi bi-geo-alt-fill"></i>
-                      <span>Córdoba Capital</span>
-                    </div>
-                    <span class="service-price-badge">Desde $15.999</span>
+                  <i class="bi bi-chevron-down toggle-icon"></i>
+                </button>
+                <div class="collapse show" id="categoriesCollapse">
+                  <div class="filter-options-list">
+                    <label class="filter-option-modern">
+                      <input type="radio" name="category" value="all" checked>
+                      <span class="option-content">
+                        <i class="bi bi-grid-3x3-gap-fill category-icon"></i>
+                        <span class="option-text">Todos los servicios</span>
+                      </span>
+                      <span class="option-check"><i class="bi bi-check-lg"></i></span>
+                    </label>
+                    <label class="filter-option-modern">
+                      <input type="radio" name="category" value="installation" data-category="installation">
+                      <span class="option-content">
+                        <i class="bi bi-tools category-icon"></i>
+                        <span class="option-text">Instalación</span>
+                      </span>
+                      <span class="option-check"><i class="bi bi-check-lg"></i></span>
+                    </label>
+                    <label class="filter-option-modern">
+                      <input type="radio" name="category" value="repair" data-category="repair">
+                      <span class="option-content">
+                        <i class="bi bi-wrench-adjustable category-icon"></i>
+                        <span class="option-text">Reparación</span>
+                      </span>
+                      <span class="option-check"><i class="bi bi-check-lg"></i></span>
+                    </label>
+                    <label class="filter-option-modern">
+                      <input type="radio" name="category" value="maintenance" data-category="maintenance">
+                      <span class="option-content">
+                        <i class="bi bi-gear-fill category-icon"></i>
+                        <span class="option-text">Mantenimiento</span>
+                      </span>
+                      <span class="option-check"><i class="bi bi-check-lg"></i></span>
+                    </label>
+                    <label class="filter-option-modern">
+                      <input type="radio" name="category" value="consultation" data-category="consultation">
+                      <span class="option-content">
+                        <i class="bi bi-chat-dots-fill category-icon"></i>
+                        <span class="option-text">Consultoría</span>
+                      </span>
+                      <span class="option-check"><i class="bi bi-check-lg"></i></span>
+                    </label>
+                    <label class="filter-option-modern">
+                      <input type="radio" name="category" value="catering" data-category="catering">
+                      <span class="option-content">
+                        <i class="bi bi-cake2-fill category-icon"></i>
+                        <span class="option-text">Gastronomía</span>
+                      </span>
+                      <span class="option-check"><i class="bi bi-check-lg"></i></span>
+                    </label>
                   </div>
                 </div>
-                <button class="btn-contact-service">
-                  <i class="bi bi-chat-dots me-2"></i>Ver más
+              </div>
+
+              <!-- Price Range Filter -->
+              <div class="filter-section">
+                <button class="filter-section-header" data-bs-toggle="collapse" data-bs-target="#priceCollapse">
+                  <div class="header-left">
+                    <i class="bi bi-currency-dollar filter-icon"></i>
+                    <h4 class="filter-section-title">Precio</h4>
+                  </div>
+                  <i class="bi bi-chevron-down toggle-icon"></i>
+                </button>
+                <div class="collapse show" id="priceCollapse">
+                  <div class="price-filter-modern">
+                    <div class="price-inputs-group">
+                      <div class="price-input-wrapper">
+                        <label class="price-label">Mínimo</label>
+                        <div class="input-with-icon">
+                          <span class="currency-symbol">$</span>
+                          <input type="number" class="price-input-modern" id="minPrice" placeholder="0" min="0">
+                        </div>
+                      </div>
+                      <div class="price-divider">
+                        <i class="bi bi-dash-lg"></i>
+                      </div>
+                      <div class="price-input-wrapper">
+                        <label class="price-label">Máximo</label>
+                        <div class="input-with-icon">
+                          <span class="currency-symbol">$</span>
+                          <input type="number" class="price-input-modern" id="maxPrice" placeholder="99999" min="0">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Shipping & Features Filter -->
+              <div class="filter-section">
+                <button class="filter-section-header" data-bs-toggle="collapse" data-bs-target="#featuresCollapse">
+                  <div class="header-left">
+                    <i class="bi bi-shield-check filter-icon"></i>
+                    <h4 class="filter-section-title">Certificaciones</h4>
+                  </div>
+                  <i class="bi bi-chevron-down toggle-icon"></i>
+                </button>
+                <div class="collapse show" id="featuresCollapse">
+                  <div class="filter-options-list">
+                    <label class="filter-checkbox-modern">
+                      <input type="checkbox" id="freeShipping">
+                      <span class="checkbox-custom"></span>
+                      <span class="checkbox-content">
+                        <i class="bi bi-patch-check-fill benefit-icon text-success"></i>
+                        <span class="checkbox-text">Certificado</span>
+                      </span>
+                    </label>
+                    <label class="filter-checkbox-modern">
+                      <input type="checkbox" id="conditionNew">
+                      <span class="checkbox-custom"></span>
+                      <span class="checkbox-content">
+                        <i class="bi bi-shield-fill-check benefit-icon text-primary"></i>
+                        <span class="checkbox-text">Con garantía</span>
+                      </span>
+                    </label>
+                    <label class="filter-checkbox-modern">
+                      <input type="checkbox" id="conditionUsed">
+                      <span class="checkbox-custom"></span>
+                      <span class="checkbox-content">
+                        <i class="bi bi-clock-fill benefit-icon text-info"></i>
+                        <span class="checkbox-text">Disponible 24/7</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Rating Filter -->
+              <div class="filter-section">
+                <button class="filter-section-header" data-bs-toggle="collapse" data-bs-target="#ratingCollapse">
+                  <div class="header-left">
+                    <i class="bi bi-star-fill filter-icon"></i>
+                    <h4 class="filter-section-title">Calificación</h4>
+                  </div>
+                  <i class="bi bi-chevron-down toggle-icon"></i>
+                </button>
+                <div class="collapse show" id="ratingCollapse">
+                  <div class="filter-options-list">
+                    <label class="filter-rating-modern">
+                      <input type="radio" name="rating" value="all" checked>
+                      <span class="rating-content">
+                        <span class="stars-group">
+                          <span class="rating-text">Todas las calificaciones</span>
+                        </span>
+                      </span>
+                    </label>
+                    <label class="filter-rating-modern">
+                      <input type="radio" name="rating" value="4">
+                      <span class="rating-content">
+                        <span class="stars-group">
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star star-empty"></i>
+                        </span>
+                        <span class="rating-label">o más</span>
+                      </span>
+                    </label>
+                    <label class="filter-rating-modern">
+                      <input type="radio" name="rating" value="3">
+                      <span class="rating-content">
+                        <span class="stars-group">
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star star-empty"></i>
+                          <i class="bi bi-star star-empty"></i>
+                        </span>
+                        <span class="rating-label">o más</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sort Filter -->
+              <div class="filter-section">
+                <button class="filter-section-header" data-bs-toggle="collapse" data-bs-target="#sortCollapse">
+                  <div class="header-left">
+                    <i class="bi bi-sort-down filter-icon"></i>
+                    <h4 class="filter-section-title">Ordenar por</h4>
+                  </div>
+                  <i class="bi bi-chevron-down toggle-icon"></i>
+                </button>
+                <div class="collapse show" id="sortCollapse">
+                  <select class="select-modern" id="sortSelect">
+                    <option value="featured">⭐ Más relevantes</option>
+                    <option value="price-low">💰 Menor precio</option>
+                    <option value="price-high">💎 Mayor precio</option>
+                    <option value="name">🔤 Nombre A-Z</option>
+                    <option value="newest">🆕 Más nuevos</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Apply Filters Button -->
+              <div class="filters-footer">
+                <button class="btn-apply-filters-compact" id="applyAllFilters">
+                  <i class="bi bi-check-circle"></i>
+                  <span>Aplicar filtros</span>
+                </button>
+              </div>
+              </div>
+            </aside>
+
+            <!-- Main Content -->
+            <div class="products-main-content">
+              <!-- Results Header -->
+              <div class="results-header">
+                <div class="results-count-container">
+                  <span id="resultsCount">Cargando servicios...</span>
+                </div>
+                <button class="btn-toggle-filters d-lg-none" id="toggleFilters">
+                  <i class="bi bi-funnel me-2"></i>
+                  Filtros
+                </button>
+              </div>
+
+              <!-- Products Grid -->
+              <div class="products-grid" id="servicesGrid">
+                <!-- Products will be loaded here dynamically -->
+              </div>
+
+              <!-- Empty State Container -->
+              <div class="empty-state-container" id="emptyStateContainer">
+                <!-- Loading State -->
+                <div class="empty-state" id="loadingContainer">
+                  <div class="empty-state-icon loading">
+                    <div class="loading-spinner-modern"></div>
+                  </div>
+                  <h3 class="empty-state-title">Cargando servicios</h3>
+                  <p class="empty-state-text">Estamos buscando los mejores servicios para ti...</p>
+                </div>
+
+                <!-- No Results State -->
+                <div class="empty-state" id="noResults" style="display: none;">
+                  <div class="empty-state-icon">
+                    <i class="bi bi-search"></i>
+                  </div>
+                  <h3 class="empty-state-title">No se encontraron servicios</h3>
+                  <p class="empty-state-text">No hay servicios que coincidan con tus filtros actuales</p>
+                  <div class="empty-state-actions">
+                    <button class="btn btn-primary" id="clearFilters">
+                      <i class="bi bi-arrow-clockwise me-2"></i>Limpiar filtros
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Load More -->
+              <div class="load-more-container" id="loadMoreContainer" style="display: none;">
+                <button class="btn btn-primary btn-lg" id="loadMoreBtn">
+                  <i class="bi bi-arrow-down me-2"></i>
+                  Cargar más servicios
                 </button>
               </div>
             </div>
-
-            <!-- Servicio 2 - Soporte Técnico -->
-            <div class="service-card" data-aos="fade-up" data-aos-delay="100" data-service-category="consultation" data-service-price="8000" data-id="tech-support">
-              <div class="service-image-container">
-                <img
-                  src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop"
-                  alt="Soporte Técnico"
-                  class="service-image"
-                />
-                <div class="service-badges">
-                  <span class="badge-24h">24/7 Disponible</span>
-                  <span class="badge-remote">Remoto</span>
-                </div>
-                <div class="service-actions">
-                  <button class="action-heart" title="Agregar a favoritos" data-service-id="tech-support">
-                    <i class="bi bi-heart"></i>
-                  </button>
-                </div>
-              </div>
-              <div class="service-info">
-                <h3 class="service-title">Soporte Técnico Especializado</h3>
-                <p class="service-description">
-                  Asistencia técnica 24/7 para resolver cualquier problema con tus dispositivos.
-                </p>
-                <div class="service-meta">
-                  <div class="service-rating">
-                    <div class="stars">
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-half"></i>
-                    </div>
-                    <span class="service-rating-text">4.6 (89)</span>
-                  </div>
-                  <div class="service-info-row">
-                    <div class="service-location">
-                      <i class="bi bi-geo-alt-fill"></i>
-                      <span>Todo el país</span>
-                    </div>
-                    <span class="service-price-badge">$8.999/mes</span>
-                  </div>
-                </div>
-                <button class="btn-contact-service">
-                  <i class="bi bi-chat-dots me-2"></i>Ver más
-                </button>
-              </div>
-            </div>
-
-            <!-- Repostería Profesional -->
-            <div class="service-card" data-aos="fade-up" data-aos-delay="200" data-service-category="catering" data-service-price="25000" data-id="pastry-service">
-              <div class="service-image-container">
-                <img
-                  src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop"
-                  alt="Repostería Profesional"
-                  class="service-image"
-                />
-                <div class="service-badges">
-                  <span class="badge-artisan">Artesanal</span>
-                  <span class="badge-custom">Personalizado</span>
-                </div>
-                <div class="service-actions">
-                  <button class="action-heart" title="Agregar a favoritos" data-service-id="pastry-service">
-                    <i class="bi bi-heart"></i>
-                  </button>
-                </div>
-              </div>
-              <div class="service-info">
-                <h3 class="service-title">Repostería & Pastelería Profesional</h3>
-                <p class="service-description">
-                  Creamos tortas, postres y dulces personalizados para todo tipo de eventos y celebraciones especiales.
-                </p>
-                <div class="service-meta">
-                  <div class="service-rating">
-                    <div class="stars">
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                    </div>
-                    <span class="service-rating-text">5.0 (234)</span>
-                  </div>
-                  <div class="service-info-row">
-                    <div class="service-location">
-                      <i class="bi bi-geo-alt-fill"></i>
-                      <span>Buenos Aires</span>
-                    </div>
-                    <span class="service-price-badge">Desde $35.999</span>
-                  </div>
-                </div>
-                <button class="btn-contact-service">
-                  <i class="bi bi-chat-dots me-2"></i>Ver más
-                </button>
-              </div>
-            </div>
-
-            <!-- Chef a Domicilio -->
-            <div class="service-card" data-aos="fade-up" data-aos-delay="300" data-service-category="catering" data-service-price="45000" data-id="home-chef">
-              <div class="service-image-container">
-                <img
-                  src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=400&h=300&fit=crop"
-                  alt="Chef a Domicilio"
-                  class="service-image"
-                />
-                <div class="service-badges">
-                  <span class="badge-premium">Premium</span>
-                  <span class="badge-certified">Chef certificado</span>
-                </div>
-                <div class="service-actions">
-                  <button class="action-heart" title="Agregar a favoritos" data-service-id="home-chef">
-                    <i class="bi bi-heart"></i>
-                  </button>
-                </div>
-              </div>
-              <div class="service-info">
-                <h3 class="service-title">Chef Profesional a Domicilio</h3>
-                <p class="service-description">
-                  Chef profesional cocina en tu hogar para cenas íntimas, eventos familiares o celebraciones especiales.
-                </p>
-                <div class="service-meta">
-                  <div class="service-rating">
-                    <div class="stars">
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                    </div>
-                    <span class="service-rating-text">4.8 (156)</span>
-                  </div>
-                  <div class="service-info-row">
-                    <div class="service-location">
-                      <i class="bi bi-geo-alt-fill"></i>
-                      <span>Capital Federal</span>
-                    </div>
-                    <span class="service-price-badge">Desde $75.999</span>
-                  </div>
-                </div>
-                <button class="btn-contact-service">
-                  <i class="bi bi-chat-dots me-2"></i>Ver más
-                </button>
-              </div>
-            </div>
-
-            <!-- Construcción -->
-            <div class="service-card" data-aos="fade-up" data-aos-delay="400" data-service-category="construction" data-service-price="30000" data-id="construction-service">
-              <div class="service-image-container">
-                <img
-                  src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=400&h=300&fit=crop"
-                  alt="Albañilería y Construcción"
-                  class="service-image"
-                />
-                <div class="service-badges">
-                  <span class="badge-professional">Profesional</span>
-                  <span class="badge-warranty">Garantía obra</span>
-                </div>
-                <div class="service-actions">
-                  <button class="action-heart" title="Agregar a favoritos" data-service-id="construction-service">
-                    <i class="bi bi-heart"></i>
-                  </button>
-                </div>
-              </div>
-              <div class="service-info">
-                <h3 class="service-title">Albañilería & Construcción</h3>
-                <p class="service-description">
-                  Servicios de albañilería, reformas, ampliaciones y construcción con materiales de calidad y acabados profesionales.
-                </p>
-                <div class="service-meta">
-                  <div class="service-rating">
-                    <div class="stars">
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-half"></i>
-                    </div>
-                    <span class="service-rating-text">4.7 (203)</span>
-                  </div>
-                  <div class="service-info-row">
-                    <div class="service-location">
-                      <i class="bi bi-geo-alt-fill"></i>
-                      <span>Zona Sur GBA</span>
-                    </div>
-                    <span class="service-price-badge">Desde $45.999/m²</span>
-                  </div>
-                </div>
-                <button class="btn-contact-service">
-                  <i class="bi bi-chat-dots me-2"></i>Ver más
-                </button>
-              </div>
-            </div>
-
-            <!-- Plomería -->
-            <div class="service-card" data-aos="fade-up" data-aos-delay="500" data-service-category="repair" data-service-price="15000" data-id="plumbing-service">
-              <div class="service-image-container">
-                <img
-                  src="https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=400&h=300&fit=crop"
-                  alt="Plomería y Gasfitería"
-                  class="service-image"
-                />
-                <div class="service-badges">
-                  <span class="badge-emergency">Emergencias 24h</span>
-                  <span class="badge-certified">Matriculado</span>
-                </div>
-                <div class="service-actions">
-                  <button class="action-heart" title="Agregar a favoritos" data-service-id="plumbing-service">
-                    <i class="bi bi-heart"></i>
-                  </button>
-                </div>
-              </div>
-              <div class="service-info">
-                <h3 class="service-title">Plomería & Gasfitería</h3>
-                <p class="service-description">
-                  Instalación, reparación y mantenimiento de sistemas de agua, gas y desagües con técnicos matriculados.
-                </p>
-                <div class="service-meta">
-                  <div class="service-rating">
-                    <div class="stars">
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                    </div>
-                    <span class="service-rating-text">4.9 (312)</span>
-                  </div>
-                  <div class="service-info-row">
-                    <div class="service-location">
-                      <i class="bi bi-geo-alt-fill"></i>
-                      <span>CABA y GBA</span>
-                    </div>
-                    <span class="service-price-badge">Desde $18.999</span>
-                  </div>
-                </div>
-                <button class="btn-contact-service">
-                  <i class="bi bi-chat-dots me-2"></i>Ver más
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="services-cta text-center">
-            <h3>¿No encontraste lo que buscas?</h3>
-            <p>Publica tu solicitud y recibe ofertas de profesionales calificados en tu área</p>
-            <button class="btn btn-primary btn-lg">
-              <i class="bi bi-megaphone me-2"></i>
-              Publicar solicitud
-            </button>
           </div>
         </div>
       </section>
@@ -820,14 +821,19 @@
     <!-- Footer -->
     <div id="footer-placeholder"></div>
 
-    <!-- Scripts -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- AOS JS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Custom Scripts -->
     <script src="../JS/utils.js"></script>
     <script src="../JS/auth.js"></script>
     <script src="../JS/cart.js"></script>
     <script src="../JS/notifications.js"></script>
     <script src="../JS/dropdown-fix.js"></script>
+    <script src="../JS/services-data.js"></script>
     <script src="../JS/pages/services.js"></script>
     <script src="../JS/component-loader.js" defer></script>
 
@@ -838,34 +844,6 @@
         easing: "ease-out-cubic",
         once: true,
         offset: 50,
-      });
-
-      // Services page specific functionality
-      document.addEventListener("DOMContentLoaded", () => {
-        // Category cards click handlers
-        document.querySelectorAll('.category-card').forEach(card => {
-          card.addEventListener('click', () => {
-            const category = card.dataset.category;
-            // Scroll to services section and filter
-            document.querySelector('.services-section').scrollIntoView({ behavior: 'smooth' });
-            setTimeout(() => {
-              // Activate the corresponding filter tab
-              document.querySelectorAll('.service-filter-tab').forEach(tab => tab.classList.remove('active'));
-              document.querySelector(`[data-service-category="${category}"]`).classList.add('active');
-              // Filter services logic would go here
-            }, 800);
-          });
-        });
-
-        // Hero actions
-        document.getElementById('exploreServicesBtn')?.addEventListener('click', () => {
-          document.querySelector('.services-section').scrollIntoView({ behavior: 'smooth' });
-        });
-
-        document.getElementById('becomeProviderBtn')?.addEventListener('click', () => {
-          // Logic for becoming a service provider
-          console.log('Become provider functionality - To implement');
-        });
       });
     </script>
   </body>
