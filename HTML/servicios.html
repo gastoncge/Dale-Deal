@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Servicios Profesionales - DALE DEAL</title>
+
+    <!-- SEO Meta Tags -->
+    <meta
+      name="description"
+      content="Descubre nuestros servicios profesionales: instalación técnica, reparaciones, gastronomía, construcción y más. Calidad garantizada en Dale Deal."
+    />
+    <meta
+      name="keywords"
+      content="servicios profesionales, instalación, reparación, chef, repostería, albañilería, jardinería, plomería, limpieza"
+    />
+    <meta name="author" content="Dale Deal" />
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    />
+
+    <!-- AOS (Animate On Scroll) -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../CSS/variables.css" />
+    <link rel="stylesheet" href="../CSS/components.css" />
+    <link rel="stylesheet" href="../CSS/pages/home.css" />
+    <link rel="stylesheet" href="../CSS/pages/services.css" />
+
+    <!-- Services Page Styles - Same as Products -->
+    <style>
+      /* Fondo uniforme */
+      html, body {
+        background: var(--white) !important;
+      }
+
+      /* Navbar igual a inicio */
+      .navbar {
+        background: var(--gray-50) !important;
+        border-bottom: none !important;
+        box-shadow: var(--shadow-md) !important;
+        width: 100% !important;
+      }
+
+      /* Breadcrumb ocupa todo el ancho */
+      .page-header-new {
+        background: var(--gray-50) !important;
+        width: 100vw !important;
+        margin-left: calc(-50vw + 50%) !important;
+        padding-left: calc(50vw - 50% + 1rem) !important;
+        padding-right: calc(50vw - 50% + 1rem) !important;
+        border-bottom: 1px solid var(--gray-200) !important;
+      }
+
+      /* ===== NEW SIDEBAR LAYOUT ===== */
+      .products-layout {
+        display: flex;
+        gap: 0;
+        align-items: stretch;
+        margin-top: 0;
+        min-height: calc(100vh - 200px);
+      }
+
+      /* Filters Sidebar - Redesigned */
+      .filters-sidebar {
+        width: 260px;
+        flex-shrink: 0;
+        background: var(--white);
+        border-radius: 0;
+        padding: 0;
+        box-shadow: 1px 0 8px rgba(0, 0, 0, 0.05);
+        border-right: 1px solid var(--gray-200);
+        position: sticky;
+        top: 70px;
+        height: calc(100vh - 70px);
+        max-height: calc(100vh - 70px);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        align-self: flex-start;
+      }
+
+      /* Sidebar Header */
+      .sidebar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--spacing-4) var(--spacing-5);
+        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        border-bottom: 1px solid var(--gray-100);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      .sidebar-title-group {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-3);
+      }
+
+      .sidebar-icon {
+        font-size: 20px;
+        background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-yellow) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .sidebar-title {
+        font-size: var(--font-size-lg);
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0;
+        letter-spacing: -0.3px;
+      }
+
+      .btn-clear-filters {
+        background: var(--gray-100);
+        border: none;
+        color: var(--gray-700);
+        font-size: 14px;
+        cursor: pointer;
+        width: 28px;
+        height: 28px;
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all var(--transition-base);
+      }
+
+      .btn-clear-filters:hover {
+        background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-yellow) 100%);
+        color: var(--white);
+      }
+
+      /* Sidebar Content with Scroll */
+      .filters-sidebar > div:last-child,
+      .filters-content {
+        overflow-y: auto;
+        padding: var(--spacing-3) var(--spacing-4) var(--spacing-4) var(--spacing-4);
+        flex: 1;
+      }
+
+      /* Filter Sections */
+      .filter-section {
+        margin-bottom: var(--spacing-3);
+        border-bottom: 1px solid var(--gray-100);
+        padding-bottom: var(--spacing-3);
+      }
+
+      .filter-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+
+      /* Collapsible Section Header */
+      .filter-section-header {
+        width: 100%;
+        background: none;
+        border: none;
+        padding: var(--spacing-3) 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        transition: all var(--transition-base);
+      }
+
+      .filter-section-header .header-left {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-3);
+      }
+
+      .filter-icon {
+        font-size: 18px;
+        background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-yellow) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .filter-section-title {
+        font-size: var(--font-size-base);
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0;
+      }
+
+      .toggle-icon {
+        font-size: 14px;
+        color: var(--gray-500);
+        transition: transform var(--transition-base);
+      }
+
+      .filter-section-header:not(.collapsed) .toggle-icon {
+        transform: rotate(180deg);
+      }
+
+      /* Filter Options List */
+      .filter-options-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-2);
+        padding-top: var(--spacing-3);
+      }
+
+      /* Modern Filter Option (Radio) */
+      .filter-option-modern {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        padding: var(--spacing-3);
+        border-radius: var(--radius-lg);
+        transition: all var(--transition-base);
+        position: relative;
+      }
+
+      .filter-option-modern input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .filter-option-modern:hover {
+        background: var(--gray-50);
+      }
+
+      .filter-option-modern input[type="radio"]:checked + .option-content {
+        font-weight: 600;
+      }
+
+      .filter-option-modern input[type="radio"]:checked + .option-content .option-text {
+        background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-yellow) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .filter-option-modern input[type="radio"]:checked ~ .option-check {
+        opacity: 1;
+        background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-yellow) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .option-content {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-3);
+        transition: all var(--transition-base);
+      }
+
+      .category-icon {
+        font-size: 18px;
+        color: var(--gray-500);
+        transition: all var(--transition-base);
+      }
+
+      .filter-option-modern input[type="radio"]:checked ~ .option-content .category-icon {
+        background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-yellow) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .option-text {
+        font-size: var(--font-size-sm);
+        color: var(--gray-700);
+      }
+
+      .option-check {
+        opacity: 0;
+        font-size: 18px;
+        transition: all var(--transition-base);
+      }
+
+      /* Modern Price Filter */
+      .price-filter-modern {
+        padding-top: var(--spacing-3);
+      }
+
+      .price-inputs-group {
+        display: flex;
+        align-items: flex-end;
+        gap: var(--spacing-3);
+        margin-bottom: var(--spacing-3);
+      }
+
+      .price-input-wrapper {
+        flex: 1;
+      }
+
+      .price-label {
+        font-size: var(--font-size-xs);
+        color: var(--gray-600);
+        font-weight: 600;
+        margin-bottom: var(--spacing-2);
+        display: block;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .input-with-icon {
+        position: relative;
+      }
+
+      .currency-symbol {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray-500);
+        font-weight: 600;
+        font-size: var(--font-size-sm);
+      }
+
+      .price-input-modern {
+        width: 100%;
+        border: 2px solid var(--gray-200);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-3) var(--spacing-3) var(--spacing-3) 32px;
+        font-size: var(--font-size-sm);
+        font-weight: 600;
+        transition: all var(--transition-base);
+      }
+
+      .price-input-modern:focus {
+        outline: none;
+        border-color: var(--primary-red);
+        box-shadow: 0 0 0 4px rgba(214, 48, 49, 0.15);
+      }
+
+      .price-divider {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--gray-400);
+        font-size: 18px;
+        padding-bottom: 8px;
+      }
+
+      /* Modern Checkbox Filter */
+      .filter-checkbox-modern {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-3);
+        cursor: pointer;
+        padding: var(--spacing-3);
+        border-radius: var(--radius-lg);
+        transition: all var(--transition-base);
+        position: relative;
+      }
+
+      .filter-checkbox-modern input[type="checkbox"] {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .filter-checkbox-modern:hover {
+        background: var(--gray-50);
+      }
+
+      .checkbox-custom {
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--gray-300);
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all var(--transition-base);
+        flex-shrink: 0;
+      }
+
+      .filter-checkbox-modern input[type="checkbox"]:checked ~ .checkbox-custom {
+        background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-yellow) 100%);
+        border-color: var(--primary-red);
+      }
+
+      .filter-checkbox-modern input[type="checkbox"]:checked ~ .checkbox-custom::after {
+        content: '✓';
+        color: var(--white);
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .checkbox-content {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-2);
+      }
+
+      .benefit-icon {
+        font-size: 18px;
+      }
+
+      .checkbox-text {
+        font-size: var(--font-size-sm);
+        color: var(--gray-700);
+        font-weight: 500;
+      }
+
+      /* Modern Rating Filter */
+      .filter-rating-modern {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        padding: var(--spacing-3);
+        border-radius: var(--radius-lg);
+        transition: all var(--transition-base);
+        position: relative;
+      }
+
+      .filter-rating-modern input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .filter-rating-modern:hover {
+        background: var(--gray-50);
+      }
+
+      .filter-rating-modern input[type="radio"]:checked ~ .rating-content {
+        background: rgba(214, 48, 49, 0.05);
+        border-radius: var(--radius-md);
+        padding: var(--spacing-1) var(--spacing-2);
+      }
+
+      .rating-content {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-3);
+        transition: all var(--transition-base);
+      }
+
+      .stars-group {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+      }
+
+      .star-filled {
+        color: var(--primary-yellow);
+        font-size: 16px;
+      }
+
+      .star-empty {
+        color: var(--gray-300);
+        font-size: 16px;
+      }
+
+      .rating-text {
+        font-size: var(--font-size-sm);
+        color: var(--gray-700);
+        font-weight: 500;
+      }
+
+      .rating-label {
+        font-size: var(--font-size-xs);
+        color: var(--gray-600);
+      }
+
+      /* Modern Select */
+      .select-modern {
+        width: 100%;
+        padding: var(--spacing-3);
+        border: 2px solid var(--gray-200);
+        border-radius: var(--radius-lg);
+        font-size: var(--font-size-sm);
+        font-weight: 600;
+        color: var(--gray-700);
+        background: var(--white);
+        cursor: pointer;
+        transition: all var(--transition-base);
+        margin-top: var(--spacing-3);
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 12px;
+        padding-right: 36px;
+      }
+
+      .select-modern:focus {
+        outline: none;
+        border-color: var(--primary-red);
+        box-shadow: 0 0 0 4px rgba(214, 48, 49, 0.15);
+      }
+
+      /* Main Content */
+      .products-main-content {
+        flex: 1;
+        min-width: 0;
+        padding: var(--spacing-4) var(--spacing-5);
+      }
+
+      .results-header {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-bottom: var(--spacing-4);
+        padding: 0;
+        background: transparent;
+        border-radius: 0;
+        box-shadow: none;
+        border: none;
+      }
+
+      .results-count-container {
+        font-size: 13px;
+        color: var(--gray-400);
+        font-weight: 500;
+        background: var(--gray-100);
+        padding: 6px 12px;
+        border-radius: var(--radius-full);
+      }
+
+      .btn-toggle-filters {
+        display: none;
+        background: var(--primary-red);
+        color: var(--white);
+        border: none;
+        padding: var(--spacing-2) var(--spacing-4);
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-sm);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition-base);
+      }
+
+      .btn-toggle-filters:hover {
+        background: var(--red-600);
+      }
+
+      /* Sidebar Overlay for Mobile */
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .sidebar-overlay.active {
+        opacity: 1;
+      }
+
+      /* Products Grid Section */
+      .products-grid-section {
+        background: var(--white);
+        min-height: 60vh;
+        padding: 0;
+        position: relative;
+      }
+
+      /* Services Grid - 4 columns like products */
+      .products-grid {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        flex-direction: initial !important;
+        gap: var(--spacing-5) !important;
+        width: 100% !important;
+        padding: 0 !important;
+      }
+
+      @media (max-width: 1400px) {
+        .products-grid {
+          grid-template-columns: repeat(3, 1fr) !important;
+          gap: var(--spacing-4) !important;
+        }
+      }
+
+      @media (max-width: 1200px) {
+        .filters-sidebar {
+          width: 240px;
+        }
+
+        .products-grid {
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: var(--spacing-4) !important;
+        }
+      }
+
+      @media (max-width: 992px) {
+        .header-title {
+          font-size: 24px;
+        }
+
+        .header-actions {
+          display: none;
+        }
+
+        .products-layout {
+          flex-direction: column;
+        }
+
+        .filters-sidebar {
+          position: fixed;
+          top: 0;
+          left: -100%;
+          width: 85%;
+          max-width: 360px;
+          height: 100vh;
+          max-height: 100vh;
+          z-index: 1000;
+          transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 8px 0 24px rgba(0, 0, 0, 0.15);
+          border-radius: 0;
+          border-right: none;
+        }
+
+        .filters-sidebar.active {
+          left: 0;
+        }
+
+        .sidebar-overlay {
+          display: block;
+        }
+
+        .btn-toggle-filters {
+          display: flex;
+          align-items: center;
+        }
+
+        .products-main-content {
+          padding: var(--spacing-4);
+        }
+
+        .products-grid {
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: var(--spacing-4) !important;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .header-content {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: var(--spacing-4);
+        }
+
+        .header-title {
+          font-size: 22px;
+        }
+
+        .badge-count {
+          font-size: 12px;
+          padding: var(--spacing-1) var(--spacing-3);
+        }
+
+        .breadcrumb-item a {
+          font-size: 12px;
+        }
+
+        .breadcrumb-item.active {
+          font-size: 12px;
+        }
+
+        .products-grid {
+          grid-template-columns: 1fr !important;
+          gap: var(--spacing-4) !important;
+        }
+
+        .product-card {
+          min-height: 380px;
+        }
+
+        .product-image-container {
+          height: 220px;
+        }
+
+        .product-info {
+          padding: var(--spacing-3);
+        }
+
+        .product-title {
+          font-size: var(--font-size-base);
+          margin-bottom: var(--spacing-2);
+        }
+
+        .product-current-price {
+          font-size: var(--font-size-lg);
+        }
+
+        .filter-section-title {
+          font-size: var(--font-size-sm);
+        }
+
+        .option-text,
+        .checkbox-text {
+          font-size: 13px;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .products-grid {
+          grid-template-columns: 1fr !important;
+          gap: var(--spacing-4) !important;
+        }
+      }
+
+      /* ===== PAGE HEADER STYLES ===== */
+      .page-header-new {
+        background: transparent;
+        padding: var(--spacing-4) 0;
+        border-bottom: none;
+      }
+
+      /* Breadcrumbs */
+      .breadcrumb-nav {
+        margin-bottom: var(--spacing-4);
+      }
+
+      .breadcrumb-list {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-2);
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        flex-wrap: wrap;
+      }
+
+      .breadcrumb-item {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-2);
+      }
+
+      .breadcrumb-item a {
+        color: var(--gray-600);
+        text-decoration: none;
+        font-size: var(--font-size-sm);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-2);
+        transition: color var(--transition-base);
+      }
+
+      .breadcrumb-item a:hover {
+        color: var(--primary-red);
+      }
+
+      .breadcrumb-item.active {
+        color: var(--gray-900);
+        font-size: var(--font-size-sm);
+        font-weight: 600;
+      }
+
+      .breadcrumb-separator {
+        color: var(--gray-400);
+        font-size: 12px;
+      }
+
+      /* Header Content */
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: var(--spacing-6);
+      }
+
+      .header-left {
+        flex: 1;
+      }
+
+      .header-title {
+        font-size: 32px;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0 0 var(--spacing-3) 0;
+        letter-spacing: -0.5px;
+      }
+
+      .header-description {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-3);
+        margin: 0;
+        flex-wrap: wrap;
+      }
+
+      .badge-count {
+        background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-yellow) 100%);
+        color: var(--white);
+        padding: var(--spacing-2) var(--spacing-4);
+        border-radius: var(--radius-full);
+        font-size: var(--font-size-sm);
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        box-shadow: 0 2px 8px rgba(214, 48, 49, 0.25);
+      }
+
+      .separator {
+        color: var(--gray-300);
+        font-weight: 600;
+      }
+
+      /* ===== PRODUCT CARD STYLES ===== */
+      .product-card {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        background: var(--white);
+        border-radius: var(--radius-2xl);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--gray-100);
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        min-height: 420px;
+      }
+
+      .product-card:hover {
+        box-shadow: var(--shadow-lg);
+      }
+
+      .product-image-container {
+        position: relative;
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+        flex-shrink: 0;
+        background: var(--gray-100);
+      }
+
+      .product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform var(--transition-slow);
+        display: block;
+      }
+
+      .product-image-container img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+      }
+
+      .product-info {
+        padding: var(--spacing-4);
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .product-title {
+        font-size: var(--font-size-lg);
+        font-weight: 600;
+        color: var(--gray-900);
+        margin-bottom: var(--spacing-2);
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .product-description {
+        font-size: var(--font-size-sm);
+        color: var(--gray-600);
+        margin-bottom: var(--spacing-3);
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .product-meta-group {
+        margin-bottom: var(--spacing-3);
+      }
+
+      .product-rating {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-2);
+        margin-bottom: var(--spacing-2);
+        font-size: var(--font-size-sm);
+        flex-wrap: wrap;
+      }
+
+      .product-rating .stars {
+        display: flex;
+        gap: 1px;
+      }
+
+      .product-rating .stars i {
+        font-size: var(--font-size-sm);
+        color: var(--primary-yellow);
+      }
+
+      .product-rating .stars .bi-star {
+        color: var(--gray-300);
+      }
+
+      .reviews-count {
+        font-size: var(--font-size-xs);
+        color: var(--gray-500);
+      }
+
+      .product-rating .shipping-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: var(--font-size-xs);
+        color: var(--success-600);
+        font-weight: 500;
+        background: var(--success-50);
+        padding: 2px 8px;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--success-200);
+      }
+
+      .product-location {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-2);
+        font-size: var(--font-size-xs);
+        color: var(--gray-600);
+      }
+
+      .product-location > i {
+        font-size: var(--font-size-sm);
+        color: var(--primary-red);
+      }
+
+      .product-pricing-wrapper {
+        margin-top: auto;
+        padding-top: var(--spacing-3);
+        border-top: 1px solid var(--gray-100);
+      }
+
+      .product-pricing {
+        display: flex;
+        align-items: baseline;
+        gap: var(--spacing-2);
+      }
+
+      .product-current-price {
+        font-size: var(--font-size-xl);
+        font-weight: 700;
+        color: var(--primary-red);
+      }
+
+      /* Badges - inside product-image-container */
+      .product-image-container .badge-featured {
+        position: absolute !important;
+        top: var(--spacing-3) !important;
+        left: var(--spacing-3) !important;
+        background: var(--gradient-primary) !important;
+        color: var(--white) !important;
+        padding: var(--spacing-1) var(--spacing-3) !important;
+        border-radius: var(--radius-md) !important;
+        font-size: var(--font-size-xs) !important;
+        font-weight: 600 !important;
+        z-index: 3 !important;
+        box-shadow: var(--shadow-md) !important;
+      }
+
+      .product-image-container .badge-offer {
+        position: absolute !important;
+        top: var(--spacing-3) !important;
+        left: var(--spacing-3) !important;
+        background: var(--primary-red) !important;
+        color: var(--white) !important;
+        padding: var(--spacing-1) var(--spacing-3) !important;
+        border-radius: var(--radius-md) !important;
+        font-size: var(--font-size-xs) !important;
+        font-weight: 700 !important;
+        z-index: 3 !important;
+        box-shadow: var(--shadow-md) !important;
+      }
+
+      /* Multiple badges stack */
+      .product-image-container .badge-featured + .badge-offer,
+      .product-image-container .badge-offer + .badge-featured {
+        top: calc(var(--spacing-3) + 28px) !important;
+      }
+
+      /* Product Actions - Favorites */
+      .product-actions {
+        position: absolute;
+        top: var(--spacing-3);
+        right: var(--spacing-3);
+        z-index: 5;
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-2);
+      }
+
+      .action-heart {
+        width: 40px !important;
+        height: 40px !important;
+        border-radius: 50% !important;
+        border: 2px solid var(--white) !important;
+        background: rgba(255, 255, 255, 0.95) !important;
+        color: var(--gray-600) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+        padding: 0 !important;
+      }
+
+      .action-heart i {
+        font-size: 18px !important;
+        line-height: 1 !important;
+      }
+
+      .action-heart:hover {
+        background: var(--primary-red) !important;
+        border-color: var(--primary-red) !important;
+        color: var(--white) !important;
+        transform: scale(1.1);
+      }
+
+      .action-heart:hover i {
+        color: var(--white) !important;
+      }
+
+      .action-heart.active {
+        background: var(--primary-red) !important;
+        border-color: var(--primary-red) !important;
+        color: var(--white) !important;
+      }
+
+      .action-heart.active i {
+        color: var(--white) !important;
+      }
+
+      /* ===== FILTER STYLES ===== */
+      /* Empty State */
+      .empty-state-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 400px;
+        padding: var(--spacing-8) 0;
+      }
+
+      .empty-state {
+        background: var(--white);
+        border-radius: var(--radius-3xl);
+        padding: var(--spacing-10);
+        text-align: center;
+        max-width: 500px;
+        width: 100%;
+      }
+
+      .empty-state-icon {
+        width: 80px;
+        height: 80px;
+        background: var(--gray-100);
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto var(--spacing-6);
+      }
+
+      .empty-state-icon i {
+        font-size: 32px;
+        color: var(--gray-400);
+      }
+
+      .empty-state-title {
+        font-size: var(--font-size-xl);
+        font-weight: 700;
+        color: var(--gray-900);
+        margin-bottom: var(--spacing-3);
+      }
+
+      .empty-state-text {
+        color: var(--gray-600);
+        margin-bottom: var(--spacing-6);
+      }
+
+      /* Loading spinner */
+      .loading-spinner-modern {
+        width: 40px;
+        height: 40px;
+        border: 3px solid var(--gray-200);
+        border-top-color: var(--primary-red);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
+      <div class="container-fluid px-4">
+        <!-- Logo -->
+        <a class="navbar-brand" href="../index.html" data-aos="fade-right">
+          <img src="../IMG/LOGO-2.png" alt="Dale Deal" class="logo-navbar" />
+          <span class="brand-text">DALE DEAL</span>
+        </a>
+
+        <!-- Search Bar -->
+        <div class="search-container mx-auto" data-aos="fade-up" data-aos-delay="100">
+          <div class="search-wrapper">
+            <i class="bi bi-search search-icon"></i>
+            <input type="text" class="search-input" placeholder="¿Qué estás buscando hoy?" id="searchInput" />
+          </div>
+        </div>
+
+        <!-- User Actions -->
+        <div class="navbar-actions" data-aos="fade-left" data-aos-delay="200">
+          <!-- Products Link -->
+          <div class="action-item">
+            <a href="./productos.html" class="action-link" title="Productos">
+              <i class="bi bi-bag me-1"></i>
+              <span class="action-text">Productos</span>
+            </a>
+          </div>
+
+          <!-- Services Link - Hidden on services page -->
+          <div class="action-item" style="display: none;">
+            <a href="./servicios.html" class="action-link" title="Servicios Profesionales">
+              <i class="bi bi-tools me-1"></i>
+              <span class="action-text">Servicios</span>
+            </a>
+          </div>
+
+          <!-- Notifications -->
+          <div class="action-item dropdown">
+            <button class="action-btn" id="notificationBtn" data-bs-toggle="dropdown" aria-expanded="false" title="Notificaciones">
+              <i class="bi bi-bell"></i>
+              <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end notifications-dropdown" aria-labelledby="notificationBtn">
+              <div class="notifications-header">
+                <h6 class="mb-0">
+                  <i class="bi bi-bell me-2"></i>Notificaciones
+                  <span class="notifications-count" id="notificationsCount">3</span>
+                </h6>
+              </div>
+              <div class="notifications-filter">
+                <button class="filter-chip active" data-filter="all">Todas</button>
+                <button class="filter-chip" data-filter="unread">No leídas</button>
+                <button class="filter-chip" data-filter="orders">Pedidos</button>
+                <button class="filter-chip" data-filter="offers">Ofertas</button>
+              </div>
+              <div class="notifications-body" id="notificationsDropdownBody">
+                <div class="notification-item unread" data-id="1" data-type="orders">
+                  <div class="notification-icon bg-success">
+                    <i class="bi bi-check-circle text-white"></i>
+                  </div>
+                  <div class="notification-content">
+                    <h6>Pedido confirmado</h6>
+                    <p>Tu pedido #12345 ha sido confirmado</p>
+                    <small>Hace 2 horas</small>
+                  </div>
+                  <button class="notification-close" data-action="dismiss">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+                <div class="notification-item unread" data-id="2" data-type="orders">
+                  <div class="notification-icon bg-info">
+                    <i class="bi bi-truck text-white"></i>
+                  </div>
+                  <div class="notification-content">
+                    <h6>Envío en camino</h6>
+                    <p>Tu pedido #12340 está siendo preparado</p>
+                    <small>Hace 1 día</small>
+                  </div>
+                  <button class="notification-close" data-action="dismiss">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+                <div class="notification-item unread" data-id="3" data-type="offers">
+                  <div class="notification-icon bg-warning">
+                    <i class="bi bi-star text-white"></i>
+                  </div>
+                  <div class="notification-content">
+                    <h6>Nueva oferta disponible</h6>
+                    <p>20% de descuento en electrónicos</p>
+                    <small>Hace 2 días</small>
+                  </div>
+                  <button class="notification-close" data-action="dismiss">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="notifications-footer">
+                <a href="./notificaciones.html" class="btn btn-outline-secondary btn-sm w-100 mb-2">
+                  <i class="bi bi-list me-2"></i>Ver todas
+                </a>
+                <button type="button" class="btn btn-primary btn-sm w-100" id="markAllAsRead">
+                  <i class="bi bi-check-all me-2"></i>Marcar todas como leídas
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cart -->
+          <div class="action-item dropdown">
+            <button class="action-btn" id="cartBtn" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" title="Carrito de compras">
+              <i class="bi bi-cart3"></i>
+              <span class="cart-badge" id="cartBadge" style="display: none;">0</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end cart-dropdown" aria-labelledby="cartBtn">
+              <div class="cart-header">
+                <h6 class="mb-0">
+                  <i class="bi bi-cart3 me-2"></i>Mi Carrito
+                  <span class="cart-count" id="cartCount">0</span>
+                </h6>
+              </div>
+              <div class="cart-body" id="cartDropdownBody"></div>
+              <div class="cart-footer">
+                <div class="cart-total mb-3">
+                  <div class="cart-total-row cart-total-final">
+                    <span class="cart-total-label">Total:</span>
+                    <span class="cart-total-value" id="cartTotal">$0</span>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-outline-secondary btn-sm w-100 mb-2" id="viewFullCart">
+                  <i class="bi bi-eye me-2"></i>Ver carrito completo
+                </button>
+                <button type="button" class="btn btn-primary btn-sm w-100" id="proceedToCheckout">
+                  <i class="bi bi-credit-card me-2"></i>Finalizar compra
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile -->
+          <div class="action-item dropdown">
+            <button class="action-btn profile-btn" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Mi cuenta">
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" alt="Perfil" class="profile-image" />
+              <span class="profile-name">Usuario</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+              <li class="dropdown-header">
+                <h6 class="mb-0">Mi Cuenta</h6>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <a class="dropdown-item" href="#">
+                  <i class="bi bi-person me-2"></i>Mi Perfil
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+                  <i class="bi bi-bag me-2"></i>Mis Compras
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#" id="favoritesLink">
+                  <i class="bi bi-heart me-2"></i>Favoritos
+                </a>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <a class="dropdown-item" href="./login.html">
+                  <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item text-danger" href="#" id="logoutBtn" style="display: none">
+                  <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Page Header -->
+      <section class="page-header-new">
+        <div class="container-fluid px-4">
+          <!-- Breadcrumbs -->
+          <nav class="breadcrumb-nav" data-aos="fade-down">
+            <ol class="breadcrumb-list">
+              <li class="breadcrumb-item">
+                <a href="../index.html">
+                  <i class="bi bi-house-door-fill"></i>
+                  Inicio
+                </a>
+              </li>
+              <li class="breadcrumb-separator">
+                <i class="bi bi-chevron-right"></i>
+              </li>
+              <li class="breadcrumb-item active">
+                Servicios
+              </li>
+            </ol>
+          </nav>
+
+          <!-- Header Content -->
+          <div class="header-content" data-aos="fade-up">
+            <div class="header-left">
+              <h1 class="header-title">
+                Servicios Profesionales
+              </h1>
+              <p class="header-description">
+                <span class="badge-count" id="headerServiceCount">2000+ servicios profesionales</span>
+                <span class="separator">•</span>
+                <span class="text-muted">Profesionales verificados y calificados</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Services Section with Sidebar -->
+      <section class="products-grid-section">
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <div class="products-layout">
+          <!-- Sidebar Filters - Redesigned -->
+          <aside class="filters-sidebar" id="filtersSidebar">
+              <div class="sidebar-header">
+                <div class="sidebar-title-group">
+                  <i class="bi bi-sliders sidebar-icon"></i>
+                  <h3 class="sidebar-title">Filtrar</h3>
+                </div>
+                <button class="btn-clear-filters" id="clearAllFilters">
+                  <i class="bi bi-arrow-clockwise"></i>
+                </button>
+              </div>
+
+              <div class="filters-content">
+                <!-- Categories Filter -->
+                <div class="filter-section">
+                <button class="filter-section-header" data-bs-toggle="collapse" data-bs-target="#categoriesCollapse">
+                  <div class="header-left">
+                    <i class="bi bi-grid-3x2-gap filter-icon"></i>
+                    <h4 class="filter-section-title">Categorías</h4>
+                  </div>
+                  <i class="bi bi-chevron-down toggle-icon"></i>
+                </button>
+                <div class="collapse show" id="categoriesCollapse">
+                  <div class="filter-options-list">
+                    <label class="filter-option-modern">
+                      <input type="radio" name="category" value="all" checked>
+                      <span class="option-content">
+                        <i class="bi bi-boxes category-icon"></i>
+                        <span class="option-text">Todos los servicios</span>
+                      </span>
+                      <span class="option-check"><i class="bi bi-check-lg"></i></span>
+                    </label>
+                    <label class="filter-option-modern">
+                      <input type="radio" name="category" value="installation" data-category="installation">
+                      <span class="option-content">
+                        <i class="bi bi-tools category-icon"></i>
+                        <span class="option-text">Instalación</span>
+                      </span>
+                      <span class="option-check"><i class="bi bi-check-lg"></i></span>
+                    </label>
+                    <label class="filter-option-modern">
+                      <input type="radio" name="category" value="repair" data-category="repair">
+                      <span class="option-content">
+                        <i class="bi bi-wrench category-icon"></i>
+                        <span class="option-text">Reparación</span>
+                      </span>
+                      <span class="option-check"><i class="bi bi-check-lg"></i></span>
+                    </label>
+                    <label class="filter-option-modern">
+                      <input type="radio" name="category" value="maintenance" data-category="maintenance">
+                      <span class="option-content">
+                        <i class="bi bi-gear category-icon"></i>
+                        <span class="option-text">Mantenimiento</span>
+                      </span>
+                      <span class="option-check"><i class="bi bi-check-lg"></i></span>
+                    </label>
+                    <label class="filter-option-modern">
+                      <input type="radio" name="category" value="consultation" data-category="consultation">
+                      <span class="option-content">
+                        <i class="bi bi-chat-dots category-icon"></i>
+                        <span class="option-text">Consultoría</span>
+                      </span>
+                      <span class="option-check"><i class="bi bi-check-lg"></i></span>
+                    </label>
+                    <label class="filter-option-modern">
+                      <input type="radio" name="category" value="catering" data-category="catering">
+                      <span class="option-content">
+                        <i class="bi bi-cup-hot category-icon"></i>
+                        <span class="option-text">Gastronomía</span>
+                      </span>
+                      <span class="option-check"><i class="bi bi-check-lg"></i></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Price Range Filter -->
+              <div class="filter-section">
+                <button class="filter-section-header" data-bs-toggle="collapse" data-bs-target="#priceCollapse">
+                  <div class="header-left">
+                    <i class="bi bi-currency-dollar filter-icon"></i>
+                    <h4 class="filter-section-title">Precio</h4>
+                  </div>
+                  <i class="bi bi-chevron-down toggle-icon"></i>
+                </button>
+                <div class="collapse show" id="priceCollapse">
+                  <div class="price-filter-modern">
+                    <div class="price-inputs-group">
+                      <div class="price-input-wrapper">
+                        <label class="price-label">Mínimo</label>
+                        <div class="input-with-icon">
+                          <span class="currency-symbol">$</span>
+                          <input type="number" class="price-input-modern" id="minPrice" placeholder="0" min="0">
+                        </div>
+                      </div>
+                      <div class="price-divider">
+                        <i class="bi bi-dash-lg"></i>
+                      </div>
+                      <div class="price-input-wrapper">
+                        <label class="price-label">Máximo</label>
+                        <div class="input-with-icon">
+                          <span class="currency-symbol">$</span>
+                          <input type="number" class="price-input-modern" id="maxPrice" placeholder="99999" min="0">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Shipping & Features Filter -->
+              <div class="filter-section">
+                <button class="filter-section-header" data-bs-toggle="collapse" data-bs-target="#featuresCollapse">
+                  <div class="header-left">
+                    <i class="bi bi-shield-check filter-icon"></i>
+                    <h4 class="filter-section-title">Certificaciones</h4>
+                  </div>
+                  <i class="bi bi-chevron-down toggle-icon"></i>
+                </button>
+                <div class="collapse show" id="featuresCollapse">
+                  <div class="filter-options-list">
+                    <label class="filter-checkbox-modern">
+                      <input type="checkbox" id="freeShipping">
+                      <span class="checkbox-custom"></span>
+                      <span class="checkbox-content">
+                        <i class="bi bi-patch-check-fill benefit-icon text-success"></i>
+                        <span class="checkbox-text">Certificado</span>
+                      </span>
+                    </label>
+                    <label class="filter-checkbox-modern">
+                      <input type="checkbox" id="conditionNew">
+                      <span class="checkbox-custom"></span>
+                      <span class="checkbox-content">
+                        <i class="bi bi-shield-fill-check benefit-icon text-primary"></i>
+                        <span class="checkbox-text">Con garantía</span>
+                      </span>
+                    </label>
+                    <label class="filter-checkbox-modern">
+                      <input type="checkbox" id="conditionUsed">
+                      <span class="checkbox-custom"></span>
+                      <span class="checkbox-content">
+                        <i class="bi bi-clock-fill benefit-icon text-info"></i>
+                        <span class="checkbox-text">Disponible 24/7</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Rating Filter -->
+              <div class="filter-section">
+                <button class="filter-section-header" data-bs-toggle="collapse" data-bs-target="#ratingCollapse">
+                  <div class="header-left">
+                    <i class="bi bi-star-fill filter-icon"></i>
+                    <h4 class="filter-section-title">Calificación</h4>
+                  </div>
+                  <i class="bi bi-chevron-down toggle-icon"></i>
+                </button>
+                <div class="collapse show" id="ratingCollapse">
+                  <div class="filter-options-list">
+                    <label class="filter-rating-modern">
+                      <input type="radio" name="rating" value="all" checked>
+                      <span class="rating-content">
+                        <span class="stars-group">
+                          <span class="rating-text">Todas las calificaciones</span>
+                        </span>
+                      </span>
+                    </label>
+                    <label class="filter-rating-modern">
+                      <input type="radio" name="rating" value="4">
+                      <span class="rating-content">
+                        <span class="stars-group">
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star star-empty"></i>
+                        </span>
+                        <span class="rating-label">o más</span>
+                      </span>
+                    </label>
+                    <label class="filter-rating-modern">
+                      <input type="radio" name="rating" value="3">
+                      <span class="rating-content">
+                        <span class="stars-group">
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star star-empty"></i>
+                          <i class="bi bi-star star-empty"></i>
+                        </span>
+                        <span class="rating-label">o más</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sort Filter -->
+              <div class="filter-section">
+                <button class="filter-section-header" data-bs-toggle="collapse" data-bs-target="#sortCollapse">
+                  <div class="header-left">
+                    <i class="bi bi-sort-down filter-icon"></i>
+                    <h4 class="filter-section-title">Ordenar por</h4>
+                  </div>
+                  <i class="bi bi-chevron-down toggle-icon"></i>
+                </button>
+                <div class="collapse show" id="sortCollapse">
+                  <select class="select-modern" id="sortSelect">
+                    <option value="featured">⭐ Más relevantes</option>
+                    <option value="price-low">💰 Menor precio</option>
+                    <option value="price-high">💎 Mayor precio</option>
+                    <option value="name">🔤 Nombre A-Z</option>
+                    <option value="newest">🆕 Más nuevos</option>
+                  </select>
+                </div>
+              </div>
+
+              </div>
+            </aside>
+
+            <!-- Main Content -->
+            <div class="products-main-content">
+              <!-- Results Header -->
+              <div class="results-header">
+                <div class="results-count-container">
+                  <span id="resultsCount">Cargando servicios...</span>
+                </div>
+                <button class="btn-toggle-filters d-lg-none" id="toggleFilters">
+                  <i class="bi bi-funnel me-2"></i>
+                  Filtros
+                </button>
+              </div>
+
+              <!-- Products Grid -->
+              <div class="products-grid" id="servicesGrid">
+                <!-- Products will be loaded here dynamically -->
+              </div>
+
+              <!-- Empty State Container -->
+              <div class="empty-state-container" id="emptyStateContainer">
+                <!-- Loading State -->
+                <div class="empty-state" id="loadingContainer">
+                  <div class="empty-state-icon loading">
+                    <div class="loading-spinner-modern"></div>
+                  </div>
+                  <h3 class="empty-state-title">Cargando servicios</h3>
+                  <p class="empty-state-text">Estamos buscando los mejores servicios para ti...</p>
+                </div>
+
+                <!-- No Results State -->
+                <div class="empty-state" id="noResults" style="display: none;">
+                  <div class="empty-state-icon">
+                    <i class="bi bi-search"></i>
+                  </div>
+                  <h3 class="empty-state-title">No se encontraron servicios</h3>
+                  <p class="empty-state-text">No hay servicios que coincidan con tus filtros actuales</p>
+                  <div class="empty-state-actions">
+                    <button class="btn btn-primary" id="clearFilters">
+                      <i class="bi bi-arrow-clockwise me-2"></i>Limpiar filtros
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Load More -->
+              <div class="load-more-container" id="loadMoreContainer" style="display: none;">
+                <button class="btn btn-primary btn-lg" id="loadMoreBtn">
+                  <i class="bi bi-arrow-down me-2"></i>
+                  Cargar más servicios
+                </button>
+              </div>
+            </div>
+          </div>
+      </section>
+
+      <!-- How It Works Section -->
+      <section class="how-it-works-section">
+        <div class="container">
+          <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title">¿Cómo Funciona?</h2>
+            <p class="section-subtitle">Conectar con el profesional ideal es muy sencillo</p>
+          </div>
+          
+          <div class="steps-container">
+            <div class="step-item" data-aos="fade-up" data-aos-delay="0">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h3 class="step-title">Busca el servicio</h3>
+                <p class="step-description">Explora las categorías y encuentra profesionales en tu zona</p>
+              </div>
+            </div>
+            
+            <div class="step-item" data-aos="fade-up" data-aos-delay="100">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h3 class="step-title">Contacta al profesional</h3>
+                <p class="step-description">Revisa perfiles, calificaciones y contacta directamente con el proveedor</p>
+              </div>
+            </div>
+            
+            <div class="step-item" data-aos="fade-up" data-aos-delay="200">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <h3 class="step-title">Acuerda los detalles</h3>
+                <p class="step-description">Negocia precio, fecha y condiciones directamente con el profesional</p>
+              </div>
+            </div>
+            
+            <div class="step-item" data-aos="fade-up" data-aos-delay="300">
+              <div class="step-number">4</div>
+              <div class="step-content">
+                <h3 class="step-title">Califica la experiencia</h3>
+                <p class="step-description">Una vez completado el trabajo, califica al profesional para ayudar a otros usuarios</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Testimonials Section -->
+      <section class="testimonials-section">
+        <div class="container">
+          <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title">Lo Que Dicen Nuestros Clientes</h2>
+          </div>
+          
+          <div class="testimonials-grid">
+            <div class="testimonial-card" data-aos="fade-up" data-aos-delay="0">
+              <div class="testimonial-rating">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+              </div>
+              <p class="testimonial-text">
+                "Encontré a María a través de Dale Deal y fue la mejor decisión. Su servicio de repostería superó todas mis expectativas para el cumpleaños."
+              </p>
+              <div class="testimonial-author">
+                <img src="https://images.unsplash.com/photo-1494790108755-2616b332c108?w=60&h=60&fit=crop&crop=face" alt="María González" class="author-image">
+                <div class="author-info">
+                  <h4 class="author-name">Laura Mendez</h4>
+                  <p class="author-service">Cliente verificado</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="testimonial-card" data-aos="fade-up" data-aos-delay="100">
+              <div class="testimonial-rating">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+              </div>
+              <p class="testimonial-text">
+                "Necesitaba un plomero urgente y a través de la plataforma encontré a Carlos. Llegó rápido, solucionó todo perfectamente."
+              </p>
+              <div class="testimonial-author">
+                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&h=60&fit=crop&crop=face" alt="Carlos Ruiz" class="author-image">
+                <div class="author-info">
+                  <h4 class="author-name">Roberto Silva</h4>
+                  <p class="author-service">Cliente verificado</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="testimonial-card" data-aos="fade-up" data-aos-delay="200">
+              <div class="testimonial-rating">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+              </div>
+              <p class="testimonial-text">
+                "La plataforma me ayudó a encontrar el servicio de limpieza perfecto. Ana fue muy profesional y dejó todo impecable."
+              </p>
+              <div class="testimonial-author">
+                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&h=60&fit=crop&crop=face" alt="Ana Torres" class="author-image">
+                <div class="author-info">
+                  <h4 class="author-name">Ana Torres</h4>
+                  <p class="author-service">Cliente verificada</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Favorites Modal -->
+    <div class="modal fade" id="favoritesModal" tabindex="-1" aria-labelledby="favoritesModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="favoritesModalLabel">
+              <i class="bi bi-heart-fill me-2 text-danger"></i>
+              Mis Favoritos
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Favorites content will be loaded dynamically -->
+            <div id="favoritesContent">
+              <div class="favorites-empty text-center py-5" id="favoritesEmpty">
+                <i class="bi bi-heart display-1 text-muted mb-3"></i>
+                <h4 class="text-muted">No tienes favoritos aún</h4>
+                <p class="text-muted">Agrega productos o servicios a tus favoritos para verlos aquí</p>
+                <button class="btn btn-primary" data-bs-dismiss="modal" id="exploreProductsBtn">
+                  <i class="bi bi-tools me-2"></i>Explorar servicios
+                </button>
+              </div>
+
+              <div id="favoritesGrid" class="favorites-grid" style="display: none;">
+                <!-- Favorites items will be loaded here -->
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div class="d-flex justify-content-between w-100">
+              <div class="favorites-count">
+                <span class="text-muted">Total: <span id="favoritesTotal">0</span> favoritos</span>
+              </div>
+              <div class="favorites-actions">
+                <button type="button" class="btn btn-outline-danger" id="clearAllFavorites">
+                  <i class="bi bi-trash me-2"></i>Limpiar todo
+                </button>
+                <button type="button" class="btn btn-primary" id="addAllToCart">
+                  <i class="bi bi-cart-plus me-2"></i>Agregar todo al carrito
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Custom Scripts -->
+    <script src="../JS/utils.js"></script>
+    <script src="../JS/auth.js"></script>
+    <script src="../JS/cart.js"></script>
+    <script src="../JS/favorites.js"></script>
+    <script src="../JS/notifications.js"></script>
+    <script src="../JS/dropdown-fix.js"></script>
+    <script src="../JS/services-data.js"></script>
+    <script src="../JS/pages/services.js"></script>
+    <script src="../JS/component-loader.js" defer></script>
+
+    <script>
+      // Initialize AOS
+      AOS.init({
+        duration: 800,
+        easing: "ease-out-cubic",
+        once: true,
+        offset: 50,
+      });
+
+      // Close sidebar on ESC key
+      document.addEventListener('keydown', (e) => {
+        const filtersSidebar = document.getElementById('filtersSidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        if (e.key === 'Escape' && filtersSidebar?.classList.contains('active')) {
+          filtersSidebar.classList.remove('active');
+          sidebarOverlay?.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+    </script>
+  </body>
+</html>

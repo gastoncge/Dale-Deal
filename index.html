@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DALE DEAL - Tu Marketplace Favorito</title>
+
+    <!-- SEO Meta Tags -->
+    <meta
+      name="description"
+      content="Descubrí miles de productos y servicios en Dale Deal. Compra, vende y conecta con la mejor comunidad de marketplace de Argentina."
+    />
+    <meta
+      name="keywords"
+      content="marketplace, comprar, vender, productos, servicios, Argentina"
+    />
+    <meta name="author" content="Dale Deal" />
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="./IMG/LOGO.png" type="image/x-icon" />
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    />
+
+    <!-- AOS (Animate On Scroll) -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="./CSS/variables.css" />
+    <link rel="stylesheet" href="./CSS/components.css" />
+    <link rel="stylesheet" href="./CSS/pages/home.css" />
+
+  </head>
+
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
+      <div class="container-fluid px-4">
+        <!-- Logo -->
+        <a class="navbar-brand" href="./index.html" data-aos="fade-right">
+          <img src="./IMG/LOGO-2.png" alt="Dale Deal" class="logo-navbar" />
+          <span class="brand-text">DALE DEAL</span>
+        </a>
+
+        <!-- Search Bar -->
+        <div class="search-container mx-auto" data-aos="fade-up" data-aos-delay="100">
+          <div class="search-wrapper">
+            <i class="bi bi-search search-icon"></i>
+            <input
+              type="text"
+              class="search-input"
+              placeholder="¿Qué estás buscando hoy?"
+              id="searchInput"
+            />
+          </div>
+        </div>
+
+        <!-- User Actions -->
+        <div class="navbar-actions" data-aos="fade-left" data-aos-delay="200">
+          <!-- Products Link -->
+          <div class="action-item">
+            <a href="./HTML/productos.html" class="action-link" title="Productos">
+              <i class="bi bi-bag me-1"></i>
+              <span class="action-text">Productos</span>
+            </a>
+          </div>
+
+          <!-- Services Link -->
+          <div class="action-item">
+            <a href="./HTML/servicios.html" class="action-link" title="Servicios Profesionales">
+              <i class="bi bi-tools me-1"></i>
+              <span class="action-text">Servicios</span>
+            </a>
+          </div>
+
+          <!-- Notifications -->
+          <div class="action-item dropdown">
+            <button
+              class="action-btn"
+              id="notificationBtn"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              title="Notificaciones"
+            >
+              <i class="bi bi-bell"></i>
+              <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end notifications-dropdown" aria-labelledby="notificationBtn">
+              <div class="notifications-header">
+                <h6 class="mb-0">
+                  <i class="bi bi-bell me-2"></i>
+                  Notificaciones
+                  <span class="notifications-count" id="notificationsCount">3</span>
+                </h6>
+              </div>
+              <div class="notifications-filter">
+                <button class="filter-chip active" data-filter="all">Todas</button>
+                <button class="filter-chip" data-filter="unread">No leídas</button>
+                <button class="filter-chip" data-filter="orders">Pedidos</button>
+                <button class="filter-chip" data-filter="offers">Ofertas</button>
+              </div>
+              <div class="notifications-body" id="notificationsDropdownBody">
+                <div class="notification-item unread" data-id="1" data-type="orders">
+                  <div class="notification-icon bg-success">
+                    <i class="bi bi-check-circle text-white"></i>
+                  </div>
+                  <div class="notification-content">
+                    <h6>Pedido confirmado</h6>
+                    <p>Tu pedido #12345 ha sido confirmado</p>
+                    <small>Hace 2 horas</small>
+                  </div>
+                  <button class="notification-close" data-action="dismiss">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+                <div class="notification-item unread" data-id="2" data-type="orders">
+                  <div class="notification-icon bg-info">
+                    <i class="bi bi-truck text-white"></i>
+                  </div>
+                  <div class="notification-content">
+                    <h6>Envío en camino</h6>
+                    <p>Tu pedido #12340 está siendo preparado</p>
+                    <small>Hace 1 día</small>
+                  </div>
+                  <button class="notification-close" data-action="dismiss">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+                <div class="notification-item unread" data-id="3" data-type="offers">
+                  <div class="notification-icon bg-warning">
+                    <i class="bi bi-star text-white"></i>
+                  </div>
+                  <div class="notification-content">
+                    <h6>Nueva oferta disponible</h6>
+                    <p>20% de descuento en electrónicos</p>
+                    <small>Hace 2 días</small>
+                  </div>
+                  <button class="notification-close" data-action="dismiss">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="notifications-footer">
+                <a href="./HTML/notificaciones.html" class="btn btn-outline-secondary btn-sm w-100 mb-2">
+                  <i class="bi bi-list me-2"></i>Ver todas
+                </a>
+                <button type="button" class="btn btn-primary btn-sm w-100" id="markAllAsRead">
+                  <i class="bi bi-check-all me-2"></i>Marcar todas como leídas
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cart -->
+          <div class="action-item dropdown">
+            <button class="action-btn" id="cartBtn" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" title="Carrito de compras">
+              <i class="bi bi-cart3"></i>
+              <span class="cart-badge" id="cartBadge" style="display: none;">0</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end cart-dropdown" aria-labelledby="cartBtn">
+              <div class="cart-header">
+                <h6 class="mb-0">
+                  <i class="bi bi-cart3 me-2"></i>
+                  Mi Carrito
+                  <span class="cart-count" id="cartCount">0</span>
+                </h6>
+              </div>
+              <div class="cart-body" id="cartDropdownBody"></div>
+              <div class="cart-footer">
+                <div class="cart-total mb-3">
+                  <div class="cart-total-row cart-total-final">
+                    <span class="cart-total-label">Total:</span>
+                    <span class="cart-total-value" id="cartTotal">$0</span>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-primary btn-sm w-100" id="proceedToCheckout">
+                  <i class="bi bi-credit-card me-2"></i>Finalizar compra
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile -->
+          <div class="action-item dropdown">
+            <button
+              class="action-btn profile-btn"
+              id="profileDropdown"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              title="Mi cuenta"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                alt="Perfil"
+                class="profile-image"
+              />
+              <span class="profile-name">Usuario</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+              <li class="dropdown-header">
+                <h6 class="mb-0">Mi Cuenta</h6>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <a class="dropdown-item" href="#">
+                  <i class="bi bi-person me-2"></i>Mi Perfil
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+                  <i class="bi bi-bag me-2"></i>Mis Compras
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#" id="favoritesLink">
+                  <i class="bi bi-heart me-2"></i>Favoritos
+                </a>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <a class="dropdown-item" href="./HTML/login.html">
+                  <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item text-danger" href="#" id="logoutBtn" style="display: none">
+                  <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Hero Carousel -->
+      <section class="hero-carousel-section">
+        <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+          <div class="carousel-indicators">
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="3"></button>
+          </div>
+          
+          <div class="carousel-inner">
+            <!-- Slide 1: Sobre Dale Deal -->
+            <div class="carousel-item active">
+              <div class="hero-slide hero-slide-main">
+                <div class="container">
+                  <div class="row align-items-center">
+                    <div class="col-lg-6">
+                      <div class="hero-content" data-aos="fade-right">
+                        <span class="hero-badge"><i class="bi bi-house-heart-fill me-2"></i>¡Bienvenido a Dale Deal!</span>
+                        <h1 class="hero-title">Tu marketplace de productos y servicios</h1>
+                        <p class="hero-subtitle">
+                          Descubrí miles de productos al mejor precio y servicios profesionales de calidad. 
+                          Compra, vende y contrata servicios con la mejor experiencia online en Argentina.
+                        </p>
+                        <div class="hero-actions">
+                          <button class="btn btn-primary btn-lg" id="heroShopBtn">
+                            <i class="bi bi-bag me-2"></i>Explorar productos
+                          </button>
+                          <button class="btn btn-outline-light btn-lg" id="heroServicesBtn">
+                            <i class="bi bi-tools me-2"></i>Ver servicios
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <div class="hero-image" data-aos="fade-left">
+                        <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop" 
+                             alt="Dale Deal Marketplace" class="img-fluid rounded-3xl">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 2: Ofertas del día -->
+            <div class="carousel-item">
+              <div class="hero-slide hero-slide-offers">
+                <div class="container">
+                  <div class="row align-items-center">
+                    <div class="col-lg-6">
+                      <div class="hero-content" data-aos="fade-right">
+                        <span class="hero-badge offer-badge"><i class="bi bi-lightning-fill me-2"></i>Ofertas del día</span>
+                        <h1 class="hero-title">Hasta 50% OFF</h1>
+                        <p class="hero-subtitle">
+                          Aprovechá las mejores ofertas que cambian cada día. 
+                          Productos seleccionados con descuentos únicos por tiempo limitado.
+                        </p>
+                        <div class="hero-stats">
+                          <div class="stat-item">
+                            <span class="stat-number"><i class="bi bi-clock me-2"></i>48</span>
+                            <span class="stat-label">Horas restantes</span>
+                          </div>
+                          <div class="stat-item">
+                            <span class="stat-number"><i class="bi bi-tag me-2"></i>127</span>
+                            <span class="stat-label">Productos en oferta</span>
+                          </div>
+                        </div>
+                        <div class="hero-actions">
+                          <button class="btn btn-primary btn-lg" id="heroOffersBtn">
+                            <i class="bi bi-lightning me-2"></i>Ver ofertas
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <div class="hero-image" data-aos="fade-left">
+                        <img src="https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=600&h=400&fit=crop" 
+                             alt="Ofertas del día" class="img-fluid rounded-3xl">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 3: Producto del mes -->
+            <div class="carousel-item">
+              <div class="hero-slide hero-slide-product">
+                <div class="container">
+                  <div class="row align-items-center">
+                    <div class="col-lg-6">
+                      <div class="hero-content" data-aos="fade-right">
+                        <span class="hero-badge product-badge"><i class="bi bi-star-fill me-2"></i>Producto del mes</span>
+                        <h1 class="hero-title">iPhone 15 Pro Max</h1>
+                        <p class="hero-subtitle">
+                          El smartphone más avanzado de Apple. Titanio, cámara profesional, 
+                          USB-C y el chip A17 Pro más poderoso que nunca.
+                        </p>
+                        <div class="product-features">
+                          <div class="feature">✓ Chip A17 Pro</div>
+                          <div class="feature">✓ Cámara de 48MP</div>
+                          <div class="feature">✓ Titanio espacial</div>
+                          <div class="feature">✓ USB-C</div>
+                        </div>
+                        <div class="hero-price">
+                          <span class="current-price">$1.299.999</span>
+                          <span class="original-price">$1.529.999</span>
+                          <span class="discount">-15%</span>
+                        </div>
+                        <div class="hero-actions">
+                          <button class="btn btn-primary btn-lg" id="heroProductBtn">
+                            <i class="bi bi-cart-plus me-2"></i>Agregar al carrito
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <div class="hero-image" data-aos="fade-left">
+                        <img src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=400&fit=crop" 
+                             alt="iPhone 15 Pro Max" class="img-fluid rounded-3xl">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 4: Servicio profesional -->
+            <div class="carousel-item">
+              <div class="hero-slide hero-slide-service">
+                <div class="container">
+                  <div class="row align-items-center">
+                    <div class="col-lg-6">
+                      <div class="hero-content" data-aos="fade-right">
+                        <span class="hero-badge service-badge"><i class="bi bi-tools me-2"></i>Servicio más pedido</span>
+                        <h1 class="hero-title">Instalación Técnica</h1>
+                        <p class="hero-subtitle">
+                          Nuestro servicio de instalación profesional es el más solicitado. 
+                          Técnicos certificados instalan y configuran tus dispositivos.
+                        </p>
+                        <div class="service-stats">
+                          <div class="stat-item">
+                            <span class="stat-number"><i class="bi bi-star me-2"></i>4.9</span>
+                            <span class="stat-label">Calificación</span>
+                          </div>
+                          <div class="stat-item">
+                            <span class="stat-number"><i class="bi bi-check-circle me-2"></i>2,847</span>
+                            <span class="stat-label">Servicios realizados</span>
+                          </div>
+                          <div class="stat-item">
+                            <span class="stat-number"><i class="bi bi-clock me-2"></i>24h</span>
+                            <span class="stat-label">Disponibilidad</span>
+                          </div>
+                        </div>
+                        <div class="hero-actions">
+                          <button class="btn btn-primary btn-lg" id="heroServiceBtn">
+                            <i class="bi bi-calendar-check me-2"></i>Reservar cita
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <div class="hero-image" data-aos="fade-left">
+                        <img src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=600&h=400&fit=crop" 
+                             alt="Instalación Técnica" class="img-fluid rounded-3xl">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controles del carrusel -->
+          <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+            <span class="visually-hidden">Anterior</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+            <span class="visually-hidden">Siguiente</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Products Section -->
+      <section class="products-section">
+        <div class="container">
+          <!-- Título de la sección -->
+          <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title">Productos Destacados</h2>
+          </div>
+          
+          <div class="products-grid" id="productsGrid">
+            <!-- Los productos se cargan dinámicamente desde JS/pages/home.js -->
+          </div>
+
+          <!-- Loading -->
+          <div class="loading-container" id="loadingContainer" style="display: none;">
+            <div class="loading-spinner"></div>
+            <p>Cargando productos...</p>
+          </div>
+
+          <!-- Load More -->
+          <div class="load-more-container" id="loadMoreContainer" style="display: none;">
+            <button class="btn btn-primary" id="loadMoreBtn">
+              Cargar más productos
+            </button>
+          </div>
+
+          <!-- View All Products Button -->
+          <div class="text-center mb-5">
+            <button class="btn btn-outline-primary btn-lg" id="viewAllProductsBtn">
+              <i class="bi bi-bag me-2"></i>
+              Ver más productos
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Services Section -->
+      <section class="services-section">
+        <div class="container">
+          <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title">Servicios Destacados</h2>
+          </div>
+
+
+          <div class="services-grid" id="servicesGrid">
+            <!-- Servicio 1 - Instalación Técnica -->
+            <div class="service-card" data-aos="fade-up" data-aos-delay="0" data-service-category="installation" data-service-price="15000" data-id="installation-tech">
+              <div class="service-image-container">
+                <img
+                  src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=400&h=300&fit=crop"
+                  alt="Instalación Técnica"
+                  class="service-image"
+                />
+                <div class="service-badges">
+                  <span class="badge-certified">Certificado</span>
+                  <span class="badge-warranty">Garantía 1 año</span>
+                </div>
+                <div class="service-actions">
+                  <button class="action-heart" title="Agregar a favoritos" data-service-id="installation-tech">
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+                <div class="service-overlay">
+                  <button class="service-cta">
+                    <i class="bi bi-calendar-check me-2"></i>
+                    Reservar cita
+                  </button>
+                </div>
+              </div>
+              <div class="service-info">
+                <h3 class="service-title">Instalación Técnica Profesional</h3>
+                <p class="service-description">
+                  Instalación y configuración profesional de todos tus dispositivos por técnicos certificados.
+                </p>
+                <div class="service-meta">
+                  <div class="service-rating">
+                    <div class="stars">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                    </div>
+                    <span class="service-rating-text">4.9 (127)</span>
+                  </div>
+                  <div class="service-info-row">
+                    <div class="service-location">
+                      <i class="bi bi-geo-alt-fill"></i>
+                      <span>Córdoba Capital</span>
+                    </div>
+                    <span class="service-price-badge">Desde $15.999</span>
+                  </div>
+                </div>
+                <button class="btn-contact-service">
+                  <i class="bi bi-chat-dots me-2"></i>Ver más
+                </button>
+              </div>
+            </div>
+
+            <!-- Servicio 2 - Soporte Técnico -->
+            <div class="service-card" data-aos="fade-up" data-aos-delay="100" data-service-category="consultation" data-service-price="8000" data-id="tech-support">
+              <div class="service-image-container">
+                <img
+                  src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop"
+                  alt="Soporte Técnico"
+                  class="service-image"
+                />
+                <div class="service-badges">
+                  <span class="badge-24h">24/7 Disponible</span>
+                  <span class="badge-remote">Remoto</span>
+                </div>
+                <div class="service-actions">
+                  <button class="action-heart" title="Agregar a favoritos" data-service-id="tech-support">
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+                <div class="service-overlay">
+                  <button class="service-cta">
+                    <i class="bi bi-headset me-2"></i>
+                    Obtener ayuda
+                  </button>
+                </div>
+              </div>
+              <div class="service-info">
+                <h3 class="service-title">Soporte Técnico Especializado</h3>
+                <p class="service-description">
+                  Asistencia técnica 24/7 para resolver cualquier problema con tus dispositivos.
+                </p>
+                <div class="service-meta">
+                  <div class="service-rating">
+                    <div class="stars">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-half"></i>
+                    </div>
+                    <span class="service-rating-text">4.6 (89)</span>
+                  </div>
+                  <div class="service-info-row">
+                    <div class="service-location">
+                      <i class="bi bi-geo-alt-fill"></i>
+                      <span>Todo el país</span>
+                    </div>
+                    <span class="service-price-badge">$8.999/mes</span>
+                  </div>
+                </div>
+                <button class="btn-contact-service">
+                  <i class="bi bi-chat-dots me-2"></i>Ver más
+                </button>
+              </div>
+            </div>
+
+            <!-- Servicio 3 - Reparaciones -->
+            <div class="service-card" data-aos="fade-up" data-aos-delay="200" data-service-category="repair" data-service-price="12000" data-id="repair-express">
+              <div class="service-image-container">
+                <img
+                  src="https://images.unsplash.com/photo-1597733153203-a54d0fbc47de?w=400&h=300&fit=crop"
+                  alt="Reparaciones"
+                  class="service-image"
+                />
+                <div class="service-badges">
+                  <span class="badge-fast">Rápido</span>
+                  <span class="badge-warranty">Garantía</span>
+                </div>
+                <div class="service-actions">
+                  <button class="action-heart" title="Agregar a favoritos" data-service-id="repair-express">
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+                <div class="service-overlay">
+                  <button class="service-cta">
+                    <i class="bi bi-wrench me-2"></i>
+                    Solicitar reparación
+                  </button>
+                </div>
+              </div>
+              <div class="service-info">
+                <h3 class="service-title">Reparación Express</h3>
+                <p class="service-description">
+                  Reparación rápida y profesional con repuestos originales y garantía extendida.
+                </p>
+                <div class="service-meta">
+                  <div class="service-rating">
+                    <div class="stars">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                    </div>
+                    <span class="service-rating-text">4.8 (215)</span>
+                  </div>
+                  <div class="service-info-row">
+                    <div class="service-location">
+                      <i class="bi bi-geo-alt-fill"></i>
+                      <span>CABA y GBA</span>
+                    </div>
+                    <span class="service-price-badge">Desde $12.999</span>
+                  </div>
+                </div>
+                <button class="btn-contact-service">
+                  <i class="bi bi-chat-dots me-2"></i>Ver más
+                </button>
+              </div>
+            </div>
+
+            <!-- Servicio 4 - Setup Personalizado -->
+            <div class="service-card" data-aos="fade-up" data-aos-delay="300" data-service-category="installation" data-service-price="20000" data-id="setup-gaming">
+              <div class="service-image-container">
+                <img
+                  src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=300&fit=crop"
+                  alt="Setup Personalizado"
+                  class="service-image"
+                />
+                <div class="service-badges">
+                  <span class="badge-custom">Personalizado</span>
+                  <span class="badge-premium">Premium</span>
+                </div>
+                <div class="service-actions">
+                  <button class="action-heart" title="Agregar a favoritos" data-service-id="setup-gaming">
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+                <div class="service-overlay">
+                  <button class="service-cta">
+                    <i class="bi bi-person-gear me-2"></i>
+                    Consultar setup
+                  </button>
+                </div>
+              </div>
+              <div class="service-info">
+                <h3 class="service-title">Setup Gaming & Productividad</h3>
+                <p class="service-description">
+                  Configuración personalizada de tu setup ideal para gaming, trabajo o entretenimiento.
+                </p>
+                <div class="service-meta">
+                  <div class="service-rating">
+                    <div class="stars">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                    </div>
+                    <span class="service-rating-text">5.0 (78)</span>
+                  </div>
+                  <div class="service-info-row">
+                    <div class="service-location">
+                      <i class="bi bi-geo-alt-fill"></i>
+                      <span>Buenos Aires</span>
+                    </div>
+                    <span class="service-price-badge">Desde $25.999</span>
+                  </div>
+                </div>
+                <button class="btn-contact-service">
+                  <i class="bi bi-chat-dots me-2"></i>Ver más
+                </button>
+              </div>
+            </div>
+
+            <!-- Servicio 5 - Mantenimiento -->
+            <div class="service-card" data-aos="fade-up" data-aos-delay="400" data-service-category="maintenance" data-service-price="10000" data-id="maintenance-preventive">
+              <div class="service-image-container">
+                <img
+                  src="https://images.unsplash.com/photo-1603899122634-f086ca5f5ddd?w=400&h=300&fit=crop"
+                  alt="Mantenimiento"
+                  class="service-image"
+                />
+                <div class="service-badges">
+                  <span class="badge-preventive">Preventivo</span>
+                  <span class="badge-scheduled">Programado</span>
+                </div>
+                <div class="service-actions">
+                  <button class="action-heart" title="Agregar a favoritos" data-service-id="maintenance-preventive">
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+                <div class="service-overlay">
+                  <button class="service-cta">
+                    <i class="bi bi-calendar-plus me-2"></i>
+                    Agendar visita
+                  </button>
+                </div>
+              </div>
+              <div class="service-info">
+                <h3 class="service-title">Mantenimiento Preventivo</h3>
+                <p class="service-description">
+                  Mantenimiento programado para mantener tus equipos funcionando al máximo rendimiento.
+                </p>
+                <div class="service-meta">
+                  <div class="service-rating">
+                    <div class="stars">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-half"></i>
+                    </div>
+                    <span class="service-rating-text">4.7 (142)</span>
+                  </div>
+                  <div class="service-info-row">
+                    <div class="service-location">
+                      <i class="bi bi-geo-alt-fill"></i>
+                      <span>Zona Norte</span>
+                    </div>
+                    <span class="service-price-badge">$19.999/visita</span>
+                  </div>
+                </div>
+                <button class="btn-contact-service">
+                  <i class="bi bi-chat-dots me-2"></i>Ver más
+                </button>
+              </div>
+            </div>
+
+            <!-- Servicio 6 - Recuperación de Datos -->
+            <div class="service-card" data-aos="fade-up" data-aos-delay="500" data-service-category="repair" data-service-price="18000" data-id="data-recovery">
+              <div class="service-image-container">
+                <img
+                  src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop"
+                  alt="Recuperación de Datos"
+                  class="service-image"
+                />
+                <div class="service-badges">
+                  <span class="badge-secure">Seguro</span>
+                  <span class="badge-success-rate">95% éxito</span>
+                </div>
+                <div class="service-actions">
+                  <button class="action-heart" title="Agregar a favoritos" data-service-id="data-recovery">
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+                <div class="service-overlay">
+                  <button class="service-cta">
+                    <i class="bi bi-database-up me-2"></i>
+                    Recuperar datos
+                  </button>
+                </div>
+              </div>
+              <div class="service-info">
+                <h3 class="service-title">Recuperación de Datos</h3>
+                <p class="service-description">
+                  Recuperación profesional de datos perdidos con tecnología avanzada y máxima seguridad.
+                </p>
+                <div class="service-meta">
+                  <div class="service-rating">
+                    <div class="stars">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-half"></i>
+                    </div>
+                    <span class="service-rating-text">4.9 (98)</span>
+                  </div>
+                  <div class="service-info-row">
+                    <div class="service-location">
+                      <i class="bi bi-geo-alt-fill"></i>
+                      <span>CABA y GBA</span>
+                    </div>
+                    <span class="service-price-badge">Desde $29.999</span>
+                  </div>
+                </div>
+                <button class="btn-contact-service">
+                  <i class="bi bi-chat-dots me-2"></i>Ver más
+                </button>
+              </div>
+            </div>
+
+            <!-- Servicio 7 - Repostería Profesional -->
+            <div class="service-card" data-aos="fade-up" data-aos-delay="600" data-service-category="catering" data-service-price="25000" data-id="pastry-service">
+              <div class="service-image-container">
+                <img
+                  src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop"
+                  alt="Repostería Profesional"
+                  class="service-image"
+                />
+                <div class="service-badges">
+                  <span class="badge-artisan">Artesanal</span>
+                  <span class="badge-custom">Personalizado</span>
+                </div>
+                <div class="service-actions">
+                  <button class="action-heart" title="Agregar a favoritos" data-service-id="pastry-service">
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+                <div class="service-overlay">
+                  <button class="service-cta">
+                    <i class="bi bi-cake me-2"></i>
+                    Solicitar cotización
+                  </button>
+                </div>
+              </div>
+              <div class="service-info">
+                <h3 class="service-title">Repostería & Pastelería Profesional</h3>
+                <p class="service-description">
+                  Creamos tortas, postres y dulces personalizados para todo tipo de eventos y celebraciones especiales.
+                </p>
+                <div class="service-meta">
+                  <div class="service-rating">
+                    <div class="stars">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                    </div>
+                    <span class="service-rating-text">5.0 (234)</span>
+                  </div>
+                  <div class="service-info-row">
+                    <div class="service-location">
+                      <i class="bi bi-geo-alt-fill"></i>
+                      <span>Buenos Aires</span>
+                    </div>
+                    <span class="service-price-badge">Desde $35.999</span>
+                  </div>
+                </div>
+                <button class="btn-contact-service">
+                  <i class="bi bi-chat-dots me-2"></i>Ver más
+                </button>
+              </div>
+            </div>
+
+            <!-- Servicio 8 - Chef a Domicilio -->
+            <div class="service-card" data-aos="fade-up" data-aos-delay="700" data-service-category="catering" data-service-price="45000" data-id="home-chef">
+              <div class="service-image-container">
+                <img
+                  src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=400&h=300&fit=crop"
+                  alt="Chef a Domicilio"
+                  class="service-image"
+                />
+                <div class="service-badges">
+                  <span class="badge-premium">Premium</span>
+                  <span class="badge-certified">Chef certificado</span>
+                </div>
+                <div class="service-actions">
+                  <button class="action-heart" title="Agregar a favoritos" data-service-id="home-chef">
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+                <div class="service-overlay">
+                  <button class="service-cta">
+                    <i class="bi bi-person-check me-2"></i>
+                    Reservar chef
+                  </button>
+                </div>
+              </div>
+              <div class="service-info">
+                <h3 class="service-title">Chef Profesional a Domicilio</h3>
+                <p class="service-description">
+                  Chef profesional cocina en tu hogar para cenas íntimas, eventos familiares o celebraciones especiales.
+                </p>
+                <div class="service-meta">
+                  <div class="service-rating">
+                    <div class="stars">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-half"></i>
+                    </div>
+                    <span class="service-rating-text">4.8 (156)</span>
+                  </div>
+                  <div class="service-info-row">
+                    <div class="service-location">
+                      <i class="bi bi-geo-alt-fill"></i>
+                      <span>Capital Federal</span>
+                    </div>
+                    <span class="service-price-badge">Desde $75.999</span>
+                  </div>
+                </div>
+                <button class="btn-contact-service">
+                  <i class="bi bi-chat-dots me-2"></i>Ver más
+                </button>
+              </div>
+            </div>
+
+            <!-- Servicio 9 - Albañilería y Construcción -->
+            <div class="service-card" data-aos="fade-up" data-aos-delay="800" data-service-category="construction" data-service-price="30000" data-id="construction-service">
+              <div class="service-image-container">
+                <img
+                  src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=400&h=300&fit=crop"
+                  alt="Albañilería y Construcción"
+                  class="service-image"
+                />
+                <div class="service-badges">
+                  <span class="badge-professional">Profesional</span>
+                  <span class="badge-warranty">Garantía obra</span>
+                </div>
+                <div class="service-actions">
+                  <button class="action-heart" title="Agregar a favoritos" data-service-id="construction-service">
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+                <div class="service-overlay">
+                  <button class="service-cta">
+                    <i class="bi bi-hammer me-2"></i>
+                    Solicitar presupuesto
+                  </button>
+                </div>
+              </div>
+              <div class="service-info">
+                <h3 class="service-title">Albañilería & Construcción</h3>
+                <p class="service-description">
+                  Servicios de albañilería, reformas, ampliaciones y construcción con materiales de calidad y acabados profesionales.
+                </p>
+                <div class="service-meta">
+                  <div class="service-rating">
+                    <div class="stars">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-half"></i>
+                    </div>
+                    <span class="service-rating-text">4.7 (203)</span>
+                  </div>
+                  <div class="service-info-row">
+                    <div class="service-location">
+                      <i class="bi bi-geo-alt-fill"></i>
+                      <span>Zona Sur GBA</span>
+                    </div>
+                    <span class="service-price-badge">Desde $45.999</span>
+                  </div>
+                </div>
+                <button class="btn-contact-service">
+                  <i class="bi bi-chat-dots me-2"></i>Ver más
+                </button>
+              </div>
+            </div>
+
+            <!-- Servicio 10 - Jardinería y Paisajismo -->
+            <div class="service-card" data-aos="fade-up" data-aos-delay="900" data-service-category="maintenance" data-service-price="20000" data-id="gardening-service">
+              <div class="service-image-container">
+                <img
+                  src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=300&fit=crop"
+                  alt="Jardinería y Paisajismo"
+                  class="service-image"
+                />
+                <div class="service-badges">
+                  <span class="badge-eco">Eco-friendly</span>
+                  <span class="badge-seasonal">Todo el año</span>
+                </div>
+                <div class="service-actions">
+                  <button class="action-heart" title="Agregar a favoritos" data-service-id="gardening-service">
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+                <div class="service-overlay">
+                  <button class="service-cta">
+                    <i class="bi bi-flower1 me-2"></i>
+                    Diseñar jardín
+                  </button>
+                </div>
+              </div>
+              <div class="service-info">
+                <h3 class="service-title">Jardinería & Paisajismo</h3>
+                <p class="service-description">
+                  Diseño, mantenimiento y cuidado de jardines, parques y espacios verdes con técnicas sustentables.
+                </p>
+                <div class="service-meta">
+                  <div class="service-rating">
+                    <div class="stars">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-half"></i>
+                    </div>
+                    <span class="service-rating-text">4.6 (87)</span>
+                  </div>
+                  <div class="service-info-row">
+                    <div class="service-location">
+                      <i class="bi bi-geo-alt-fill"></i>
+                      <span>Zona Oeste</span>
+                    </div>
+                    <span class="service-price-badge">Desde $28.999</span>
+                  </div>
+                </div>
+                <button class="btn-contact-service">
+                  <i class="bi bi-chat-dots me-2"></i>Ver más
+                </button>
+              </div>
+            </div>
+
+            <!-- Servicio 11 - Plomería y Gasfitería -->
+            <div class="service-card" data-aos="fade-up" data-aos-delay="1000" data-service-category="repair" data-service-price="15000" data-id="plumbing-service">
+              <div class="service-image-container">
+                <img
+                  src="https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=400&h=300&fit=crop"
+                  alt="Plomería y Gasfitería"
+                  class="service-image"
+                />
+                <div class="service-badges">
+                  <span class="badge-emergency">Emergencias 24h</span>
+                  <span class="badge-certified">Matriculado</span>
+                </div>
+                <div class="service-actions">
+                  <button class="action-heart" title="Agregar a favoritos" data-service-id="plumbing-service">
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+                <div class="service-overlay">
+                  <button class="service-cta">
+                    <i class="bi bi-wrench me-2"></i>
+                    Llamar plomero
+                  </button>
+                </div>
+              </div>
+              <div class="service-info">
+                <h3 class="service-title">Plomería & Gasfitería</h3>
+                <p class="service-description">
+                  Instalación, reparación y mantenimiento de sistemas de agua, gas y desagües con técnicos matriculados.
+                </p>
+                <div class="service-meta">
+                  <div class="service-rating">
+                    <div class="stars">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-half"></i>
+                    </div>
+                    <span class="service-rating-text">4.9 (312)</span>
+                  </div>
+                  <div class="service-info-row">
+                    <div class="service-location">
+                      <i class="bi bi-geo-alt-fill"></i>
+                      <span>CABA y GBA</span>
+                    </div>
+                    <span class="service-price-badge">Desde $18.999</span>
+                  </div>
+                </div>
+                <button class="btn-contact-service">
+                  <i class="bi bi-chat-dots me-2"></i>Ver más
+                </button>
+              </div>
+            </div>
+
+            <!-- Servicio 12 - Limpieza Profunda -->
+            <div class="service-card" data-aos="fade-up" data-aos-delay="1100" data-service-category="maintenance" data-service-price="12000" data-id="cleaning-service">
+              <div class="service-image-container">
+                <img
+                  src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop"
+                  alt="Limpieza Profunda"
+                  class="service-image"
+                />
+                <div class="service-badges">
+                  <span class="badge-deep-clean">Limpieza profunda</span>
+                  <span class="badge-eco">Productos ecológicos</span>
+                </div>
+                <div class="service-actions">
+                  <button class="action-heart" title="Agregar a favoritos" data-service-id="cleaning-service">
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+                <div class="service-overlay">
+                  <button class="service-cta">
+                    <i class="bi bi-brush me-2"></i>
+                    Agendar limpieza
+                  </button>
+                </div>
+              </div>
+              <div class="service-info">
+                <h3 class="service-title">Limpieza Profunda del Hogar</h3>
+                <p class="service-description">
+                  Servicio completo de limpieza profunda para hogares y oficinas con productos ecológicos y equipos profesionales.
+                </p>
+                <div class="service-meta">
+                  <div class="service-rating">
+                    <div class="stars">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                    </div>
+                    <span class="service-rating-text">4.9 (312)</span>
+                  </div>
+                  <div class="service-info-row">
+                    <div class="service-location">
+                      <i class="bi bi-geo-alt-fill"></i>
+                      <span>Todo CABA</span>
+                    </div>
+                    <span class="service-price-badge">Desde $22.999</span>
+                  </div>
+                </div>
+                <button class="btn-contact-service">
+                  <i class="bi bi-chat-dots me-2"></i>Ver más
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-center mb-5">
+            <button class="btn btn-outline-primary btn-lg" id="viewAllServicesBtn">
+              <i class="bi bi-grid-3x3-gap me-2"></i>
+              Ver más servicios
+            </button>
+          </div>
+
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="row">
+            <!-- Company Info -->
+            <div class="col-lg-4 col-md-6 mb-4">
+              <div class="footer-section">
+                <div class="footer-logo">
+                  <img src="./IMG/LOGO-2.png" alt="Dale Deal" class="footer-logo-img" />
+                  <span class="footer-brand-text">DALE DEAL</span>
+                </div>
+                <p class="footer-description">
+                  Tu marketplace de productos y servicios en Argentina.
+                  Compra, vende productos y contrata servicios profesionales de calidad.
+                </p>
+                <div class="footer-social">
+                  <a href="#" class="social-link" title="Facebook">
+                    <i class="bi bi-facebook"></i>
+                  </a>
+                  <a href="#" class="social-link" title="Instagram">
+                    <i class="bi bi-instagram"></i>
+                  </a>
+                  <a href="#" class="social-link" title="Twitter">
+                    <i class="bi bi-twitter"></i>
+                  </a>
+                  <a href="#" class="social-link" title="LinkedIn">
+                    <i class="bi bi-linkedin"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="col-lg-2 col-md-6 mb-4">
+              <div class="footer-section">
+                <h5 class="footer-title">Plataforma</h5>
+                <ul class="footer-links">
+                  <li><a href="./HTML/servicios.html">Buscar servicios</a></li>
+                  <li><a href="#" id="registerProviderLink">Ofrecer servicios</a></li>
+                  <li><a href="#">Cómo funciona</a></li>
+                  <li><a href="#" id="businessLink">Soy una empresa</a></li>
+                  <li><a href="#" id="sellProductsLink">Publicar productos</a></li>
+                  <li><a href="#" id="advertiseLink">Publicidad en el sitio</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Categories -->
+            <div class="col-lg-2 col-md-6 mb-4">
+              <div class="footer-section">
+                <h5 class="footer-title">Categorías</h5>
+                <ul class="footer-links">
+                  <li><a href="./HTML/productos.html">Productos</a></li>
+                  <li><a href="./HTML/servicios.html">Servicios</a></li>
+                  <li><a href="./HTML/productos.html?category=electronics">Electrónica</a></li>
+                  <li><a href="./HTML/productos.html?category=home">Hogar y Jardín</a></li>
+                  <li><a href="./HTML/productos.html?category=fashion">Moda y Belleza</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Support -->
+            <div class="col-lg-2 col-md-6 mb-4">
+              <div class="footer-section">
+                <h5 class="footer-title">Soporte</h5>
+                <ul class="footer-links">
+                  <li><a href="#">Centro de ayuda</a></li>
+                  <li><a href="#">Contacto</a></li>
+                  <li><a href="#">Reportar problema</a></li>
+                  <li><a href="#">Estado del servicio</a></li>
+                  <li><a href="#">Seguridad</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Contact & Download -->
+            <div class="col-lg-2 col-md-6 mb-4">
+              <div class="footer-section">
+                <h5 class="footer-title">Contacto</h5>
+                <div class="footer-contact">
+                  <div class="contact-item">
+                    <i class="bi bi-telephone"></i>
+                    <span>0800-DALEDEAL</span>
+                  </div>
+                  <div class="contact-item">
+                    <i class="bi bi-envelope"></i>
+                    <span>hola@daledeal.com</span>
+                  </div>
+                  <div class="contact-item">
+                    <i class="bi bi-geo-alt"></i>
+                    <span>Buenos Aires, Argentina</span>
+                  </div>
+                </div>
+
+                <div class="footer-apps mt-3">
+                  <p class="footer-apps-title">Descarga la app</p>
+                  <div class="app-links">
+                    <a href="#" class="app-link">
+                      <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" class="app-badge">
+                    </a>
+                    <a href="#" class="app-link">
+                      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" class="app-badge">
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Newsletter Signup -->
+          <div class="footer-newsletter">
+            <div class="row align-items-center">
+              <div class="col-md-6">
+                <h5 class="newsletter-title">
+                  <i class="bi bi-bell me-2"></i>
+                  Mantente actualizado
+                </h5>
+                <p class="newsletter-subtitle">Recibe las mejores ofertas y novedades de Dale Deal</p>
+              </div>
+              <div class="col-md-6">
+                <form class="newsletter-form" id="footerNewsletterForm">
+                  <div class="input-group">
+                    <input
+                      type="email"
+                      class="form-control newsletter-input"
+                      placeholder="Ingresa tu email"
+                      id="footerNewsletterEmail"
+                      required
+                    >
+                    <button class="btn btn-primary newsletter-btn" type="submit">
+                      <i class="bi bi-arrow-right"></i>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer Bottom -->
+          <div class="footer-bottom">
+            <div class="footer-bottom-content">
+              <div class="row align-items-center">
+                <div class="col-md-8">
+                  <div class="footer-copyright">
+                    <div class="copyright-main">
+                      <span class="copyright-year">© 2025</span>
+                      <span class="copyright-brand">Dale Deal</span>
+                      <span class="copyright-text">Todos los derechos reservados.</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="footer-legal">
+                    <div class="legal-links-group">
+                      <a href="#" class="legal-link">Términos y Condiciones</a>
+                      <span class="text-muted mx-2">•</span>
+                      <a href="#" class="legal-link">Política de Privacidad</a>
+                      <span class="text-muted mx-2">•</span>
+                      <a href="#" class="legal-link">Política de Cookies</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Favorites Modal -->
+    <div class="modal fade" id="favoritesModal" tabindex="-1" aria-labelledby="favoritesModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="favoritesModalLabel">
+              <i class="bi bi-heart-fill me-2 text-danger"></i>
+              Mis Favoritos
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Favorites content will be loaded dynamically -->
+            <div id="favoritesContent">
+              <div class="favorites-empty text-center py-5" id="favoritesEmpty">
+                <i class="bi bi-heart display-1 text-muted mb-3"></i>
+                <h4 class="text-muted">No tienes favoritos aún</h4>
+                <p class="text-muted">Agrega productos a tus favoritos para verlos aquí</p>
+                <button class="btn btn-primary" data-bs-dismiss="modal" id="exploreProductsBtn">
+                  <i class="bi bi-bag me-2"></i>Explorar productos
+                </button>
+              </div>
+              
+              <div id="favoritesGrid" class="favorites-grid" style="display: none;">
+                <!-- Favorites items will be loaded here -->
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div class="d-flex justify-content-between w-100">
+              <div class="favorites-count">
+                <span class="text-muted">Total: <span id="favoritesTotal">0</span> productos</span>
+              </div>
+              <div class="favorites-actions">
+                <button type="button" class="btn btn-outline-danger" id="clearAllFavorites">
+                  <i class="bi bi-trash me-2"></i>Limpiar todo
+                </button>
+                <button type="button" class="btn btn-primary" id="addAllToCart">
+                  <i class="bi bi-cart-plus me-2"></i>Agregar todo al carrito
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="./JS/utils.js"></script>
+    <script src="./JS/auth.js"></script>
+    <script src="./JS/cart.js"></script>
+    <script src="./JS/notifications.js"></script>
+    <script src="./JS/filters.js"></script>
+    <script src="./JS/favorites.js"></script>
+    <script src="./JS/quick-view.js"></script>
+    <script src="./JS/product-carousel.js"></script>
+    <script src="./JS/dropdown-fix.js"></script>
+
+    <!-- API y Product Loader -->
+    <script src="./JS/api.js"></script>
+    <script src="./JS/search.js"></script>
+    <script src="./JS/pages/home.js"></script>
+
+    <script>
+      // Product navigation function
+      function goToProduct(productId) {
+        // Store product ID in localStorage
+        localStorage.setItem('selectedProductId', productId);
+        // Navigate to product page
+        window.location.href = './HTML/producto.html';
+      }
+
+      // Initialize AOS
+      AOS.init({
+        duration: 800,
+        easing: "ease-out-cubic",
+        once: true,
+        offset: 50,
+      });
+
+      // Newsletter form handlers
+      const handleNewsletterSubmit = function(e) {
+        e.preventDefault();
+        const emailInput = this.querySelector('input[type="email"]');
+        const email = emailInput?.value;
+
+        if (email) {
+          // Simulate newsletter subscription
+          const btn = this.querySelector('.newsletter-btn');
+          const originalHTML = btn.innerHTML;
+
+          btn.innerHTML = '<i class="bi bi-check-circle"></i>';
+          btn.disabled = true;
+          btn.style.background = 'var(--success-600)';
+
+          setTimeout(() => {
+            btn.innerHTML = originalHTML;
+            btn.disabled = false;
+            btn.style.background = '';
+            this.reset();
+          }, 2000);
+        }
+      };
+
+      // Apply to all newsletter forms
+      document.getElementById('newsletterForm')?.addEventListener('submit', handleNewsletterSubmit);
+      document.getElementById('footerNewsletterForm')?.addEventListener('submit', handleNewsletterSubmit);
+
+      // Initialize notifications dropdown
+      document.addEventListener("DOMContentLoaded", () => {
+        // El dropdown ahora se maneja automáticamente por Bootstrap
+        // Solo necesitamos cargar las notificaciones cuando se abre
+        const notificationBtn = document.getElementById("notificationBtn");
+        if (notificationBtn) {
+          notificationBtn.addEventListener("shown.bs.dropdown", () => {
+            if (window.notificationManager) {
+              window.notificationManager.renderNotifications();
+            }
+          });
+        }
+
+        // Ejemplo: Agregar nuevas notificaciones después de 10 segundos
+        setTimeout(() => {
+          if (window.notificationManager) {
+            window.notificationManager.addNotification({
+              type: 'offers',
+              title: 'Flash Sale!',
+              message: '¡Solo por hoy! 30% de descuento en smartphones',
+              time: 'Ahora mismo',
+              icon: 'bi-lightning-fill',
+              iconColor: 'bg-warning',
+              actions: [
+                { label: 'Ver ofertas', action: 'view', data: { sale: 'flash2024' } },
+                { label: 'Recordar más tarde', action: 'remind', data: { remindIn: '1h' } }
+              ]
+            });
+          }
+        }, 10000);
+
+        // Funcionalidad de botones del carrusel
+        document.getElementById('heroShopBtn')?.addEventListener('click', () => {
+          document.querySelector('.products-section')?.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        document.getElementById('heroServicesBtn')?.addEventListener('click', () => {
+          document.querySelector('.services-section')?.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        document.getElementById('heroOffersBtn')?.addEventListener('click', () => {
+          // Activar filtro de ofertas y navegar a productos
+          setTimeout(() => {
+            if (window.productFilters) {
+              window.productFilters.currentCategory = 'all';
+              window.productFilters.currentSort = 'featured';
+              window.productFilters.filterAndRender();
+            }
+          }, 500);
+          document.querySelector('.products-section')?.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        document.getElementById('heroProductBtn')?.addEventListener('click', () => {
+          // Agregar iPhone al carrito
+          if (window.cartManager) {
+            const iphoneProduct = {
+              id: 'hero-iphone',
+              title: 'iPhone 15 Pro Max 256GB',
+              price: 1299999,
+              image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=400&fit=crop',
+              quantity: 1
+            };
+            window.cartManager.addItem(iphoneProduct);
+          }
+        });
+
+        document.getElementById('heroServiceBtn')?.addEventListener('click', () => {
+          // Scroll a servicios y mostrar modal de reserva
+          document.querySelector('.services-section')?.scrollIntoView({ behavior: 'smooth' });
+          setTimeout(() => {
+            console.log('Funcionalidad de reserva de citas - Por implementar');
+          }, 800);
+        });
+
+        // Filtros de servicios
+        class ServiceFilters {
+          constructor() {
+            this.currentCategory = 'all';
+            this.currentSort = 'featured';
+            this.services = [];
+            this.init();
+          }
+
+          init() {
+            this.loadServices();
+            this.bindEvents();
+          }
+
+          loadServices() {
+            const serviceCards = document.querySelectorAll('.service-card');
+            this.services = Array.from(serviceCards).map(card => {
+              const category = card.dataset.serviceCategory;
+              const price = parseInt(card.dataset.servicePrice) || 0;
+              const title = card.querySelector('.service-title')?.textContent || '';
+              
+              return {
+                element: card,
+                category,
+                price,
+                title
+              };
+            });
+          }
+
+          bindEvents() {
+            // Filtros de categoría
+            document.querySelectorAll('.service-filter-tab').forEach(tab => {
+              tab.addEventListener('click', (e) => this.handleCategoryFilter(e));
+            });
+
+            // Botón de ordenar (simplificado)
+            document.getElementById('serviceSortBtn')?.addEventListener('click', () => {
+              this.currentSort = this.currentSort === 'price-asc' ? 'price-desc' : 'price-asc';
+              this.filterAndRender();
+            });
+          }
+
+          handleCategoryFilter(e) {
+            e.preventDefault();
+            
+            // Actualizar estado visual
+            document.querySelectorAll('.service-filter-tab').forEach(tab => tab.classList.remove('active'));
+            e.target.classList.add('active');
+            
+            // Actualizar categoría actual
+            this.currentCategory = e.target.dataset.serviceCategory;
+            
+            // Filtrar y renderizar
+            this.filterAndRender();
+          }
+
+          filterAndRender() {
+            let filteredServices = [...this.services];
+
+            // Filtro por categoría
+            if (this.currentCategory && this.currentCategory !== 'all') {
+              filteredServices = filteredServices.filter(service => 
+                service.category === this.currentCategory
+              );
+            }
+
+            // Ordenar
+            if (this.currentSort === 'price-asc') {
+              filteredServices.sort((a, b) => a.price - b.price);
+            } else if (this.currentSort === 'price-desc') {
+              filteredServices.sort((a, b) => b.price - a.price);
+            }
+
+            this.renderServices(filteredServices);
+          }
+
+          renderServices(filteredServices) {
+            // Ocultar todos los servicios
+            this.services.forEach(service => {
+              service.element.style.display = 'none';
+            });
+
+            // Mostrar servicios filtrados
+            filteredServices.forEach((service, index) => {
+              service.element.style.display = 'block';
+              service.element.style.animationDelay = `${index * 0.1}s`;
+            });
+          }
+        }
+
+        // Botón ver todos los productos
+        document.getElementById('viewAllProductsBtn')?.addEventListener('click', () => {
+          // Crear página de productos o redirigir a una sección específica
+          window.location.href = './HTML/productos.html';
+        });
+
+        // Inicializar filtros de servicios
+        new ServiceFilters();
+      });
+    </script>
+
+    <!-- Component Loader - DESHABILITADO
+    <script src="./JS/component-loader.js" defer></script>
+    -->
+  </body>
+</html>
