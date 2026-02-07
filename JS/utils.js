@@ -7,6 +7,7 @@
 // ===== CONFIGURACIÓN GLOBAL =====
 window.DaleDeal = {
   CONFIG: {
+    DEBUG: window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1",
     API_BASE_URL: "https://api.daledeal.com",
     PRODUCTS_PER_PAGE: 12,
     SEARCH_DELAY: 300,
@@ -31,6 +32,11 @@ window.DaleDeal = {
 
   // ===== UTILIDADES =====
   utils: {},
+
+  // ===== LOGGER =====
+  log: (...args) => { if (window.DaleDeal?.CONFIG?.DEBUG) console.log('[DaleDeal]', ...args); },
+  warn: (...args) => { if (window.DaleDeal?.CONFIG?.DEBUG) console.warn('[DaleDeal]', ...args); },
+  error: (...args) => console.error('[DaleDeal]', ...args),
 };
 
 // ===== UTILIDADES DE FORMATO =====
@@ -651,7 +657,7 @@ DaleDeal.utils.init = () => {
   // Crear contenedor de toasts (preferido)
   DaleDeal.utils.createToastContainer();
 
-  console.log("🚀 Dale Deal Utils inicializados correctamente");
+  DaleDeal.log("Utils inicializados");
 };
 
 // Auto-inicializar cuando el DOM esté listo

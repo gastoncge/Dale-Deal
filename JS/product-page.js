@@ -38,7 +38,7 @@ class ProductPage {
     const productData = window.getProductById ? window.getProductById(productId) : null;
     
     if (!productData) {
-      console.error('Product not found:', productId);
+      DaleDeal.error('Product not found:', productId);
       // Redirect back to home page
       window.location.href = '../index.html';
       return;
@@ -531,7 +531,7 @@ class ProductPage {
         this.showNotification("Producto agregado al carrito", "success");
       }
     } catch (error) {
-      console.error("Error agregando al carrito:", error);
+      DaleDeal.error("Error agregando al carrito:", error);
       this.showNotification("Error al agregar al carrito", "error");
     } finally {
       this.setButtonLoading(button, false);
@@ -550,10 +550,10 @@ class ProductPage {
 
       // En una app real, aquí redirigirías al checkout
       setTimeout(() => {
-        console.log("¡Gracias por tu compra! En una implementación real, aquí se procesaría el pago.");
+        DaleDeal.log("¡Gracias por tu compra! En una implementación real, aquí se procesaría el pago.");
       }, 1000);
     } catch (error) {
-      console.error("Error en compra:", error);
+      DaleDeal.error("Error en compra:", error);
       this.showNotification("Error al procesar la compra", "error");
     } finally {
       this.setButtonLoading(button, false);
@@ -612,11 +612,11 @@ class ProductPage {
     }
 
     // Fallback simple
-    console.log(`[${type.toUpperCase()}] ${message}`);
+    DaleDeal.log(`[${type.toUpperCase()}] ${message}`);
     
     // Mostrar en consola como último recurso
     if (type === "error") {
-      console.error(`Error: ${message}`);
+      DaleDeal.error(`Error: ${message}`);
     }
   }
 
@@ -650,7 +650,7 @@ class ProductPage {
         this.renderSimilarProducts(similarProducts, false);
       }
     } catch (error) {
-      console.error('Error cargando productos similares:', error);
+      DaleDeal.error('Error cargando productos similares:', error);
       similarGrid.innerHTML = `
         <div class="error-similar-products text-center py-5">
           <i class="bi bi-exclamation-triangle display-4 text-warning mb-3"></i>
@@ -826,7 +826,7 @@ class ProductPage {
 
       this.renderRecentlyViewed(productsData);
     } catch (error) {
-      console.error('Error cargando productos vistos recientemente:', error);
+      DaleDeal.error('Error cargando productos vistos recientemente:', error);
     }
   }
 
@@ -937,7 +937,7 @@ class ProductPage {
       
       localStorage.setItem('daledealt_recently_viewed', JSON.stringify(recentProducts));
     } catch (error) {
-      console.error('Error guardando producto en vistos recientemente:', error);
+      DaleDeal.error('Error guardando producto en vistos recientemente:', error);
     }
   }
 
@@ -947,7 +947,7 @@ class ProductPage {
       const recent = localStorage.getItem('daledealt_recently_viewed');
       return recent ? JSON.parse(recent) : [];
     } catch (error) {
-      console.error('Error cargando productos vistos recientemente:', error);
+      DaleDeal.error('Error cargando productos vistos recientemente:', error);
       return [];
     }
   }

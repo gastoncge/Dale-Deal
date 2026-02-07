@@ -2757,7 +2757,6 @@
     <script src="../JS/notifications.js"></script>
     <script src="../JS/dropdown-fix.js"></script>
     <script src="../JS/services-data.js"></script>
-    <script src="../JS/pages/services.js"></script>
     <script src="../JS/component-loader.js" defer></script>
 
     <script>
@@ -3395,9 +3394,6 @@
       // INITIALIZATION
       // ===========================================
       document.addEventListener('DOMContentLoaded', () => {
-        // ServiceCatalog is the single controller for the services grid.
-        // ServicesPageLoader (services.js) is intentionally not auto-initialized
-        // to avoid double-render conflicts.
         window.serviceCatalog = new ServiceCatalog();
 
         // Category filter from URL params (e.g. ?category=installation)

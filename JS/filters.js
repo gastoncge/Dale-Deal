@@ -46,7 +46,7 @@ class ProductFilters {
     });
     
     this.originalProducts = [...this.products];
-    console.log('Productos cargados:', this.products.length);
+    DaleDeal.log('Productos cargados:', this.products.length);
   }
 
   // Extraer rating de una tarjeta
@@ -615,7 +615,7 @@ class ProductFilters {
   // Detectar ubicación
   detectLocation() {
     if (!navigator.geolocation) {
-      console.log('La geolocalización no está soportada en este navegador');
+      DaleDeal.log('La geolocalización no está soportada en este navegador');
       return;
     }
 
@@ -796,7 +796,7 @@ class ProductFilters {
       window.DaleDeal.utils.showNotification(message, type);
     } else {
       // Fallback si utils no está disponible
-      console.log(`[FILTERS ${type.toUpperCase()}] ${message}`);
+      DaleDeal.log(`[FILTERS ${type.toUpperCase()}] ${message}`);
     }
   }
 }

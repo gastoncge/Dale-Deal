@@ -20,7 +20,7 @@ class CartManager {
       const cart = localStorage.getItem(this.storageKey);
       return cart ? JSON.parse(cart) : [];
     } catch (error) {
-      console.error("Error cargando carrito:", error);
+      DaleDeal.error("Error cargando carrito:", error);
       return [];
     }
   }
@@ -31,7 +31,7 @@ class CartManager {
       localStorage.setItem(this.storageKey, JSON.stringify(this.items));
       this.updateCartBadge();
     } catch (error) {
-      console.error("Error guardando carrito:", error);
+      DaleDeal.error("Error guardando carrito:", error);
     }
   }
 
@@ -58,7 +58,7 @@ class CartManager {
       this.showNotification(`${product.title} agregado al carrito`, "success");
       return true;
     } catch (error) {
-      console.error("Error agregando al carrito:", error);
+      DaleDeal.error("Error agregando al carrito:", error);
       this.showNotification("Error al agregar producto", "error");
       return false;
     }
@@ -80,7 +80,7 @@ class CartManager {
       }
       return false;
     } catch (error) {
-      console.error("Error removiendo del carrito:", error);
+      DaleDeal.error("Error removiendo del carrito:", error);
       return false;
     }
   }
@@ -96,7 +96,7 @@ class CartManager {
         this.updateCartDropdown();
         
         // Log para debug
-        console.log(`Cantidad actualizada para ${item.title}: ${oldQuantity} → ${newQuantity}`);
+        DaleDeal.log(`Cantidad actualizada para ${item.title}: ${oldQuantity} → ${newQuantity}`);
         
         return true;
       } else if (newQuantity <= 0) {
@@ -104,7 +104,7 @@ class CartManager {
       }
       return false;
     } catch (error) {
-      console.error("Error actualizando cantidad:", error);
+      DaleDeal.error("Error actualizando cantidad:", error);
       return false;
     }
   }
@@ -170,7 +170,7 @@ class CartManager {
     // Actualizar total
     if (cartTotal) {
       const totalPrice = this.getTotalPrice();
-      console.log('Total calculado:', totalPrice); // Debug
+      DaleDeal.log('Total calculado:', totalPrice); // Debug
       cartTotal.textContent = this.formatPrice(totalPrice);
     }
 
@@ -269,16 +269,16 @@ class CartManager {
     // Eventos para botones del dropdown del carrito
     document.getElementById('viewFullCart')?.addEventListener('click', () => {
       // Aquí podrías redirigir a una página completa del carrito
-      console.log('Ver carrito completo');
+      DaleDeal.log('Ver carrito completo');
     });
 
     document.getElementById('proceedToCheckout')?.addEventListener('click', () => {
       if (this.items.length === 0) {
-        console.log('Carrito vacío');
+        DaleDeal.log('Carrito vacío');
         return;
       }
       // Aquí podrías redirigir al checkout
-      console.log('Proceder al checkout');
+      DaleDeal.log('Proceder al checkout');
     });
 
     // Manejar clics en el dropdown del carrito
@@ -298,7 +298,7 @@ class CartManager {
             case 'increase':
               const currentItem = this.items.find(item => item.id === productId);
               if (currentItem) {
-                console.log(`Incrementando cantidad para ${currentItem.title}: ${currentItem.quantity} → ${currentItem.quantity + 1}`);
+                DaleDeal.log(`Incrementando cantidad para ${currentItem.title}: ${currentItem.quantity} → ${currentItem.quantity + 1}`);
                 this.updateQuantity(productId, currentItem.quantity + 1);
               }
               break;
@@ -306,7 +306,7 @@ class CartManager {
             case 'decrease':
               const currentItemDec = this.items.find(item => item.id === productId);
               if (currentItemDec && currentItemDec.quantity > 1) {
-                console.log(`Decrementando cantidad para ${currentItemDec.title}: ${currentItemDec.quantity} → ${currentItemDec.quantity - 1}`);
+                DaleDeal.log(`Decrementando cantidad para ${currentItemDec.title}: ${currentItemDec.quantity} → ${currentItemDec.quantity - 1}`);
                 this.updateQuantity(productId, currentItemDec.quantity - 1);
               } else if (currentItemDec && currentItemDec.quantity === 1) {
                 // Si la cantidad es 1, preguntar si quiere eliminar
@@ -370,7 +370,7 @@ class CartManager {
 
       return { id, title, price: price, priceText: priceText, image, quantity: 1 };
     } catch (error) {
-      console.error("Error extrayendo datos del producto:", error);
+      DaleDeal.error("Error extrayendo datos del producto:", error);
       return null;
     }
   }
@@ -382,7 +382,7 @@ class CartManager {
       window.DaleDeal.utils.showNotification(message, type);
     } else {
       // Fallback si utils no está disponible
-      console.log(`[CART ${type.toUpperCase()}] ${message}`);
+      DaleDeal.log(`[CART ${type.toUpperCase()}] ${message}`);
     }
   }
 }

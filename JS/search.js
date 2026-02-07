@@ -33,7 +33,7 @@ class SearchManager {
             this.performSearch(e.target.value);
           }
         });
-        console.log('✓ Search input initialized');
+        DaleDeal.log('✓ Search input initialized');
       } else {
         // Reintentar después de que se cargue el header
         setTimeout(checkSearchInput, 500);
@@ -72,7 +72,7 @@ class SearchManager {
   async performSearch(query) {
     try {
       this.isSearching = true;
-      console.log(`🔍 Buscando: "${query}"`);
+      DaleDeal.log(`🔍 Buscando: "${query}"`);
 
       // Usar la API para buscar
       if (window.DaleDeal?.api) {
@@ -86,11 +86,11 @@ class SearchManager {
           this.redirectToProductsPage(query);
         }
       } else {
-        console.error('API no disponible para búsqueda');
+        DaleDeal.error('API no disponible para búsqueda');
       }
 
     } catch (error) {
-      console.error('Error al buscar productos:', error);
+      DaleDeal.error('Error al buscar productos:', error);
       this.showSearchError();
     } finally {
       this.isSearching = false;

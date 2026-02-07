@@ -184,7 +184,7 @@ async function loadProducts() {
   try {
     const productsGrid = document.getElementById('productsGrid');
     if (!productsGrid) {
-      console.warn('Products grid container not found');
+      DaleDeal.warn('Products grid container not found');
       return;
     }
 
@@ -223,10 +223,10 @@ async function loadProducts() {
     // Reinicializar event listeners después de cargar productos
     initializeProductListeners();
 
-    console.log(`✓ ${products.length} productos cargados en el home`);
+    DaleDeal.log(`✓ ${products.length} productos cargados en el home`);
 
   } catch (error) {
-    console.error('Error al cargar productos:', error);
+    DaleDeal.error('Error al cargar productos:', error);
 
     const productsGrid = document.getElementById('productsGrid');
     if (productsGrid) {
@@ -267,10 +267,10 @@ function initializeProductListeners() {
   setTimeout(() => {
     if (window.productCarousel) {
       window.productCarousel.reinitialize();
-      console.log('✅ Carruseles reinicializados en home');
+      DaleDeal.log('✅ Carruseles reinicializados en home');
     } else if (window.ProductCarousel) {
       window.productCarousel = new window.ProductCarousel();
-      console.log('✅ ProductCarousel creado en home');
+      DaleDeal.log('✅ ProductCarousel creado en home');
     }
   }, 200);
 
@@ -289,7 +289,7 @@ if (document.readyState === 'loading') {
     if (window.DaleDeal?.api) {
       loadProducts();
     } else {
-      console.error('API de productos no disponible');
+      DaleDeal.error('API de productos no disponible');
     }
   });
 } else {
@@ -297,7 +297,7 @@ if (document.readyState === 'loading') {
   if (window.DaleDeal?.api) {
     loadProducts();
   } else {
-    console.error('API de productos no disponible');
+    DaleDeal.error('API de productos no disponible');
   }
 }
 

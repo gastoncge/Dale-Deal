@@ -24,9 +24,9 @@ class ProductsPageLoader {
         window.searchManager.loadSearchFromURL();
       }
 
-      console.log('✓ Products page initialized');
+      DaleDeal.log('✓ Products page initialized');
     } catch (error) {
-      console.error('Error initializing products page:', error);
+      DaleDeal.error('Error initializing products page:', error);
     }
   }
 
@@ -39,7 +39,7 @@ class ProductsPageLoader {
       const loadingContainer = document.getElementById('loadingContainer');
 
       if (!productsGrid) {
-        console.warn('Products grid not found');
+        DaleDeal.warn('Products grid not found');
         return;
       }
 
@@ -60,10 +60,10 @@ class ProductsPageLoader {
       // Renderizar
       this.renderProducts();
 
-      console.log(`✓ ${this.allProducts.length} productos cargados`);
+      DaleDeal.log(`✓ ${this.allProducts.length} productos cargados`);
 
     } catch (error) {
-      console.error('Error loading products:', error);
+      DaleDeal.error('Error loading products:', error);
       this.showError();
     }
   }

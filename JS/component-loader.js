@@ -42,13 +42,13 @@ async function loadComponent(componentPath, targetId) {
 
     if (targetElement) {
       targetElement.innerHTML = html;
-      console.log(`✓ Componente cargado: ${componentPath} → #${targetId}`);
+      DaleDeal.log(`✓ Componente cargado: ${componentPath} → #${targetId}`);
     } else {
-      console.warn(`⚠ Elemento con ID "${targetId}" no encontrado en la página`);
+      DaleDeal.warn(`⚠ Elemento con ID "${targetId}" no encontrado en la página`);
     }
 
   } catch (error) {
-    console.error(`Error cargando componente ${componentPath}:`, error);
+    DaleDeal.error(`Error cargando componente ${componentPath}:`, error);
 
     // Mostrar mensaje de error en el placeholder si existe
     const targetElement = document.getElementById(targetId);
@@ -98,7 +98,7 @@ function fixHeaderPaths() {
     loginLink.href = isRoot ? './HTML/login.html' : './login.html';
   }
 
-  console.log('✓ Header paths fixed');
+  DaleDeal.log('✓ Header paths fixed');
 }
 
 /**
@@ -138,7 +138,7 @@ function initializeNewsletterForm() {
       }
     });
 
-    console.log('✓ Newsletter form inicializado');
+    DaleDeal.log('✓ Newsletter form inicializado');
   }
 }
 
@@ -164,7 +164,7 @@ function initializeHeaderComponents() {
     });
   }
 
-  console.log('✓ Header components inicializados');
+  DaleDeal.log('✓ Header components inicializados');
 }
 
 /**
@@ -173,7 +173,7 @@ function initializeHeaderComponents() {
 async function loadAllComponents() {
   const basePath = getBasePath();
 
-  console.log(`📁 Base path detectado: ${basePath}`);
+  DaleDeal.log(`📁 Base path detectado: ${basePath}`);
 
   // Cargar header
   const navbarPlaceholder = document.getElementById('navbar-placeholder');
@@ -194,7 +194,7 @@ async function loadAllComponents() {
     setTimeout(initializeNewsletterForm, 100);
   }
 
-  console.log('✓ Todos los componentes cargados');
+  DaleDeal.log('✓ Todos los componentes cargados');
 }
 
 /**

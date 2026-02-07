@@ -21,7 +21,7 @@ class DropdownManager {
     this.setupGlobalHandlers();
     this.isInitialized = true;
 
-    console.log("✅ DropdownManager inicializado");
+    DaleDeal.log("✅ DropdownManager inicializado");
   }
 
   // ===== BOOTSTRAP DROPDOWNS =====
@@ -422,7 +422,7 @@ class DropdownManager {
     } else if (window.authManager?.showNotification) {
       window.authManager.showNotification(message, type);
     } else {
-      console.log(message);
+      DaleDeal.log(message);
     }
   }
 

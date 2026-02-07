@@ -22,7 +22,7 @@ class FavoritesManager {
       const favorites = localStorage.getItem(this.storageKey);
       return favorites ? JSON.parse(favorites) : [];
     } catch (error) {
-      console.error('Error cargando favoritos:', error);
+      DaleDeal.error('Error cargando favoritos:', error);
       return [];
     }
   }
@@ -32,7 +32,7 @@ class FavoritesManager {
     try {
       localStorage.setItem(this.storageKey, JSON.stringify(this.favorites));
     } catch (error) {
-      console.error('Error guardando favoritos:', error);
+      DaleDeal.error('Error guardando favoritos:', error);
     }
   }
 
@@ -133,7 +133,7 @@ class FavoritesManager {
     const productId = localStorage.getItem('selectedProductId') || '1';
     
     if (!window.getProductById) {
-      console.error('Product data not available');
+      DaleDeal.error('Product data not available');
       return;
     }
 
@@ -583,7 +583,7 @@ class FavoritesManager {
       window.cartManager.addItem(product);
       this.showToast(`${favorite.title} agregado al carrito`, 'success');
     } catch (error) {
-      console.error('Error agregando producto al carrito:', error);
+      DaleDeal.error('Error agregando producto al carrito:', error);
       this.showToast('Error al agregar producto al carrito', 'error');
     }
   }
@@ -618,7 +618,7 @@ class FavoritesManager {
         window.cartManager.addItem(product);
         addedCount++;
       } catch (error) {
-        console.error('Error agregando producto al carrito:', error);
+        DaleDeal.error('Error agregando producto al carrito:', error);
       }
     });
 
@@ -640,7 +640,7 @@ class FavoritesManager {
       window.DaleDeal.utils.showNotification(message, type);
     } else {
       // Fallback si utils no está disponible
-      console.log(`[FAVORITES ${type.toUpperCase()}] ${message}`);
+      DaleDeal.log(`[FAVORITES ${type.toUpperCase()}] ${message}`);
     }
   }
 }

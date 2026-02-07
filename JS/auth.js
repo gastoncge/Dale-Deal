@@ -23,7 +23,7 @@ class AuthManager {
     this.bindGlobalEvents();
     this.isInitialized = true;
 
-    console.log("✅ AuthManager inicializado");
+    DaleDeal.log("✅ AuthManager inicializado");
   }
 
   // ===== GESTIÓN DE USUARIO =====
@@ -32,7 +32,7 @@ class AuthManager {
       const userData = localStorage.getItem(this.storageKey);
       this.currentUser = userData ? JSON.parse(userData) : null;
     } catch (error) {
-      console.error("Error cargando usuario:", error);
+      DaleDeal.error("Error cargando usuario:", error);
       this.currentUser = null;
     }
   }
@@ -78,7 +78,7 @@ class AuthManager {
 
       return { success: true, user };
     } catch (error) {
-      console.error("Error en login:", error);
+      DaleDeal.error("Error en login:", error);
       this.showNotification(error.message, "error");
       return { success: false, error: error.message };
     }
@@ -109,7 +109,7 @@ class AuthManager {
 
       return { success: true, user };
     } catch (error) {
-      console.error("Error en registro:", error);
+      DaleDeal.error("Error en registro:", error);
       this.showNotification(error.message, "error");
       return { success: false, error: error.message };
     }
