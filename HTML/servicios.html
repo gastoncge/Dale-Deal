@@ -2779,6 +2779,460 @@
           document.body.style.overflow = '';
         }
       });
+
+      // =====================================================
+      // SERVICE CATALOG - Analogous to ProductCatalog
+      // =====================================================
+      class ServiceCatalog {
+        constructor() {
+          this.services = [];
+          this.currentPage = 1;
+          this.servicesPerPage = 12;
+          this.displayedServices = [];
+          this.isLoading = false;
+
+          this.init();
+        }
+
+        async init() {
+          try {
+            // Show loading state with skeleton cards
+            this.showLoading(true);
+            this.renderSkeletonCards();
+
+            // Fetch services
+            const servicesRaw = await this.fetchServices();
+
+            // Transform data to match expected format
+            this.services = this.transformServicesData(servicesRaw);
+
+            // Hide loading and render services
+            this.showLoading(false);
+            this.renderFilteredServices();
+            this.updateResultsCount();
+
+            // Wait for ServicesPageLoader to initialize, then override its render method
+            setTimeout(() => {
+              if (window.servicesLoader) {
+                // Override the renderServices method to use our grid layout
+                window.servicesLoader.originalRenderServices = window.servicesLoader.renderServices;
+                window.servicesLoader.renderServices = () => this.renderFilteredServices();
+
+                // Load services into the filter system
+                window.servicesLoader.allServices = this.services;
+                window.servicesLoader.filteredServices = [...this.services];
+              }
+            }, 100);
+
+          } catch (error) {
+            console.error('Error loading services:', error);
+            this.showLoading(false);
+            this.showError('Error al cargar los servicios. Por favor, intenta nuevamente.');
+          }
+        }
+
+        /**
+         * Fetch services from the data source
+         */
+        async fetchServices() {
+          // Simulate network delay for loading UX
+          await new Promise(resolve => setTimeout(resolve, 800));
+
+          if (typeof servicesData !== 'undefined') {
+            console.log(`✓ ${servicesData.length} servicios cargados`);
+            return servicesData;
+          }
+
+          throw new Error('servicesData no está definido');
+        }
+
+        /**
+         * Transform raw services data to internal format
+         * Analogous to transformProductsData
+         */
+        transformServicesData(apiServices) {
+          return apiServices.map(service => ({
+            id: service.id,
+            title: service.title,
+            description: service.description || '',
+            price: service.price,
+            category: this.mapCategory(service.category),
+            image: service.image,
+            rating: service.rating,
+            reviewCount: service.reviewCount || 0,
+            location: service.location || 'CABA',
+            badges: service.badges || [],
+            featured: service.featured || false,
+            priceType: service.priceType || null,
+            topRated: service.topRated || false,
+            emergency: service.emergency || false,
+            nationwide: service.nationwide || false
+          }));
+        }
+
+        /**
+         * Map service category names to internal keys
+         */
+        mapCategory(category) {
+          const categoryMap = {
+            'Instalación': 'installation',
+            'Reparación': 'repair',
+            'Mantenimiento': 'maintenance',
+            'Consultoría': 'consultation',
+            'Gastronomía': 'catering',
+            'Construcción': 'construction'
+          };
+          return categoryMap[category] || category?.toLowerCase() || 'general';
+        }
+
+        /**
+         * Toggle loading state visibility
+         */
+        showLoading(show) {
+          const emptyStateContainer = document.getElementById('emptyStateContainer');
+          const loading = document.getElementById('loadingContainer');
+          const grid = document.getElementById('servicesGrid');
+          const noResults = document.getElementById('noResults');
+
+          if (show) {
+            if (grid) grid.style.display = 'none';
+            if (emptyStateContainer) emptyStateContainer.style.display = 'flex';
+            if (loading) loading.style.display = 'block';
+            if (noResults) noResults.style.display = 'none';
+            this.isLoading = true;
+          } else {
+            if (emptyStateContainer) emptyStateContainer.style.display = 'none';
+            if (loading) loading.style.display = 'none';
+            if (grid) grid.style.display = 'grid';
+            this.isLoading = false;
+          }
+        }
+
+        /**
+         * Render 9 skeleton placeholder cards during loading
+         */
+        renderSkeletonCards() {
+          const grid = document.getElementById('servicesGrid');
+          if (!grid) return;
+          grid.style.display = 'grid';
+          grid.innerHTML = '';
+
+          for (let i = 0; i < 9; i++) {
+            const skeletonCard = this.createSkeletonCard(i);
+            grid.appendChild(skeletonCard);
+          }
+        }
+
+        /**
+         * Create a single skeleton card element
+         */
+        createSkeletonCard(index) {
+          const card = document.createElement('div');
+          card.className = 'product-card skeleton-card';
+          card.setAttribute('data-aos', 'fade-up');
+          card.setAttribute('data-aos-delay', index * 50);
+
+          card.innerHTML = `
+            <div class="product-image-container">
+              <div class="skeleton skeleton-image"></div>
+              <div class="skeleton skeleton-badge"></div>
+            </div>
+            <div class="product-info">
+              <div class="skeleton skeleton-title"></div>
+              <div class="skeleton skeleton-title" style="width: 60%;"></div>
+              <div class="product-rating">
+                <div class="skeleton skeleton-stars"></div>
+                <div class="skeleton skeleton-text" style="width: 80px;"></div>
+              </div>
+              <div class="skeleton skeleton-text" style="width: 120px; margin-bottom: var(--spacing-3);"></div>
+              <div class="product-pricing">
+                <div class="skeleton skeleton-price"></div>
+              </div>
+            </div>
+          `;
+
+          return card;
+        }
+
+        /**
+         * Display error state with retry button
+         */
+        showError(message) {
+          const emptyStateContainer = document.getElementById('emptyStateContainer');
+          const grid = document.getElementById('servicesGrid');
+          const loading = document.getElementById('loadingContainer');
+          const noResults = document.getElementById('noResults');
+
+          if (grid) grid.style.display = 'none';
+          if (emptyStateContainer) emptyStateContainer.style.display = 'flex';
+          if (loading) loading.style.display = 'none';
+          if (noResults) noResults.style.display = 'block';
+
+          if (noResults) {
+            noResults.innerHTML = `
+              <div class="empty-state-icon">
+                <i class="bi bi-exclamation-triangle" style="color: var(--primary-red);"></i>
+              </div>
+              <h3 class="empty-state-title">Error al cargar</h3>
+              <p class="empty-state-text">${message}</p>
+              <div class="empty-state-actions">
+                <button class="btn btn-primary" onclick="location.reload()">
+                  <i class="bi bi-arrow-clockwise me-2"></i>Reintentar
+                </button>
+              </div>
+            `;
+          }
+        }
+
+        /**
+         * Render services based on current filters with pagination
+         */
+        renderFilteredServices() {
+          const container = document.getElementById('servicesGrid');
+          const emptyStateContainer = document.getElementById('emptyStateContainer');
+          const loading = document.getElementById('loadingContainer');
+          const noResults = document.getElementById('noResults');
+          const loadMore = document.getElementById('loadMoreContainer');
+
+          const currentServices = window.servicesLoader
+            ? window.servicesLoader.filteredServices
+            : this.services;
+
+          // Show loading state
+          if (container) container.style.display = 'none';
+          if (emptyStateContainer) emptyStateContainer.style.display = 'flex';
+          if (loading) loading.style.display = 'block';
+          if (noResults) noResults.style.display = 'none';
+          if (container) container.innerHTML = '';
+
+          // Wait 2 seconds for loading UX, then render
+          setTimeout(() => {
+            if (currentServices.length === 0) {
+              if (container) container.style.display = 'none';
+              if (emptyStateContainer) emptyStateContainer.style.display = 'flex';
+              if (loading) loading.style.display = 'none';
+              if (noResults) noResults.style.display = 'block';
+              if (loadMore) loadMore.style.display = 'none';
+              this.updateResultsCount();
+              return;
+            }
+
+            // Hide empty states and show grid
+            if (emptyStateContainer) emptyStateContainer.style.display = 'none';
+            if (loading) loading.style.display = 'none';
+            if (noResults) noResults.style.display = 'none';
+            if (container) container.style.display = 'grid';
+
+            // Paginated rendering
+            const startIndex = 0;
+            const endIndex = this.currentPage * this.servicesPerPage;
+            const servicesToShow = currentServices.slice(startIndex, endIndex);
+
+            servicesToShow.forEach((service, index) => {
+              const serviceCard = this.createServiceCard(service, index);
+              container.appendChild(serviceCard);
+            });
+
+            // Show/hide load more button
+            if (loadMore) {
+              loadMore.style.display = endIndex < currentServices.length ? 'block' : 'none';
+            }
+
+            this.updateResultsCount();
+
+            // Re-initialize AOS for new cards
+            if (typeof AOS !== 'undefined') {
+              AOS.refresh();
+            }
+
+            // Re-initialize favorites listeners
+            this.initializeFavoritesListeners();
+          }, 2000);
+        }
+
+        /**
+         * Create a single service card element
+         */
+        createServiceCard(service, index) {
+          const card = document.createElement('div');
+          card.className = 'product-card';
+          card.setAttribute('data-id', service.id);
+          card.setAttribute('data-aos', 'fade-up');
+          card.setAttribute('data-aos-delay', (index % 12) * 50);
+
+          // Format price with type suffix
+          let priceText = window.DaleDeal?.utils?.formatCurrency
+            ? window.DaleDeal.utils.formatCurrency(service.price)
+            : `$ ${service.price.toLocaleString('es-AR')}`;
+          if (service.priceType === 'monthly') priceText += '/mes';
+          else if (service.priceType === 'per_m2') priceText += '/m²';
+          else if (service.priceType === 'per_room') priceText += '/amb';
+
+          // Render stars
+          const fullStars = Math.floor(service.rating);
+          const hasHalfStar = service.rating % 1 >= 0.5;
+          let starsHTML = '';
+          for (let i = 0; i < fullStars; i++) {
+            starsHTML += '<i class="bi bi-star-fill"></i>';
+          }
+          if (hasHalfStar) {
+            starsHTML += '<i class="bi bi-star-half"></i>';
+          }
+          const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+          for (let i = 0; i < emptyStars; i++) {
+            starsHTML += '<i class="bi bi-star"></i>';
+          }
+
+          // Render badges
+          const badgesHTML = (service.badges || []).map(badge => {
+            const badgeClass = service.emergency || badge.includes('Premium') || badge.includes('Emergencia')
+              ? 'badge-offer'
+              : 'badge-featured';
+            return `<span class="${badgeClass}">${badge}</span>`;
+          }).join('');
+
+          // Extra badges (top rated, emergency, nationwide)
+          let extraBadges = '';
+          if (service.topRated) {
+            extraBadges += '<span class="shipping-badge"><i class="bi bi-star-fill"></i> Top rated</span>';
+          }
+          if (service.emergency) {
+            extraBadges += ' <span class="shipping-badge"><i class="bi bi-lightning-charge-fill"></i> Urgencias</span>';
+          }
+          if (service.nationwide) {
+            extraBadges += ' <span class="shipping-badge"><i class="bi bi-truck"></i> Cobertura nacional</span>';
+          }
+
+          // Short description
+          const shortDescription = service.description
+            ? (service.description.length > 80
+                ? service.description.substring(0, 80) + '...'
+                : service.description)
+            : '';
+
+          card.innerHTML = `
+            <div class="product-image-container">
+              <img
+                src="${service.image}"
+                alt="${service.title}"
+                class="product-image active"
+                loading="lazy"
+              />
+              ${badgesHTML}
+              <div class="product-actions">
+                <button class="action-heart" title="Agregar a favoritos" data-product-id="${service.id}">
+                  <i class="bi bi-heart"></i>
+                </button>
+              </div>
+            </div>
+            <div class="product-info">
+              <h3 class="product-title">${service.title}</h3>
+              <p class="product-description">${shortDescription}</p>
+
+              <div class="product-meta-group">
+                <div class="product-rating">
+                  <div class="stars">${starsHTML}</div>
+                  <span class="reviews-count">(${(service.reviewCount || 0).toLocaleString('es-AR')})</span>
+                  ${extraBadges}
+                </div>
+                <div class="product-location">
+                  <i class="bi bi-geo-alt-fill"></i>
+                  <span>${service.location}</span>
+                </div>
+              </div>
+
+              <div class="product-pricing-wrapper">
+                <div class="product-pricing">
+                  <span class="product-current-price">${priceText}</span>
+                </div>
+              </div>
+            </div>
+          `;
+
+          // Click handler for service detail navigation
+          card.addEventListener('click', (e) => {
+            if (e.target.closest('.action-heart')) return;
+            // Navigate to service detail page when available
+            console.log(`Service clicked: ${service.id}`);
+          });
+
+          return card;
+        }
+
+        /**
+         * Initialize favorites button listeners
+         */
+        initializeFavoritesListeners() {
+          document.querySelectorAll('#servicesGrid .action-heart').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              const icon = btn.querySelector('i');
+              if (icon.classList.contains('bi-heart')) {
+                icon.classList.remove('bi-heart');
+                icon.classList.add('bi-heart-fill');
+                btn.classList.add('active');
+              } else {
+                icon.classList.remove('bi-heart-fill');
+                icon.classList.add('bi-heart');
+                btn.classList.remove('active');
+              }
+            });
+          });
+        }
+
+        /**
+         * Find a service by its ID
+         */
+        findServiceById(id) {
+          return this.services.find(s => s.id === id);
+        }
+
+        /**
+         * Update the results counter display
+         */
+        updateResultsCount() {
+          const currentServices = window.servicesLoader
+            ? window.servicesLoader.filteredServices
+            : this.services;
+          const count = currentServices.length;
+          const countEl = document.getElementById('resultsCount');
+          if (countEl) {
+            countEl.textContent = `${count} servicio${count !== 1 ? 's' : ''} encontrado${count !== 1 ? 's' : ''}`;
+          }
+        }
+
+        /**
+         * Load more services (pagination)
+         */
+        loadMore() {
+          this.currentPage++;
+          this.renderFilteredServices();
+        }
+      }
+
+      // Initialize ServiceCatalog when DOM is ready
+      document.addEventListener('DOMContentLoaded', () => {
+        const catalog = new ServiceCatalog();
+
+        // Load more button
+        document.getElementById('loadMoreBtn')?.addEventListener('click', () => {
+          catalog.loadMore();
+        });
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        searchInput?.addEventListener('input', (e) => {
+          const searchTerm = e.target.value.toLowerCase();
+          if (window.servicesLoader) {
+            // Filter services by search term
+            window.servicesLoader.filteredServices = window.servicesLoader.allServices.filter(s =>
+              s.title.toLowerCase().includes(searchTerm) ||
+              s.description.toLowerCase().includes(searchTerm)
+            );
+            window.servicesLoader.renderServices();
+          }
+        });
+      });
     </script>
   </body>
 </html>

@@ -510,5 +510,5 @@ class ServicesPageLoader {
 
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
-  new ServicesPageLoader();
+  window.servicesLoader = new ServicesPageLoader();
 });
