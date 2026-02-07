@@ -16,21 +16,7 @@ class ServicesPageLoader {
       verified: false,
       warranty: false
     };
-    this.init();
-  }
-
-  async init() {
-    try {
-      // Cargar servicios
-      await this.loadServices();
-
-      // Bind eventos
-      this.bindFilterEvents();
-
-      console.log('✓ Services page initialized');
-    } catch (error) {
-      console.error('Error initializing services page:', error);
-    }
+    // NOTE: init() is NOT called here - ServiceCatalog controls initialization
   }
 
   /**
@@ -508,7 +494,4 @@ class ServicesPageLoader {
   }
 }
 
-// Inicializar cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', () => {
-  window.servicesLoader = new ServicesPageLoader();
-});
+// NOTE: Auto-init removed - ServiceCatalog in servicios.html controls initialization

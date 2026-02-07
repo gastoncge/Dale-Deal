@@ -2769,27 +2769,29 @@
         offset: 50,
       });
 
-      // Close sidebar on ESC key
-      document.addEventListener('keydown', (e) => {
-        const filtersSidebar = document.getElementById('filtersSidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-        if (e.key === 'Escape' && filtersSidebar?.classList.contains('active')) {
-          filtersSidebar.classList.remove('active');
-          sidebarOverlay?.classList.remove('active');
-          document.body.style.overflow = '';
-        }
-      });
-
       // =====================================================
-      // SERVICE CATALOG - Analogous to ProductCatalog
+      // SERVICE CATALOG - Full controller (analogous to ProductCatalog)
       // =====================================================
       class ServiceCatalog {
         constructor() {
           this.services = [];
+          this.filteredServices = [];
           this.currentPage = 1;
           this.servicesPerPage = 12;
-          this.displayedServices = [];
           this.isLoading = false;
+
+          // Filter state
+          this.currentCategory = 'all';
+          this.currentSort = 'featured';
+          this.searchTerm = '';
+          this.filters = {
+            priceMin: null,
+            priceMax: null,
+            rating: null,
+            certified: false,
+            verified: false,
+            warranty: false
+          };
 
           this.init();
         }
@@ -2805,24 +2807,17 @@
 
             // Transform data to match expected format
             this.services = this.transformServicesData(servicesRaw);
+            this.filteredServices = [...this.services];
+
+            // Bind all sidebar filter events
+            this.bindFilterEvents();
 
             // Hide loading and render services
             this.showLoading(false);
             this.renderFilteredServices();
             this.updateResultsCount();
 
-            // Wait for ServicesPageLoader to initialize, then override its render method
-            setTimeout(() => {
-              if (window.servicesLoader) {
-                // Override the renderServices method to use our grid layout
-                window.servicesLoader.originalRenderServices = window.servicesLoader.renderServices;
-                window.servicesLoader.renderServices = () => this.renderFilteredServices();
-
-                // Load services into the filter system
-                window.servicesLoader.allServices = this.services;
-                window.servicesLoader.filteredServices = [...this.services];
-              }
-            }, 100);
+            console.log('✓ ServiceCatalog initialized');
 
           } catch (error) {
             console.error('Error loading services:', error);
@@ -2831,25 +2826,21 @@
           }
         }
 
-        /**
-         * Fetch services from the data source
-         */
+        // ===========================================
+        // DATA FETCHING & TRANSFORMATION
+        // ===========================================
+
         async fetchServices() {
-          // Simulate network delay for loading UX
           await new Promise(resolve => setTimeout(resolve, 800));
 
           if (typeof servicesData !== 'undefined') {
-            console.log(`✓ ${servicesData.length} servicios cargados`);
+            console.log(`✓ ${servicesData.length} servicios cargados desde servicesData`);
             return servicesData;
           }
 
           throw new Error('servicesData no está definido');
         }
 
-        /**
-         * Transform raw services data to internal format
-         * Analogous to transformProductsData
-         */
         transformServicesData(apiServices) {
           return apiServices.map(service => ({
             id: service.id,
@@ -2870,9 +2861,6 @@
           }));
         }
 
-        /**
-         * Map service category names to internal keys
-         */
         mapCategory(category) {
           const categoryMap = {
             'Instalación': 'installation',
@@ -2885,9 +2873,257 @@
           return categoryMap[category] || category?.toLowerCase() || 'general';
         }
 
-        /**
-         * Toggle loading state visibility
-         */
+        // ===========================================
+        // FILTER EVENT BINDINGS
+        // ===========================================
+
+        bindFilterEvents() {
+          const self = this;
+
+          // --- Category radios ---
+          document.querySelectorAll('input[name="category"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+              self.currentCategory = e.target.value;
+              self.applyFilters();
+            });
+          });
+
+          // --- Price inputs (debounced 500ms) ---
+          let priceTimer;
+          const minPrice = document.getElementById('minPrice');
+          const maxPrice = document.getElementById('maxPrice');
+
+          if (minPrice) {
+            minPrice.addEventListener('input', (e) => {
+              self.filters.priceMin = e.target.value ? parseFloat(e.target.value) : null;
+              clearTimeout(priceTimer);
+              priceTimer = setTimeout(() => self.applyFilters(), 500);
+            });
+          }
+          if (maxPrice) {
+            maxPrice.addEventListener('input', (e) => {
+              self.filters.priceMax = e.target.value ? parseFloat(e.target.value) : null;
+              clearTimeout(priceTimer);
+              priceTimer = setTimeout(() => self.applyFilters(), 500);
+            });
+          }
+
+          // --- Rating radios ---
+          document.querySelectorAll('input[name="rating"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+              self.filters.rating = e.target.value !== 'all' ? parseFloat(e.target.value) : null;
+              self.applyFilters();
+            });
+          });
+
+          // --- Certification checkboxes ---
+          const certifiedCb = document.getElementById('freeShipping');
+          const verifiedCb = document.getElementById('conditionNew');
+          const warrantyCb = document.getElementById('conditionUsed');
+
+          if (certifiedCb) {
+            certifiedCb.addEventListener('change', (e) => {
+              self.filters.certified = e.target.checked;
+              self.applyFilters();
+            });
+          }
+          if (verifiedCb) {
+            verifiedCb.addEventListener('change', (e) => {
+              self.filters.verified = e.target.checked;
+              self.applyFilters();
+            });
+          }
+          if (warrantyCb) {
+            warrantyCb.addEventListener('change', (e) => {
+              self.filters.warranty = e.target.checked;
+              self.applyFilters();
+            });
+          }
+
+          // --- Sort select ---
+          const sortSelect = document.getElementById('sortSelect');
+          if (sortSelect) {
+            sortSelect.addEventListener('change', (e) => {
+              self.currentSort = e.target.value;
+              self.applyFilters();
+            });
+          }
+
+          // --- Clear filters buttons ---
+          document.getElementById('clearFilters')?.addEventListener('click', () => {
+            self.resetFilters();
+          });
+
+          document.getElementById('clearAllFilters')?.addEventListener('click', () => {
+            self.resetFilters();
+          });
+
+          // --- Mobile sidebar toggle ---
+          const toggleBtn = document.getElementById('toggleFilters');
+          const sidebar = document.getElementById('filtersSidebar');
+          const overlay = document.getElementById('sidebarOverlay');
+
+          if (toggleBtn && sidebar) {
+            toggleBtn.addEventListener('click', () => {
+              sidebar.classList.add('active');
+              overlay?.classList.add('active');
+              document.body.style.overflow = 'hidden';
+            });
+          }
+
+          if (overlay) {
+            overlay.addEventListener('click', () => {
+              sidebar?.classList.remove('active');
+              overlay.classList.remove('active');
+              document.body.style.overflow = '';
+            });
+          }
+
+          // --- ESC key to close sidebar ---
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && sidebar?.classList.contains('active')) {
+              sidebar.classList.remove('active');
+              overlay?.classList.remove('active');
+              document.body.style.overflow = '';
+            }
+          });
+
+          // --- Search bar ---
+          const searchInput = document.getElementById('searchInput');
+          let searchTimer;
+          if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+              self.searchTerm = e.target.value.toLowerCase();
+              clearTimeout(searchTimer);
+              searchTimer = setTimeout(() => self.applyFilters(), 300);
+            });
+          }
+
+          // --- Load more button ---
+          document.getElementById('loadMoreBtn')?.addEventListener('click', () => {
+            self.loadMore();
+          });
+        }
+
+        // ===========================================
+        // FILTER LOGIC
+        // ===========================================
+
+        applyFilters() {
+          // Reset to page 1 on any filter change
+          this.currentPage = 1;
+
+          // Start from all services
+          let filtered = this.currentCategory === 'all'
+            ? [...this.services]
+            : this.services.filter(s => s.category === this.currentCategory);
+
+          // Search term
+          if (this.searchTerm) {
+            filtered = filtered.filter(s =>
+              s.title.toLowerCase().includes(this.searchTerm) ||
+              s.description.toLowerCase().includes(this.searchTerm)
+            );
+          }
+
+          // Price range
+          if (this.filters.priceMin !== null) {
+            filtered = filtered.filter(s => s.price >= this.filters.priceMin);
+          }
+          if (this.filters.priceMax !== null) {
+            filtered = filtered.filter(s => s.price <= this.filters.priceMax);
+          }
+
+          // Rating
+          if (this.filters.rating !== null) {
+            filtered = filtered.filter(s => s.rating >= this.filters.rating);
+          }
+
+          // Certifications
+          if (this.filters.certified) {
+            filtered = filtered.filter(s =>
+              s.badges?.some(b => b.includes('Certificado') || b.includes('Matriculado'))
+            );
+          }
+          if (this.filters.verified) {
+            filtered = filtered.filter(s =>
+              s.badges?.some(b => b.includes('Verificado')) || s.featured
+            );
+          }
+          if (this.filters.warranty) {
+            filtered = filtered.filter(s =>
+              s.badges?.some(b => b.includes('Garantía'))
+            );
+          }
+
+          // Sort
+          switch (this.currentSort) {
+            case 'price-low':
+              filtered.sort((a, b) => a.price - b.price);
+              break;
+            case 'price-high':
+              filtered.sort((a, b) => b.price - a.price);
+              break;
+            case 'name':
+              filtered.sort((a, b) => a.title.localeCompare(b.title));
+              break;
+            case 'newest':
+              filtered.reverse();
+              break;
+            case 'featured':
+            default:
+              filtered.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+              break;
+          }
+
+          this.filteredServices = filtered;
+          this.renderFilteredServices();
+        }
+
+        resetFilters() {
+          this.currentCategory = 'all';
+          this.currentSort = 'featured';
+          this.searchTerm = '';
+          this.filters = {
+            priceMin: null,
+            priceMax: null,
+            rating: null,
+            certified: false,
+            verified: false,
+            warranty: false
+          };
+
+          // Reset UI elements
+          document.querySelectorAll('input[name="category"]').forEach(r => {
+            r.checked = r.value === 'all';
+          });
+          document.querySelectorAll('input[name="rating"]').forEach(r => {
+            r.checked = r.value === 'all';
+          });
+
+          const sortSelect = document.getElementById('sortSelect');
+          if (sortSelect) sortSelect.value = 'featured';
+
+          const minPrice = document.getElementById('minPrice');
+          const maxPrice = document.getElementById('maxPrice');
+          if (minPrice) minPrice.value = '';
+          if (maxPrice) maxPrice.value = '';
+
+          const searchInput = document.getElementById('searchInput');
+          if (searchInput) searchInput.value = '';
+
+          ['freeShipping', 'conditionNew', 'conditionUsed'].forEach(id => {
+            const cb = document.getElementById(id);
+            if (cb) cb.checked = false;
+          });
+
+          this.applyFilters();
+        }
+
+        // ===========================================
+        // LOADING / SKELETON / ERROR STATES
+        // ===========================================
+
         showLoading(show) {
           const emptyStateContainer = document.getElementById('emptyStateContainer');
           const loading = document.getElementById('loadingContainer');
@@ -2908,9 +3144,6 @@
           }
         }
 
-        /**
-         * Render 9 skeleton placeholder cards during loading
-         */
         renderSkeletonCards() {
           const grid = document.getElementById('servicesGrid');
           if (!grid) return;
@@ -2918,14 +3151,10 @@
           grid.innerHTML = '';
 
           for (let i = 0; i < 9; i++) {
-            const skeletonCard = this.createSkeletonCard(i);
-            grid.appendChild(skeletonCard);
+            grid.appendChild(this.createSkeletonCard(i));
           }
         }
 
-        /**
-         * Create a single skeleton card element
-         */
         createSkeletonCard(index) {
           const card = document.createElement('div');
           card.className = 'product-card skeleton-card';
@@ -2954,9 +3183,6 @@
           return card;
         }
 
-        /**
-         * Display error state with retry button
-         */
         showError(message) {
           const emptyStateContainer = document.getElementById('emptyStateContainer');
           const grid = document.getElementById('servicesGrid');
@@ -2984,9 +3210,10 @@
           }
         }
 
-        /**
-         * Render services based on current filters with pagination
-         */
+        // ===========================================
+        // RENDERING
+        // ===========================================
+
         renderFilteredServices() {
           const container = document.getElementById('servicesGrid');
           const emptyStateContainer = document.getElementById('emptyStateContainer');
@@ -2994,20 +3221,16 @@
           const noResults = document.getElementById('noResults');
           const loadMore = document.getElementById('loadMoreContainer');
 
-          const currentServices = window.servicesLoader
-            ? window.servicesLoader.filteredServices
-            : this.services;
-
-          // Show loading state
+          // Show loading spinner
           if (container) container.style.display = 'none';
           if (emptyStateContainer) emptyStateContainer.style.display = 'flex';
           if (loading) loading.style.display = 'block';
           if (noResults) noResults.style.display = 'none';
           if (container) container.innerHTML = '';
 
-          // Wait 2 seconds for loading UX, then render
+          // 2-second loading delay for UX (matches ProductCatalog)
           setTimeout(() => {
-            if (currentServices.length === 0) {
+            if (this.filteredServices.length === 0) {
               if (container) container.style.display = 'none';
               if (emptyStateContainer) emptyStateContainer.style.display = 'flex';
               if (loading) loading.style.display = 'none';
@@ -3017,42 +3240,37 @@
               return;
             }
 
-            // Hide empty states and show grid
+            // Hide states, show grid
             if (emptyStateContainer) emptyStateContainer.style.display = 'none';
             if (loading) loading.style.display = 'none';
             if (noResults) noResults.style.display = 'none';
             if (container) container.style.display = 'grid';
 
-            // Paginated rendering
-            const startIndex = 0;
+            // Paginated slice
             const endIndex = this.currentPage * this.servicesPerPage;
-            const servicesToShow = currentServices.slice(startIndex, endIndex);
+            const servicesToShow = this.filteredServices.slice(0, endIndex);
 
             servicesToShow.forEach((service, index) => {
-              const serviceCard = this.createServiceCard(service, index);
-              container.appendChild(serviceCard);
+              container.appendChild(this.createServiceCard(service, index));
             });
 
-            // Show/hide load more button
+            // Load more visibility
             if (loadMore) {
-              loadMore.style.display = endIndex < currentServices.length ? 'block' : 'none';
+              loadMore.style.display = endIndex < this.filteredServices.length ? 'block' : 'none';
             }
 
             this.updateResultsCount();
 
-            // Re-initialize AOS for new cards
+            // Refresh AOS animations
             if (typeof AOS !== 'undefined') {
               AOS.refresh();
             }
 
-            // Re-initialize favorites listeners
+            // Re-bind favorites
             this.initializeFavoritesListeners();
           }, 2000);
         }
 
-        /**
-         * Create a single service card element
-         */
         createServiceCard(service, index) {
           const card = document.createElement('div');
           card.className = 'product-card';
@@ -3060,7 +3278,7 @@
           card.setAttribute('data-aos', 'fade-up');
           card.setAttribute('data-aos-delay', (index % 12) * 50);
 
-          // Format price with type suffix
+          // Price with type suffix
           let priceText = window.DaleDeal?.utils?.formatCurrency
             ? window.DaleDeal.utils.formatCurrency(service.price)
             : `$ ${service.price.toLocaleString('es-AR')}`;
@@ -3068,56 +3286,34 @@
           else if (service.priceType === 'per_m2') priceText += '/m²';
           else if (service.priceType === 'per_room') priceText += '/amb';
 
-          // Render stars
+          // Stars
           const fullStars = Math.floor(service.rating);
-          const hasHalfStar = service.rating % 1 >= 0.5;
+          const hasHalf = service.rating % 1 >= 0.5;
           let starsHTML = '';
-          for (let i = 0; i < fullStars; i++) {
-            starsHTML += '<i class="bi bi-star-fill"></i>';
-          }
-          if (hasHalfStar) {
-            starsHTML += '<i class="bi bi-star-half"></i>';
-          }
-          const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-          for (let i = 0; i < emptyStars; i++) {
-            starsHTML += '<i class="bi bi-star"></i>';
-          }
+          for (let i = 0; i < fullStars; i++) starsHTML += '<i class="bi bi-star-fill"></i>';
+          if (hasHalf) starsHTML += '<i class="bi bi-star-half"></i>';
+          for (let i = 0; i < 5 - fullStars - (hasHalf ? 1 : 0); i++) starsHTML += '<i class="bi bi-star"></i>';
 
-          // Render badges
+          // Badges
           const badgesHTML = (service.badges || []).map(badge => {
-            const badgeClass = service.emergency || badge.includes('Premium') || badge.includes('Emergencia')
-              ? 'badge-offer'
-              : 'badge-featured';
-            return `<span class="${badgeClass}">${badge}</span>`;
+            const cls = service.emergency || badge.includes('Premium') || badge.includes('Emergencia')
+              ? 'badge-offer' : 'badge-featured';
+            return `<span class="${cls}">${badge}</span>`;
           }).join('');
 
-          // Extra badges (top rated, emergency, nationwide)
+          // Extra indicators
           let extraBadges = '';
-          if (service.topRated) {
-            extraBadges += '<span class="shipping-badge"><i class="bi bi-star-fill"></i> Top rated</span>';
-          }
-          if (service.emergency) {
-            extraBadges += ' <span class="shipping-badge"><i class="bi bi-lightning-charge-fill"></i> Urgencias</span>';
-          }
-          if (service.nationwide) {
-            extraBadges += ' <span class="shipping-badge"><i class="bi bi-truck"></i> Cobertura nacional</span>';
-          }
+          if (service.topRated) extraBadges += '<span class="shipping-badge"><i class="bi bi-star-fill"></i> Top rated</span>';
+          if (service.emergency) extraBadges += ' <span class="shipping-badge"><i class="bi bi-lightning-charge-fill"></i> Urgencias</span>';
+          if (service.nationwide) extraBadges += ' <span class="shipping-badge"><i class="bi bi-truck"></i> Cobertura nacional</span>';
 
-          // Short description
-          const shortDescription = service.description
-            ? (service.description.length > 80
-                ? service.description.substring(0, 80) + '...'
-                : service.description)
+          const shortDesc = service.description
+            ? (service.description.length > 80 ? service.description.substring(0, 80) + '...' : service.description)
             : '';
 
           card.innerHTML = `
             <div class="product-image-container">
-              <img
-                src="${service.image}"
-                alt="${service.title}"
-                class="product-image active"
-                loading="lazy"
-              />
+              <img src="${service.image}" alt="${service.title}" class="product-image active" loading="lazy" />
               ${badgesHTML}
               <div class="product-actions">
                 <button class="action-heart" title="Agregar a favoritos" data-product-id="${service.id}">
@@ -3127,8 +3323,7 @@
             </div>
             <div class="product-info">
               <h3 class="product-title">${service.title}</h3>
-              <p class="product-description">${shortDescription}</p>
-
+              <p class="product-description">${shortDesc}</p>
               <div class="product-meta-group">
                 <div class="product-rating">
                   <div class="stars">${starsHTML}</div>
@@ -3140,7 +3335,6 @@
                   <span>${service.location}</span>
                 </div>
               </div>
-
               <div class="product-pricing-wrapper">
                 <div class="product-pricing">
                   <span class="product-current-price">${priceText}</span>
@@ -3149,19 +3343,18 @@
             </div>
           `;
 
-          // Click handler for service detail navigation
           card.addEventListener('click', (e) => {
             if (e.target.closest('.action-heart')) return;
-            // Navigate to service detail page when available
             console.log(`Service clicked: ${service.id}`);
           });
 
           return card;
         }
 
-        /**
-         * Initialize favorites button listeners
-         */
+        // ===========================================
+        // HELPERS
+        // ===========================================
+
         initializeFavoritesListeners() {
           document.querySelectorAll('#servicesGrid .action-heart').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -3180,58 +3373,45 @@
           });
         }
 
-        /**
-         * Find a service by its ID
-         */
         findServiceById(id) {
           return this.services.find(s => s.id === id);
         }
 
-        /**
-         * Update the results counter display
-         */
         updateResultsCount() {
-          const currentServices = window.servicesLoader
-            ? window.servicesLoader.filteredServices
-            : this.services;
-          const count = currentServices.length;
+          const count = this.filteredServices.length;
           const countEl = document.getElementById('resultsCount');
           if (countEl) {
             countEl.textContent = `${count} servicio${count !== 1 ? 's' : ''} encontrado${count !== 1 ? 's' : ''}`;
           }
         }
 
-        /**
-         * Load more services (pagination)
-         */
         loadMore() {
           this.currentPage++;
           this.renderFilteredServices();
         }
       }
 
-      // Initialize ServiceCatalog when DOM is ready
+      // ===========================================
+      // INITIALIZATION
+      // ===========================================
       document.addEventListener('DOMContentLoaded', () => {
-        const catalog = new ServiceCatalog();
+        // ServiceCatalog is the single controller for the services grid.
+        // ServicesPageLoader (services.js) is intentionally not auto-initialized
+        // to avoid double-render conflicts.
+        window.serviceCatalog = new ServiceCatalog();
 
-        // Load more button
-        document.getElementById('loadMoreBtn')?.addEventListener('click', () => {
-          catalog.loadMore();
-        });
-
-        // Search functionality
-        const searchInput = document.getElementById('searchInput');
-        searchInput?.addEventListener('input', (e) => {
-          const searchTerm = e.target.value.toLowerCase();
-          if (window.servicesLoader) {
-            // Filter services by search term
-            window.servicesLoader.filteredServices = window.servicesLoader.allServices.filter(s =>
-              s.title.toLowerCase().includes(searchTerm) ||
-              s.description.toLowerCase().includes(searchTerm)
-            );
-            window.servicesLoader.renderServices();
-          }
-        });
+        // Category filter from URL params (e.g. ?category=installation)
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryParam = urlParams.get('category');
+        if (categoryParam) {
+          setTimeout(() => {
+            const radio = document.querySelector(`input[name="category"][value="${categoryParam}"]`);
+            if (radio) {
+              radio.checked = true;
+              radio.dispatchEvent(new Event('change'));
+            }
+          }, 200);
+        }
       });
     </script>
   </body>
