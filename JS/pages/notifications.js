@@ -228,8 +228,13 @@ class NotificationsCenterManager {
       item.addEventListener('click', (e) => this.handleFilterChange(e, 'sidebar'));
     });
 
-    // Marcar todas como leídas
+    // Marcar todas como leídas (botón principal + botón del dropdown del navbar)
     document.getElementById('markAllReadBtn')?.addEventListener('click', () => this.markAllAsRead());
+    document.getElementById('markAllAsRead')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.markAllAsRead();
+    });
+    document.getElementById('deleteAllBtn')?.addEventListener('click', () => this.deleteAllNotifications());
 
     // Cargar más notificaciones
     document.getElementById('loadMoreBtn')?.addEventListener('click', () => this.loadMore());
@@ -237,6 +242,32 @@ class NotificationsCenterManager {
     // Event delegation para notificaciones dinámicas
     document.getElementById('notificationsContainer')?.addEventListener('click', (e) => {
       this.handleNotificationClick(e);
+    });
+
+    // ===== SIDEBAR TOGGLE FOR MOBILE =====
+    const toggleFiltersBtn = document.getElementById('toggleFilters');
+    const filtersSidebar = document.getElementById('filtersSidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    const openSidebar = () => {
+      filtersSidebar?.classList.add('active');
+      sidebarOverlay?.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    };
+
+    const closeSidebar = () => {
+      filtersSidebar?.classList.remove('active');
+      sidebarOverlay?.classList.remove('active');
+      document.body.style.overflow = '';
+    };
+
+    toggleFiltersBtn?.addEventListener('click', openSidebar);
+    sidebarOverlay?.addEventListener('click', closeSidebar);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && filtersSidebar?.classList.contains('active')) {
+        closeSidebar();
+      }
     });
   }
 
@@ -333,24 +364,18 @@ class NotificationsCenterManager {
 
     if (!notification) return;
 
-    const confirmed = confirm(`¿Eliminar la notificación "${notification.title}"?`);
+    // Animar salida y eliminar sin confirmación
+    cardElement.classList.add('removing');
 
-    if (confirmed) {
-      // Animar salida
-      cardElement.classList.add('removing');
-
-      setTimeout(() => {
-        // Eliminar del array
-        const index = this.notifications.findIndex(n => n.id === notificationId);
-        if (index !== -1) {
-          this.notifications.splice(index, 1);
-          this.saveNotifications();
-          this.renderNotifications();
-          this.updateFilterCounts();
-          this.showToast('Notificación eliminada', 'info');
-        }
-      }, 300);
-    }
+    setTimeout(() => {
+      const index = this.notifications.findIndex(n => n.id === notificationId);
+      if (index !== -1) {
+        this.notifications.splice(index, 1);
+        this.saveNotifications();
+        this.updateFilterCounts();
+        this.renderNotifications(false);
+      }
+    }, 300);
   }
 
   // Manejar acciones de notificación
@@ -386,26 +411,40 @@ class NotificationsCenterManager {
 
   // Marcar todas como leídas
   markAllAsRead() {
-    const unreadNotifications = this.getFilteredNotifications().filter(n => !n.read);
+    const unreadNotifications = this.notifications.filter(n => !n.read);
 
     if (unreadNotifications.length === 0) {
       this.showToast('No hay notificaciones sin leer', 'info');
       return;
     }
 
-    const confirmed = confirm(`¿Marcar ${unreadNotifications.length} notificación${unreadNotifications.length > 1 ? 'es' : ''} como leída${unreadNotifications.length > 1 ? 's' : ''}?`);
+    unreadNotifications.forEach(notification => {
+      notification.read = true;
+    });
 
-    if (confirmed) {
-      unreadNotifications.forEach(notification => {
-        notification.read = true;
-      });
+    this.saveNotifications();
+    this.renderNotifications();
+    this.updateFilterCounts();
 
-      this.saveNotifications();
-      this.renderNotifications();
-      this.updateFilterCounts();
+    this.showToast(`${unreadNotifications.length} notificación${unreadNotifications.length > 1 ? 'es' : ''} marcada${unreadNotifications.length > 1 ? 's' : ''} como leída${unreadNotifications.length > 1 ? 's' : ''}`, 'success');
+  }
 
-      this.showToast(`${unreadNotifications.length} notificación${unreadNotifications.length > 1 ? 'es' : ''} marcada${unreadNotifications.length > 1 ? 's' : ''} como leída${unreadNotifications.length > 1 ? 's' : ''}`, 'success');
+  // Borrar todas las notificaciones
+  deleteAllNotifications() {
+    if (this.notifications.length === 0) {
+      this.showToast('No hay notificaciones para borrar', 'info');
+      return;
     }
+
+    const deletedCount = this.notifications.length;
+    this.notifications = [];
+    this.displayedCount = this.itemsPerLoad;
+
+    this.saveNotifications();
+    this.updateFilterCounts();
+    this.renderNotifications(false);
+
+    this.showToast(`${deletedCount} notificación${deletedCount > 1 ? 'es' : ''} eliminada${deletedCount > 1 ? 's' : ''}`, 'success');
   }
 
   // Cargar más notificaciones
@@ -423,7 +462,7 @@ class NotificationsCenterManager {
   }
 
   // Renderizar notificaciones
-  renderNotifications() {
+  renderNotifications(showLoading = true) {
     const container = document.getElementById('notificationsContainer');
     const loadingState = document.getElementById('loadingState');
     const emptyState = document.getElementById('emptyState');
@@ -431,37 +470,59 @@ class NotificationsCenterManager {
 
     if (!container) return;
 
-    // Mostrar loading
-    loadingState.style.display = 'flex';
-    container.innerHTML = '';
-    emptyState.style.display = 'none';
-    loadMoreContainer.style.display = 'none';
-
-    // Simular carga
-    setTimeout(() => {
-      loadingState.style.display = 'none';
-
+    const doRender = () => {
       const filteredNotifications = this.getFilteredNotifications();
       const displayNotifications = filteredNotifications.slice(0, this.displayedCount);
 
+      // Update results count pill
+      const resultsEl = document.getElementById('resultsCount');
+      if (resultsEl) {
+        const total = filteredNotifications.length;
+        const unread = filteredNotifications.filter(n => !n.read).length;
+        resultsEl.textContent = unread > 0
+          ? `${total} notificación${total !== 1 ? 'es' : ''} · ${unread} sin leer`
+          : `${total} notificación${total !== 1 ? 'es' : ''}`;
+      }
+
       if (filteredNotifications.length === 0) {
-        emptyState.style.display = 'block';
+        if (emptyState) emptyState.style.display = 'block';
+        container.innerHTML = '';
+        if (loadMoreContainer) loadMoreContainer.style.display = 'none';
         return;
       }
 
+      if (emptyState) emptyState.style.display = 'none';
       container.innerHTML = displayNotifications.map(notification =>
         this.createNotificationHTML(notification)
       ).join('');
 
       // Mostrar botón de cargar más si hay más notificaciones
       if (displayNotifications.length < filteredNotifications.length) {
-        loadMoreContainer.style.display = 'block';
+        if (loadMoreContainer) loadMoreContainer.style.display = 'block';
         const remaining = filteredNotifications.length - displayNotifications.length;
         document.getElementById('loadMoreBtn').innerHTML = `
           <i class="bi bi-arrow-down-circle me-2"></i>Cargar más notificaciones (${remaining})
         `;
+      } else if (loadMoreContainer) {
+        loadMoreContainer.style.display = 'none';
       }
-    }, 500);
+    };
+
+    if (showLoading) {
+      if (loadingState) loadingState.style.display = 'flex';
+      container.innerHTML = '';
+      if (emptyState) emptyState.style.display = 'none';
+      if (loadMoreContainer) loadMoreContainer.style.display = 'none';
+
+      setTimeout(() => {
+        if (loadingState) loadingState.style.display = 'none';
+        doRender();
+      }, 500);
+      return;
+    }
+
+    if (loadingState) loadingState.style.display = 'none';
+    doRender();
   }
 
   // Crear HTML de notificación
@@ -524,6 +585,28 @@ class NotificationsCenterManager {
         countElement.textContent = counts[key];
       }
     });
+
+    // Update header badge with unread count
+    const headerBadge = document.getElementById('headerUnreadCount');
+    if (headerBadge) {
+      const unreadAll = this.notifications.filter(n => !n.read).length;
+      headerBadge.textContent = `${unreadAll} sin leer`;
+    }
+
+    // Update navbar notification badge bubble
+    const unreadAll = this.notifications.filter(n => !n.read).length;
+    const navbarBadge = document.getElementById('notificationBadge');
+    if (navbarBadge) {
+      navbarBadge.textContent = unreadAll;
+      navbarBadge.style.display = unreadAll > 0 ? 'flex' : 'none';
+    }
+
+    // Update dropdown header counter in navbar
+    const dropdownCount = document.getElementById('notificationsCount');
+    if (dropdownCount) {
+      dropdownCount.textContent = unreadAll;
+      dropdownCount.style.display = unreadAll > 0 ? 'inline-flex' : 'none';
+    }
   }
 
   // Mostrar toast de notificación

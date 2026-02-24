@@ -9,12 +9,26 @@
 }
 
 .hero-slide {
-  min-height: 750px;
-  height: 750px;
+  min-height: auto;
+  height: auto;
   display: flex;
   align-items: center;
   position: relative;
-  padding: var(--spacing-20) 0;
+  padding: var(--spacing-12) 0;
+}
+
+@media (min-width: 768px) {
+  .hero-slide {
+    min-height: 600px;
+    padding: var(--spacing-16) 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-slide {
+    min-height: 700px;
+    padding: var(--spacing-20) 0;
+  }
 }
 
 .hero-slide-main {
@@ -293,8 +307,8 @@
 /* Responsive */
 @media (max-width: 992px) {
   .hero-slide {
-    min-height: 750px;
-    height: 750px;
+    min-height: auto;
+    height: auto;
     padding: var(--spacing-12) 0;
   }
 
@@ -314,9 +328,9 @@
 
 @media (max-width: 768px) {
   .hero-slide {
-    min-height: 750px;
-    height: 750px;
-    padding: var(--spacing-10) 0;
+    min-height: auto;
+    height: auto;
+    padding: var(--spacing-8) 0;
   }
 
   .hero-title {
@@ -406,19 +420,19 @@
 
 @media (max-width: 480px) {
   .hero-slide {
-    min-height: 750px;
-    height: 750px;
-    padding: var(--spacing-8) 0;
+    min-height: auto;
+    height: auto;
+    padding: var(--spacing-6) 0;
   }
 
   .hero-badge {
-    font-size: 10px;
+    font-size: var(--font-size-xs);
     padding: var(--spacing-1) var(--spacing-3);
     margin-bottom: var(--spacing-3);
   }
 
   .hero-title {
-    font-size: clamp(var(--font-size-lg), 8vw, var(--font-size-2xl));
+    font-size: clamp(var(--font-size-lg), 7vw, var(--font-size-2xl));
     margin-bottom: var(--spacing-3);
   }
 
@@ -433,7 +447,8 @@
 
   .hero-actions .btn {
     font-size: var(--font-size-sm);
-    padding: var(--spacing-2) var(--spacing-4);
+    padding: var(--spacing-3) var(--spacing-4);
+    min-height: 44px;
   }
 
   .product-features {
@@ -442,7 +457,7 @@
   }
 
   .feature {
-    font-size: 11px;
+    font-size: var(--font-size-sm);
   }
 
   .current-price {
@@ -454,13 +469,30 @@
   }
 
   .discount {
-    font-size: 10px;
+    font-size: var(--font-size-xs);
   }
 
-  /* Ocultar controles del carrusel en móviles */
+  /* Reducir controles del carrusel en móviles (no ocultar — son necesarios) */
   .carousel-control-prev,
   .carousel-control-next {
-    display: none !important;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+  }
+
+  .carousel-control-prev {
+    left: var(--spacing-2) !important;
+  }
+
+  .carousel-control-next {
+    right: var(--spacing-2) !important;
+  }
+
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+    width: 14px !important;
+    height: 14px !important;
   }
 
   #heroCarousel .carousel-indicators {
@@ -825,8 +857,8 @@
 }
 
 .products-section .action-heart {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: none;
   background: rgba(255, 255, 255, 0.9);
@@ -1026,12 +1058,12 @@
   .products-section .badge-featured,
   .products-section .badge-offer {
     padding: var(--spacing-1) var(--spacing-2);
-    font-size: 10px;
+    font-size: var(--font-size-2xs);
   }
 
   .products-section .action-heart {
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
   }
 
   .services-section .service-card {
@@ -1040,5 +1072,23 @@
 
   .services-section .service-image-container {
     height: 200px;
+  }
+}
+
+@media (max-width: 374px) {
+  .products-section .product-card {
+    min-height: 300px;
+  }
+
+  .products-section .product-image-container {
+    height: 170px;
+  }
+
+  .services-section .service-card {
+    min-height: 300px;
+  }
+
+  .services-section .service-image-container {
+    height: 170px;
   }
 }

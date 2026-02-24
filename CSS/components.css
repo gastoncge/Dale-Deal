@@ -324,13 +324,13 @@
   right: -6px;
   background: var(--primary-red);
   color: var(--white);
-  font-size: 10px;
-  font-weight: 600;
+  font-size: var(--font-size-2xs);
+  font-weight: 700;
   padding: 0;
   border-radius: var(--radius-full);
-  min-width: 18px;
-  height: 18px;
-  line-height: 18px;
+  min-width: 20px;
+  height: 20px;
+  line-height: 20px;
   text-align: center;
   display: flex;
   align-items: center;
@@ -1312,7 +1312,7 @@
 @media (max-width: 768px) {
   .notifications-dropdown {
     position: fixed !important;
-    top: 60px !important;
+    top: 65px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
     width: 90% !important;
@@ -1352,18 +1352,15 @@
     /* CAPAS - Z-Index NUCLEAR sobre TODO */
     z-index: 10000 !important;               /* Nuclear - sobre navbar y search */
 
-    /* RESET MODERNO - Limpia conflictos de inset */
-    inset: auto !important;
-
-    /* ESTÉTICA - Backdrop oscuro simulado */
-    box-shadow: 0 0 0 100vh rgba(0, 0, 0, 0.5) !important; /* Fondo oscuro modal */
+    /* ESTÉTICA - Sombra de panel */
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25) !important;
 
     /* Estilos visuales adicionales */
     border-radius: var(--radius-3xl) !important;
     border: none !important;
     overflow: hidden !important;
 
-    /* Reset completo */
+    /* Reset posicionamiento */
     right: auto !important;
     bottom: auto !important;
   }
@@ -1383,8 +1380,8 @@
   }
 
   .notifications-dropdown .filter-chip {
-    font-size: 10px;
-    padding: 2px var(--spacing-2);
+    font-size: 12px;
+    padding: var(--spacing-1) var(--spacing-2);
   }
 }
 
@@ -1472,9 +1469,11 @@
 }
 
 .cart-dropdown .quantity-btn {
-  width: 24px;
-  height: 24px;
-  font-size: 12px;
+  min-width: 36px;
+  min-height: 36px;
+  width: 36px;
+  height: 36px;
+  font-size: 13px;
 }
 
 .cart-dropdown .quantity-display {
@@ -1516,7 +1515,7 @@
 @media (max-width: 768px) {
   .cart-dropdown {
     position: fixed !important;
-    top: 60px !important;
+    top: 65px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
     width: 90% !important;
@@ -1553,18 +1552,15 @@
     /* CAPAS - Z-Index NUCLEAR sobre TODO */
     z-index: 10000 !important;               /* Nuclear - sobre navbar y search */
 
-    /* RESET MODERNO - Limpia conflictos de inset */
-    inset: auto !important;
-
-    /* ESTÉTICA - Backdrop oscuro simulado */
-    box-shadow: 0 0 0 100vh rgba(0, 0, 0, 0.5) !important; /* Fondo oscuro modal */
+    /* ESTÉTICA - Sombra de panel */
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25) !important;
 
     /* Estilos visuales adicionales */
     border-radius: var(--radius-3xl) !important;
     border: none !important;
     overflow: hidden !important;
 
-    /* Reset completo */
+    /* Reset posicionamiento */
     right: auto !important;
     bottom: auto !important;
   }
@@ -1873,7 +1869,8 @@
 
   .action-btn {
     padding: var(--spacing-2);
-    min-width: 40px;
+    min-width: 44px;
+    min-height: 44px;
   }
 
   .cart-item {
@@ -2386,7 +2383,7 @@
 /* Grid de servicios */
 .services-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
   gap: var(--spacing-6);
   margin-bottom: var(--spacing-16);
 }
@@ -3536,6 +3533,73 @@
   padding: var(--spacing-8) 0;
 }
 
+@media (max-width: 480px) {
+  .load-more-container {
+    padding: var(--spacing-4) 0;
+  }
+}
+
+/* ===== LOAD MORE BUTTON - Clase compartida para catálogos ===== */
+.btn-load-more {
+  position: relative;
+  overflow: hidden;
+  background: var(--white);
+  border: 2px solid var(--primary-red);
+  color: var(--primary-red);
+  padding: var(--spacing-4) var(--spacing-8);
+  border-radius: var(--radius-2xl);
+  font-weight: 600;
+  font-size: var(--font-size-lg);
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+}
+
+.btn-load-more:hover:not(:disabled) {
+  background: var(--primary-red);
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-load-more::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+  pointer-events: none;
+}
+
+.btn-load-more:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+/* Estado loading / disabled */
+.btn-load-more.loading,
+.btn-load-more:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+  pointer-events: none;
+}
+
+@media (max-width: 480px) {
+  .btn-load-more {
+    padding: var(--spacing-3) var(--spacing-6);
+    font-size: var(--font-size-base);
+    width: 100%;
+  }
+}
+
 /* ===== ANIMATIONS ===== */
 /* Animaciones compartidas entre componentes */
 .spinning {
@@ -3826,7 +3890,7 @@
   /* Dropdown de Perfil - Panel Flotante en Tablet */
   .dropdown-menu:not(.notifications-dropdown):not(.cart-dropdown) {
     position: fixed !important;
-    top: 60px !important;
+    top: 65px !important;
     right: 5% !important;
     left: auto !important;
     transform: none !important;
@@ -3858,18 +3922,15 @@
     /* CAPAS - Z-Index NUCLEAR sobre TODO */
     z-index: 10000 !important;               /* Nuclear - sobre navbar y search */
 
-    /* RESET MODERNO - Limpia conflictos de inset */
-    inset: auto !important;
-
-    /* ESTÉTICA - Backdrop oscuro simulado */
-    box-shadow: 0 0 0 100vh rgba(0, 0, 0, 0.5) !important; /* Fondo oscuro modal */
+    /* ESTÉTICA - Sombra de panel */
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25) !important;
 
     /* Estilos visuales adicionales */
     border-radius: var(--radius-3xl) !important;
     border: none !important;
     overflow-y: auto !important;
 
-    /* Reset completo */
+    /* Reset posicionamiento */
     right: auto !important;
     bottom: auto !important;
   }
@@ -3988,9 +4049,10 @@
 
   .cart-badge,
   .notification-badge {
-    width: 16px;
-    height: 16px;
-    font-size: 10px;
+    width: 18px;
+    height: 18px;
+    font-size: var(--font-size-2xs);
+    line-height: 18px;
   }
 
   /* Modal y dropdowns */
@@ -4021,7 +4083,14 @@
     border-radius: var(--radius-lg);
   }
 
-  /* Dropdowns ya configurados en sus secciones específicas arriba */
+  /* Dropdowns - ancho responsive en 320-480px para evitar overflow */
+  .cart-dropdown,
+  .notifications-dropdown {
+    width: 92vw !important;
+    max-width: 360px !important;
+    right: 4vw !important;
+    left: auto !important;
+  }
 
   /* Footer ajustes adicionales */
   .footer {

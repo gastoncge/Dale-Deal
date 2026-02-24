@@ -39,6 +39,7 @@
     <link rel="stylesheet" href="../CSS/components.css" />
     <link rel="stylesheet" href="../CSS/pages/home.css" />
     <link rel="stylesheet" href="../CSS/pages/services.css" />
+    <link rel="stylesheet" href="../CSS/responsive.css" />
 
     <!-- Services Page Styles - Same as Products -->
     <style>
@@ -81,13 +82,13 @@
         right: -6px !important;
         background: var(--primary-red) !important;
         color: var(--white) !important;
-        font-size: 10px !important;
-        font-weight: 600 !important;
+        font-size: var(--font-size-2xs) !important;
+        font-weight: 700 !important;
         padding: 0 !important;
         border-radius: 50% !important;
-        min-width: 18px !important;
-        height: 18px !important;
-        line-height: 18px !important;
+        min-width: 20px !important;
+        height: 20px !important;
+        line-height: 20px !important;
         text-align: center !important;
         align-items: center !important;
         justify-content: center !important;
@@ -124,7 +125,7 @@
       @media (max-width: 992px) {
         /* Header */
         .header-title {
-          font-size: 24px;
+          font-size: var(--font-size-2xl);
         }
 
         .header-actions {
@@ -182,16 +183,16 @@
         }
 
         .header-title {
-          font-size: 22px;
+          font-size: var(--font-size-xl);
         }
 
         .badge-count {
-          font-size: 12px;
+          font-size: var(--font-size-xs);
           padding: var(--spacing-1) var(--spacing-3);
         }
 
         .breadcrumb-item a {
-          font-size: 12px;
+          font-size: var(--font-size-xs);
         }
 
         .products-grid {
@@ -200,7 +201,7 @@
         }
 
         .breadcrumb-item.active {
-          font-size: 12px;
+          font-size: var(--font-size-xs);
         }
 
         /* Products */
@@ -255,12 +256,12 @@
         .badge-featured,
         .badge-offer {
           padding: var(--spacing-1) var(--spacing-2);
-          font-size: 10px;
+          font-size: var(--font-size-2xs);
         }
 
         .action-heart {
-          width: 36px;
-          height: 36px;
+          width: 44px;
+          height: 44px;
         }
 
         /* Empty State - Mobile */
@@ -314,9 +315,9 @@
       .products-layout {
         display: flex;
         gap: 0;
-        align-items: stretch;
+        align-items: flex-start;
         margin-top: 0;
-        min-height: calc(100vh - 200px);
+        min-height: 0;
       }
 
       /* Filters Sidebar - Redesigned */
@@ -330,7 +331,7 @@
         border-right: 1px solid var(--gray-200);
         position: sticky;
         top: 70px;
-        height: calc(100vh - 70px);
+        height: auto;
         max-height: calc(100vh - 70px);
         display: flex;
         flex-direction: column;
@@ -396,6 +397,8 @@
       /* Sidebar Content with Scroll */
       .filters-sidebar > div:last-child {
         overflow-y: auto;
+        flex: 1;
+        min-height: 0;
         padding: var(--spacing-3) var(--spacing-4) var(--spacing-4) var(--spacing-4);
       }
 
@@ -1127,7 +1130,7 @@
       /* Enhanced products grid section */
       .products-grid-section {
         background: var(--white);
-        min-height: 60vh;
+        min-height: auto;
         padding: 0;
         position: relative;
       }
@@ -1208,46 +1211,7 @@
       }
 
       /* Enhanced load more button */
-      .load-more-container {
-        text-align: center;
-        padding: var(--spacing-8) 0;
-      }
-
-      #loadMoreBtn {
-        position: relative;
-        overflow: hidden;
-        background: var(--white);
-        border: 2px solid var(--primary-red);
-        color: var(--primary-red);
-        padding: var(--spacing-4) var(--spacing-8);
-        border-radius: var(--radius-2xl);
-        font-weight: 600;
-        font-size: var(--font-size-lg);
-        transition: all var(--transition-base);
-        box-shadow: var(--shadow-md);
-      }
-
-      #loadMoreBtn:hover {
-        background: var(--primary-red);
-        color: var(--white);
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-      }
-
-      #loadMoreBtn::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        transition: left 0.5s;
-      }
-
-      #loadMoreBtn:hover::before {
-        left: 100%;
-      }
+      /* Load more button - styles moved to components.css (.btn-load-more) */
 
       /* Product card enhancements */
       .product-card {
@@ -2113,7 +2077,7 @@
 
           <!-- Notifications -->
           <div class="action-item dropdown">
-            <button class="action-btn" id="notificationBtn" data-bs-toggle="dropdown" aria-expanded="false" title="Notificaciones">
+            <button class="action-btn" id="notificationBtn" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" title="Notificaciones">
               <i class="bi bi-bell"></i>
               <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
             </button>
@@ -2184,7 +2148,7 @@
 
           <!-- Cart -->
           <div class="action-item dropdown">
-            <button class="action-btn" id="cartBtn" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" title="Carrito de compras">
+            <button class="action-btn" id="cartBtn" data-bs-toggle="dropdown" data-bs-display="static" data-bs-auto-close="outside" aria-expanded="false" title="Carrito de compras">
               <i class="bi bi-cart3"></i>
               <span class="cart-badge" id="cartBadge" style="display: none;">0</span>
             </button>
@@ -2215,7 +2179,7 @@
 
           <!-- Profile -->
           <div class="action-item dropdown">
-            <button class="action-btn profile-btn" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Mi cuenta">
+            <button class="action-btn profile-btn" id="profileDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" title="Mi cuenta">
               <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" alt="Perfil" class="profile-image" />
               <span class="profile-name">Usuario</span>
             </button>
@@ -2568,9 +2532,9 @@
 
               <!-- Load More -->
               <div class="load-more-container" id="loadMoreContainer" style="display: none;">
-                <button class="btn btn-primary btn-lg" id="loadMoreBtn">
-                  <i class="bi bi-arrow-down me-2"></i>
-                  Cargar más servicios
+                <button class="btn btn-outline-primary btn-lg" id="loadMoreBtn">
+                  <i class="bi bi-grid-3x3-gap me-2"></i>
+                  Ver más servicios
                 </button>
               </div>
             </div>
@@ -3000,7 +2964,18 @@
 
           // --- Load more button ---
           document.getElementById('loadMoreBtn')?.addEventListener('click', () => {
+            const btn = document.getElementById('loadMoreBtn');
+            if (btn) {
+              btn.classList.add('loading');
+              btn.disabled = true;
+              btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Cargando...';
+            }
             self.loadMore();
+          });
+
+          // Keep sidebar height aligned with visible results to avoid large blank space
+          window.addEventListener('resize', () => {
+            self.syncDesktopSidebarHeight();
           });
         }
 
@@ -3141,6 +3116,8 @@
             if (grid) grid.style.display = 'grid';
             this.isLoading = false;
           }
+
+          this.syncDesktopSidebarHeight();
         }
 
         renderSkeletonCards() {
@@ -3236,6 +3213,7 @@
               if (noResults) noResults.style.display = 'block';
               if (loadMore) loadMore.style.display = 'none';
               this.updateResultsCount();
+              this.syncDesktopSidebarHeight();
               return;
             }
 
@@ -3253,6 +3231,14 @@
               container.appendChild(this.createServiceCard(service, index));
             });
 
+            // Restore load more button state
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            if (loadMoreBtn) {
+              loadMoreBtn.classList.remove('loading');
+              loadMoreBtn.disabled = false;
+              loadMoreBtn.innerHTML = '<i class="bi bi-grid-3x3-gap me-2"></i> Ver más servicios';
+            }
+
             // Load more visibility
             if (loadMore) {
               loadMore.style.display = endIndex < this.filteredServices.length ? 'block' : 'none';
@@ -3267,6 +3253,8 @@
 
             // Re-bind favorites
             this.initializeFavoritesListeners();
+
+            this.syncDesktopSidebarHeight();
           }, 2000);
         }
 
@@ -3382,6 +3370,25 @@
           if (countEl) {
             countEl.textContent = `${count} servicio${count !== 1 ? 's' : ''} encontrado${count !== 1 ? 's' : ''}`;
           }
+        }
+
+        syncDesktopSidebarHeight() {
+          const sidebar = document.getElementById('filtersSidebar');
+          const mainContent = document.querySelector('.products-main-content');
+          if (!sidebar || !mainContent) return;
+
+          if (window.innerWidth <= 992) {
+            sidebar.style.removeProperty('max-height');
+            return;
+          }
+
+          // Match sidebar max-height to current visible content to prevent reserved empty area.
+          requestAnimationFrame(() => {
+            const mainHeight = Math.ceil(mainContent.getBoundingClientRect().height);
+            if (mainHeight > 0) {
+              sidebar.style.maxHeight = `${mainHeight}px`;
+            }
+          });
         }
 
         loadMore() {

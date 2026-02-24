@@ -68,7 +68,13 @@
   display: flex;
   gap: var(--spacing-3);
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
   padding: var(--spacing-2);
+}
+
+.thumbnail-container > * {
+  scroll-snap-align: start;
 }
 
 .thumbnail {
@@ -315,8 +321,8 @@
 }
 
 .quantity-btn {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border: none;
   background: var(--white);
   color: var(--gray-700);
@@ -345,7 +351,7 @@
 
 .quantity-input {
   width: 60px;
-  height: 40px;
+  height: 44px;
   border: none;
   background: var(--white);
   text-align: center;
@@ -1375,8 +1381,8 @@
   }
 
   .color-option {
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
   }
 
   .storage-option {
@@ -1824,8 +1830,8 @@
   /* Controles en pantallas muy pequeñas */
   .carousel-control-prev,
   .carousel-control-next {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-width: 1px;
   }
 

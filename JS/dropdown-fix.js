@@ -42,6 +42,10 @@ class DropdownManager {
       const menu = dropdown.querySelector(".dropdown-menu");
 
       if (menu) {
+        // Limpiar estilos inline para que CSS base vuelva a controlar
+        ["position", "top", "right", "left", "transform", "bottom"].forEach(
+          (p) => menu.style.removeProperty(p)
+        );
         menu.classList.remove("dropdown-fixed");
         this.activeDropdowns.delete(menu);
         this.removeBackdrop();
@@ -50,32 +54,29 @@ class DropdownManager {
   }
 
   positionBootstrapDropdown(dropdown, menu) {
-    const rect = dropdown.getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
-    const viewportWidth = window.innerWidth;
+    // Obtener el botón toggle para su posición exacta
+    const toggle =
+      dropdown.querySelector('[data-bs-toggle="dropdown"]') || dropdown;
+    const rect = toggle.getBoundingClientRect();
 
-    // Posición inicial
-    let top = rect.bottom + 8;
-    let right = viewportWidth - rect.right;
+    // Anclar debajo de todo el navbar (incluyendo fila de búsqueda en móvil)
+    const navbar = toggle.closest("nav") || document.querySelector("#mainNavbar, nav.navbar");
+    const anchorBottom = navbar ? navbar.getBoundingClientRect().bottom : rect.bottom;
 
-    // Ajustar si se sale de la pantalla verticalmente
-    if (top + 300 > viewportHeight) {
-      top = rect.top - 300 - 8;
-    }
+    const vw = window.innerWidth;
+    const top = anchorBottom + 6;
 
-    // Ajustar si se sale de la pantalla horizontalmente
-    if (right < 16) {
-      right = 16;
-    }
+    // Alinear borde derecho del menú con borde derecho del botón
+    let right = vw - rect.right;
+    if (right < 8) right = 8;
 
-    // Aplicar posicionamiento fijo
-    menu.style.position = "fixed";
-    menu.style.top = `${top}px`;
-    menu.style.right = `${right}px`;
-    menu.style.left = "auto";
-    menu.style.zIndex = "1000";
-    menu.style.transform = "none";
-
+    // Aplicar con !important para ganar sobre cualquier regla CSS con !important
+    menu.style.setProperty("position", "fixed", "important");
+    menu.style.setProperty("top", `${top}px`, "important");
+    menu.style.setProperty("right", `${right}px`, "important");
+    menu.style.setProperty("left", "auto", "important");
+    menu.style.setProperty("transform", "none", "important");
+    menu.style.setProperty("bottom", "auto", "important");
     menu.classList.add("dropdown-fixed");
   }
 
@@ -247,6 +248,8 @@ class DropdownManager {
     const backdrop = document.createElement("div");
     backdrop.className = "dropdown-backdrop";
     backdrop.setAttribute("data-dropdown-backdrop", "true");
+    // En móvil el backdrop oscurece la pantalla; en desktop es transparente
+    const bgColor = window.innerWidth < 768 ? "rgba(0,0,0,0.45)" : "transparent";
     backdrop.style.cssText = `
       position: fixed !important;
       top: 0;
@@ -254,7 +257,7 @@ class DropdownManager {
       right: 0;
       bottom: 0;
       z-index: 999;
-      background: transparent;
+      background: ${bgColor};
       cursor: default;
     `;
 

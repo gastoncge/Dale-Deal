@@ -37,6 +37,7 @@
     <link rel="stylesheet" href="../CSS/variables.css" />
     <link rel="stylesheet" href="../CSS/components.css" />
     <link rel="stylesheet" href="../CSS/pages/notifications.css" />
+    <link rel="stylesheet" href="../CSS/responsive.css" />
   </head>
 
   <body>
@@ -84,7 +85,7 @@
 
           <!-- Notifications -->
           <div class="action-item dropdown">
-            <button class="action-btn" id="notificationBtn" data-bs-toggle="dropdown" aria-expanded="false" title="Notificaciones">
+            <button class="action-btn" id="notificationBtn" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" title="Notificaciones">
               <i class="bi bi-bell"></i>
               <span class="notification-badge" id="notificationBadge">3</span>
             </button>
@@ -155,7 +156,7 @@
 
           <!-- Cart -->
           <div class="action-item dropdown">
-            <button class="action-btn" id="cartBtn" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" title="Carrito de compras">
+            <button class="action-btn" id="cartBtn" data-bs-toggle="dropdown" data-bs-display="static" data-bs-auto-close="outside" aria-expanded="false" title="Carrito de compras">
               <i class="bi bi-cart3"></i>
               <span class="cart-badge" id="cartBadge">0</span>
             </button>
@@ -186,7 +187,7 @@
 
           <!-- Profile -->
           <div class="action-item dropdown">
-            <button class="action-btn profile-btn" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Mi cuenta">
+            <button class="action-btn profile-btn" id="profileDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" title="Mi cuenta">
               <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" alt="Perfil" class="profile-image" />
               <span class="profile-name">Usuario</span>
             </button>
@@ -228,172 +229,152 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="notifications-page">
-      <!-- Header Section -->
-      <section class="notifications-header" data-aos="fade-down">
-        <div class="container">
-          <div class="row align-items-center">
-            <div class="col-lg-6 col-md-6">
-              <div class="header-content">
-                <h1 class="page-title">Centro de notificaciones</h1>
-                <p class="page-subtitle">
-                  Mantenete al día con tus pedidos, servicios y mensajes.
-                </p>
-              </div>
-            </div>
-            <div class="col-lg-6 col-md-6">
-              <div class="header-actions">
-                <div class="filter-dropdown">
-                  <button
-                    class="btn btn-outline-secondary dropdown-toggle"
-                    type="button"
-                    id="filterDropdown"
-                    data-bs-toggle="dropdown"
-                  >
-                    <i class="bi bi-funnel me-2"></i>
-                    <span id="currentFilterLabel">Todas</span>
-                  </button>
-                  <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                      <button class="dropdown-item filter-option active" data-filter="all">
-                        Todas
-                      </button>
-                    </li>
-                    <li>
-                      <button class="dropdown-item filter-option" data-filter="orders">
-                        Pedidos
-                      </button>
-                    </li>
-                    <li>
-                      <button class="dropdown-item filter-option" data-filter="services">
-                        Servicios
-                      </button>
-                    </li>
-                    <li>
-                      <button class="dropdown-item filter-option" data-filter="messages">
-                        Mensajes
-                      </button>
-                    </li>
-                    <li>
-                      <button class="dropdown-item filter-option" data-filter="payments">
-                        Pagos
-                      </button>
-                    </li>
-                    <li>
-                      <button class="dropdown-item filter-option" data-filter="system">
-                        Sistema
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-                <button class="btn btn-primary" id="markAllReadBtn">
-                  <i class="bi bi-check-all me-2"></i>Marcar todas como leídas
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+    <main class="main-content">
 
-      <!-- Filter Chips Section (Mobile/Tablet) -->
-      <section class="filter-chips-section d-lg-none" data-aos="fade-up">
-        <div class="container">
-          <div class="filter-chips-container">
-            <button class="filter-chip active" data-filter="all">
-              Todas
-            </button>
-            <button class="filter-chip" data-filter="orders">
-              Pedidos
-            </button>
-            <button class="filter-chip" data-filter="services">
-              Servicios
-            </button>
-            <button class="filter-chip" data-filter="messages">
-              Mensajes
-            </button>
-            <button class="filter-chip" data-filter="payments">
-              Pagos
-            </button>
-            <button class="filter-chip" data-filter="system">
-              Sistema
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Notifications List Section -->
-      <section class="notifications-list-section">
-        <div class="container">
-          <div class="row">
-            <!-- Sidebar Filters (Desktop) -->
-            <aside class="col-lg-3 d-none d-lg-block" data-aos="fade-right">
-              <div class="sidebar-filters">
-                <h5 class="sidebar-title">Filtros</h5>
-                <div class="filter-list">
-                  <button class="filter-item active" data-filter="all">
-                    <i class="bi bi-inbox-fill me-2"></i>
-                    <span>Todas</span>
-                    <span class="filter-count" id="countAll">0</span>
-                  </button>
-                  <button class="filter-item" data-filter="orders">
-                    <i class="bi bi-box-seam me-2"></i>
-                    <span>Pedidos</span>
-                    <span class="filter-count" id="countOrders">0</span>
-                  </button>
-                  <button class="filter-item" data-filter="services">
-                    <i class="bi bi-tools me-2"></i>
-                    <span>Servicios</span>
-                    <span class="filter-count" id="countServices">0</span>
-                  </button>
-                  <button class="filter-item" data-filter="messages">
-                    <i class="bi bi-chat-dots me-2"></i>
-                    <span>Mensajes</span>
-                    <span class="filter-count" id="countMessages">0</span>
-                  </button>
-                  <button class="filter-item" data-filter="payments">
-                    <i class="bi bi-credit-card me-2"></i>
-                    <span>Pagos</span>
-                    <span class="filter-count" id="countPayments">0</span>
-                  </button>
-                  <button class="filter-item" data-filter="system">
-                    <i class="bi bi-gear me-2"></i>
-                    <span>Sistema</span>
-                    <span class="filter-count" id="countSystem">0</span>
-                  </button>
-                </div>
-              </div>
-            </aside>
-
-            <!-- Notifications List -->
-            <div class="col-lg-9">
-              <div class="notifications-container" id="notificationsContainer" data-aos="fade-up">
-                <!-- Las notificaciones se cargarán dinámicamente aquí -->
-              </div>
-
-              <!-- Load More Button -->
-              <div class="load-more-container" id="loadMoreContainer" style="display: none;">
-                <button class="btn btn-outline-primary btn-lg" id="loadMoreBtn">
-                  <i class="bi bi-arrow-down-circle me-2"></i>Cargar más notificaciones
-                </button>
-              </div>
-
-              <!-- Loading State -->
-              <div class="loading-state" id="loadingState" style="display: none;">
-                <div class="spinner-border text-primary" role="status">
-                  <span class="visually-hidden">Cargando...</span>
-                </div>
-                <p>Cargando notificaciones...</p>
-              </div>
-
-              <!-- Empty State -->
-              <div class="empty-state" id="emptyState" style="display: none;">
-                <i class="bi bi-bell-slash"></i>
-                <h3>No hay notificaciones</h3>
-                <p>Te notificaremos cuando tengas nuevas actualizaciones.</p>
-                <a href="../index.html" class="btn btn-primary mt-3">
-                  <i class="bi bi-house-door me-2"></i>Volver al inicio
+      <!-- Page Header -->
+      <section class="page-header-new">
+        <div class="container-fluid px-4">
+          <!-- Breadcrumbs -->
+          <nav class="breadcrumb-nav" data-aos="fade-down">
+            <ol class="breadcrumb-list">
+              <li class="breadcrumb-item">
+                <a href="../index.html">
+                  <i class="bi bi-house-door-fill"></i>
+                  Inicio
                 </a>
+              </li>
+              <li class="breadcrumb-separator">
+                <i class="bi bi-chevron-right"></i>
+              </li>
+              <li class="breadcrumb-item active">
+                Notificaciones
+              </li>
+            </ol>
+          </nav>
+
+          <!-- Header Content -->
+          <div class="header-content" data-aos="fade-up">
+            <div class="header-left">
+              <h1 class="header-title">Centro de Notificaciones</h1>
+              <p class="header-description">
+                <span class="badge-count" id="headerUnreadCount">0 sin leer</span>
+                <span class="separator">•</span>
+                <span class="text-muted">Mantenete al día con tus pedidos y servicios</span>
+              </p>
+            </div>
+            <div class="header-actions">
+              <button class="btn btn-outline-danger" id="deleteAllBtn">
+                <i class="bi bi-trash me-2"></i>Borrar todas
+              </button>
+              <button class="btn btn-primary" id="markAllReadBtn">
+                <i class="bi bi-check-all me-2"></i>Marcar todas como leídas
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Notifications Section with Sidebar -->
+      <section class="products-grid-section">
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <div class="products-layout">
+          <!-- Sidebar Filters -->
+          <aside class="filters-sidebar" id="filtersSidebar">
+            <div class="sidebar-header">
+              <div class="sidebar-title-group">
+                <i class="bi bi-bell sidebar-icon"></i>
+                <h3 class="sidebar-title">Filtrar</h3>
               </div>
+            </div>
+            <div class="filters-content">
+              <div class="filter-list">
+                <button class="filter-item active" data-filter="all">
+                  <i class="bi bi-inbox-fill me-2"></i>
+                  <span>Todas</span>
+                  <span class="filter-count" id="countAll">0</span>
+                </button>
+                <button class="filter-item" data-filter="orders">
+                  <i class="bi bi-box-seam me-2"></i>
+                  <span>Pedidos</span>
+                  <span class="filter-count" id="countOrders">0</span>
+                </button>
+                <button class="filter-item" data-filter="services">
+                  <i class="bi bi-tools me-2"></i>
+                  <span>Servicios</span>
+                  <span class="filter-count" id="countServices">0</span>
+                </button>
+                <button class="filter-item" data-filter="messages">
+                  <i class="bi bi-chat-dots me-2"></i>
+                  <span>Mensajes</span>
+                  <span class="filter-count" id="countMessages">0</span>
+                </button>
+                <button class="filter-item" data-filter="payments">
+                  <i class="bi bi-credit-card me-2"></i>
+                  <span>Pagos</span>
+                  <span class="filter-count" id="countPayments">0</span>
+                </button>
+                <button class="filter-item" data-filter="system">
+                  <i class="bi bi-gear me-2"></i>
+                  <span>Sistema</span>
+                  <span class="filter-count" id="countSystem">0</span>
+                </button>
+              </div>
+            </div>
+          </aside>
+
+          <!-- Main Content -->
+          <div class="products-main-content">
+            <!-- Results Header -->
+            <div class="results-header">
+              <div class="results-count-container">
+                <span id="resultsCount">Cargando notificaciones...</span>
+              </div>
+              <button class="btn-toggle-filters d-lg-none" id="toggleFilters">
+                <i class="bi bi-funnel me-2"></i>
+                Filtros
+              </button>
+            </div>
+
+            <!-- Notifications Container -->
+            <div class="notifications-container" id="notificationsContainer">
+              <!-- Las notificaciones se cargarán dinámicamente aquí -->
+            </div>
+
+            <!-- Loading State -->
+            <div class="empty-state-container" id="loadingState" style="display: none;">
+              <div class="empty-state">
+                <div class="empty-state-icon loading">
+                  <div class="loading-spinner-modern"></div>
+                </div>
+                <h3 class="empty-state-title">Cargando notificaciones</h3>
+                <p class="empty-state-text">Estamos obteniendo tus notificaciones...</p>
+              </div>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state-container" id="emptyState" style="display: none;">
+              <div class="empty-state">
+                <div class="empty-state-icon">
+                  <i class="bi bi-bell-slash"></i>
+                </div>
+                <h3 class="empty-state-title">No hay notificaciones</h3>
+                <p class="empty-state-text">Te notificaremos cuando tengas nuevas actualizaciones.</p>
+                <div class="empty-state-actions">
+                  <a href="../index.html" class="btn btn-primary">
+                    <i class="bi bi-house-door me-2"></i>Volver al inicio
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Load More Button -->
+            <div class="load-more-container" id="loadMoreContainer" style="display: none;">
+              <button class="btn btn-outline-primary btn-lg" id="loadMoreBtn">
+                <i class="bi bi-bell me-2"></i>
+                Cargar más notificaciones
+              </button>
             </div>
           </div>
         </div>
@@ -413,6 +394,7 @@
     <script src="../JS/utils.js"></script>
     <script src="../JS/auth.js"></script>
     <script src="../JS/cart.js"></script>
+    <script src="../JS/dropdown-fix.js"></script>
     <script src="../JS/pages/notifications.js"></script>
     <script src="../JS/component-loader.js" defer></script>
 
