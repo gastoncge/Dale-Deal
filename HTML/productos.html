@@ -2925,7 +2925,6 @@
           noResults.style.display = 'none';
           container.innerHTML = '';
 
-          // Wait 2 seconds to show results for better UX
           setTimeout(() => {
             if (window.productFilters.products.length === 0) {
               // Show no results state
@@ -2982,7 +2981,7 @@
                 initializeProductCarousels();
               }
             }, 100);
-          }, 2000); // 2 seconds loading delay
+          }, 0);
         }
 
         findProductById(id) {
@@ -3146,15 +3145,10 @@
           }
         }
 
-        loadMore() {
-          this.currentPage++;
-          this.renderProducts();
-        }
-
         updateResultsCount() {
           const count = window.productFilters ? window.productFilters.products.length : this.products.length;
           const countEl = document.getElementById('resultsCount');
-          countEl.textContent = `${count} producto${count !== 1 ? 's' : ''} encontrado${count !== 1 ? 's' : ''}`;
+          if (countEl) countEl.textContent = `${count} producto${count !== 1 ? 's' : ''} encontrado${count !== 1 ? 's' : ''}`;
         }
 
         loadMore() {

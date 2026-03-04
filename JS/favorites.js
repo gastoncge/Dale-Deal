@@ -505,11 +505,11 @@ class FavoritesManager {
 
   // Remover desde el modal
   removeFromFavoritesModal(productId) {
+    // Guardar título ANTES de eliminar
+    const favorite = this.favorites.find(fav => fav.id === productId) || { title: 'Producto' };
     this.removeFromFavorites(productId);
     this.renderFavoritesContent();
     this.updateFavoriteButtons();
-    
-    const favorite = this.favorites.find(fav => fav.id === productId) || { title: 'Producto' };
     this.showToast(`${favorite.title} eliminado de favoritos`, 'info');
   }
 
@@ -575,8 +575,8 @@ class FavoritesManager {
 
     try {
       // Extraer el precio numérico del texto formateado
-      const priceMatch = favorite.priceText.match(/[\d,]+/);
-      const price = priceMatch ? parseFloat(priceMatch[0].replace(/,/g, '')) : 0;
+      // Formato argentino usa '.' como separador de miles y ',' como decimal
+      const price = favorite.priceText ? parseFloat(favorite.priceText.replace(/[^0-9,.]/g, '').replace(/\./g, '').replace(',', '.')) || 0 : 0;
       
       const product = {
         id: `favorite-${favorite.id}`,

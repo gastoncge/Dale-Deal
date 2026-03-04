@@ -1075,7 +1075,9 @@
       });
       document.getElementById('passForm')?.addEventListener('submit', function(e) {
         e.preventDefault();
-        alert('Contraseña actualizada correctamente');
+        if (window.DaleDeal?.utils?.showNotification) {
+          window.DaleDeal.utils.showNotification('Contraseña actualizada correctamente', 'success');
+        }
         this.reset();
       });
 

@@ -213,9 +213,7 @@ async function loadProducts() {
       const row = document.createElement('div');
       row.className = 'products-row';
 
-      rowProducts.forEach(product => {
-        row.innerHTML += renderProductCard(product);
-      });
+      row.innerHTML = rowProducts.map(product => renderProductCard(product)).join('');
 
       productsGrid.appendChild(row);
     }
@@ -275,8 +273,8 @@ function initializeProductListeners() {
   }, 200);
 
   // Reinicializar favoritos
-  if (window.favoriteManager) {
-    window.favoriteManager.updateFavoriteButtons();
+  if (window.favoritesManager) {
+    window.favoritesManager.updateFavoriteButtons();
   }
 }
 

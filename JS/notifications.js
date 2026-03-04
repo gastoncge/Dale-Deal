@@ -21,7 +21,12 @@ class NotificationManager {
   loadNotifications() {
     const stored = localStorage.getItem('daledealt_notifications');
     if (stored) {
-      this.notifications = JSON.parse(stored);
+      try {
+        this.notifications = JSON.parse(stored);
+      } catch (e) {
+        DaleDeal.error('Error al parsear notificaciones del localStorage:', e);
+        this.notifications = null;
+      }
     } else {
       // Datos de ejemplo
       this.notifications = [
@@ -130,8 +135,9 @@ class NotificationManager {
     e.preventDefault();
     e.stopPropagation();
     document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
-    e.target.classList.add('active');
-    this.currentFilter = e.target.dataset.filter;
+    const chip = e.target.closest('.filter-chip');
+    if (chip) chip.classList.add('active');
+    this.currentFilter = chip?.dataset.filter || e.target.dataset.filter;
     this.renderNotifications();
   }
 
@@ -298,8 +304,8 @@ class NotificationManager {
 
   // Ver todas las notificaciones
   viewAllNotifications() {
-    // Redirigir a la página del centro de notificaciones
-    window.location.href = './HTML/notificaciones.html';
+    const isInHtmlFolder = window.location.pathname.includes('/HTML/');
+    window.location.href = isInHtmlFolder ? './notificaciones.html' : './HTML/notificaciones.html';
   }
 
   // Renderizar notificaciones

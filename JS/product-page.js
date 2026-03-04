@@ -73,10 +73,10 @@ class ProductPage {
     };
 
     // Convert arrays → keyed objects
-    productData.colors.forEach(c => {
+    (productData.colors || []).forEach(c => {
       this.currentProduct.colors[c.value] = { name: c.name, price: 0, color: c.color };
     });
-    productData.storage.forEach(s => {
+    (productData.storage || []).forEach(s => {
       this.currentProduct.storage[s.size] = { name: s.size, price: s.price };
     });
 
@@ -657,8 +657,10 @@ class ProductPage {
     const carousel = document.getElementById(carouselId);
     if (!carousel) return;
     const show = slideCount > 1;
-    carousel.querySelector('.carousel-control-prev').style.display = show ? 'flex' : 'none';
-    carousel.querySelector('.carousel-control-next').style.display = show ? 'flex' : 'none';
+    const prev = carousel.querySelector('.carousel-control-prev');
+    const next = carousel.querySelector('.carousel-control-next');
+    if (prev) prev.style.display = show ? 'flex' : 'none';
+    if (next) next.style.display = show ? 'flex' : 'none';
   }
 
   // ── Recently viewed persistence ────────────────────────────────────────────

@@ -285,7 +285,8 @@ class NotificationsCenterManager {
     if (type === 'dropdown') {
       document.querySelectorAll('.filter-option').forEach(opt => opt.classList.remove('active'));
       target.classList.add('active');
-      document.getElementById('currentFilterLabel').textContent = target.textContent.trim();
+      const labelEl = document.getElementById('currentFilterLabel');
+      if (labelEl) labelEl.textContent = target.textContent.trim();
     } else if (type === 'chip') {
       document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
       target.classList.add('active');

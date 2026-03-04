@@ -115,9 +115,11 @@ class ProductFilters {
     // Botón de filtros avanzados
     document.getElementById('filterBtn')?.addEventListener('click', () => this.showAdvancedFilters());
 
-    // Listener para resize de ventana
+    // Listener para resize de ventana (debounced para no re-renderizar en cada pixel)
+    let resizeTimer;
     window.addEventListener('resize', () => {
-      this.renderProducts();
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => this.renderProducts(), 200);
     });
 
     // Búsqueda
@@ -135,10 +137,11 @@ class ProductFilters {
     
     // Actualizar estado visual
     document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
-    e.target.classList.add('active');
-    
+    const tab = e.target.closest('.filter-tab');
+    if (tab) tab.classList.add('active');
+
     // Actualizar categoría actual
-    this.currentCategory = e.target.dataset.category;
+    this.currentCategory = tab?.dataset.category || e.target.dataset.category;
     
     // Filtrar y renderizar
     this.filterAndRender();
@@ -211,7 +214,6 @@ class ProductFilters {
   filterAndRender() {
     this.products = this.filterProducts();
     this.renderProducts();
-    this.updateClearButtonVisibility();
   }
 
   // Renderizar productos
@@ -329,7 +331,8 @@ class ProductFilters {
       option.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        this.currentSort = e.target.dataset.sort;
+        const sortBtn = e.target.closest('.sort-option');
+        this.currentSort = sortBtn?.dataset.sort || e.target.dataset.sort;
         this.closeModal(); // Cerrar primero
         this.filterAndRender();
       });

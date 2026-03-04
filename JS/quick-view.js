@@ -322,9 +322,10 @@ class QuickViewManager {
 
   // Actualizar galería
   updateGallery() {
+    const modal = document.getElementById('quickViewModal');
     const mainImage = document.getElementById('mainQuickViewImage');
-    const thumbnails = document.querySelectorAll('.thumbnail');
-    const indicators = document.querySelectorAll('.image-indicators .indicator');
+    const thumbnails = modal ? modal.querySelectorAll('.thumbnail') : [];
+    const indicators = modal ? modal.querySelectorAll('.image-indicators .indicator') : [];
 
     if (mainImage) {
       mainImage.src = this.currentProduct.images[this.currentImageIndex];
