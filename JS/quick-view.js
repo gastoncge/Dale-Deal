@@ -514,15 +514,20 @@ quickViewStyle.textContent = `
     background: rgba(0, 0, 0, 0.7);
     color: var(--white);
     border: none;
-    width: 40px;
-    height: 40px;
+    /* 44px mínimo táctil — WCAG 2.5.5 */
+    min-width: 44px;
+    min-height: 44px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-xl);
     transition: all var(--transition-fast);
+    /* Asegurar que el botón siempre sea visible sobre el contenido */
+    backdrop-filter: blur(4px);
   }
 
   .btn-close-quick-view:hover {
@@ -801,35 +806,111 @@ quickViewStyle.textContent = `
     padding: var(--spacing-4) var(--spacing-6);
   }
 
-  /* Responsive */
-  @media (max-width: 768px) {
+  /* ===== RESPONSIVE — MÓVIL (< 768px) ===== */
+  @media (max-width: 767px) {
+    /*
+     * El modal NO ocupa toda la pantalla: 95% del viewport
+     * con bordes redondeados y scroll interno en el contenido.
+     * El backdrop cierra el modal si se toca afuera.
+     */
     .quick-view-content {
-      width: 100%;
-      height: 100vh;
-      border-radius: 0;
-      max-height: none;
+      width: 95%;
+      max-width: 100%;
+      /* Altura máxima: deja espacio para ver que hay un backdrop */
+      max-height: 92vh;
+      height: auto;
+      border-radius: var(--radius-2xl);
+      overflow: hidden;
+      /* Centrado vertical con margen superior */
+      margin-top: 4vh;
     }
 
+    /*
+     * El cuerpo es el área scrollable.
+     * -webkit-overflow-scrolling: touch para inercia en iOS.
+     */
     .quick-view-body {
       grid-template-columns: 1fr;
-      gap: var(--spacing-6);
-      padding: var(--spacing-6) var(--spacing-4);
+      gap: var(--spacing-4);
+      padding: var(--spacing-5) var(--spacing-4) var(--spacing-6);
+      /* Restar la altura del botón cerrar del scroll disponible */
+      max-height: calc(92vh - 56px);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
     }
 
+    /* Imagen principal: altura fija para que el info se vea sin scroll */
+    .main-image-container {
+      aspect-ratio: auto;
+      height: 240px;
+    }
+
+    /* Thumbnails: 4 en fila usando el ancho completo */
     .thumbnail-grid {
       grid-template-columns: repeat(4, 1fr);
     }
 
+    /* Botones de acción apilados verticalmente */
     .action-buttons {
       grid-template-columns: 1fr;
     }
 
+    /* Tipografía ajustada al ancho de 95vw */
     .product-title {
-      font-size: var(--font-size-xl);
+      font-size: var(--font-size-lg);
     }
 
     .current-price {
       font-size: var(--font-size-2xl);
+    }
+
+    /* Botón cerrar: mayor visibilidad y accesibilidad */
+    .btn-close-quick-view {
+      top: var(--spacing-3);
+      right: var(--spacing-3);
+    }
+
+    /* Specs: texto más pequeño para caber en el ancho */
+    .spec-item {
+      flex-direction: column;
+      gap: var(--spacing-1);
+      padding: var(--spacing-2);
+    }
+
+    .spec-value {
+      text-align: left;
+    }
+  }
+
+  /* Extra pequeño (< 480px): ajustes adicionales */
+  @media (max-width: 479px) {
+    .quick-view-content {
+      width: 96%;
+      max-height: 94vh;
+      margin-top: 3vh;
+    }
+
+    .quick-view-body {
+      padding: var(--spacing-4) var(--spacing-3) var(--spacing-5);
+      max-height: calc(94vh - 56px);
+      gap: var(--spacing-3);
+    }
+
+    .main-image-container {
+      height: 200px;
+    }
+
+    .product-title {
+      font-size: var(--font-size-base);
+    }
+
+    .current-price {
+      font-size: var(--font-size-xl);
+    }
+
+    .product-details {
+      gap: var(--spacing-4);
     }
   }
 `;

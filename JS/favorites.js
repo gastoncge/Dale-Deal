@@ -58,7 +58,11 @@ class FavoritesManager {
         const productCard = e.target.closest('.product-card');
         const productId = productCard.dataset.id;
         if (productId) {
-          goToProduct(parseInt(productId));
+          if (typeof window.goToProduct === 'function') {
+            window.goToProduct(parseInt(productId));
+          } else if (window.favoritesManager) {
+            window.favoritesManager.goToProduct(parseInt(productId));
+          }
         }
       }
     });
@@ -130,7 +134,8 @@ class FavoritesManager {
 
   // Manejar clic en wishlist de producto
   handleProductWishlistClick(e) {
-    const productId = localStorage.getItem('selectedProductId') || '1';
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get('id') || localStorage.getItem('selectedProductId') || '1';
     
     if (!window.getProductById) {
       DaleDeal.error('Product data not available');
@@ -305,7 +310,8 @@ class FavoritesManager {
     const wishlistBtn = document.querySelector('.btn-wishlist');
     if (!wishlistBtn) return;
 
-    const productId = localStorage.getItem('selectedProductId') || '1';
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get('id') || localStorage.getItem('selectedProductId') || '1';
     const isFavorite = this.isFavorite(productId);
     
     wishlistBtn.classList.toggle('active', isFavorite);
@@ -510,13 +516,13 @@ class FavoritesManager {
   // Ir al producto
   goToProduct(productId) {
     localStorage.setItem('selectedProductId', productId);
-    
-    if (window.location.pathname.includes('producto.html')) {
-      // Recargar la página de producto con el nuevo ID
-      window.location.reload();
+    const path = window.location.pathname;
+    if (path.includes('producto.html')) {
+      window.location.href = window.location.pathname + '?id=' + productId;
+    } else if (path.includes('/HTML/')) {
+      window.location.href = './producto.html?id=' + productId;
     } else {
-      // Navegar a la página de producto desde index
-      window.location.href = './HTML/producto.html';
+      window.location.href = './HTML/producto.html?id=' + productId;
     }
   }
 

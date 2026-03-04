@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Estado del Servicio - DALE DEAL</title>
+    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../CSS/variables.css" />
+    <link rel="stylesheet" href="../CSS/components.css" />
+    <link rel="stylesheet" href="../CSS/pages/notifications.css" />
+    <link rel="stylesheet" href="../CSS/responsive.css" />
+    <style>
+      .overall-status {
+        border-radius: var(--radius-2xl); padding: var(--spacing-8);
+        text-align: center; margin-bottom: var(--spacing-8);
+        background: rgba(34,197,94,.1); border: 2px solid rgba(34,197,94,.3);
+      }
+      .overall-icon { font-size: 56px; display: block; margin-bottom: var(--spacing-3); }
+      .overall-title { font-size: var(--font-size-2xl); font-weight: 800; color: #15803d; margin-bottom: var(--spacing-2); }
+      .overall-subtitle { color: var(--gray-600); }
+      .updated-time { font-size: var(--font-size-sm); color: var(--gray-500); margin-top: var(--spacing-3); }
+      .services-grid { display: flex; flex-direction: column; gap: var(--spacing-3); margin-bottom: var(--spacing-8); }
+      .service-row {
+        background: var(--white); border: 2px solid var(--gray-200);
+        border-radius: var(--radius-xl); padding: var(--spacing-5);
+        display: flex; align-items: center; gap: var(--spacing-4);
+        transition: all var(--transition-base);
+      }
+      .service-row:hover { box-shadow: var(--shadow-md); }
+      .service-icon { font-size: 28px; width: 48px; text-align: center; flex-shrink: 0; }
+      .service-info { flex: 1; }
+      .service-name { font-weight: 700; color: var(--gray-900); }
+      .service-desc { font-size: var(--font-size-sm); color: var(--gray-500); }
+      .service-uptime { font-size: var(--font-size-xs); color: var(--gray-400); font-weight: 600; white-space: nowrap; }
+      .status-dot {
+        width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
+        position: relative;
+      }
+      .status-dot::after {
+        content: ''; position: absolute; inset: -4px; border-radius: 50%;
+        animation: pulse-ring 2s infinite;
+      }
+      .status-dot.operational { background: #22c55e; }
+      .status-dot.operational::after { border: 2px solid #22c55e; }
+      .status-dot.degraded { background: #f59e0b; }
+      .status-dot.degraded::after { border: 2px solid #f59e0b; animation: none; }
+      .status-dot.outage { background: #ef4444; }
+      .status-dot.maintenance { background: #3b82f6; }
+      .status-dot.maintenance::after { border: 2px solid #3b82f6; animation: none; }
+      @keyframes pulse-ring { 0%,100% { opacity: .5; transform: scale(1); } 50% { opacity: 0; transform: scale(1.8); } }
+      .status-label {
+        padding: 4px 12px; border-radius: var(--radius-full); font-size: var(--font-size-xs);
+        font-weight: 700; white-space: nowrap;
+      }
+      .label-operational { background: rgba(34,197,94,.12); color: #15803d; }
+      .label-degraded { background: rgba(245,158,11,.12); color: #d97706; }
+      .label-outage { background: rgba(239,68,68,.12); color: #dc2626; }
+      .label-maintenance { background: rgba(59,130,246,.12); color: #1d4ed8; }
+      .uptime-bars { display: flex; gap: 2px; align-items: center; }
+      .uptime-bar { width: 8px; height: 24px; border-radius: 2px; background: #22c55e; }
+      .uptime-bar.degraded { background: #f59e0b; }
+      .incident-card {
+        background: var(--white); border: 2px solid var(--gray-200);
+        border-radius: var(--radius-xl); padding: var(--spacing-5);
+        margin-bottom: var(--spacing-4); border-left: 4px solid #22c55e;
+      }
+      .incident-date { font-size: var(--font-size-xs); color: var(--gray-500); font-weight: 600; }
+      .incident-title { font-weight: 700; color: var(--gray-900); margin: var(--spacing-1) 0; }
+      .incident-update { font-size: var(--font-size-sm); color: var(--gray-700); line-height: 1.5; }
+      .incident-resolved { color: #15803d; font-weight: 700; font-size: var(--font-size-sm); margin-top: var(--spacing-2); }
+    </style>
+  </head>
+  <body>
+    <div id="navbar-placeholder"></div>
+
+    <section class="page-header-new">
+      <div class="container-fluid px-4">
+        <nav class="breadcrumb-nav" data-aos="fade-down">
+          <ol class="breadcrumb-list">
+            <li class="breadcrumb-item"><a href="../index.html"><i class="bi bi-house-door-fill"></i> Inicio</a></li>
+            <li class="breadcrumb-separator"><i class="bi bi-chevron-right"></i></li>
+            <li class="breadcrumb-item"><a href="./notificaciones.html">Mi Centro</a></li>
+            <li class="breadcrumb-separator"><i class="bi bi-chevron-right"></i></li>
+            <li class="breadcrumb-item active">Estado del Servicio</li>
+          </ol>
+        </nav>
+        <div class="header-content" data-aos="fade-up">
+          <div class="header-left">
+            <h1 class="header-title">Estado del Servicio</h1>
+            <p class="header-description">
+              <span class="badge-count" style="background: linear-gradient(135deg,#22c55e,#16a34a)">Todos operacionales</span>
+              <span class="separator">•</span>
+              <span class="text-muted">Monitoreo en tiempo real</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main class="main-content">
+      <div class="container-fluid px-4 py-5">
+
+        <!-- Overall status -->
+        <div class="overall-status" data-aos="fade-up">
+          <span class="overall-icon">✅</span>
+          <div class="overall-title">Todos los sistemas operacionales</div>
+          <div class="overall-subtitle">No hay incidencias activas en este momento</div>
+          <div class="updated-time"><i class="bi bi-arrow-repeat me-1"></i>Actualizado: 1 mar 2026, 14:32 hs</div>
+        </div>
+
+        <!-- Services -->
+        <h4 class="fw-bold mb-4" data-aos="fade-up">Estado de los servicios</h4>
+        <div class="services-grid" data-aos="fade-up">
+
+          <div class="service-row">
+            <div class="service-icon">🌐</div>
+            <div class="service-info">
+              <div class="service-name">Sitio web principal</div>
+              <div class="service-desc">daledeal.com y todas las páginas</div>
+            </div>
+            <div class="uptime-bars">
+              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar"></div>
+              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar"></div>
+              <div class="uptime-bar"></div>
+            </div>
+            <div class="service-uptime">99.98% uptime</div>
+            <div class="status-dot operational"></div>
+            <span class="status-label label-operational">Operacional</span>
+          </div>
+
+          <div class="service-row">
+            <div class="service-icon">💳</div>
+            <div class="service-info">
+              <div class="service-name">Procesamiento de pagos</div>
+              <div class="service-desc">Tarjetas, transferencias y Mercado Pago</div>
+            </div>
+            <div class="uptime-bars">
+              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar"></div>
+              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar degraded"></div>
+              <div class="uptime-bar"></div>
+            </div>
+            <div class="service-uptime">99.81% uptime</div>
+            <div class="status-dot operational"></div>
+            <span class="status-label label-operational">Operacional</span>
+          </div>
+
+          <div class="service-row">
+            <div class="service-icon">🔔</div>
+            <div class="service-info">
+              <div class="service-name">Notificaciones</div>
+              <div class="service-desc">Email, push y SMS</div>
+            </div>
+            <div class="uptime-bars">
+              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar"></div>
+              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar"></div>
+              <div class="uptime-bar"></div>
+            </div>
+            <div class="service-uptime">100% uptime</div>
+            <div class="status-dot operational"></div>
+            <span class="status-label label-operational">Operacional</span>
+          </div>
+
+          <div class="service-row">
+            <div class="service-icon">📦</div>
+            <div class="service-info">
+              <div class="service-name">Gestión de pedidos</div>
+              <div class="service-desc">Creación, seguimiento y despacho</div>
+            </div>
+            <div class="uptime-bars">
+              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar"></div>
+              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar"></div>
+              <div class="uptime-bar"></div>
+            </div>
+            <div class="service-uptime">99.95% uptime</div>
+            <div class="status-dot operational"></div>
+            <span class="status-label label-operational">Operacional</span>
+          </div>
+
+          <div class="service-row">
+            <div class="service-icon">🔍</div>
+            <div class="service-info">
+              <div class="service-name">Motor de búsqueda</div>
+              <div class="service-desc">Búsqueda y filtros de productos</div>
+            </div>
+            <div class="uptime-bars">
+              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar"></div>
+              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar"></div>
+              <div class="uptime-bar"></div>
+            </div>
+            <div class="service-uptime">99.99% uptime</div>
+            <div class="status-dot operational"></div>
+            <span class="status-label label-operational">Operacional</span>
+          </div>
+
+          <div class="service-row">
+            <div class="service-icon">🔧</div>
+            <div class="service-info">
+              <div class="service-name">API de servicios técnicos</div>
+              <div class="service-desc">Agendamiento y gestión de servicios</div>
+            </div>
+            <div class="uptime-bars">
+              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar"></div>
+              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar"></div>
+              <div class="uptime-bar"></div>
+            </div>
+            <div class="service-uptime">99.90% uptime</div>
+            <div class="status-dot maintenance"></div>
+            <span class="status-label label-maintenance">Mantenimiento programado</span>
+          </div>
+
+        </div>
+
+        <!-- Incident history -->
+        <h4 class="fw-bold mb-4" data-aos="fade-up">Historial de incidencias (últimos 30 días)</h4>
+        <div data-aos="fade-up">
+          <div class="incident-card">
+            <div class="incident-date">24 Feb 2026 · 11:15 hs</div>
+            <div class="incident-title">Demoras en procesamiento de pagos con tarjetas Visa</div>
+            <div class="incident-update">Se detectaron demoras de hasta 45 segundos en la confirmación de pagos con tarjetas Visa. El problema fue aislado en el gateway de pagos.</div>
+            <div class="incident-resolved"><i class="bi bi-check-circle me-1"></i>Resuelto · Duración: 23 minutos</div>
+          </div>
+          <div class="incident-card">
+            <div class="incident-date">10 Feb 2026 · 03:00 hs</div>
+            <div class="incident-title">Mantenimiento programado — Actualización del sistema</div>
+            <div class="incident-update">Ventana de mantenimiento programada para actualizar la infraestructura de base de datos. El sitio estuvo en modo de solo lectura durante la ventana.</div>
+            <div class="incident-resolved"><i class="bi bi-check-circle me-1"></i>Completado · Duración: 2 horas</div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="../JS/utils.js"></script>
+    <script src="../JS/auth.js"></script>
+    <script src="../JS/cart.js"></script>
+    <script src="../JS/notifications.js"></script>
+    <script src="../JS/dropdown-fix.js"></script>
+    <script src="../JS/component-loader.js" defer></script>
+    <script>AOS.init({ duration: 800, once: true, offset: 100 });</script>
+  </body>
+</html>

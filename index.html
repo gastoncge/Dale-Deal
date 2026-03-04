@@ -214,13 +214,8 @@
               </li>
               <li><hr class="dropdown-divider" /></li>
               <li>
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="./HTML/notificaciones.html#mi-perfil">
                   <i class="bi bi-person me-2"></i>Mi Perfil
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="#">
-                  <i class="bi bi-bag me-2"></i>Mis Compras
                 </a>
               </li>
               <li>
@@ -1170,18 +1165,31 @@
               </div>
             </div>
 
-            <!-- Quick Links -->
-            <div class="col-lg-2 col-md-6 mb-4">
+            <!-- Mi Centro + Plataforma -->
+            <div class="col-lg-4 col-md-12 mb-4">
               <div class="footer-section">
-                <h5 class="footer-title">Plataforma</h5>
-                <ul class="footer-links">
-                  <li><a href="./HTML/servicios.html">Buscar servicios</a></li>
-                  <li><a href="#" id="registerProviderLink">Ofrecer servicios</a></li>
-                  <li><a href="#">Cómo funciona</a></li>
-                  <li><a href="#" id="businessLink">Soy una empresa</a></li>
-                  <li><a href="#" id="sellProductsLink">Publicar productos</a></li>
-                  <li><a href="#" id="advertiseLink">Publicidad en el sitio</a></li>
-                </ul>
+                <h5 class="footer-title">Mi Centro</h5>
+                <div class="row">
+                  <div class="col-6">
+                    <ul class="footer-links">
+                      <li><a href="./HTML/notificaciones.html">Notificaciones</a></li>
+                      <li><a href="./HTML/notificaciones.html#centro-ayuda">Ayuda</a></li>
+                      <li><a href="./HTML/notificaciones.html#contacto">Contacto</a></li>
+                      <li><a href="./HTML/notificaciones.html#reportar-problema">Reportar problema</a></li>
+                      <li><a href="./HTML/notificaciones.html#estado-servicio">Estado del servicio</a></li>
+                      <li><a href="./HTML/notificaciones.html#seguridad">Seguridad</a></li>
+                    </ul>
+                  </div>
+                  <div class="col-6">
+                    <ul class="footer-links">
+                      <li><a href="./HTML/notificaciones.html#contacto">Publicidad en el sitio</a></li>
+                      <li><a href="./HTML/notificaciones.html#centro-ayuda">Soy una empresa</a></li>
+                      <li><a href="./HTML/notificaciones.html#contacto">Publicar productos</a></li>
+                      <li><a href="./HTML/notificaciones.html#centro-ayuda">Publicar servicios</a></li>
+                      <li><a href="./HTML/notificaciones.html#mis-compras">Mis compras</a></li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -1192,23 +1200,6 @@
                 <ul class="footer-links">
                   <li><a href="./HTML/productos.html">Productos</a></li>
                   <li><a href="./HTML/servicios.html">Servicios</a></li>
-                  <li><a href="./HTML/productos.html?category=electronics">Electrónica</a></li>
-                  <li><a href="./HTML/productos.html?category=home">Hogar y Jardín</a></li>
-                  <li><a href="./HTML/productos.html?category=fashion">Moda y Belleza</a></li>
-                </ul>
-              </div>
-            </div>
-
-            <!-- Support -->
-            <div class="col-lg-2 col-md-6 mb-4">
-              <div class="footer-section">
-                <h5 class="footer-title">Soporte</h5>
-                <ul class="footer-links">
-                  <li><a href="#">Centro de ayuda</a></li>
-                  <li><a href="#">Contacto</a></li>
-                  <li><a href="#">Reportar problema</a></li>
-                  <li><a href="#">Estado del servicio</a></li>
-                  <li><a href="#">Seguridad</a></li>
                 </ul>
               </div>
             </div>
@@ -1375,10 +1366,8 @@
     <script>
       // Product navigation function
       function goToProduct(productId) {
-        // Store product ID in localStorage
-        localStorage.setItem('selectedProductId', productId);
-        // Navigate to product page
-        window.location.href = './HTML/producto.html';
+        // Delegate to global utility (URL param + localStorage fallback)
+        window.goToProduct(productId);
       }
 
       // Initialize AOS

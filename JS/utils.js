@@ -667,6 +667,24 @@ if (document.readyState === "loading") {
   DaleDeal.utils.init();
 }
 
+// ===== NAVEGACIÓN A PRODUCTO =====
+// Función global usada desde cualquier página para navegar al detalle de producto.
+// Prioridad: URL param `?id=` + fallback localStorage (para compatibilidad).
+window.goToProduct = function(productId) {
+  localStorage.setItem('selectedProductId', productId); // backward-compat fallback
+  const path = window.location.pathname;
+  if (path.includes('producto.html')) {
+    // Ya en la página de producto: navegar con nuevo id (reemplaza param actual)
+    window.location.href = window.location.pathname + '?id=' + productId;
+  } else if (path.includes('/HTML/')) {
+    // En otra página dentro de HTML/
+    window.location.href = './producto.html?id=' + productId;
+  } else {
+    // Raíz (index.html) u otro nivel
+    window.location.href = './HTML/producto.html?id=' + productId;
+  }
+};
+
 // Exponer para debugging en desarrollo
 if (
   window.location.hostname === "localhost" ||

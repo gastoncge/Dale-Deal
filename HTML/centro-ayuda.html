@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Centro de Ayuda - DALE DEAL</title>
+    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../CSS/variables.css" />
+    <link rel="stylesheet" href="../CSS/components.css" />
+    <link rel="stylesheet" href="../CSS/pages/notifications.css" />
+    <link rel="stylesheet" href="../CSS/responsive.css" />
+    <style>
+      .help-search {
+        background: var(--gradient-primary);
+        padding: var(--spacing-10) var(--spacing-4);
+        text-align: center;
+        margin-bottom: var(--spacing-8);
+      }
+      .help-search h2 { color: var(--white); font-weight: 800; font-size: 28px; margin-bottom: var(--spacing-4); }
+      .help-search p { color: rgba(255,255,255,.85); margin-bottom: var(--spacing-5); }
+      .search-help-box {
+        max-width: 560px; margin: 0 auto;
+        display: flex; gap: var(--spacing-2);
+      }
+      .search-help-box input {
+        flex: 1; padding: var(--spacing-3) var(--spacing-5);
+        border: none; border-radius: var(--radius-full);
+        font-size: var(--font-size-base); outline: none;
+      }
+      .search-help-box button {
+        padding: var(--spacing-3) var(--spacing-6);
+        background: var(--white); color: var(--primary-red);
+        border: none; border-radius: var(--radius-full);
+        font-weight: 700; cursor: pointer; white-space: nowrap;
+      }
+      .help-categories { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--spacing-4); margin-bottom: var(--spacing-10); }
+      .help-category-card {
+        background: var(--white); border: 2px solid var(--gray-200);
+        border-radius: var(--radius-xl); padding: var(--spacing-6) var(--spacing-4);
+        text-align: center; cursor: pointer;
+        transition: all var(--transition-base); text-decoration: none; color: var(--gray-700);
+        display: flex; flex-direction: column; align-items: center; gap: var(--spacing-3);
+      }
+      .help-category-card:hover { border-color: var(--primary-red); box-shadow: var(--shadow-lg); transform: translateY(-4px); color: var(--primary-red); text-decoration: none; }
+      .help-category-icon { font-size: 36px; }
+      .help-category-name { font-weight: 700; font-size: var(--font-size-base); }
+      .help-category-count { font-size: var(--font-size-xs); color: var(--gray-500); }
+      .faq-section { margin-bottom: var(--spacing-10); }
+      .faq-section-title { font-size: var(--font-size-xl); font-weight: 700; color: var(--gray-900); margin-bottom: var(--spacing-4); display: flex; align-items: center; gap: var(--spacing-3); }
+      .faq-section-title i { color: var(--primary-red); }
+      .accordion-button:not(.collapsed) { background: var(--primary-red-light); color: var(--primary-red); box-shadow: none; }
+      .accordion-button:focus { box-shadow: none; }
+      .accordion-item { border: 2px solid var(--gray-200); border-radius: var(--radius-lg) !important; margin-bottom: var(--spacing-2); overflow: hidden; }
+      .accordion-button { font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <div id="navbar-placeholder"></div>
+
+    <section class="page-header-new">
+      <div class="container-fluid px-4">
+        <nav class="breadcrumb-nav" data-aos="fade-down">
+          <ol class="breadcrumb-list">
+            <li class="breadcrumb-item"><a href="../index.html"><i class="bi bi-house-door-fill"></i> Inicio</a></li>
+            <li class="breadcrumb-separator"><i class="bi bi-chevron-right"></i></li>
+            <li class="breadcrumb-item"><a href="./notificaciones.html">Mi Centro</a></li>
+            <li class="breadcrumb-separator"><i class="bi bi-chevron-right"></i></li>
+            <li class="breadcrumb-item active">Centro de Ayuda</li>
+          </ol>
+        </nav>
+        <div class="header-content" data-aos="fade-up">
+          <div class="header-left">
+            <h1 class="header-title">Centro de Ayuda</h1>
+            <p class="header-description">
+              <span class="badge-count">32 artículos</span>
+              <span class="separator">•</span>
+              <span class="text-muted">Encontrá respuestas a tus preguntas</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main class="main-content">
+
+      <!-- Search banner -->
+      <div class="help-search" data-aos="fade-up">
+        <h2>¿En qué podemos ayudarte?</h2>
+        <p>Buscá entre cientos de artículos y guías de ayuda</p>
+        <div class="search-help-box">
+          <input type="text" placeholder="Ej: cómo hacer un pedido, métodos de pago...">
+          <button><i class="bi bi-search me-2"></i>Buscar</button>
+        </div>
+      </div>
+
+      <div class="container-fluid px-4 pb-5">
+
+        <!-- Categories -->
+        <h2 class="fw-bold mb-4" data-aos="fade-up">Categorías populares</h2>
+        <div class="help-categories" data-aos="fade-up">
+          <a href="#pedidos" class="help-category-card">
+            <span class="help-category-icon">📦</span>
+            <span class="help-category-name">Pedidos</span>
+            <span class="help-category-count">8 artículos</span>
+          </a>
+          <a href="#pagos" class="help-category-card">
+            <span class="help-category-icon">💳</span>
+            <span class="help-category-name">Pagos</span>
+            <span class="help-category-count">6 artículos</span>
+          </a>
+          <a href="#cuenta" class="help-category-card">
+            <span class="help-category-icon">👤</span>
+            <span class="help-category-name">Mi cuenta</span>
+            <span class="help-category-count">7 artículos</span>
+          </a>
+          <a href="#envios" class="help-category-card">
+            <span class="help-category-icon">🚚</span>
+            <span class="help-category-name">Envíos</span>
+            <span class="help-category-count">5 artículos</span>
+          </a>
+          <a href="#devoluciones" class="help-category-card">
+            <span class="help-category-icon">🔄</span>
+            <span class="help-category-name">Devoluciones</span>
+            <span class="help-category-count">6 artículos</span>
+          </a>
+        </div>
+
+        <!-- FAQ Pedidos -->
+        <div class="faq-section" id="pedidos" data-aos="fade-up">
+          <div class="faq-section-title"><i class="bi bi-box-seam-fill"></i> Pedidos</div>
+          <div class="accordion" id="accordionPedidos">
+            <div class="accordion-item">
+              <h2 class="accordion-header"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#p1">¿Cómo realizo un pedido?</button></h2>
+              <div id="p1" class="accordion-collapse collapse show" data-bs-parent="#accordionPedidos">
+                <div class="accordion-body">Seleccioná el producto que querés comprar, hacé clic en "Agregar al carrito" y seguí los pasos del checkout. Necesitás tener una cuenta activa para finalizar tu compra.</div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#p2">¿Puedo modificar o cancelar un pedido?</button></h2>
+              <div id="p2" class="accordion-collapse collapse" data-bs-parent="#accordionPedidos">
+                <div class="accordion-body">Podés modificar o cancelar un pedido dentro de las primeras 2 horas de haberlo realizado, siempre que no haya sido despachado aún. Ingresá a "Mis Compras" y seleccioná la opción deseada.</div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#p3">¿Cómo rastreo mi pedido?</button></h2>
+              <div id="p3" class="accordion-collapse collapse" data-bs-parent="#accordionPedidos">
+                <div class="accordion-body">Una vez despachado tu pedido, recibirás un email con el número de seguimiento. También podés rastrearlo desde "Mis Compras" haciendo clic en "Rastrear envío".</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ Pagos -->
+        <div class="faq-section" id="pagos" data-aos="fade-up">
+          <div class="faq-section-title"><i class="bi bi-credit-card-fill"></i> Pagos</div>
+          <div class="accordion" id="accordionPagos">
+            <div class="accordion-item">
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pg1">¿Qué métodos de pago aceptan?</button></h2>
+              <div id="pg1" class="accordion-collapse collapse" data-bs-parent="#accordionPagos">
+                <div class="accordion-body">Aceptamos tarjetas de crédito y débito (Visa, Mastercard, American Express), transferencia bancaria, Mercado Pago y efectivo mediante Rapipago o Pago Fácil.</div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pg2">¿Tienen cuotas sin interés?</button></h2>
+              <div id="pg2" class="accordion-collapse collapse" data-bs-parent="#accordionPagos">
+                <div class="accordion-body">Sí, ofrecemos hasta 12 cuotas sin interés con tarjetas seleccionadas. La disponibilidad de cuotas varía según el banco emisor y el monto de la compra.</div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pg3">¿Cómo proceso una devolución?</button></h2>
+              <div id="pg3" class="accordion-collapse collapse" data-bs-parent="#accordionPagos">
+                <div class="accordion-body">Si tu compra califica para devolución, el reembolso se procesa en 3 a 5 días hábiles una vez recibido el producto. El dinero se acredita al mismo medio de pago utilizado.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ Cuenta -->
+        <div class="faq-section" id="cuenta" data-aos="fade-up">
+          <div class="faq-section-title"><i class="bi bi-person-circle"></i> Mi cuenta</div>
+          <div class="accordion" id="accordionCuenta">
+            <div class="accordion-item">
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#c1">¿Cómo cambio mi contraseña?</button></h2>
+              <div id="c1" class="accordion-collapse collapse" data-bs-parent="#accordionCuenta">
+                <div class="accordion-body">Ingresá a Mi Centro → Seguridad → Cambiar contraseña. Necesitarás tu contraseña actual para confirmar el cambio.</div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#c2">¿Cómo elimino mi cuenta?</button></h2>
+              <div id="c2" class="accordion-collapse collapse" data-bs-parent="#accordionCuenta">
+                <div class="accordion-body">Para eliminar tu cuenta contactate con nuestro equipo de soporte. Tené en cuenta que esta acción es irreversible y perderás todo tu historial de compras.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact CTA -->
+        <div class="text-center py-5" data-aos="fade-up">
+          <h4 class="fw-bold mb-3">¿No encontraste lo que buscabas?</h4>
+          <p class="text-muted mb-4">Nuestro equipo de soporte está listo para ayudarte</p>
+          <a href="./contacto.html" class="btn btn-primary btn-lg me-3">
+            <i class="bi bi-envelope me-2"></i>Contactar soporte
+          </a>
+          <a href="./reportar-problema.html" class="btn btn-outline-secondary btn-lg">
+            <i class="bi bi-flag me-2"></i>Reportar un problema
+          </a>
+        </div>
+
+      </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="../JS/utils.js"></script>
+    <script src="../JS/auth.js"></script>
+    <script src="../JS/cart.js"></script>
+    <script src="../JS/notifications.js"></script>
+    <script src="../JS/dropdown-fix.js"></script>
+    <script src="../JS/component-loader.js" defer></script>
+    <script>AOS.init({ duration: 800, once: true, offset: 100 });</script>
+  </body>
+</html>

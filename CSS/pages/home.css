@@ -990,16 +990,22 @@
 }
 
 @media (max-width: 768px) {
+  /*
+   * En tablet (480–768px): mantener 2 columnas en el flex-row.
+   * El 992px block ya activó flex-wrap + max-width: calc(50% - spacing-3).
+   * Aquí solo ajustamos el tamaño de gap para pantallas más pequeñas.
+   * El bloque de 480px (abajo) convierte a 1 columna con flex-direction: column.
+   */
   .products-section .products-row .product-card {
-    max-width: 100%;
+    max-width: calc(50% - var(--spacing-2));
   }
 
   .products-section .product-card {
-    min-height: 380px;
+    min-height: 360px;
   }
 
   .products-section .product-image-container {
-    height: 220px;
+    height: 200px;
   }
 
   .products-section .product-info {
@@ -1042,17 +1048,38 @@
 }
 
 @media (max-width: 480px) {
+  /* 1 columna: flex-direction: column ya activado en el bloque genérico de 480px */
   .products-section .products-row {
     gap: var(--spacing-4);
     margin-bottom: var(--spacing-4);
   }
 
+  /* En 1 columna el ancho es 100%, no necesitamos min-height artificial */
   .products-section .product-card {
-    min-height: 360px;
+    min-height: auto;
   }
 
   .products-section .product-image-container {
-    height: 200px;
+    height: 190px;
+  }
+
+  /* Legibilidad en 1 columna: info más compacta */
+  .products-section .product-info {
+    padding: var(--spacing-3) var(--spacing-3) var(--spacing-4);
+  }
+
+  .products-section .product-title {
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-2);
+    -webkit-line-clamp: 2;
+  }
+
+  .products-section .product-current-price {
+    font-size: var(--font-size-base);
+  }
+
+  .products-section .product-original-price {
+    font-size: var(--font-size-sm);
   }
 
   .products-section .badge-featured,

@@ -282,9 +282,6 @@ class ProductFilters {
           <i class="bi bi-search"></i>
           <h3>No encontramos productos</h3>
           <p>Intenta con otros términos de búsqueda o categorías</p>
-          <button class="btn btn-primary" onclick="productFilters.clearFilters()">
-            <i class="bi bi-arrow-clockwise me-2"></i>Limpiar filtros
-          </button>
         </div>
       </div>
     `;
@@ -475,11 +472,7 @@ class ProductFilters {
         </div>
         
         <div class="filter-actions">
-          <button class="btn btn-outline-danger btn-clear-filters" onclick="productFilters.clearFilters()">
-            <i class="bi bi-arrow-clockwise me-2"></i>
-            Limpiar filtros
-          </button>
-          <button class="btn btn-primary btn-apply-filters" onclick="productFilters.applyAdvancedFilters()">
+<button class="btn btn-primary btn-apply-filters" onclick="productFilters.applyAdvancedFilters()">
             <i class="bi bi-check-circle me-2"></i>
             Aplicar filtros
           </button>

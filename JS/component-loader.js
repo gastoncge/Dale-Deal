@@ -151,7 +151,9 @@ function initializeHeaderComponents() {
   if (notificationBtn) {
     notificationBtn.addEventListener('shown.bs.dropdown', () => {
       if (window.notificationManager) {
+        window.notificationManager.loadNotifications();
         window.notificationManager.renderNotifications();
+        window.notificationManager.updateBadge();
       }
     });
   }
@@ -191,7 +193,10 @@ async function loadAllComponents() {
   if (footerPlaceholder) {
     await loadComponent(`${basePath}footer.html`, 'footer-placeholder');
     // Esperar un poco para que el DOM se actualice
-    setTimeout(initializeNewsletterForm, 100);
+    setTimeout(() => {
+      initializeNewsletterForm();
+      if (typeof window.onFooterLoaded === 'function') window.onFooterLoaded();
+    }, 100);
   }
 
   DaleDeal.log('✓ Todos los componentes cargados');

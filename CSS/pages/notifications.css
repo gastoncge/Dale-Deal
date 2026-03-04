@@ -123,7 +123,7 @@ html, body {
 }
 
 /* ===== NAVBAR BADGES (consistent with other pages) ===== */
-.notification-badge,
+#notificationBadge,
 .cart-badge {
   position: absolute !important;
   top: -6px !important;
@@ -387,7 +387,7 @@ html, body {
 
 .notification-card.unread {
   border-color: var(--gray-200);
-  background: linear-gradient(to right, rgba(255, 128, 0, 0.02), var(--white));
+  background: var(--white);
 }
 
 .notification-card:hover {
@@ -459,19 +459,23 @@ html, body {
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .notification-badge {
   display: inline-flex;
   align-items: center;
-  padding: var(--spacing-1) var(--spacing-2);
-  background: var(--gradient-primary);
+  padding: 2px 6px;
+  background: var(--primary-red);
   color: var(--white);
-  border-radius: var(--radius-full);
-  font-size: var(--font-size-2xs);
+  border-radius: var(--radius-sm);
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  vertical-align: middle;
+  line-height: 1.4;
 }
 
 .notification-message {
@@ -479,6 +483,8 @@ html, body {
   color: var(--gray-700);
   line-height: 1.45;
   margin-bottom: var(--spacing-3);
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .notification-meta {
@@ -539,17 +545,16 @@ html, body {
   position: absolute;
   top: var(--spacing-3);
   right: var(--spacing-3);
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-md);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
   border: none;
-  background: var(--gray-100);
+  background: var(--gray-200);
   color: var(--gray-600);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all var(--transition-base);
   opacity: 0;
 }
 
@@ -560,7 +565,6 @@ html, body {
 .notification-close:hover {
   background: var(--error);
   color: var(--white);
-  transform: rotate(90deg);
 }
 
 /* ===== LOAD MORE ===== */
@@ -637,6 +641,67 @@ html, body {
   gap: var(--spacing-3);
   justify-content: center;
   flex-wrap: wrap;
+}
+
+/* ===== SIDEBAR EXTRA SECTIONS ===== */
+.sidebar-divider {
+  height: 1px;
+  background: var(--gray-200);
+  margin: var(--spacing-4) 0 var(--spacing-3);
+}
+
+.sidebar-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-400);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0 var(--spacing-2) var(--spacing-2);
+  margin: 0;
+}
+
+.sidebar-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-3) var(--spacing-4);
+  border: 2px solid transparent;
+  background: var(--gray-50);
+  color: var(--gray-700);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  text-decoration: none;
+  width: 100%;
+}
+
+.sidebar-nav-item i {
+  font-size: var(--font-size-lg);
+  color: var(--gray-500);
+  transition: all var(--transition-base);
+  margin-right: 0.5rem;
+}
+
+.sidebar-nav-item span {
+  flex: 1;
+}
+
+.sidebar-nav-item:hover {
+  background: var(--primary-red-light);
+  border-color: var(--primary-red);
+  transform: translateX(4px);
+  text-decoration: none;
+}
+
+.sidebar-nav-item:hover i {
+  color: var(--primary-red);
 }
 
 /* ===== FILTER CHIPS (kept for JS sync — not rendered in new layout) ===== */
@@ -834,6 +899,12 @@ html, body {
 }
 
 @media (max-width: 480px) {
+  /* Guarantee single-column layout on small phones */
+  .notifications-container {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-3);
+  }
+
   .page-header-new {
     padding: var(--spacing-3) 0 var(--spacing-4);
   }
@@ -893,9 +964,14 @@ html, body {
     line-height: 1.35;
   }
 
+  /* Truncate long messages at 3 lines on very small screens */
   .notification-message {
     font-size: var(--font-size-xs);
     line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .notification-meta {

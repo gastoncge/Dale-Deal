@@ -285,8 +285,7 @@
 
 .action-btn:hover {
   background: var(--gray-200);
-  color: var(--gray-900);
-  transform: translateY(-1px);
+  color: var(--primary-red);
 }
 
 .action-link {
@@ -317,7 +316,7 @@
 }
 
 /* ===== BADGES ===== */
-.notification-badge,
+#notificationBadge,
 .cart-badge {
   position: absolute;
   top: -6px;
@@ -343,6 +342,10 @@
 .profile-btn {
   padding: var(--spacing-2) var(--spacing-3) !important;
   gap: var(--spacing-2) !important;
+}
+
+.profile-btn:hover .profile-name {
+  color: var(--primary-red);
 }
 
 .profile-image {
@@ -1730,7 +1733,6 @@
   border-radius: 50%;
   cursor: pointer;
   font-size: var(--font-size-xs);
-  transition: all var(--transition-fast);
   opacity: 0;
 }
 
@@ -4048,7 +4050,7 @@
   }
 
   .cart-badge,
-  .notification-badge {
+  #notificationBadge {
     width: 18px;
     height: 18px;
     font-size: var(--font-size-2xs);

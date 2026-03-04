@@ -196,13 +196,8 @@
               </li>
               <li><hr class="dropdown-divider" /></li>
               <li>
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="./notificaciones.html#mi-perfil">
                   <i class="bi bi-person me-2"></i>Mi Perfil
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="#">
-                  <i class="bi bi-bag me-2"></i>Mis Compras
                 </a>
               </li>
               <li>
@@ -617,6 +612,20 @@
     <script src="../JS/product-carousel.js"></script>
     <script src="../JS/dropdown-fix.js"></script>
     <script src="../JS/component-loader.js" defer></script>
+    <script>
+      window.onFooterLoaded = function() {
+        const list = document.getElementById('footerCategoriesList');
+        if (!list) return;
+        list.innerHTML = `
+          <li><a href="./productos.html">Todos los productos</a></li>
+          <li><a href="./productos.html?category=electronics">Electrónica</a></li>
+          <li><a href="./productos.html?category=home">Hogar y Jardín</a></li>
+          <li><a href="./productos.html?category=fashion">Moda y Belleza</a></li>
+          <li><a href="./productos.html?category=sports">Deportes</a></li>
+          <li><a href="./productos.html?category=toys">Juguetes</a></li>
+        `;
+      };
+    </script>
 
     <!-- Product loaders -->
     <script src="../JS/api.js"></script>
@@ -820,19 +829,23 @@
         }
       }
 
-      @media (max-width: 576px) {
+      /* Breakpoint 480px: 2 columnas hasta 479px inclusive → 1 columna
+         (responsive.css ya lo fuerza con !important, esto queda como fallback) */
+      @media (max-width: 479px) {
         .products-grid {
           grid-template-columns: 1fr;
         }
       }
 
+      /* Ajustes de tarjeta en 2 columnas ≤ 768px */
       @media (max-width: 480px) {
+        /* En 2-col a 480px: mantener altura mínima para consistencia visual */
         .product-card {
-          min-height: 360px;
+          min-height: 340px;
         }
 
         .product-image-container {
-          height: 200px;
+          height: 180px;
         }
 
         .badge-featured,
@@ -868,6 +881,63 @@
 
         .empty-state-text {
           font-size: var(--font-size-sm);
+        }
+      }
+
+      /* ===== TARJETAS EN 1 COLUMNA (≤ 479px) ===== */
+      @media (max-width: 479px) {
+        /* En 1 columna el ancho es 100%: min-height artificial innecesario */
+        .product-card {
+          min-height: auto;
+        }
+
+        /* Imagen más corta para dejar espacio al contenido sin scroll */
+        .product-image-container {
+          height: 200px;
+        }
+
+        /* Imagen siempre cubre el contenedor sin deformarse */
+        .product-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+        }
+
+        /* Padding lateral reducido: texto no toca bordes de la tarjeta */
+        .product-info {
+          padding: var(--spacing-3) var(--spacing-3) var(--spacing-4);
+        }
+
+        /* Título más pequeño en 1 columna: cabe en 2 líneas cómodamente */
+        .product-title {
+          font-size: var(--font-size-sm);
+          margin-bottom: var(--spacing-2);
+          -webkit-line-clamp: 2;
+        }
+
+        /* Descripción resumida a 1 línea para ahorrar espacio */
+        .product-description {
+          font-size: var(--font-size-xs);
+          -webkit-line-clamp: 1;
+          margin-bottom: var(--spacing-2);
+        }
+
+        /* Precio legible sin ser dominante */
+        .product-current-price {
+          font-size: var(--font-size-base);
+          font-weight: 700;
+        }
+
+        .product-original-price {
+          font-size: var(--font-size-xs);
+        }
+
+        /* Rating compacto */
+        .product-rating {
+          font-size: var(--font-size-xs);
+          gap: var(--spacing-1);
+          margin-bottom: var(--spacing-1);
         }
       }
 

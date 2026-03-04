@@ -374,6 +374,14 @@ class NotificationsCenterManager {
         this.saveNotifications();
         this.updateFilterCounts();
         this.renderNotifications(false);
+
+        // Sincronizar dropdown
+        if (window.notificationManager) {
+          window.notificationManager.notifications = [...this.notifications];
+          window.notificationManager.renderNotifications();
+          window.notificationManager.updateCounter();
+          window.notificationManager.updateBadge();
+        }
       }
     }, 300);
   }
@@ -443,6 +451,14 @@ class NotificationsCenterManager {
     this.saveNotifications();
     this.updateFilterCounts();
     this.renderNotifications(false);
+
+    // Sincronizar dropdown si está disponible en la misma página
+    if (window.notificationManager) {
+      window.notificationManager.notifications = [];
+      window.notificationManager.renderNotifications();
+      window.notificationManager.updateCounter();
+      window.notificationManager.updateBadge();
+    }
 
     this.showToast(`${deletedCount} notificación${deletedCount > 1 ? 'es' : ''} eliminada${deletedCount > 1 ? 's' : ''}`, 'success');
   }

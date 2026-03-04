@@ -475,6 +475,66 @@
   text-decoration: underline;
 }
 
+.auth-empresa-section {
+  text-align: center;
+  margin-bottom: var(--spacing-4);
+}
+
+.auth-empresa-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--gray-700);
+  text-decoration: none;
+  border: 1.5px solid var(--gray-300);
+  border-radius: var(--radius-full);
+  padding: var(--spacing-2) var(--spacing-4);
+  transition: all var(--transition-base);
+}
+
+.auth-empresa-link:hover {
+  border-color: var(--primary-red);
+  color: var(--primary-red);
+  background: rgba(229,62,62,.05);
+}
+
+/* ===== RUBRO PRIORIDADES ===== */
+.rubro-prioridades {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-2);
+}
+
+.rubro-prioridad-option {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  color: var(--gray-700);
+  transition: all var(--transition-fast);
+}
+
+.rubro-prioridad-option:hover {
+  border-color: var(--primary-red);
+  color: var(--primary-red);
+}
+
+.rubro-prioridad-option input:checked ~ span {
+  color: var(--primary-red);
+  font-weight: 600;
+}
+
+.rubro-prioridad-option:has(input:checked) {
+  border-color: var(--primary-red);
+  background: rgba(229,62,62,.05);
+}
+
 /* ===== ENLACES DEL PIE ===== */
 .auth-footer-links {
   text-align: center;
@@ -801,6 +861,12 @@
     padding: var(--spacing-3);
   }
 
+  /* Wrapper at 90% width — centered, with breathing room on very small screens */
+  .auth-form-wrapper {
+    width: 90%;
+    margin: 0 auto;
+  }
+
   .auth-welcome-section {
     margin-bottom: var(--spacing-6);
   }
@@ -809,12 +875,21 @@
     font-size: var(--font-size-2xl);
   }
 
+  /* Inputs: ensure minimum 44px touch target (Apple HIG / WCAG 2.5.5) */
   .auth-form-floating .form-control {
     height: 52px;
+    min-height: 44px;
   }
 
+  /* Primary button: same touch target guarantee */
   .auth-btn-primary {
     height: 52px;
+    min-height: 44px;
+  }
+
+  /* Social buttons: ensure 44px touch target */
+  .auth-social-btn {
+    min-height: 44px;
   }
 
   .auth-login-options {

@@ -5,14 +5,24 @@
 
 /* =====================================================
    BREAKPOINT STRATEGY
-   320px  - Mobile small (iPhone SE, old Androids)
-   375px  - Mobile standard (iPhone 12/13/14)
-   768px  - Tablet (iPad portrait)
-   1024px - Laptop / Tablet landscape
-   1440px - Desktop large
+   320px  (xs) — Móvil pequeño: iPhone SE, Android compactos
+   480px  (sm) — Móvil estándar: iPhone 12-16, Pixel, Galaxy
+   768px  (md) — Tablet: iPad portrait, Android 10"
+   1024px (lg) — Laptop / Tablet landscape
+   1200px (xl) — Desktop estándar
    ===================================================== */
 
 /* ===== GLOBAL MOBILE FIXES ===== */
+
+/* Prevenir scroll horizontal en ambos niveles (body solo no basta en iOS) */
+html {
+  overflow-x: hidden;
+  min-width: 320px;
+}
+
+body {
+  min-width: 320px;
+}
 
 /* Prevent ANY horizontal overflow */
 *,
@@ -82,11 +92,148 @@ svg,
 
 /* Notification close button */
 .notification-close {
-  min-width: 44px;
-  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* ===== CONTAINER PADDING & BASE FONT SCALING ===== */
+
+/*
+ * Escala el font-size raíz a 15px en móvil pequeño/estándar (≤ 479px).
+ * Todos los valores rem se reducen proporcionalmente (÷16×15):
+ *   1rem → 15px, 0.875rem → ~13px, 1.25rem → ~18.75px
+ * Resultado: textos, paddings y márgenes en rem se comprimen
+ * automáticamente sin necesidad de redefinir cada regla.
+ */
+@media (max-width: 479px) {
+  html {
+    font-size: 15px;
+  }
+
+  /* Padding lateral de contenedores: texto nunca toca el borde */
+  .container,
+  .container-fluid {
+    padding-left: var(--container-px-xs, 1rem);
+    padding-right: var(--container-px-xs, 1rem);
+  }
+}
+
+/* Móvil mediano 480px–767px */
+@media (min-width: 480px) and (max-width: 767px) {
+  html {
+    font-size: 16px;
+  }
+
+  .container,
+  .container-fluid {
+    padding-left: var(--container-px-sm, 1.25rem);
+    padding-right: var(--container-px-sm, 1.25rem);
+  }
+}
+
+/* Tablet 768px–1023px */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .container,
+  .container-fluid {
+    padding-left: var(--container-px-md, 1.5rem);
+    padding-right: var(--container-px-md, 1.5rem);
+  }
+}
+
+/* ===== HAMBURGER BUTTON ===== */
+
+/*
+ * El botón hamburguesa se muestra en móvil (< 768px) y se oculta en desktop.
+ * La visibilidad la maneja Bootstrap d-md-none en el HTML.
+ * Aquí definimos forma, tamaño mínimo táctil y animación → X al abrir.
+ */
+.navbar-menu-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: var(--spacing-2);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-md, 8px);
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background var(--transition-fast, 0.15s);
+}
+
+.navbar-menu-toggle:hover {
+  background: var(--gray-200);
+}
+
+.navbar-menu-toggle span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--gray-700);
+  border-radius: 2px;
+  transition: transform var(--transition-base, 0.25s),
+              opacity var(--transition-fast, 0.15s);
+  transform-origin: center;
+}
+
+/* Animación hamburguesa → X cuando aria-expanded="true" */
+.navbar-menu-toggle[aria-expanded="true"] span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.navbar-menu-toggle[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.navbar-menu-toggle[aria-expanded="true"] span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ===== MOBILE NAV COLLAPSE MENU ===== */
+.nav-mobile-menu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  padding: var(--spacing-2) var(--container-px-xs, 1rem) var(--spacing-4);
+  border-top: 1px solid var(--gray-200);
+  background: var(--gray-50);
+}
+
+.nav-mobile-link {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-4);
+  color: var(--gray-700);
+  text-decoration: none;
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  border-radius: var(--radius-lg);
+  min-height: 44px;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.nav-mobile-link:hover,
+.nav-mobile-link:focus-visible {
+  background: var(--gray-100);
+  color: var(--primary-red);
+}
+
+.nav-mobile-link i {
+  font-size: var(--font-size-lg);
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* Desktop: asegurar que el collapse nunca sea visible aunque Bootstrap falle */
+@media (min-width: 768px) {
+  #navMobileLinks {
+    display: none !important;
+  }
 }
 
 /* ===== NAVBAR - MOBILE SMALL (320px-374px) ===== */
@@ -145,10 +292,24 @@ svg,
 
 /* ===== NAVBAR - MOBILE STANDARD (375px-767px) ===== */
 @media (max-width: 767px) {
-  .navbar .container-fluid {
+  /*
+   * Primera fila: [Logo] [Hamburger] [--auto--] [Iconos]
+   * - justify-content: flex-start + margin-left: auto en .navbar-actions
+   *   empuja los iconos a la derecha sin centrar el hamburger.
+   * - gap: spacing-2 da espacio entre logo y botón hamburguesa.
+   */
+  .navbar > .container-fluid {
     flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: var(--spacing-2);
   }
 
+  /* Iconos siempre a la derecha */
+  .navbar-actions {
+    margin-left: auto;
+  }
+
+  /* Segunda fila: barra de búsqueda a 100% del ancho */
   .search-container {
     order: 3;
     flex-basis: 100%;
@@ -156,7 +317,7 @@ svg,
     margin: var(--spacing-2) 0 0 0;
   }
 
-  /* Hide action text labels */
+  /* Ocultar etiquetas de texto de los action-links */
   .action-link .action-text {
     display: none;
   }
@@ -705,9 +866,70 @@ svg,
   }
 }
 
+/* ===== FOOTER - COLUMNA ÚNICA EN MÓVIL ===== */
+
+/*
+ * Bootstrap ya colapsa el grid a 1 columna en xs/sm (ningún col tiene col-sm-*).
+ * Lo que falta es:
+ *   1. row-gap entre secciones (el mb-4 de Bootstrap es suficiente en desktop
+ *      pero en 1-columna queremos control explícito).
+ *   2. footer-description sin max-width: 300px en móvil.
+ *   3. Stack del bottom bar cuando hay 1 columna.
+ */
+@media (max-width: 767px) {
+  /* Espacio vertical entre cada sección del footer en layout de 1 columna */
+  .footer .row {
+    row-gap: var(--spacing-6);
+  }
+
+  /* row-gap ya maneja el espaciado; anulamos el margin-bottom de .footer-section */
+  .footer-section {
+    margin-bottom: 0;
+  }
+
+  /* Descripción ocupa todo el ancho disponible (sin max-width: 300px) */
+  .footer-description {
+    max-width: 100%;
+  }
+
+  /* Bottom bar: copyright arriba, links legales abajo */
+  .footer-bottom-content .row {
+    row-gap: var(--spacing-4);
+  }
+
+  /* Centrar el contenido del bottom bar */
+  .footer-bottom-content [class*="col-"] {
+    text-align: center;
+  }
+}
+
+@media (max-width: 479px) {
+  /* Newsletter: padding lateral coherente con el resto del contenido */
+  .footer-newsletter {
+    padding: var(--spacing-5) var(--container-px-xs, 1rem);
+    margin: var(--spacing-8) 0 var(--spacing-6);
+  }
+
+  /* Stack del newsletter (título + form) en pantallas muy pequeñas */
+  .footer-newsletter .row {
+    row-gap: var(--spacing-4);
+  }
+
+  /* App badges en fila (no columna) para aprovechar el espacio */
+  .app-links {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+  }
+
+  .app-badge {
+    height: 36px;
+  }
+}
+
 /* ===== BADGE BALANCE FIX ===== */
 /* Numero mas legible dentro del globo sin verse apretado */
-.notification-badge,
+#notificationBadge,
 .cart-badge {
   font-size: var(--font-size-2xs);
   min-width: 20px;

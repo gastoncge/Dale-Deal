@@ -5,22 +5,17 @@
 class ProductPage {
   constructor() {
     this.currentProduct = null;
-    this.selectedColor = "blue";
-    this.selectedStorage = "256GB";
+    this.selectedColor = '';
+    this.selectedStorage = '';
     this.quantity = 1;
     this.currentImageIndex = 0;
-    this.images = [
-      "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=600&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1567581935884-3349723552ca?w=600&h=600&fit=crop",
-    ];
 
     this.init();
   }
 
   init() {
     this.loadProductData();
+    if (!this.currentProduct) return; // Abort if product not found
     this.setupEventListeners();
     this.setupImageGallery();
     this.updatePrice();
@@ -30,20 +25,32 @@ class ProductPage {
     this.saveToRecentlyViewed();
   }
 
+  // ── ID resolution: URL param → localStorage → fallback 1 ──────────────────
   loadProductData() {
-    // Get product ID from localStorage (set from index.html)
-    const productId = parseInt(localStorage.getItem('selectedProductId')) || 1;
-    
-    // Load product data from the global PRODUCTS_DATA
+    const params = new URLSearchParams(window.location.search);
+    const paramId = params.get('id');
+    const storedId = localStorage.getItem('selectedProductId');
+    const productId = parseInt(paramId || storedId) || 1;
+
+    // Keep localStorage in sync with the URL param (for legacy pages)
+    if (paramId) {
+      localStorage.setItem('selectedProductId', paramId);
+    }
+
     const productData = window.getProductById ? window.getProductById(productId) : null;
-    
+
     if (!productData) {
       DaleDeal.error('Product not found:', productId);
-      // Redirect back to home page
-      window.location.href = '../index.html';
+      if (window.DaleDeal?.utils?.showNotification) {
+        DaleDeal.utils.showNotification(
+          `Producto #${productId} no encontrado. Redirigiendo al inicio…`,
+          'error'
+        );
+      }
+      setTimeout(() => { window.location.href = '../index.html'; }, 2000);
       return;
     }
-    
+
     this.currentProduct = {
       id: productData.id,
       title: productData.title,
@@ -57,241 +64,252 @@ class ProductPage {
       salesCount: productData.soldCount,
       stock: productData.stock,
       description: productData.description,
-      features: productData.features,
-      specifications: productData.specifications,
-      badges: productData.badges,
+      features: productData.features || [],
+      specifications: productData.specifications || {},
+      badges: productData.badges || [],
       colors: {},
       storage: {},
       images: productData.images
     };
 
-    // Convert colors format
-    productData.colors.forEach(color => {
-      this.currentProduct.colors[color.value] = {
-        name: color.name,
-        price: 0,
-        color: color.color
-      };
+    // Convert arrays → keyed objects
+    productData.colors.forEach(c => {
+      this.currentProduct.colors[c.value] = { name: c.name, price: 0, color: c.color };
+    });
+    productData.storage.forEach(s => {
+      this.currentProduct.storage[s.size] = { name: s.size, price: s.price };
     });
 
-    // Convert storage format
-    productData.storage.forEach(storage => {
-      this.currentProduct.storage[storage.size] = {
-        name: storage.size,
-        price: storage.price
-      };
-    });
+    // Set default selections
+    const colorKeys = Object.keys(this.currentProduct.colors);
+    const storageKeys = Object.keys(this.currentProduct.storage);
+    this.selectedColor = colorKeys[0] || '';
+    // Prefer second storage option when multiple exist (mirrors product title e.g. "256GB")
+    this.selectedStorage = storageKeys.length > 1 ? storageKeys[1] : (storageKeys[0] || '');
 
-    // Update the page content
     this.updatePageContent();
   }
 
+  // ── Event listeners ────────────────────────────────────────────────────────
   setupEventListeners() {
-    // Selectores de color
-    document.querySelectorAll(".color-option").forEach((option) => {
-      option.addEventListener("click", (e) => {
-        this.selectColor(e.target.dataset.color);
+    // Color selectors
+    document.querySelectorAll('.color-option').forEach(option => {
+      option.addEventListener('click', (e) => {
+        this.selectColor(e.currentTarget.dataset.color);
       });
     });
 
-    // Selectores de almacenamiento
-    document.querySelectorAll(".storage-option").forEach((option) => {
-      option.addEventListener("click", (e) => {
-        this.selectStorage(e.target.dataset.storage);
+    // Storage selectors — use currentTarget so clicks on inner <span> still work
+    document.querySelectorAll('.storage-option').forEach(option => {
+      option.addEventListener('click', (e) => {
+        this.selectStorage(e.currentTarget.dataset.storage);
       });
     });
 
-    // Controles de cantidad
-    document.getElementById("decreaseBtn")?.addEventListener("click", () => {
-      this.changeQuantity(-1);
+    // Quantity controls
+    document.getElementById('decreaseBtn')?.addEventListener('click', () => this.changeQuantity(-1));
+    document.getElementById('increaseBtn')?.addEventListener('click', () => this.changeQuantity(1));
+    document.getElementById('quantityInput')?.addEventListener('change', (e) => {
+      this.setQuantity(parseInt(e.target.value) || 1);
     });
 
-    document.getElementById("increaseBtn")?.addEventListener("click", () => {
-      this.changeQuantity(1);
-    });
+    // Purchase buttons
+    document.querySelector('.btn-buy-now')?.addEventListener('click', () => this.buyNow());
+    document.querySelector('.btn-add-cart')?.addEventListener('click', () => this.addToCart());
 
-    document
-      .getElementById("quantityInput")
-      ?.addEventListener("change", (e) => {
-        this.setQuantity(Number.parseInt(e.target.value) || 1);
-      });
-
-    // Botones de acción
-    document.querySelector(".btn-buy-now")?.addEventListener("click", () => {
-      this.buyNow();
-    });
-
-    document.querySelector(".btn-add-cart")?.addEventListener("click", () => {
-      this.addToCart();
-    });
-
-    // El botón de wishlist se maneja ahora por el FavoritesManager
-    // No necesitamos agregar un listener aquí ya que usa event delegation
-
-    // Botón ver más productos similares
-    document.getElementById('viewMoreSimilarBtn')?.addEventListener('click', () => {
-      this.goToCategory();
-    });
+    // View more similar
+    document.getElementById('viewMoreSimilarBtn')?.addEventListener('click', () => this.goToCategory());
   }
 
+  // ── Page content update ────────────────────────────────────────────────────
   updatePageContent() {
-    // Update title
+    const p = this.currentProduct;
+
+    // Title
     const titleEl = document.querySelector('.product-title');
-    if (titleEl) titleEl.textContent = this.currentProduct.title;
+    if (titleEl) titleEl.textContent = p.title;
 
-    // Update breadcrumb
-    const breadcrumbCategory = document.querySelector('.breadcrumb-item:nth-child(2) a');
-    const breadcrumbSubcategory = document.querySelector('.breadcrumb-item:nth-child(3) a');
-    const breadcrumbProduct = document.querySelector('.breadcrumb-item.active');
-    if (breadcrumbCategory) breadcrumbCategory.textContent = this.currentProduct.category;
-    if (breadcrumbSubcategory) breadcrumbSubcategory.textContent = this.currentProduct.subcategory;
-    if (breadcrumbProduct) breadcrumbProduct.textContent = this.currentProduct.title;
+    // Breadcrumb
+    const bcCat = document.querySelector('.breadcrumb-item:nth-child(2) a');
+    const bcSub = document.querySelector('.breadcrumb-item:nth-child(3) a');
+    const bcActive = document.querySelector('.breadcrumb-item.active');
+    if (bcCat) bcCat.textContent = p.category;
+    if (bcSub) bcSub.textContent = p.subcategory;
+    if (bcActive) bcActive.textContent = p.title;
 
-    // Update meta title
-    document.title = `${this.currentProduct.title} - DALE DEAL`;
+    // SEO — dynamic title + meta tags
+    document.title = `${p.title} - DALE DEAL`;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      const preview = p.description.length > 120
+        ? p.description.substring(0, 120) + '…'
+        : p.description;
+      metaDesc.setAttribute('content',
+        `${p.title} al mejor precio. ${preview} Envío gratis y cuotas sin interés en Dale Deal.`
+      );
+    }
+    const metaKw = document.querySelector('meta[name="keywords"]');
+    if (metaKw) {
+      metaKw.setAttribute('content',
+        [p.title, p.category, p.subcategory, 'dale deal', 'marketplace Argentina'].join(', ')
+      );
+    }
 
-    // Update rating
+    // Rating
     const ratingText = document.querySelector('.rating-text');
     if (ratingText) {
-      ratingText.textContent = `${this.currentProduct.rating} (${this.currentProduct.reviewCount.toLocaleString()} reseñas)`;
+      ratingText.textContent = `${p.rating} (${p.reviewCount.toLocaleString('es-AR')} reseñas)`;
     }
+    const ratingStars = document.querySelector('.product-rating .stars');
+    if (ratingStars) ratingStars.innerHTML = this.renderProductStars(p.rating);
 
-    // Update sold count
-    const soldCount = document.querySelector('.product-sold span');
-    if (soldCount) {
-      soldCount.textContent = `+${this.currentProduct.salesCount} vendidos`;
-    }
+    // Sold count
+    const soldEl = document.querySelector('.product-sold span');
+    if (soldEl) soldEl.textContent = `+${p.salesCount} vendidos`;
 
-    // Update prices
+    // Prices
     const currentPriceEl = document.querySelector('.current-price');
+    if (currentPriceEl) currentPriceEl.textContent = this.formatPrice(p.basePrice);
+
     const originalPriceEl = document.querySelector('.original-price');
+    if (originalPriceEl) {
+      if (p.originalPrice) {
+        originalPriceEl.textContent = this.formatPrice(p.originalPrice);
+        originalPriceEl.style.display = '';
+      } else {
+        originalPriceEl.style.display = 'none';
+      }
+    }
+
     const discountBadgeEl = document.querySelector('.discount-badge');
-    
-    if (currentPriceEl) currentPriceEl.textContent = this.formatPrice(this.currentProduct.basePrice);
-    
-    if (this.currentProduct.originalPrice && originalPriceEl) {
-      originalPriceEl.textContent = this.formatPrice(this.currentProduct.originalPrice);
-      originalPriceEl.style.display = 'inline';
-    } else if (originalPriceEl) {
-      originalPriceEl.style.display = 'none';
+    if (discountBadgeEl) {
+      if (p.discount) {
+        discountBadgeEl.textContent = `${p.discount}% OFF`;
+        discountBadgeEl.style.display = '';
+      } else {
+        discountBadgeEl.style.display = 'none';
+      }
     }
 
-    if (this.currentProduct.discount && discountBadgeEl) {
-      discountBadgeEl.textContent = `${this.currentProduct.discount}% OFF`;
-      discountBadgeEl.style.display = 'inline';
-    } else if (discountBadgeEl) {
-      discountBadgeEl.style.display = 'none';
-    }
-
-    // Update installments
-    const installmentPrice = this.currentProduct.basePrice / 12;
-    const installmentsEl = document.querySelector('.installments strong');
+    // Installments
+    const installmentsEl = document.querySelector('.installments');
     if (installmentsEl) {
-      installmentsEl.textContent = this.formatPrice(installmentPrice);
+      installmentsEl.innerHTML = `Hasta <strong>12 cuotas sin interés</strong> de ${this.formatPrice(p.basePrice / 12)}`;
     }
 
-    // Update stock info
+    // Stock
     const stockInfo = document.querySelector('.stock-info');
-    if (stockInfo) {
-      stockInfo.textContent = `Stock disponible: ${this.currentProduct.stock} unidades`;
-    }
+    if (stockInfo) stockInfo.textContent = `Stock disponible: ${p.stock} unidades`;
 
-    // Update color options
+    // Quantity max
+    const qtyInput = document.getElementById('quantityInput');
+    if (qtyInput) qtyInput.max = Math.min(p.stock, 10);
+
+    // Options
     this.updateColorOptions();
-
-    // Update storage options
     this.updateStorageOptions();
 
-    // Update description and features
+    // Description & specs tabs
     this.updateDescriptionTab();
-    
-    // Update specifications
     this.updateSpecificationsTab();
+
+    // Reviews tab — update rating summary with real data
+    const overallRatingEl = document.querySelector('.overall-rating .rating-number');
+    if (overallRatingEl) overallRatingEl.textContent = p.rating;
+    const reviewCountEl = document.querySelector('.overall-rating .rating-count');
+    if (reviewCountEl) reviewCountEl.textContent = `${p.reviewCount.toLocaleString('es-AR')} reseñas`;
+    const reviewStarsEl = document.querySelector('.overall-rating .rating-stars');
+    if (reviewStarsEl) reviewStarsEl.innerHTML = this.renderProductStars(p.rating);
   }
 
+  // ── Color options ──────────────────────────────────────────────────────────
   updateColorOptions() {
-    const colorContainer = document.querySelector('.color-options');
-    if (!colorContainer) return;
+    const container = document.querySelector('.color-options');
+    if (!container) return;
 
-    colorContainer.innerHTML = '';
-    Object.keys(this.currentProduct.colors).forEach((colorKey, index) => {
-      const color = this.currentProduct.colors[colorKey];
-      const colorDiv = document.createElement('div');
-      colorDiv.className = `color-option ${index === 0 ? 'active' : ''}`;
-      colorDiv.dataset.color = colorKey;
-      colorDiv.style.background = color.color;
-      colorDiv.title = color.name;
-      
-      colorContainer.appendChild(colorDiv);
-      
-      if (index === 0) {
-        this.selectedColor = colorKey;
-      }
+    container.innerHTML = '';
+    const colorKeys = Object.keys(this.currentProduct.colors);
+    colorKeys.forEach((key, i) => {
+      const c = this.currentProduct.colors[key];
+      const div = document.createElement('div');
+      div.className = `color-option ${i === 0 ? 'active' : ''}`;
+      div.dataset.color = key;
+      div.style.background = c.color;
+      div.title = c.name;
+      container.appendChild(div);
     });
+    // selectedColor already set in loadProductData
   }
 
+  // ── Storage options ────────────────────────────────────────────────────────
   updateStorageOptions() {
-    const storageContainer = document.querySelector('.storage-options');
-    if (!storageContainer) return;
+    const container = document.querySelector('.storage-options');
+    if (!container) return;
 
-    storageContainer.innerHTML = '';
-    Object.keys(this.currentProduct.storage).forEach((storageKey, index) => {
-      const storage = this.currentProduct.storage[storageKey];
-      const storageDiv = document.createElement('div');
-      storageDiv.className = `storage-option ${index === 1 ? 'active' : ''}`; // Make second option active by default
-      storageDiv.dataset.storage = storageKey;
-      
-      const priceText = storage.price === 0 ? 'Base' : 
-                       storage.price > 0 ? `+${this.formatPrice(storage.price)}` : 
-                       this.formatPrice(storage.price);
-      
-      storageDiv.innerHTML = `
-        ${storageKey}
-        <span class="extra-cost">${priceText}</span>
-      `;
-      
-      storageContainer.appendChild(storageDiv);
-      
-      if (index === 1) { // Select second option by default
-        this.selectedStorage = storageKey;
-      }
+    const storageKeys = Object.keys(this.currentProduct.storage);
+    container.innerHTML = '';
+    storageKeys.forEach((key, i) => {
+      const s = this.currentProduct.storage[key];
+      const div = document.createElement('div');
+      // Edge case: single option → always active at index 0
+      const isActive = storageKeys.length === 1 ? i === 0 : i === 1;
+      div.className = `storage-option ${isActive ? 'active' : ''}`;
+      div.dataset.storage = key;
+      const priceText = s.price === 0
+        ? 'Base'
+        : s.price > 0 ? `+${this.formatPrice(s.price)}` : this.formatPrice(s.price);
+      div.innerHTML = `${key}<span class="extra-cost">${priceText}</span>`;
+      container.appendChild(div);
     });
+    // selectedStorage already set in loadProductData
   }
 
+  // ── Description tab — fully dynamic ───────────────────────────────────────
   updateDescriptionTab() {
-    // Update main description
-    const descriptionEl = document.querySelector('.description-content p');
-    if (descriptionEl) {
-      descriptionEl.textContent = this.currentProduct.description;
-    }
+    const descContent = document.querySelector('.description-content');
+    if (!descContent) return;
 
-    // Update features list
-    const featuresList = document.querySelector('.description-content ul');
-    if (featuresList && this.currentProduct.features) {
-      featuresList.innerHTML = '';
-      this.currentProduct.features.forEach(feature => {
-        const li = document.createElement('li');
-        li.textContent = feature;
-        featuresList.appendChild(li);
-      });
-    }
+    const p = this.currentProduct;
+    const icons = ['bi-camera', 'bi-cpu', 'bi-battery-charging', 'bi-wifi', 'bi-shield-check', 'bi-star'];
+
+    const featureCards = (p.features || []).slice(0, 3).map((feat, i) => {
+      const words = feat.split(' ');
+      const cardTitle = words.slice(0, 3).join(' ');
+      return `
+        <div class="feature-card">
+          <i class="bi ${icons[i] || 'bi-check-circle'}"></i>
+          <h5>${cardTitle}</h5>
+          <p>${feat}</p>
+        </div>`;
+    }).join('');
+
+    const featuresListHTML = (p.features || [])
+      .map(f => `<li>${f}</li>`)
+      .join('');
+
+    descContent.innerHTML = `
+      <h3>${p.title}</h3>
+      <p>${p.description}</p>
+      ${featuresListHTML ? `<h4>Características destacadas</h4><ul>${featuresListHTML}</ul>` : ''}
+      ${featureCards ? `<div class="feature-grid">${featureCards}</div>` : ''}
+    `;
   }
 
+  // ── Specifications tab — dynamic ───────────────────────────────────────────
   updateSpecificationsTab() {
     const specsContainer = document.querySelector('.specifications-content');
     if (!specsContainer || !this.currentProduct.specifications) return;
 
     specsContainer.innerHTML = '';
-    
     Object.keys(this.currentProduct.specifications).forEach(groupKey => {
       const group = this.currentProduct.specifications[groupKey];
       const groupDiv = document.createElement('div');
       groupDiv.className = 'spec-group';
-      
-      const groupTitle = document.createElement('h4');
-      groupTitle.textContent = this.getSpecGroupTitle(groupKey);
-      groupDiv.appendChild(groupTitle);
-      
+
+      const title = document.createElement('h4');
+      title.textContent = this.getSpecGroupTitle(groupKey);
+      groupDiv.appendChild(title);
+
       Object.keys(group).forEach(specKey => {
         const specDiv = document.createElement('div');
         specDiv.className = 'spec-item';
@@ -301,363 +319,230 @@ class ProductPage {
         `;
         groupDiv.appendChild(specDiv);
       });
-      
       specsContainer.appendChild(groupDiv);
     });
   }
 
   getSpecGroupTitle(key) {
-    const titles = {
-      screen: 'Pantalla',
-      display: 'Pantalla',
-      performance: 'Rendimiento',
-      camera: 'Cámara',
-      memory: 'Memoria',
-      audio: 'Audio',
-      battery: 'Batería',
-      connectivity: 'Conectividad',
-      video: 'Video',
-      smart: 'Smart TV'
+    const map = {
+      screen: 'Pantalla', display: 'Pantalla', performance: 'Rendimiento',
+      camera: 'Cámara', memory: 'Memoria', audio: 'Audio',
+      battery: 'Batería', connectivity: 'Conectividad', video: 'Video', smart: 'Smart TV'
     };
-    return titles[key] || key.charAt(0).toUpperCase() + key.slice(1);
+    return map[key] || key.charAt(0).toUpperCase() + key.slice(1);
   }
 
   getSpecLabel(key) {
-    const labels = {
-      size: 'Tamaño',
-      technology: 'Tecnología',
-      resolution: 'Resolución',
-      density: 'Densidad',
-      chip: 'Chip',
-      cpu: 'CPU',
-      gpu: 'GPU',
-      neuralEngine: 'Neural Engine',
-      ram: 'RAM',
-      storage: 'Almacenamiento',
-      main: 'Principal',
-      ultraWide: 'Ultra gran angular',
-      telephoto: 'Teleobjetivo',
-      opticalZoom: 'Zoom óptico',
-      telephoto1: 'Teleobjetivo 1',
-      telephoto2: 'Teleobjetivo 2',
-      drivers: 'Controladores',
-      frequency: 'Frecuencia',
-      impedance: 'Impedancia',
-      sensitivity: 'Sensibilidad',
-      listening: 'Escucha',
-      withCase: 'Con estuche',
-      talkTime: 'Tiempo de llamada',
-      charging: 'Carga rápida',
-      bluetooth: 'Bluetooth',
-      compatibility: 'Compatibilidad',
-      memory: 'Memoria',
-      frameRate: 'Tasa de frames',
-      rayTracing: 'Ray Tracing',
-      hdr: 'HDR',
-      output: 'Salida',
-      os: 'Sistema operativo',
-      wifi: 'Wi-Fi',
-      apps: 'Aplicaciones',
-      hdmi: 'HDMI',
-      usb: 'USB',
-      ethernet: 'Ethernet'
+    const map = {
+      size: 'Tamaño', technology: 'Tecnología', resolution: 'Resolución', density: 'Densidad',
+      chip: 'Chip', cpu: 'CPU', gpu: 'GPU', neuralEngine: 'Neural Engine',
+      ram: 'RAM', storage: 'Almacenamiento', main: 'Principal',
+      ultraWide: 'Ultra gran angular', telephoto: 'Teleobjetivo', opticalZoom: 'Zoom óptico',
+      telephoto1: 'Teleobjetivo 1', telephoto2: 'Teleobjetivo 2',
+      drivers: 'Controladores', frequency: 'Frecuencia', impedance: 'Impedancia',
+      sensitivity: 'Sensibilidad', listening: 'Escucha', withCase: 'Con estuche',
+      talkTime: 'Tiempo de llamada', charging: 'Carga rápida', bluetooth: 'Bluetooth',
+      compatibility: 'Compatibilidad', memory: 'Memoria', frameRate: 'Tasa de frames',
+      rayTracing: 'Ray Tracing', hdr: 'HDR', output: 'Salida', os: 'Sistema operativo',
+      wifi: 'Wi-Fi', apps: 'Aplicaciones', hdmi: 'HDMI', usb: 'USB', ethernet: 'Ethernet'
     };
-    return labels[key] || key.charAt(0).toUpperCase() + key.slice(1);
+    return map[key] || key.charAt(0).toUpperCase() + key.slice(1);
   }
 
+  // ── Image gallery ──────────────────────────────────────────────────────────
   setupImageGallery() {
-    if (!this.currentProduct.images) return;
+    if (!this.currentProduct?.images) return;
 
-    const mainImage = document.querySelector(".main-product-image");
-    const thumbnailContainer = document.querySelector(".thumbnail-container");
+    const mainImage = document.querySelector('.main-product-image');
+    const thumbnailContainer = document.querySelector('.thumbnail-container');
 
-    // Update main image
     if (mainImage && this.currentProduct.images.main) {
       mainImage.src = this.currentProduct.images.main;
+      mainImage.alt = this.currentProduct.title;
     }
 
-    // Update thumbnails
-    if (thumbnailContainer && this.currentProduct.images.thumbnails) {
+    if (thumbnailContainer && this.currentProduct.images.thumbnails?.length) {
       thumbnailContainer.innerHTML = '';
-      
-      this.currentProduct.images.thumbnails.forEach((thumb, index) => {
-        const imgEl = document.createElement('img');
-        imgEl.src = thumb;
-        imgEl.alt = `${this.currentProduct.title} - Vista ${index + 1}`;
-        imgEl.className = `thumbnail ${index === 0 ? 'active' : ''}`;
-        imgEl.dataset.full = this.currentProduct.images.gallery[index];
-        
-        imgEl.addEventListener('click', () => {
-          // Update main image
-          mainImage.src = this.currentProduct.images.gallery[index];
-          
-          // Update active thumbnail
+      this.currentProduct.images.thumbnails.forEach((thumb, i) => {
+        const img = document.createElement('img');
+        img.src = thumb;
+        img.alt = `${this.currentProduct.title} – Vista ${i + 1}`;
+        img.className = `thumbnail ${i === 0 ? 'active' : ''}`;
+        img.dataset.full = this.currentProduct.images.gallery[i] || thumb;
+
+        img.addEventListener('click', () => {
+          if (mainImage) {
+            mainImage.src = this.currentProduct.images.gallery[i] || thumb;
+          }
           thumbnailContainer.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
-          imgEl.classList.add('active');
+          img.classList.add('active');
+          this.currentImageIndex = i;
         });
-        
-        thumbnailContainer.appendChild(imgEl);
+        thumbnailContainer.appendChild(img);
       });
     }
 
-    // Update product badge if there's a discount
+    // Product badge (discount indicator on image)
     const badgeEl = document.querySelector('.product-badge');
-    if (badgeEl && this.currentProduct.discount) {
-      badgeEl.textContent = `${this.currentProduct.discount}% OFF`;
-    } else if (badgeEl) {
-      badgeEl.style.display = 'none';
+    if (badgeEl) {
+      if (this.currentProduct.discount) {
+        badgeEl.textContent = `${this.currentProduct.discount}% OFF`;
+        badgeEl.style.display = '';
+      } else {
+        badgeEl.style.display = 'none';
+      }
     }
   }
 
+  // ── Selectors ──────────────────────────────────────────────────────────────
   selectColor(color) {
-    if (!this.currentProduct.colors[color]) return;
-
+    if (!color || !this.currentProduct.colors[color]) return;
     this.selectedColor = color;
-
-    // Actualizar UI
-    document.querySelectorAll(".color-option").forEach((option) => {
-      option.classList.remove("active");
-    });
-    document.querySelector(`[data-color="${color}"]`)?.classList.add("active");
-
+    document.querySelectorAll('.color-option').forEach(o => o.classList.remove('active'));
+    document.querySelector(`[data-color="${color}"]`)?.classList.add('active');
     this.updatePrice();
-    this.showNotification(
-      `Color seleccionado: ${this.currentProduct.colors[color].name}`,
-      "info"
-    );
+    this.showNotification(`Color: ${this.currentProduct.colors[color].name}`, 'info');
   }
 
   selectStorage(storage) {
-    if (!this.currentProduct.storage[storage]) return;
-
+    if (!storage || !this.currentProduct.storage[storage]) return;
     this.selectedStorage = storage;
-
-    // Actualizar UI
-    document.querySelectorAll(".storage-option").forEach((option) => {
-      option.classList.remove("active");
-    });
-    document
-      .querySelector(`[data-storage="${storage}"]`)
-      ?.classList.add("active");
-
+    document.querySelectorAll('.storage-option').forEach(o => o.classList.remove('active'));
+    document.querySelector(`[data-storage="${storage}"]`)?.classList.add('active');
     this.updatePrice();
-    this.showNotification(`Almacenamiento seleccionado: ${storage}`, "info");
+    this.showNotification(`Almacenamiento: ${storage}`, 'info');
   }
 
-  changeQuantity(delta) {
-    const newQuantity = this.quantity + delta;
-    this.setQuantity(newQuantity);
-  }
+  // ── Quantity ───────────────────────────────────────────────────────────────
+  changeQuantity(delta) { this.setQuantity(this.quantity + delta); }
 
-  setQuantity(quantity) {
-    const maxQuantity = Math.min(this.currentProduct.stock, 10);
-    this.quantity = Math.max(1, Math.min(quantity, maxQuantity));
-
-    const input = document.getElementById("quantityInput");
-    if (input) {
-      input.value = this.quantity;
-    }
-
+  setQuantity(qty) {
+    const max = Math.min(this.currentProduct.stock, 10);
+    this.quantity = Math.max(1, Math.min(qty, max));
+    const input = document.getElementById('quantityInput');
+    if (input) input.value = this.quantity;
     this.updatePrice();
   }
 
+  // ── Price update ───────────────────────────────────────────────────────────
   updatePrice() {
-    const basePrice = this.currentProduct.basePrice;
-    const storagePrice =
-      this.currentProduct.storage[this.selectedStorage].price;
-    const colorPrice = this.currentProduct.colors[this.selectedColor].price;
-    const totalPrice = (basePrice + storagePrice + colorPrice) * this.quantity;
+    if (!this.currentProduct) return;
 
-    // Actualizar precio actual
-    const currentPriceEl = document.querySelector(".current-price");
-    if (currentPriceEl) {
-      currentPriceEl.textContent = this.formatPrice(totalPrice);
+    // Safety guards: reset selection to first valid option if stale
+    const storageKeys = Object.keys(this.currentProduct.storage);
+    if (!this.currentProduct.storage[this.selectedStorage]) {
+      this.selectedStorage = storageKeys.length > 1 ? storageKeys[1] : (storageKeys[0] || '');
+    }
+    const colorKeys = Object.keys(this.currentProduct.colors);
+    if (!this.currentProduct.colors[this.selectedColor]) {
+      this.selectedColor = colorKeys[0] || '';
     }
 
-    // Actualizar cuotas
-    const installmentPrice = totalPrice / 12;
-    const installmentsEl = document.querySelector(".installments .highlight");
+    const storagePrice = this.currentProduct.storage[this.selectedStorage]?.price || 0;
+    const colorPrice  = this.currentProduct.colors[this.selectedColor]?.price  || 0;
+    const totalPrice  = (this.currentProduct.basePrice + storagePrice + colorPrice) * this.quantity;
+
+    const currentPriceEl = document.querySelector('.current-price');
+    if (currentPriceEl) currentPriceEl.textContent = this.formatPrice(totalPrice);
+
+    // Rebuild installments text to avoid stale DOM references
+    const installmentsEl = document.querySelector('.installments');
     if (installmentsEl) {
-      installmentsEl.textContent = this.formatPrice(installmentPrice);
+      installmentsEl.innerHTML = `Hasta <strong>12 cuotas sin interés</strong> de ${this.formatPrice(totalPrice / 12)}`;
     }
   }
 
-  changeMainImage(index) {
-    if (index < 0 || index >= this.images.length) return;
-
-    this.currentImageIndex = index;
-
-    // Actualizar imagen principal
-    const mainImage = document.querySelector(".main-product-image");
-    if (mainImage) {
-      mainImage.style.opacity = "0";
-      setTimeout(() => {
-        mainImage.src = this.images[index];
-        mainImage.style.opacity = "1";
-      }, 150);
-    }
-
-    // Actualizar miniaturas activas
-    document.querySelectorAll(".thumbnail-item").forEach((thumb, i) => {
-      thumb.classList.toggle("active", i === index);
-    });
+  // ── Cart & Buy ─────────────────────────────────────────────────────────────
+  calculateUnitPrice() {
+    const storagePrice = this.currentProduct.storage[this.selectedStorage]?.price || 0;
+    const colorPrice   = this.currentProduct.colors[this.selectedColor]?.price   || 0;
+    return this.currentProduct.basePrice + storagePrice + colorPrice;
   }
 
   async addToCart() {
-    const button = document.querySelector(".btn-add-cart");
+    const button = document.querySelector('.btn-add-cart');
     this.setButtonLoading(button, true);
-
     try {
-      // Simular delay de API
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      const productData = {
+      await new Promise(resolve => setTimeout(resolve, 800));
+      const colorName = this.currentProduct.colors[this.selectedColor]?.name || this.selectedColor;
+      const cartItem = {
         id: `${this.currentProduct.id}-${this.selectedColor}-${this.selectedStorage}`,
-        title: `${this.currentProduct.title} - ${
-          this.currentProduct.colors[this.selectedColor].name
-        }`,
+        title: `${this.currentProduct.title} – ${colorName}`,
         price: this.calculateUnitPrice(),
-        image: this.images[this.currentImageIndex],
+        // Use the currently displayed gallery image (not a stale hardcoded array)
+        image: this.currentProduct.images.gallery[this.currentImageIndex]
+               || this.currentProduct.images.main,
         quantity: this.quantity,
         color: this.selectedColor,
         storage: this.selectedStorage,
       };
-
-      // Usar el CartManager global
       if (window.cartManager) {
-        window.cartManager.addItem(productData);
+        window.cartManager.addItem(cartItem);
       } else {
-        // Fallback si no está disponible
-        this.showNotification("Producto agregado al carrito", "success");
+        this.showNotification('Producto agregado al carrito', 'success');
       }
-    } catch (error) {
-      DaleDeal.error("Error agregando al carrito:", error);
-      this.showNotification("Error al agregar al carrito", "error");
+    } catch (err) {
+      DaleDeal.error('Error agregando al carrito:', err);
+      this.showNotification('Error al agregar al carrito', 'error');
     } finally {
       this.setButtonLoading(button, false);
     }
   }
 
   async buyNow() {
-    const button = document.querySelector(".btn-buy-now");
+    const button = document.querySelector('.btn-buy-now');
     this.setButtonLoading(button, true);
-
     try {
-      // Simular proceso de compra
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      this.showNotification("Redirigiendo al checkout...", "info");
-
-      // En una app real, aquí redirigirías al checkout
+      await new Promise(resolve => setTimeout(resolve, 1200));
+      this.showNotification('Redirigiendo al checkout…', 'info');
       setTimeout(() => {
-        DaleDeal.log("¡Gracias por tu compra! En una implementación real, aquí se procesaría el pago.");
+        DaleDeal.log('¡Checkout! En producción aquí se procesaría el pago.');
       }, 1000);
-    } catch (error) {
-      DaleDeal.error("Error en compra:", error);
-      this.showNotification("Error al procesar la compra", "error");
+    } catch (err) {
+      DaleDeal.error('Error en compra:', err);
+      this.showNotification('Error al procesar la compra', 'error');
     } finally {
       this.setButtonLoading(button, false);
     }
   }
 
+  // ── Favorites ──────────────────────────────────────────────────────────────
   updateFavoriteButton() {
-    // Esperar a que el FavoritesManager esté disponible
     setTimeout(() => {
-      if (window.favoritesManager) {
-        window.favoritesManager.updateWishlistButton();
-      }
-    }, 100);
+      if (window.favoritesManager) window.favoritesManager.updateWishlistButton();
+    }, 150);
   }
 
-  calculateUnitPrice() {
-    const basePrice = this.currentProduct.basePrice;
-    const storagePrice =
-      this.currentProduct.storage[this.selectedStorage].price;
-    const colorPrice = this.currentProduct.colors[this.selectedColor].price;
-    return basePrice + storagePrice + colorPrice;
-  }
-
-  formatPrice(price) {
-    // Usar la función global de utils si está disponible
-    if (window.DaleDeal?.utils?.formatPrice) {
-      return window.DaleDeal.utils.formatPrice(price);
-    }
-    
-    // Fallback
-    return new Intl.NumberFormat("es-AR", {
-      style: "currency",
-      currency: "ARS",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
-  }
-
-  setButtonLoading(button, isLoading) {
-    if (!button) return;
-
-    if (isLoading) {
-      button.classList.add("btn-loading");
-      button.disabled = true;
-    } else {
-      button.classList.remove("btn-loading");
-      button.disabled = false;
-    }
-  }
-
-  showNotification(message, type = "info") {
-    // Usar el sistema de notificaciones global si está disponible
-    if (window.DaleDeal?.utils?.showNotification) {
-      window.DaleDeal.utils.showNotification(message, type);
-      return;
-    }
-
-    // Fallback simple
-    DaleDeal.log(`[${type.toUpperCase()}] ${message}`);
-    
-    // Mostrar en consola como último recurso
-    if (type === "error") {
-      DaleDeal.error(`Error: ${message}`);
-    }
-  }
-
-  // Cargar productos similares
+  // ── Similar products ───────────────────────────────────────────────────────
   async loadSimilarProducts() {
     const similarGrid = document.getElementById('similarProductsGrid');
     if (!similarGrid || !this.currentProduct) return;
 
     try {
-      // Simular delay de carga
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Obtener productos de la misma categoría
+      await new Promise(resolve => setTimeout(resolve, 800));
       const allProducts = window.getAllProducts ? window.getAllProducts() : [];
-      const similarProducts = allProducts
-        .filter(product => 
-          product.category === this.currentProduct.category && 
-          product.id !== this.currentProduct.id
-        )
-        .slice(0, 4); // Mostrar máximo 4 productos
+      let similar = allProducts
+        .filter(p => p.category === this.currentProduct.category && p.id !== this.currentProduct.id)
+        .slice(0, 4);
 
-      if (similarProducts.length === 0) {
-        // Si no hay productos de la misma categoría, mostrar productos aleatorios
-        const randomProducts = allProducts
-          .filter(product => product.id !== this.currentProduct.id)
+      if (similar.length === 0) {
+        similar = allProducts
+          .filter(p => p.id !== this.currentProduct.id)
           .sort(() => 0.5 - Math.random())
           .slice(0, 4);
-        
-        this.renderSimilarProducts(randomProducts, true);
+        this.renderSimilarProducts(similar, true);
       } else {
-        this.renderSimilarProducts(similarProducts, false);
+        this.renderSimilarProducts(similar, false);
       }
-    } catch (error) {
-      DaleDeal.error('Error cargando productos similares:', error);
+    } catch (err) {
+      DaleDeal.error('Error cargando similares:', err);
       similarGrid.innerHTML = `
-        <div class="error-similar-products text-center py-5">
-          <i class="bi bi-exclamation-triangle display-4 text-warning mb-3"></i>
-          <h5 class="text-muted">Error cargando productos similares</h5>
-          <p class="text-muted">Inténtalo de nuevo más tarde</p>
-        </div>
-      `;
+        <div class="carousel-item active">
+          <div class="text-center py-5">
+            <i class="bi bi-exclamation-triangle display-4 text-warning mb-3"></i>
+            <p class="text-muted">Error cargando productos similares</p>
+          </div>
+        </div>`;
     }
   }
 
@@ -665,303 +550,182 @@ class ProductPage {
     const similarGrid = document.getElementById('similarProductsGrid');
     if (!similarGrid) return;
 
-    // Crear slides de carrusel - cada slide muestra múltiples productos
-    const productsPerSlide = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 4;
+    const pps = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 4;
     const slides = [];
-    
-    for (let i = 0; i < products.length; i += productsPerSlide) {
-      const slideProducts = products.slice(i, i + productsPerSlide);
-      const slideHTML = `
+    for (let i = 0; i < products.length; i += pps) {
+      const batch = products.slice(i, i + pps);
+      slides.push(`
         <div class="carousel-item ${i === 0 ? 'active' : ''}">
           <div class="row justify-content-center">
-            ${slideProducts.map(product => `
-              <div class="col-12 col-md-6 col-lg-3 mb-4 d-flex">
-                <div class="product-card similar-product-card w-100" data-id="${product.id}" data-clickable="true">
-                  <div class="product-image-container">
-                    <img
-                      src="${product.images.main}"
-                      alt="${product.title}"
-                      class="product-image"
-                    />
-                    ${product.discount ? `<div class="product-badges"><span class="badge-offer">-${product.discount}%</span></div>` : ''}
-                    <div class="product-actions">
-                      <button class="action-heart" title="Agregar a favoritos" data-product-id="${product.id}">
-                        <i class="bi bi-heart"></i>
-                      </button>
-                    </div>
-                  </div>
-                  <div class="product-info">
-                    <h3 class="product-title">${product.title}</h3>
-                    <p class="product-description">${product.description ? (product.description.length > 80 ? product.description.substring(0, 80) + '...' : product.description) : 'Producto de alta calidad con excelentes características.'}</p>
-
-                    <div class="product-meta-group">
-                      <div class="product-rating">
-                        <div class="stars">${this.renderProductStars(product.rating)}</div>
-                        <span class="reviews-count">(${product.reviewCount.toLocaleString('es-AR')})</span>
-                        ${product.shipping?.free ? `<span class="shipping-badge"><i class="bi bi-truck"></i> Envío gratis</span>` : ''}
-                      </div>
-                      <div class="product-location">
-                        <i class="bi bi-geo-alt-fill"></i>
-                        <span>CABA</span>
-                        ${product.shipping?.speed === 'today' ? `<span class="shipping-badge"><i class="bi bi-lightning-charge-fill"></i> Llega hoy</span>` : ''}
-                        ${product.shipping?.speed === 'tomorrow' ? `<span class="shipping-badge"><i class="bi bi-clock-fill"></i> Llega mañana</span>` : ''}
-                      </div>
-                    </div>
-
-                    <div class="product-pricing-wrapper">
-                      <div class="product-pricing">
-                        <span class="product-current-price">${this.formatPrice(product.price)}</span>
-                        ${product.originalPrice ? `<span class="product-original-price">${this.formatPrice(product.originalPrice)}</span>` : ''}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            `).join('')}
+            ${batch.map(p => this.renderProductCard(p)).join('')}
           </div>
           ${isRandom && i === 0 ? `
-            <div class="random-products-notice text-center mt-4">
+            <div class="text-center mt-3">
               <small class="text-muted">
                 <i class="bi bi-info-circle me-1"></i>
-                Mostrando productos recomendados ya que no hay productos similares disponibles
+                Productos recomendados
               </small>
-            </div>
-          ` : ''}
-        </div>
-      `;
-      slides.push(slideHTML);
+            </div>` : ''}
+        </div>`);
     }
-
     similarGrid.innerHTML = slides.join('');
-
-    // Mostrar/ocultar controles según la cantidad de slides
-    const carousel = document.getElementById('similarProductsCarousel');
-    const prevBtn = carousel.querySelector('.carousel-control-prev');
-    const nextBtn = carousel.querySelector('.carousel-control-next');
-    
-    if (slides.length <= 1) {
-      prevBtn.style.display = 'none';
-      nextBtn.style.display = 'none';
-    } else {
-      prevBtn.style.display = 'flex';
-      nextBtn.style.display = 'flex';
-    }
-
-    // Actualizar botones de favoritos
-    setTimeout(() => {
-      if (window.favoritesManager) {
-        window.favoritesManager.updateFavoriteButtons();
-      }
-    }, 100);
+    this._toggleCarouselControls('similarProductsCarousel', slides.length);
+    setTimeout(() => window.favoritesManager?.updateFavoriteButtons(), 100);
   }
 
-  renderProductStars(rating) {
-    let stars = '';
-    for (let i = 1; i <= 5; i++) {
-      if (i <= rating) {
-        stars += '<i class="bi bi-star-fill"></i>';
-      } else if (i - 0.5 <= rating) {
-        stars += '<i class="bi bi-star-half"></i>';
-      } else {
-        stars += '<i class="bi bi-star"></i>';
-      }
-    }
-    return stars;
-  }
-
-  renderShippingBadges(shipping) {
-    if (!shipping) return '';
-
-    let badgesHTML = '';
-
-    // Badge de envío gratis
-    if (shipping.free) {
-      badgesHTML += `
-        <div class="shipping-badge shipping-free">
-          <i class="bi bi-truck"></i>
-          <span>Envío gratis</span>
-        </div>
-      `;
-    }
-
-    // Badge de velocidad de entrega
-    if (shipping.speed === 'today') {
-      badgesHTML += `
-        <div class="shipping-badge shipping-fast">
-          <i class="bi bi-lightning-charge-fill"></i>
-          <span>Llega hoy</span>
-        </div>
-      `;
-    } else if (shipping.speed === 'tomorrow') {
-      badgesHTML += `
-        <div class="shipping-badge shipping-fast">
-          <i class="bi bi-clock-fill"></i>
-          <span>Llega mañana</span>
-        </div>
-      `;
-    }
-
-    return badgesHTML ? `<div class="shipping-badges">${badgesHTML}</div>` : '';
-  }
-
-  // Cargar productos vistos recientemente
+  // ── Recently viewed ────────────────────────────────────────────────────────
   loadRecentlyViewed() {
-    const recentlyViewedGrid = document.getElementById('recentlyViewedGrid');
-    if (!recentlyViewedGrid) return;
-
+    const grid = document.getElementById('recentlyViewedGrid');
+    if (!grid) return;
     try {
-      const recentProducts = this.getRecentlyViewed()
-        .filter(productId => productId !== this.currentProduct.id.toString()) // Excluir el producto actual
-        .slice(0, 4); // Mostrar máximo 4 productos
+      const recentIds = this.getRecentlyViewed()
+        .filter(id => id !== String(this.currentProduct.id))
+        .slice(0, 4);
 
-      if (recentProducts.length === 0) {
-        return; // Mantener el mensaje por defecto
-      }
+      if (!recentIds.length) return;
 
-      const productsData = recentProducts
-        .map(productId => window.getProductById ? window.getProductById(parseInt(productId)) : null)
-        .filter(product => product !== null);
+      const productsData = recentIds
+        .map(id => window.getProductById ? window.getProductById(parseInt(id)) : null)
+        .filter(Boolean);
 
-      if (productsData.length === 0) return;
-
-      this.renderRecentlyViewed(productsData);
-    } catch (error) {
-      DaleDeal.error('Error cargando productos vistos recientemente:', error);
+      if (productsData.length) this.renderRecentlyViewed(productsData);
+    } catch (err) {
+      DaleDeal.error('Error cargando recientes:', err);
     }
   }
 
   renderRecentlyViewed(products) {
-    const recentlyViewedGrid = document.getElementById('recentlyViewedGrid');
-    if (!recentlyViewedGrid) return;
+    const grid = document.getElementById('recentlyViewedGrid');
+    if (!grid) return;
 
-    // Crear slides de carrusel - cada slide muestra múltiples productos
-    const productsPerSlide = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 4;
+    const pps = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 4;
     const slides = [];
-    
-    for (let i = 0; i < products.length; i += productsPerSlide) {
-      const slideProducts = products.slice(i, i + productsPerSlide);
-      const slideHTML = `
+    for (let i = 0; i < products.length; i += pps) {
+      const batch = products.slice(i, i + pps);
+      slides.push(`
         <div class="carousel-item ${i === 0 ? 'active' : ''}">
           <div class="row justify-content-center">
-            ${slideProducts.map(product => `
-              <div class="col-12 col-md-6 col-lg-3 mb-4 d-flex">
-                <div class="product-card recent-product-card w-100" data-id="${product.id}" data-clickable="true">
-                  <div class="product-image-container">
-                    <img
-                      src="${product.images.main}"
-                      alt="${product.title}"
-                      class="product-image"
-                    />
-                    <div class="recently-viewed-badge">
-                      <i class="bi bi-clock-history"></i>
-                    </div>
-                    <div class="product-actions">
-                      <button class="action-heart" title="Agregar a favoritos" data-product-id="${product.id}">
-                        <i class="bi bi-heart"></i>
-                      </button>
-                    </div>
-                  </div>
-                  <div class="product-info">
-                    <h3 class="product-title">${product.title}</h3>
-                    <p class="product-description">${product.description ? (product.description.length > 80 ? product.description.substring(0, 80) + '...' : product.description) : 'Producto de alta calidad con excelentes características.'}</p>
+            ${batch.map(p => this.renderProductCard(p, true)).join('')}
+          </div>
+        </div>`);
+    }
+    grid.innerHTML = slides.join('');
+    this._toggleCarouselControls('recentlyViewedCarousel', slides.length);
+    setTimeout(() => window.favoritesManager?.updateFavoriteButtons(), 100);
+  }
 
-                    <div class="product-meta-group">
-                      <div class="product-rating">
-                        <div class="stars">${this.renderProductStars(product.rating)}</div>
-                        <span class="reviews-count">(${product.reviewCount.toLocaleString('es-AR')})</span>
-                        ${product.shipping?.free ? `<span class="shipping-badge"><i class="bi bi-truck"></i> Envío gratis</span>` : ''}
-                      </div>
-                      <div class="product-location">
-                        <i class="bi bi-geo-alt-fill"></i>
-                        <span>CABA</span>
-                        ${product.shipping?.speed === 'today' ? `<span class="shipping-badge"><i class="bi bi-lightning-charge-fill"></i> Llega hoy</span>` : ''}
-                        ${product.shipping?.speed === 'tomorrow' ? `<span class="shipping-badge"><i class="bi bi-clock-fill"></i> Llega mañana</span>` : ''}
-                      </div>
-                    </div>
-
-                    <div class="product-pricing-wrapper">
-                      <div class="product-pricing">
-                        <span class="product-current-price">${this.formatPrice(product.price)}</span>
-                        ${product.originalPrice ? `<span class="product-original-price">${this.formatPrice(product.originalPrice)}</span>` : ''}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+  // ── Shared card renderer (similar & recent) ────────────────────────────────
+  renderProductCard(product, isRecent = false) {
+    const desc = product.description
+      ? (product.description.length > 80 ? product.description.substring(0, 80) + '…' : product.description)
+      : 'Producto de alta calidad.';
+    return `
+      <div class="col-12 col-md-6 col-lg-3 mb-4 d-flex">
+        <div class="product-card ${isRecent ? 'recent-product-card' : 'similar-product-card'} w-100"
+             data-id="${product.id}" data-clickable="true">
+          <div class="product-image-container">
+            <img src="${product.images.main}" alt="${product.title}" class="product-image" />
+            ${product.discount ? `<div class="product-badges"><span class="badge-offer">-${product.discount}%</span></div>` : ''}
+            ${isRecent ? `<div class="recently-viewed-badge"><i class="bi bi-clock-history"></i></div>` : ''}
+            <div class="product-actions">
+              <button class="action-heart" title="Agregar a favoritos" data-product-id="${product.id}">
+                <i class="bi bi-heart"></i>
+              </button>
+            </div>
+          </div>
+          <div class="product-info">
+            <h3 class="product-title">${product.title}</h3>
+            <p class="product-description">${desc}</p>
+            <div class="product-meta-group">
+              <div class="product-rating">
+                <div class="stars">${this.renderProductStars(product.rating)}</div>
+                <span class="reviews-count">(${product.reviewCount.toLocaleString('es-AR')})</span>
               </div>
-            `).join('')}
+            </div>
+            <div class="product-pricing-wrapper">
+              <div class="product-pricing">
+                <span class="product-current-price">${this.formatPrice(product.price)}</span>
+                ${product.originalPrice ? `<span class="product-original-price">${this.formatPrice(product.originalPrice)}</span>` : ''}
+              </div>
+            </div>
           </div>
         </div>
-      `;
-      slides.push(slideHTML);
-    }
-
-    recentlyViewedGrid.innerHTML = slides.join('');
-
-    // Mostrar/ocultar controles según la cantidad de slides
-    const carousel = document.getElementById('recentlyViewedCarousel');
-    const prevBtn = carousel.querySelector('.carousel-control-prev');
-    const nextBtn = carousel.querySelector('.carousel-control-next');
-    
-    if (slides.length <= 1) {
-      prevBtn.style.display = 'none';
-      nextBtn.style.display = 'none';
-    } else {
-      prevBtn.style.display = 'flex';
-      nextBtn.style.display = 'flex';
-    }
-
-    // Actualizar botones de favoritos
-    setTimeout(() => {
-      if (window.favoritesManager) {
-        window.favoritesManager.updateFavoriteButtons();
-      }
-    }, 100);
+      </div>`;
   }
 
-  // Guardar producto actual en productos vistos recientemente
+  _toggleCarouselControls(carouselId, slideCount) {
+    const carousel = document.getElementById(carouselId);
+    if (!carousel) return;
+    const show = slideCount > 1;
+    carousel.querySelector('.carousel-control-prev').style.display = show ? 'flex' : 'none';
+    carousel.querySelector('.carousel-control-next').style.display = show ? 'flex' : 'none';
+  }
+
+  // ── Recently viewed persistence ────────────────────────────────────────────
   saveToRecentlyViewed() {
     if (!this.currentProduct) return;
-
     try {
-      const productId = this.currentProduct.id.toString();
-      let recentProducts = this.getRecentlyViewed();
-      
-      // Remover el producto si ya existe
-      recentProducts = recentProducts.filter(id => id !== productId);
-      
-      // Agregar al inicio
-      recentProducts.unshift(productId);
-      
-      // Mantener solo los últimos 10 productos
-      recentProducts = recentProducts.slice(0, 10);
-      
-      localStorage.setItem('daledealt_recently_viewed', JSON.stringify(recentProducts));
-    } catch (error) {
-      DaleDeal.error('Error guardando producto en vistos recientemente:', error);
+      const id = String(this.currentProduct.id);
+      let recent = this.getRecentlyViewed().filter(x => x !== id);
+      recent.unshift(id);
+      localStorage.setItem('daledealt_recently_viewed', JSON.stringify(recent.slice(0, 10)));
+    } catch (err) {
+      DaleDeal.error('Error guardando reciente:', err);
     }
   }
 
-  // Obtener productos vistos recientemente
   getRecentlyViewed() {
     try {
-      const recent = localStorage.getItem('daledealt_recently_viewed');
-      return recent ? JSON.parse(recent) : [];
-    } catch (error) {
-      DaleDeal.error('Error cargando productos vistos recientemente:', error);
+      const raw = localStorage.getItem('daledealt_recently_viewed');
+      return raw ? JSON.parse(raw) : [];
+    } catch {
       return [];
     }
   }
 
-  // Ir a la página de categoría
+  // ── Category navigation ────────────────────────────────────────────────────
   goToCategory() {
-    // En una implementación real, esto navegar a una página de categoría
-    // Por ahora, vamos al inicio y podríamos filtrar por categoría
-    localStorage.setItem('filterCategory', this.currentProduct.category);
-    window.location.href = '../index.html';
+    // Navigate to productos.html filtered by category
+    window.location.href =
+      `./productos.html?category=${encodeURIComponent(this.currentProduct.category)}`;
+  }
+
+  // ── Stars renderer ─────────────────────────────────────────────────────────
+  renderProductStars(rating) {
+    let html = '';
+    for (let i = 1; i <= 5; i++) {
+      if (i <= rating)          html += '<i class="bi bi-star-fill"></i>';
+      else if (i - 0.5 <= rating) html += '<i class="bi bi-star-half"></i>';
+      else                        html += '<i class="bi bi-star"></i>';
+    }
+    return html;
+  }
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+  formatPrice(price) {
+    if (window.DaleDeal?.utils?.formatPrice) return window.DaleDeal.utils.formatPrice(price);
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency', currency: 'ARS',
+      minimumFractionDigits: 0, maximumFractionDigits: 0
+    }).format(price);
+  }
+
+  setButtonLoading(button, isLoading) {
+    if (!button) return;
+    button.classList.toggle('btn-loading', isLoading);
+    button.disabled = isLoading;
+  }
+
+  showNotification(message, type = 'info') {
+    if (window.DaleDeal?.utils?.showNotification) {
+      window.DaleDeal.utils.showNotification(message, type);
+      return;
+    }
+    DaleDeal.log(`[${type.toUpperCase()}] ${message}`);
   }
 }
 
-// Inicializar cuando el DOM esté listo
-document.addEventListener("DOMContentLoaded", () => {
+// ── Bootstrap ────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
   new ProductPage();
 });

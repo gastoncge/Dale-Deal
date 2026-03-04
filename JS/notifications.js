@@ -118,7 +118,11 @@ class NotificationManager {
     });
 
     // Actualizar el dropdown cuando se abre
-    document.getElementById('notificationBtn')?.addEventListener('shown.bs.dropdown', () => this.renderNotifications());
+    document.getElementById('notificationBtn')?.addEventListener('shown.bs.dropdown', () => {
+      this.loadNotifications();
+      this.renderNotifications();
+      this.updateBadge();
+    });
   }
 
   // Manejar cambio de filtros
