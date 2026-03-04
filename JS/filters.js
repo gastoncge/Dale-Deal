@@ -115,12 +115,6 @@ class ProductFilters {
     // Botón de filtros avanzados
     document.getElementById('filterBtn')?.addEventListener('click', () => this.showAdvancedFilters());
 
-    // Botón de limpiar filtros
-    document.getElementById('clearFiltersBtn')?.addEventListener('click', () => this.clearFilters());
-
-    // Actualizar visibilidad del botón de limpiar
-    this.updateClearButtonVisibility();
-
     // Listener para resize de ventana
     window.addEventListener('resize', () => {
       this.renderProducts();
@@ -232,8 +226,6 @@ class ProductFilters {
     if (this.products.length === 0) {
       this.showNoResults();
     } else {
-      this.hideNoResults();
-      
       // Organizar productos en filas (responsive)
       let productsPerRow = 3;
       if (window.innerWidth <= 480) {
@@ -289,10 +281,6 @@ class ProductFilters {
   }
 
   // Ocultar mensaje sin resultados
-  hideNoResults() {
-    // No necesario ya que limpiamos todo el contenedor en renderProducts
-  }
-
   // Actualizar contador de resultados
   updateResultsCounter() {
     let counterEl = document.getElementById('resultsCounter');
@@ -704,13 +692,6 @@ class ProductFilters {
       return;
     }
 
-    // Animación del botón
-    const clearBtn = document.getElementById('clearFiltersBtn');
-    if (clearBtn) {
-      clearBtn.classList.add('clearing');
-      clearBtn.innerHTML = '<i class="bi bi-arrow-clockwise me-2 spinning"></i>Limpiando...';
-    }
-
     // Limpiar filtros después de animación
     setTimeout(() => {
       this.currentCategory = 'all';
@@ -727,34 +708,8 @@ class ProductFilters {
       this.filterAndRender();
       this.closeModal();
 
-      // Restaurar botón
-      if (clearBtn) {
-        clearBtn.classList.remove('clearing');
-        clearBtn.innerHTML = '<i class="bi bi-arrow-clockwise me-2"></i>Limpiar';
-      }
     }, 800);
   }
-
-  // Actualizar visibilidad del botón limpiar
-  updateClearButtonVisibility() {
-    const clearBtn = document.getElementById('clearFiltersBtn');
-    if (!clearBtn) return;
-
-    const hasFilters = this.currentCategory !== 'all' || 
-                      this.currentSort !== 'featured' || 
-                      this.searchQuery !== '';
-
-    if (hasFilters) {
-      clearBtn.style.opacity = '1';
-      clearBtn.style.pointerEvents = 'auto';
-      clearBtn.style.transform = 'scale(1)';
-    } else {
-      clearBtn.style.opacity = '0.5';
-      clearBtn.style.pointerEvents = 'none';
-      clearBtn.style.transform = 'scale(0.95)';
-    }
-  }
-
 
   // Obtener nombre de categoría
   getCategoryName() {

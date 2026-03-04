@@ -466,7 +466,7 @@
       <!-- Services Section -->
       <section class="services-section">
         <div class="container">
-          <div class="section-header text-center mb-5" data-aos="fade-up">
+          <div class="section-header text-center mb-5">
             <h2 class="section-title">Servicios Destacados</h2>
           </div>
 
@@ -1473,11 +1473,7 @@
         });
 
         document.getElementById('heroServiceBtn')?.addEventListener('click', () => {
-          // Scroll a servicios y mostrar modal de reserva
           document.querySelector('.services-section')?.scrollIntoView({ behavior: 'smooth' });
-          setTimeout(() => {
-            console.log('Funcionalidad de reserva de citas - Por implementar');
-          }, 800);
         });
 
         // Filtros de servicios

@@ -2762,7 +2762,7 @@
             }, 100);
 
           } catch (error) {
-            console.error('Error loading products:', error);
+            DaleDeal.error('Error loading products:', error);
             this.showLoading(false);
             this.showError('Error al cargar los productos. Por favor, intenta nuevamente.');
           }

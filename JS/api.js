@@ -43,51 +43,6 @@ async function fetchProducts() {
 }
 
 /**
- * Obtiene un producto específico por su ID
- * @param {number|string} productId - ID del producto a buscar
- * @returns {Promise<Object|null>} Producto encontrado o null
- */
-async function fetchProductById(productId) {
-  try {
-    const products = await fetchProducts();
-    return products.find(p => p.id === Number(productId)) || null;
-  } catch (error) {
-    DaleDeal.error(`Error al buscar producto ${productId}:`, error.message);
-    throw error;
-  }
-}
-
-/**
- * Filtra productos por categoría
- */
-async function fetchProductsByCategory(category) {
-  try {
-    const products = await fetchProducts();
-    return products.filter(p =>
-      p.category.toLowerCase() === category.toLowerCase()
-    );
-  } catch (error) {
-    DaleDeal.error('Error al filtrar por categoría:', error.message);
-    throw error;
-  }
-}
-
-/**
- * Filtra productos por subcategoría
- */
-async function fetchProductsBySubcategory(subcategory) {
-  try {
-    const products = await fetchProducts();
-    return products.filter(p =>
-      p.subcategory.toLowerCase() === subcategory.toLowerCase()
-    );
-  } catch (error) {
-    DaleDeal.error('Error al filtrar por subcategoría:', error.message);
-    throw error;
-  }
-}
-
-/**
  * Busca productos por término de búsqueda
  */
 async function searchProducts(searchTerm) {
@@ -107,58 +62,11 @@ async function searchProducts(searchTerm) {
   }
 }
 
-/**
- * Obtiene productos con descuento
- */
-async function fetchDiscountedProducts() {
-  try {
-    const products = await fetchProducts();
-    return products.filter(p => p.discount && p.discount > 0);
-  } catch (error) {
-    DaleDeal.error('Error al obtener productos con descuento:', error.message);
-    throw error;
-  }
-}
-
-/**
- * Ordena productos por precio
- */
-async function fetchProductsSortedByPrice(order = 'asc') {
-  try {
-    const products = await fetchProducts();
-    return [...products].sort((a, b) => {
-      return order === 'asc' ? a.price - b.price : b.price - a.price;
-    });
-  } catch (error) {
-    DaleDeal.error('Error al ordenar productos:', error.message);
-    throw error;
-  }
-}
-
-/**
- * Obtiene productos disponibles en stock
- */
-async function fetchProductsInStock() {
-  try {
-    const products = await fetchProducts();
-    return products.filter(p => p.stock > 0);
-  } catch (error) {
-    DaleDeal.error('Error al obtener productos en stock:', error.message);
-    throw error;
-  }
-}
-
 // Exportar funciones para uso global
 if (typeof window !== 'undefined') {
   window.DaleDeal = window.DaleDeal || {};
   window.DaleDeal.api = {
     fetchProducts,
-    fetchProductById,
-    fetchProductsByCategory,
-    fetchProductsBySubcategory,
     searchProducts,
-    fetchDiscountedProducts,
-    fetchProductsSortedByPrice,
-    fetchProductsInStock
   };
 }

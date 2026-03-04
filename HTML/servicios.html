@@ -2665,10 +2665,8 @@
             this.bindFilterEvents();
             this.renderFilteredServices();
 
-            console.log('✓ ServiceCatalog initialized');
-
           } catch (error) {
-            console.error('Error loading services:', error);
+            DaleDeal.error('Error loading services:', error);
             this.showError('Error al cargar los servicios. Por favor, intenta nuevamente.');
           }
         }
@@ -3185,7 +3183,6 @@
 
           card.addEventListener('click', (e) => {
             if (e.target.closest('.action-heart')) return;
-            console.log(`Service clicked: ${service.id}`);
           });
 
           return card;
