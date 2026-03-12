@@ -17,7 +17,7 @@
     <meta name="author" content="Dale Deal" />
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="./IMG/LOGO.png" type="image/x-icon" />
+    <link rel="icon" href="./IMG/LOGO.png" type="image/png" />
 
     <!-- Bootstrap CSS -->
     <link
@@ -80,6 +80,14 @@
             <a href="./HTML/servicios.html" class="action-link" title="Servicios Profesionales">
               <i class="bi bi-tools me-1"></i>
               <span class="action-text">Servicios</span>
+            </a>
+          </div>
+
+          <!-- Publicar Button -->
+          <div class="action-item d-none d-md-flex">
+            <a href="./HTML/publicar.html" class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-3" title="Publicar producto o servicio" style="border-radius: 20px; font-weight: 600;">
+              <i class="bi bi-plus-circle-fill"></i>
+              <span>Publicar</span>
             </a>
           </div>
 
@@ -279,7 +287,7 @@
                     <div class="col-lg-6">
                       <div class="hero-image" data-aos="fade-left">
                         <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop" 
-                             alt="Dale Deal Marketplace" class="img-fluid rounded-3xl">
+                             alt="Dale Deal Marketplace" class="img-fluid rounded-4">
                       </div>
                     </div>
                   </div>
@@ -320,7 +328,7 @@
                     <div class="col-lg-6">
                       <div class="hero-image" data-aos="fade-left">
                         <img src="https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=600&h=400&fit=crop" 
-                             alt="Ofertas del día" class="img-fluid rounded-3xl">
+                             alt="Ofertas del día" class="img-fluid rounded-4">
                       </div>
                     </div>
                   </div>
@@ -362,7 +370,7 @@
                     <div class="col-lg-6">
                       <div class="hero-image" data-aos="fade-left">
                         <img src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=400&fit=crop" 
-                             alt="iPhone 15 Pro Max" class="img-fluid rounded-3xl">
+                             alt="iPhone 15 Pro Max" class="img-fluid rounded-4">
                       </div>
                     </div>
                   </div>
@@ -407,7 +415,7 @@
                     <div class="col-lg-6">
                       <div class="hero-image" data-aos="fade-left">
                         <img src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=600&h=400&fit=crop" 
-                             alt="Instalación Técnica" class="img-fluid rounded-3xl">
+                             alt="Instalación Técnica" class="img-fluid rounded-4">
                       </div>
                     </div>
                   </div>
@@ -1364,12 +1372,6 @@
     <script src="./JS/pages/home.js"></script>
 
     <script>
-      // Product navigation function
-      function goToProduct(productId) {
-        // Delegate to global utility (URL param + localStorage fallback)
-        window.goToProduct(productId);
-      }
-
       // Initialize AOS
       AOS.init({
         duration: 800,
@@ -1402,8 +1404,7 @@
         }
       };
 
-      // Apply to all newsletter forms
-      document.getElementById('newsletterForm')?.addEventListener('submit', handleNewsletterSubmit);
+      // Apply to footer newsletter form
       document.getElementById('footerNewsletterForm')?.addEventListener('submit', handleNewsletterSubmit);
 
       // Initialize notifications dropdown
