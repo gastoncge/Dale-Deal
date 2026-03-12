@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "Bash(node:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git branch:*)",
+      "Bash(powershell -ExecutionPolicy Bypass -File:*)",
+      "Bash(git checkout:*)",
+      "Bash(del \"d:\\\\Descargas\\\\Dale-Deal-main\\\\replace_styles.ps1\")",
+      "Bash(sort:*)",
+      "Bash(grep:*)",
+      "Bash(del \"d:\\\\Descargas\\\\Dale-Deal-main\\\\JS\\\\pages\\\\services.js\")",
+      "Bash(del \"d:\\\\Descargas\\\\Dale-Deal-main\\\\JS\\\\pages\\\\product.js\")",
+      "Bash(git restore:*)",
+      "Bash(wc -l \"d:/Descargas/Dale-Deal-main/JS\"/* \"d:/Descargas/Dale-Deal-main/CSS\"/* \"d:/Descargas/Dale-Deal-main/HTML\"/*)",
+      "Bash(wc -l \"d:/Descargas/Dale-Deal-main/JS/pages\"/*)",
+      "Bash(wc -l \"d:/Descargas/Dale-Deal-main/CSS/pages\"/*)",
+      "Bash(ls -lh \"d:/Descargas/Dale-Deal-main/HTML/components\"/*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

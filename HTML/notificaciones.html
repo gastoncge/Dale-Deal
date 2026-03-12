@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mi Centro - DALE DEAL</title>
+
+    <!-- SEO Meta Tags -->
+    <meta
+      name="description"
+      content="Mantenete al día con tus pedidos, servicios y mensajes en Dale Deal"
+    />
+    <meta
+      name="keywords"
+      content="notificaciones, pedidos, servicios, dale deal, marketplace"
+    />
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    />
+
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../CSS/variables.css" />
+    <link rel="stylesheet" href="../CSS/components.css" />
+    <link rel="stylesheet" href="../CSS/pages/notifications.css" />
+    <link rel="stylesheet" href="../CSS/responsive.css" />
+  </head>
+
+  <body>
+    <!-- Alert Container -->
+    <div
+      id="alertContainer"
+      class="position-fixed top-0 start-50 translate-middle-x"
+      style="z-index: 1060; margin-top: 20px"
+    ></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
+      <div class="container-fluid px-4">
+        <!-- Logo -->
+        <a class="navbar-brand" href="../index.html" data-aos="fade-right">
+          <img src="../IMG/LOGO-2.png" alt="Dale Deal" class="logo-navbar" />
+          <span class="brand-text">DALE DEAL</span>
+        </a>
+
+        <!-- Search Bar -->
+        <div class="search-container mx-auto" data-aos="fade-up" data-aos-delay="100">
+          <div class="search-wrapper">
+            <i class="bi bi-search search-icon"></i>
+            <input type="text" class="search-input" placeholder="¿Qué estás buscando hoy?" id="searchInput" />
+          </div>
+        </div>
+
+        <!-- User Actions -->
+        <div class="navbar-actions" data-aos="fade-left" data-aos-delay="200">
+          <!-- Products Link -->
+          <div class="action-item">
+            <a href="./productos.html" class="action-link" title="Productos">
+              <i class="bi bi-bag me-1"></i>
+              <span class="action-text">Productos</span>
+            </a>
+          </div>
+
+          <!-- Services Link -->
+          <div class="action-item">
+            <a href="./servicios.html" class="action-link" title="Servicios Profesionales">
+              <i class="bi bi-tools me-1"></i>
+              <span class="action-text">Servicios</span>
+            </a>
+          </div>
+
+          <!-- Notifications -->
+          <div class="action-item dropdown">
+            <button class="action-btn" id="notificationBtn" data-bs-toggle="dropdown" data-bs-display="static" data-bs-auto-close="outside" aria-expanded="false" title="Notificaciones">
+              <i class="bi bi-bell"></i>
+              <span class="notification-badge" id="notificationBadge">3</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end notifications-dropdown" aria-labelledby="notificationBtn">
+              <div class="notifications-header">
+                <h6 class="mb-0">
+                  <i class="bi bi-bell me-2"></i>Notificaciones
+                  <span class="notifications-count" id="notificationsCount">3</span>
+                </h6>
+              </div>
+              <div class="notifications-filter">
+                <button class="filter-chip active" data-filter="all">Todas</button>
+                <button class="filter-chip" data-filter="unread">No leídas</button>
+                <button class="filter-chip" data-filter="orders">Pedidos</button>
+                <button class="filter-chip" data-filter="offers">Ofertas</button>
+              </div>
+              <div class="notifications-body" id="notificationsDropdownBody">
+                <div class="notification-item unread" data-id="1" data-type="orders">
+                  <div class="notification-icon bg-success">
+                    <i class="bi bi-check-circle text-white"></i>
+                  </div>
+                  <div class="notification-content">
+                    <h6>Pedido confirmado</h6>
+                    <p>Tu pedido #12345 ha sido confirmado</p>
+                    <small>Hace 2 horas</small>
+                  </div>
+                  <button class="notification-close" data-action="dismiss">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+                <div class="notification-item unread" data-id="2" data-type="orders">
+                  <div class="notification-icon bg-info">
+                    <i class="bi bi-truck text-white"></i>
+                  </div>
+                  <div class="notification-content">
+                    <h6>Envío en camino</h6>
+                    <p>Tu pedido #12340 está siendo preparado</p>
+                    <small>Hace 1 día</small>
+                  </div>
+                  <button class="notification-close" data-action="dismiss">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+                <div class="notification-item unread" data-id="3" data-type="offers">
+                  <div class="notification-icon bg-warning">
+                    <i class="bi bi-star text-white"></i>
+                  </div>
+                  <div class="notification-content">
+                    <h6>Nueva oferta disponible</h6>
+                    <p>20% de descuento en electrónicos</p>
+                    <small>Hace 2 días</small>
+                  </div>
+                  <button class="notification-close" data-action="dismiss">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="notifications-footer">
+                <button type="button" class="btn btn-outline-secondary btn-sm w-100 mb-2" id="viewAllNotifications">
+                  <i class="bi bi-list me-2"></i>Ver todas
+                </button>
+                <button type="button" class="btn btn-primary btn-sm w-100" id="markAllAsRead">
+                  <i class="bi bi-check-all me-2"></i>Marcar todas como leídas
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cart -->
+          <div class="action-item dropdown">
+            <button class="action-btn" id="cartBtn" data-bs-toggle="dropdown" data-bs-display="static" data-bs-auto-close="outside" aria-expanded="false" title="Carrito de compras">
+              <i class="bi bi-cart3"></i>
+              <span class="cart-badge" id="cartBadge">0</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end cart-dropdown" aria-labelledby="cartBtn">
+              <div class="cart-header">
+                <h6 class="mb-0">
+                  <i class="bi bi-cart3 me-2"></i>Mi Carrito
+                  <span class="cart-count" id="cartCount">0</span>
+                </h6>
+              </div>
+              <div class="cart-body" id="cartDropdownBody"></div>
+              <div class="cart-footer">
+                <div class="cart-total mb-3">
+                  <div class="cart-total-row cart-total-final">
+                    <span class="cart-total-label">Total:</span>
+                    <span class="cart-total-value" id="cartTotal">$0</span>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-outline-secondary btn-sm w-100 mb-2" id="viewFullCart">
+                  <i class="bi bi-eye me-2"></i>Ver carrito completo
+                </button>
+                <button type="button" class="btn btn-primary btn-sm w-100" id="proceedToCheckout">
+                  <i class="bi bi-credit-card me-2"></i>Finalizar compra
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile -->
+          <div class="action-item dropdown">
+            <button class="action-btn profile-btn" id="profileDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" title="Mi cuenta">
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" alt="Perfil" class="profile-image" />
+              <span class="profile-name">Usuario</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+              <li class="dropdown-header">
+                <h6 class="mb-0">Mi Cuenta</h6>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <a class="dropdown-item" href="./notificaciones.html#mi-perfil">
+                  <i class="bi bi-person me-2"></i>Mi Perfil
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#" id="favoritesLink">
+                  <i class="bi bi-heart me-2"></i>Favoritos
+                </a>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <a class="dropdown-item" href="./login.html">
+                  <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item text-danger" href="#" id="logoutBtn" style="display: none">
+                  <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- Page Header -->
+      <section class="page-header-new">
+        <div class="container-fluid px-4">
+          <!-- Breadcrumbs -->
+          <nav class="breadcrumb-nav" data-aos="fade-down">
+            <ol class="breadcrumb-list">
+              <li class="breadcrumb-item">
+                <a href="../index.html">
+                  <i class="bi bi-house-door-fill"></i>
+                  Inicio
+                </a>
+              </li>
+              <li class="breadcrumb-separator">
+                <i class="bi bi-chevron-right"></i>
+              </li>
+              <li class="breadcrumb-item active">
+                Mi Centro
+              </li>
+            </ol>
+          </nav>
+
+          <!-- Header Content -->
+          <div class="header-content" data-aos="fade-up">
+            <div class="header-left">
+              <h1 class="header-title">Mi Centro</h1>
+              <p class="header-description">
+                <span class="badge-count" id="headerUnreadCount">0 sin leer</span>
+                <span class="separator">•</span>
+                <span class="text-muted">Mantenete al día con tus pedidos y servicios</span>
+              </p>
+            </div>
+            <div class="header-actions">
+              <button class="btn btn-outline-danger" id="deleteAllBtn">
+                <i class="bi bi-trash me-2"></i>Borrar todas
+              </button>
+              <button class="btn btn-primary" id="markAllReadBtn">
+                <i class="bi bi-check-all me-2"></i>Marcar todas como leídas
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Notifications Section with Sidebar -->
+      <section class="products-grid-section">
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <div class="products-layout">
+          <!-- Sidebar Filters -->
+          <aside class="filters-sidebar" id="filtersSidebar">
+            <div class="sidebar-header">
+              <div class="sidebar-title-group">
+                <i class="bi bi-bell sidebar-icon"></i>
+                <h3 class="sidebar-title">Filtrar</h3>
+              </div>
+            </div>
+            <div class="filters-content">
+              <p class="sidebar-section-label">Notificaciones</p>
+              <div class="filter-list">
+                <button class="filter-item active" data-filter="all">
+                  <i class="bi bi-inbox-fill me-2"></i>
+                  <span>Todas</span>
+                  <span class="filter-count" id="countAll">0</span>
+                </button>
+                <button class="filter-item" data-filter="orders">
+                  <i class="bi bi-box-seam me-2"></i>
+                  <span>Pedidos</span>
+                  <span class="filter-count" id="countOrders">0</span>
+                </button>
+                <button class="filter-item" data-filter="services">
+                  <i class="bi bi-tools me-2"></i>
+                  <span>Servicios</span>
+                  <span class="filter-count" id="countServices">0</span>
+                </button>
+                <button class="filter-item" data-filter="messages">
+                  <i class="bi bi-chat-dots me-2"></i>
+                  <span>Mensajes</span>
+                  <span class="filter-count" id="countMessages">0</span>
+                </button>
+                <button class="filter-item" data-filter="payments">
+                  <i class="bi bi-credit-card me-2"></i>
+                  <span>Pagos</span>
+                  <span class="filter-count" id="countPayments">0</span>
+                </button>
+                <button class="filter-item" data-filter="system">
+                  <i class="bi bi-gear me-2"></i>
+                  <span>Sistema</span>
+                  <span class="filter-count" id="countSystem">0</span>
+                </button>
+              </div>
+
+              <!-- Cuenta -->
+              <div class="sidebar-divider"></div>
+              <p class="sidebar-section-label">Cuenta</p>
+              <nav class="sidebar-nav-list">
+                <a href="#" class="sidebar-nav-item" data-section="mi-perfil">
+                  <i class="bi bi-person me-2"></i>
+                  <span>Mi Perfil</span>
+                </a>
+                <a href="#" class="sidebar-nav-item" data-section="mis-compras">
+                  <i class="bi bi-bag me-2"></i>
+                  <span>Mis compras</span>
+                </a>
+              </nav>
+
+              <!-- Centro de Ayuda -->
+              <div class="sidebar-divider"></div>
+              <p class="sidebar-section-label">Centro de Ayuda</p>
+              <nav class="sidebar-nav-list">
+                <a href="#" class="sidebar-nav-item" data-section="centro-ayuda">
+                  <i class="bi bi-question-circle me-2"></i>
+                  <span>Ayuda</span>
+                </a>
+                <a href="#" class="sidebar-nav-item" data-section="contacto">
+                  <i class="bi bi-envelope me-2"></i>
+                  <span>Contacto</span>
+                </a>
+                <a href="#" class="sidebar-nav-item" data-section="reportar-problema">
+                  <i class="bi bi-flag me-2"></i>
+                  <span>Reportar problema</span>
+                </a>
+                <a href="#" class="sidebar-nav-item" data-section="estado-servicio">
+                  <i class="bi bi-activity me-2"></i>
+                  <span>Estado del servicio</span>
+                </a>
+                <a href="#" class="sidebar-nav-item" data-section="seguridad">
+                  <i class="bi bi-shield-lock me-2"></i>
+                  <span>Seguridad</span>
+                </a>
+              </nav>
+            </div>
+          </aside>
+
+          <!-- Main Content -->
+          <div class="products-main-content">
+
+            <!-- ===== SECCIÓN: NOTIFICACIONES (default) ===== -->
+            <div id="view-notifications">
+              <div class="results-header">
+                <div class="results-count-container">
+                  <span id="resultsCount">Cargando notificaciones...</span>
+                </div>
+                <button class="btn-toggle-filters d-lg-none" id="toggleFilters">
+                  <i class="bi bi-funnel me-2"></i>Filtros
+                </button>
+              </div>
+              <div class="notifications-container" id="notificationsContainer"></div>
+              <div class="empty-state-container" id="loadingState" style="display: none;">
+                <div class="empty-state">
+                  <div class="empty-state-icon loading"><div class="loading-spinner-modern"></div></div>
+                  <h3 class="empty-state-title">Cargando notificaciones</h3>
+                  <p class="empty-state-text">Estamos obteniendo tus notificaciones...</p>
+                </div>
+              </div>
+              <div class="empty-state-container" id="emptyState" style="display: none;">
+                <div class="empty-state">
+                  <div class="empty-state-icon"><i class="bi bi-bell-slash"></i></div>
+                  <h3 class="empty-state-title">No hay notificaciones</h3>
+                  <p class="empty-state-text">Te notificaremos cuando tengas nuevas actualizaciones.</p>
+                  <div class="empty-state-actions">
+                    <a href="../index.html" class="btn btn-primary"><i class="bi bi-house-door me-2"></i>Volver al inicio</a>
+                  </div>
+                </div>
+              </div>
+              <div class="load-more-container" id="loadMoreContainer" style="display: none;">
+                <button class="btn btn-outline-primary btn-lg" id="loadMoreBtn">
+                  <i class="bi bi-bell me-2"></i>Cargar más notificaciones
+                </button>
+              </div>
+            </div>
+
+            <!-- ===== SECCIÓN: MI PERFIL ===== -->
+            <div id="view-mi-perfil" class="centro-section" style="display:none">
+              <div class="centro-section-header">
+                <h2 class="centro-section-title"><i class="bi bi-person me-2"></i>Mi Perfil</h2>
+              </div>
+
+              <!-- Avatar + stats -->
+              <div class="perfil-hero">
+                <div class="perfil-avatar-wrap">
+                  <img src="https://ui-avatars.com/api/?name=Usuario&background=e53e3e&color=fff&size=128" alt="Avatar" class="perfil-avatar" id="perfilAvatarImg">
+                  <button class="perfil-avatar-edit" title="Cambiar foto" onclick="document.getElementById('avatarInput').click()">
+                    <i class="bi bi-camera-fill"></i>
+                  </button>
+                  <input type="file" id="avatarInput" accept="image/*" style="display:none">
+                </div>
+                <div class="perfil-hero-info">
+                  <div class="perfil-name-row">
+                    <h4 class="perfil-name" id="perfilDisplayName">Juan García</h4>
+                    <span class="perfil-verified-badge" id="perfilVerifiedBadge" title="Identidad verificada">
+                      <i class="bi bi-patch-check-fill"></i> Verificado
+                    </span>
+                  </div>
+                  <p class="perfil-since"><i class="bi bi-calendar3 me-1"></i>Miembro desde enero 2024</p>
+                  <div class="perfil-stats">
+                    <div class="perfil-stat">
+                      <span class="perfil-stat-value">12</span>
+                      <span class="perfil-stat-label">Compras</span>
+                    </div>
+                    <div class="perfil-stat">
+                      <span class="perfil-stat-value">8</span>
+                      <span class="perfil-stat-label">Favoritos</span>
+                    </div>
+                    <div class="perfil-stat">
+                      <span class="perfil-stat-value">4.9</span>
+                      <span class="perfil-stat-label">Reputación</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Datos personales -->
+              <div class="perfil-card">
+                <div class="perfil-card-header">
+                  <h5><i class="bi bi-person-lines-fill me-2"></i>Datos personales</h5>
+                </div>
+                <form id="perfilForm">
+                  <div class="row g-4">
+                    <div class="col-md-6">
+                      <label class="form-label">Nombre <small class="text-muted fw-normal">(no editable)</small></label>
+                      <div class="input-group">
+                        <input type="text" class="form-control" value="Juan" readonly>
+                        <span class="input-group-text text-success"><i class="bi bi-check-circle-fill"></i></span>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Apellido <small class="text-muted fw-normal">(no editable)</small></label>
+                      <div class="input-group">
+                        <input type="text" class="form-control" value="García" readonly>
+                        <span class="input-group-text text-success"><i class="bi bi-check-circle-fill"></i></span>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Email</label>
+                      <div class="input-group">
+                        <input type="email" class="form-control" placeholder="tu@email.com" value="juan.garcia@email.com">
+                        <span class="input-group-text text-success"><i class="bi bi-check-circle-fill"></i></span>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Teléfono</label>
+                      <input type="tel" class="form-control" placeholder="+54 11 0000-0000" value="+54 11 4567-8900">
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Fecha de nacimiento <small class="text-muted fw-normal">(no editable)</small></label>
+                      <div class="input-group">
+                        <input type="date" class="form-control" value="1990-05-15" readonly>
+                        <span class="input-group-text text-success"><i class="bi bi-check-circle-fill"></i></span>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">DNI <small class="text-muted fw-normal">(no editable)</small></label>
+                      <div class="input-group">
+                        <input type="text" class="form-control" value="32.456.789" readonly>
+                        <span class="input-group-text text-success"><i class="bi bi-check-circle-fill"></i></span>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <button type="submit" class="btn btn-primary px-5">
+                        <i class="bi bi-check-lg me-2"></i>Guardar cambios
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Dirección -->
+              <div class="perfil-card mt-4">
+                <div class="perfil-card-header">
+                  <h5><i class="bi bi-geo-alt me-2"></i>Dirección de envío</h5>
+                  <button class="btn btn-outline-primary btn-sm" id="btnAgregarDireccion">
+                    <i class="bi bi-plus me-1"></i>Agregar
+                  </button>
+                </div>
+                <div class="address-list" id="addressList"></div>
+              </div>
+
+              <!-- Modal Dirección -->
+              <div class="address-modal-overlay" id="addressModalOverlay">
+                <div class="address-modal">
+                  <div class="address-modal-header">
+                    <h5 id="addressModalTitle">Agregar dirección</h5>
+                    <button class="address-modal-close" id="addressModalClose"><i class="bi bi-x-lg"></i></button>
+                  </div>
+                  <form id="addressForm">
+                    <input type="hidden" id="addressEditIndex" value="-1">
+                    <div class="row g-3">
+                      <div class="col-12">
+                        <label class="form-label">Calle y número *</label>
+                        <input type="text" class="form-control" id="addrCalle" placeholder="Ej: Av. Corrientes 1234" required>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label">Piso / Depto</label>
+                        <input type="text" class="form-control" id="addrPiso" placeholder="Ej: Piso 3, Dpto B">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label">Código postal *</label>
+                        <input type="text" class="form-control" id="addrCP" placeholder="Ej: 1043" required>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label">Ciudad *</label>
+                        <input type="text" class="form-control" id="addrCiudad" placeholder="Ej: Buenos Aires" required>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label">Provincia *</label>
+                        <input type="text" class="form-control" id="addrProvincia" placeholder="Ej: CABA" required>
+                      </div>
+                      <div class="col-12">
+                        <label class="form-label">Tipo de dirección</label>
+                        <div class="address-type-selector">
+                          <label class="address-type-option">
+                            <input type="radio" name="addrTipo" value="principal" id="tipoPrincipal">
+                            <span class="address-type-label"><i class="bi bi-star-fill"></i> Principal</span>
+                          </label>
+                          <label class="address-type-option">
+                            <input type="radio" name="addrTipo" value="secundaria" id="tipoSecundaria" checked>
+                            <span class="address-type-label"><i class="bi bi-geo-alt"></i> Secundaria</span>
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-12 d-flex gap-2 justify-content-end mt-2">
+                        <button type="button" class="btn btn-outline-secondary" id="addressModalCancel">Cancelar</button>
+                        <button type="submit" class="btn btn-primary px-4">
+                          <i class="bi bi-check-lg me-1"></i>Guardar dirección
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===== SECCIÓN: MIS COMPRAS ===== -->
+            <div id="view-mis-compras" class="centro-section" style="display:none">
+              <div class="centro-section-header">
+                <h2 class="centro-section-title"><i class="bi bi-bag me-2"></i>Mis Compras</h2>
+                <div class="filter-tabs">
+                  <button class="filter-tab active" data-order-filter="all">Todos</button>
+                  <button class="filter-tab" data-order-filter="processing">En proceso</button>
+                  <button class="filter-tab" data-order-filter="delivered">Entregados</button>
+                  <button class="filter-tab" data-order-filter="cancelled">Cancelados</button>
+                </div>
+              </div>
+              <div class="orders-list">
+                <div class="order-card">
+                  <div class="order-header">
+                    <div><div class="order-id">Pedido #12345</div><div class="order-date"><i class="bi bi-calendar3 me-1"></i>28 de febrero de 2026</div></div>
+                    <span class="order-status status-processing"><i class="bi bi-clock-history me-1"></i>En proceso</span>
+                  </div>
+                  <div class="order-row">
+                    <img class="order-item-img" src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=80&h=80&fit=crop" alt="iPhone 15 Pro Max" />
+                    <div class="order-item-info"><div class="order-item-name">iPhone 15 Pro Max 256GB</div><div class="order-item-qty">Cantidad: 1 · Negro titanio</div></div>
+                  </div>
+                  <div class="order-footer">
+                    <div class="order-total"><small>Total pagado</small><br>$1.299.999</div>
+                    <div class="d-flex gap-2"><button class="btn btn-outline-secondary btn-sm"><i class="bi bi-truck me-1"></i>Rastrear</button><button class="btn btn-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalles</button></div>
+                  </div>
+                </div>
+                <div class="order-card">
+                  <div class="order-header">
+                    <div><div class="order-id">Pedido #12340</div><div class="order-date"><i class="bi bi-calendar3 me-1"></i>15 de febrero de 2026</div></div>
+                    <span class="order-status status-delivered"><i class="bi bi-check-circle-fill me-1"></i>Entregado</span>
+                  </div>
+                  <div class="order-row">
+                    <img class="order-item-img" src="https://images.unsplash.com/photo-1593305841991-05c297ba4575?w=80&h=80&fit=crop" alt="Smart TV Samsung" />
+                    <div class="order-item-info"><div class="order-item-name">Smart TV Samsung 55" 4K QLED</div><div class="order-item-qty">Cantidad: 1</div></div>
+                  </div>
+                  <div class="order-footer">
+                    <div class="order-total"><small>Total pagado</small><br>$289.999</div>
+                    <div class="d-flex gap-2"><button class="btn btn-outline-secondary btn-sm"><i class="bi bi-star me-1"></i>Calificar</button><button class="btn btn-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalles</button></div>
+                  </div>
+                </div>
+                <div class="order-card">
+                  <div class="order-header">
+                    <div><div class="order-id">Pedido #12330</div><div class="order-date"><i class="bi bi-calendar3 me-1"></i>1 de febrero de 2026</div></div>
+                    <span class="order-status status-cancelled"><i class="bi bi-x-circle-fill me-1"></i>Cancelado</span>
+                  </div>
+                  <div class="order-row">
+                    <img class="order-item-img" src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=80&h=80&fit=crop" alt="MacBook Air M2" />
+                    <div class="order-item-info"><div class="order-item-name">MacBook Air M2 8GB 256GB</div><div class="order-item-qty">Cantidad: 1 · Gris espacial</div></div>
+                  </div>
+                  <div class="order-footer">
+                    <div class="order-total"><small>Reembolso procesado</small><br>$799.999</div>
+                    <div class="d-flex gap-2"><button class="btn btn-outline-secondary btn-sm"><i class="bi bi-headset me-1"></i>Ayuda</button><button class="btn btn-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalles</button></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===== SECCIÓN: CENTRO DE AYUDA ===== -->
+            <div id="view-centro-ayuda" class="centro-section" style="display:none">
+              <div class="centro-section-header">
+                <h2 class="centro-section-title"><i class="bi bi-question-circle me-2"></i>Centro de Ayuda</h2>
+              </div>
+              <div class="help-search-banner">
+                <h4>¿En qué podemos ayudarte?</h4>
+                <p>Buscá entre nuestros artículos y guías</p>
+                <div class="d-flex gap-2 mt-3" style="max-width:480px;margin:0 auto">
+                  <input type="text" class="form-control" placeholder="Ej: cómo hacer un pedido...">
+                  <button class="btn btn-light fw-bold px-4"><i class="bi bi-search"></i></button>
+                </div>
+              </div>
+              <div class="help-cats">
+                <div class="help-cat-card"><i class="bi bi-box-seam"></i><b>Pedidos</b><small>8 artículos</small></div>
+                <div class="help-cat-card"><i class="bi bi-credit-card"></i><b>Pagos</b><small>6 artículos</small></div>
+                <div class="help-cat-card"><i class="bi bi-person"></i><b>Mi cuenta</b><small>7 artículos</small></div>
+                <div class="help-cat-card"><i class="bi bi-truck"></i><b>Envíos</b><small>5 artículos</small></div>
+                <div class="help-cat-card"><i class="bi bi-arrow-repeat"></i><b>Devoluciones</b><small>6 artículos</small></div>
+              </div>
+
+              <!-- Registrarse como empresa -->
+              <div class="empresa-banner">
+                <div class="empresa-banner-info">
+                  <i class="bi bi-building"></i>
+                  <div>
+                    <b>¿Sos una empresa?</b>
+                    <p>Accedé a herramientas exclusivas para vender y publicitar en Dale Deal.</p>
+                  </div>
+                </div>
+                <a href="./signup.html#empresa" class="btn btn-primary">
+                  Registrarme como empresa
+                </a>
+              </div>
+
+              <div class="accordion mt-4" id="faqAcc">
+                <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#fq1">¿Cómo realizo un pedido?</button></h2><div id="fq1" class="accordion-collapse collapse show" data-bs-parent="#faqAcc"><div class="accordion-body">Seleccioná el producto, hacé clic en "Agregar al carrito" y seguí los pasos del checkout. Necesitás una cuenta activa para finalizar la compra.</div></div></div>
+                <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fq2">¿Puedo cancelar un pedido?</button></h2><div id="fq2" class="accordion-collapse collapse" data-bs-parent="#faqAcc"><div class="accordion-body">Podés cancelar dentro de las primeras 2 horas de haberlo realizado, siempre que no haya sido despachado. Ingresá a "Mis compras" y seleccioná la opción.</div></div></div>
+                <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fq3">¿Qué métodos de pago aceptan?</button></h2><div id="fq3" class="accordion-collapse collapse" data-bs-parent="#faqAcc"><div class="accordion-body">Aceptamos tarjetas de crédito y débito (Visa, Mastercard, Amex), transferencia bancaria, Mercado Pago y efectivo por Rapipago o Pago Fácil.</div></div></div>
+                <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fq4">¿Cómo rastreo mi pedido?</button></h2><div id="fq4" class="accordion-collapse collapse" data-bs-parent="#faqAcc"><div class="accordion-body">Recibirás un email con el número de seguimiento una vez despachado. También podés rastrearlo desde "Mis compras" → "Rastrear envío".</div></div></div>
+                <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fq5">¿Cómo cambio mi contraseña?</button></h2><div id="fq5" class="accordion-collapse collapse" data-bs-parent="#faqAcc"><div class="accordion-body">Ingresá a Mi Centro → Seguridad → Cambiar contraseña. Necesitarás tu contraseña actual para confirmar el cambio.</div></div></div>
+              </div>
+            </div>
+
+            <!-- ===== SECCIÓN: CONTACTO ===== -->
+            <div id="view-contacto" class="centro-section" style="display:none">
+              <div class="centro-section-header">
+                <h2 class="centro-section-title"><i class="bi bi-envelope me-2"></i>Contacto</h2>
+              </div>
+              <div class="contact-layout">
+                <div class="contact-form-box">
+                  <h5 class="fw-bold mb-1">Envianos un mensaje</h5>
+                  <p class="text-muted mb-4">Te responderemos en menos de 24 horas hábiles</p>
+                  <div id="contactSuccess" class="success-msg" style="display:none"><i class="bi bi-check-circle-fill"></i><b>¡Mensaje enviado!</b> Te contactaremos pronto.</div>
+                  <form id="contactForm">
+                    <div class="row g-3">
+                      <div class="col-md-6"><label class="form-label">Nombre *</label><input type="text" class="form-control" required></div>
+                      <div class="col-md-6"><label class="form-label">Email *</label><input type="email" class="form-control" required></div>
+                      <div class="col-12"><label class="form-label">Asunto *</label><select class="form-select" required><option value="">Seleccioná</option><option>Consulta sobre un pedido</option><option>Problema con un pago</option><option>Devolución o reembolso</option><option>Problema técnico</option><option>Publicidad en el sitio</option><option>Otro</option></select></div>
+                      <div class="col-12"><label class="form-label">Mensaje *</label><textarea class="form-control" rows="4" required placeholder="Describí tu consulta..."></textarea></div>
+                      <div class="col-12"><button type="submit" class="btn btn-primary w-100"><i class="bi bi-send me-2"></i>Enviar mensaje</button></div>
+                    </div>
+                  </form>
+                </div>
+                <div class="contact-info-box">
+                  <div class="contact-info-item-row"><i class="bi bi-envelope"></i><div><small>Email</small><b>soporte@daledeal.com</b></div></div>
+                  <div class="contact-info-item-row"><i class="bi bi-telephone"></i><div><small>Teléfono</small><b>0800-555-DALE</b></div></div>
+                  <div class="contact-info-item-row"><i class="bi bi-clock"></i><div><small>Horario</small><b>Lun–Vie 9:00–18:00 hs</b></div></div>
+                  <div class="contact-info-item-row"><i class="bi bi-geo-alt"></i><div><small>Dirección</small><b>Av. Corrientes 1234, CABA</b></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===== SECCIÓN: REPORTAR PROBLEMA ===== -->
+            <div id="view-reportar-problema" class="centro-section" style="display:none">
+              <div class="centro-section-header">
+                <h2 class="centro-section-title"><i class="bi bi-flag me-2"></i>Reportar Problema</h2>
+              </div>
+              <div class="report-box">
+                <div id="reportFormState">
+                  <p class="text-muted mb-4">Cuanta más información nos des, más rápido podremos resolverlo.</p>
+                  <form id="reportForm">
+                    <div class="mb-4">
+                      <label class="form-label fw-semibold mb-2">Tipo de problema *</label>
+                      <div class="problem-types">
+                        <button type="button" class="prob-btn" data-type="pago"><i class="bi bi-credit-card me-1"></i>Pago</button>
+                        <button type="button" class="prob-btn" data-type="pedido"><i class="bi bi-box-seam me-1"></i>Pedido</button>
+                        <button type="button" class="prob-btn" data-type="cuenta"><i class="bi bi-person me-1"></i>Cuenta</button>
+                        <button type="button" class="prob-btn" data-type="tecnico"><i class="bi bi-gear me-1"></i>Técnico</button>
+                        <button type="button" class="prob-btn" data-type="otro"><i class="bi bi-question-circle me-1"></i>Otro</button>
+                      </div>
+                    </div>
+                    <div class="mb-4">
+                      <label class="form-label fw-semibold mb-2">Gravedad *</label>
+                      <div class="severity-btns">
+                        <button type="button" class="sev-btn sev-low">Menor</button>
+                        <button type="button" class="sev-btn sev-med">Moderado</button>
+                        <button type="button" class="sev-btn sev-high">Crítico</button>
+                      </div>
+                    </div>
+                    <div class="mb-3"><label class="form-label fw-semibold">Descripción *</label><textarea class="form-control mt-1" rows="4" required placeholder="¿Qué pasó? ¿Cuándo? ¿Podés reproducirlo?"></textarea></div>
+                    <div class="mb-4"><label class="form-label fw-semibold">Tu email</label><input type="email" class="form-control mt-1" placeholder="tu@email.com"></div>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-flag me-2"></i>Enviar reporte</button>
+                  </form>
+                </div>
+                <div id="reportSuccessState" style="display:none" class="text-center py-5">
+                  <i class="bi bi-check-circle-fill" style="font-size:56px;color:#22c55e;display:block;margin-bottom:1rem"></i>
+                  <h4 class="fw-bold">¡Reporte enviado!</h4>
+                  <p class="text-muted mb-3">Nuestro equipo técnico lo revisará a la brevedad.</p>
+                  <div class="ticket-badge">Ticket #RPT-<span id="ticketNum"></span></div>
+                  <button class="btn btn-outline-secondary mt-4" onclick="document.getElementById('reportFormState').style.display='block';document.getElementById('reportSuccessState').style.display='none';document.getElementById('reportForm').reset()">Nuevo reporte</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===== SECCIÓN: ESTADO DEL SERVICIO ===== -->
+            <div id="view-estado-servicio" class="centro-section" style="display:none">
+              <div class="centro-section-header">
+                <h2 class="centro-section-title"><i class="bi bi-activity me-2"></i>Estado del Servicio</h2>
+              </div>
+              <div class="overall-ok"><i class="bi bi-check-circle-fill"></i><div><b>Todos los sistemas operacionales</b><p>No hay incidencias activas · Actualizado: 1 mar 2026, 14:32 hs</p></div></div>
+              <div class="services-list">
+                <div class="svc-row"><i class="bi bi-globe2 svc-icon"></i><div class="svc-info"><b>Sitio web principal</b><small>daledeal.com y todas las páginas</small></div><span class="uptime-pct">99.98%</span><span class="svc-dot operational"></span><span class="svc-lbl lbl-ok">Operacional</span></div>
+                <div class="svc-row"><i class="bi bi-credit-card svc-icon"></i><div class="svc-info"><b>Procesamiento de pagos</b><small>Tarjetas, transferencias y Mercado Pago</small></div><span class="uptime-pct">99.81%</span><span class="svc-dot operational"></span><span class="svc-lbl lbl-ok">Operacional</span></div>
+                <div class="svc-row"><i class="bi bi-bell svc-icon"></i><div class="svc-info"><b>Notificaciones</b><small>Email, push y SMS</small></div><span class="uptime-pct">100%</span><span class="svc-dot operational"></span><span class="svc-lbl lbl-ok">Operacional</span></div>
+                <div class="svc-row"><i class="bi bi-box-seam svc-icon"></i><div class="svc-info"><b>Gestión de pedidos</b><small>Creación, seguimiento y despacho</small></div><span class="uptime-pct">99.95%</span><span class="svc-dot operational"></span><span class="svc-lbl lbl-ok">Operacional</span></div>
+                <div class="svc-row"><i class="bi bi-tools svc-icon"></i><div class="svc-info"><b>API de servicios técnicos</b><small>Agendamiento y gestión de servicios</small></div><span class="uptime-pct">99.90%</span><span class="svc-dot maintenance"></span><span class="svc-lbl lbl-maint">Mantenimiento</span></div>
+              </div>
+              <h5 class="fw-bold mt-5 mb-3">Historial reciente</h5>
+              <div class="incident-item"><div class="incident-date">24 Feb 2026</div><div><b>Demoras en pagos con Visa</b><p class="text-muted small mb-1">Se detectaron demoras de hasta 45 segundos. Problema aislado en el gateway.</p><span class="resolved-badge"><i class="bi bi-check-circle me-1"></i>Resuelto · 23 min</span></div></div>
+              <div class="incident-item"><div class="incident-date">10 Feb 2026</div><div><b>Mantenimiento programado</b><p class="text-muted small mb-1">Actualización de infraestructura de base de datos. Sitio en modo solo lectura.</p><span class="resolved-badge"><i class="bi bi-check-circle me-1"></i>Completado · 2 hs</span></div></div>
+            </div>
+
+            <!-- ===== SECCIÓN: SEGURIDAD ===== -->
+            <div id="view-seguridad" class="centro-section" style="display:none">
+              <div class="centro-section-header">
+                <h2 class="centro-section-title"><i class="bi bi-shield-lock me-2"></i>Seguridad</h2>
+              </div>
+              <div class="security-sections">
+                <!-- Contraseña -->
+                <div class="sec-card">
+                  <div class="sec-card-head"><div class="sec-card-icon"><i class="bi bi-key-fill"></i></div><div><b>Contraseña</b><small>Última modificación: hace 3 meses</small></div></div>
+                  <div class="sec-card-body">
+                    <form id="passForm">
+                      <div class="row g-3">
+                        <div class="col-12"><label class="form-label">Contraseña actual *</label><input type="password" class="form-control" required placeholder="••••••••"></div>
+                        <div class="col-md-6"><label class="form-label">Nueva contraseña *</label><input type="password" class="form-control" id="newPass" required placeholder="Mínimo 8 caracteres"><div class="pass-strength-bar mt-2"><div id="strengthFill"></div></div><small id="strengthTxt" class="text-muted">Ingresá tu nueva contraseña</small></div>
+                        <div class="col-md-6"><label class="form-label">Confirmar *</label><input type="password" class="form-control" required placeholder="Repetí la contraseña"></div>
+                        <div class="col-12"><button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-check-lg me-1"></i>Actualizar contraseña</button></div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                <!-- 2FA -->
+                <div class="sec-card">
+                  <div class="sec-card-head"><div class="sec-card-icon"><i class="bi bi-shield-check"></i></div><div><b>Autenticación y alertas</b><small>Capas adicionales de seguridad</small></div></div>
+                  <div class="sec-card-body">
+                    <div class="toggle-row"><div><b class="d-block">Autenticación en dos pasos (2FA)</b><small class="text-muted">Requerí un código extra al iniciar desde nuevos dispositivos</small></div><div class="form-check form-switch ms-4"><input class="form-check-input" type="checkbox" style="width:44px;height:24px"></div></div>
+                    <div class="toggle-row"><div><b class="d-block">Alertas de inicio de sesión</b><small class="text-muted">Email al iniciar desde un dispositivo nuevo</small></div><div class="form-check form-switch ms-4"><input class="form-check-input" type="checkbox" checked style="width:44px;height:24px"></div></div>
+                  </div>
+                </div>
+                <!-- Sesiones -->
+                <div class="sec-card">
+                  <div class="sec-card-head"><div class="sec-card-icon"><i class="bi bi-laptop"></i></div><div><b>Sesiones activas</b><small>Dispositivos con sesión iniciada</small></div></div>
+                  <div class="sec-card-body">
+                    <div class="session-row"><i class="bi bi-laptop sess-icon"></i><div><b>Windows · Chrome 122 <span class="current-badge">Este dispositivo</span></b><small class="text-muted d-block">Buenos Aires · Ahora</small></div></div>
+                    <div class="session-row"><i class="bi bi-phone sess-icon"></i><div><b>iPhone 15 · Safari</b><small class="text-muted d-block">Buenos Aires · Hace 2 horas</small></div><button class="btn btn-outline-danger btn-sm ms-auto" onclick="this.closest('.session-row').remove()">Cerrar</button></div>
+                    <div class="session-row"><i class="bi bi-phone sess-icon"></i><div><b>Android · Chrome Mobile</b><small class="text-muted d-block">Córdoba · Hace 3 días</small></div><button class="btn btn-outline-danger btn-sm ms-auto" onclick="this.closest('.session-row').remove()">Cerrar</button></div>
+                    <button class="btn btn-outline-danger btn-sm mt-3"><i class="bi bi-box-arrow-right me-2"></i>Cerrar todas las otras sesiones</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- AOS Animation -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Custom JS -->
+    <script src="../JS/utils.js"></script>
+    <script src="../JS/auth.js"></script>
+    <script src="../JS/cart.js"></script>
+    <script src="../JS/notifications.js"></script>
+    <script src="../JS/dropdown-fix.js"></script>
+    <script src="../JS/pages/notifications.js"></script>
+    <script src="../JS/component-loader.js" defer></script>
+
+    <style>
+      /* ---- Section switcher ---- */
+      .centro-section { padding-top: var(--spacing-2); }
+      .centro-section-header { margin-bottom: var(--spacing-5); }
+      .centro-section-title { font-size: var(--font-size-xl); font-weight: 800; color: var(--gray-900); }
+      .centro-section-title i { color: var(--primary-red); }
+
+      /* Active sidebar nav */
+      .sidebar-nav-item.active {
+        background: var(--gradient-primary);
+        border-color: transparent;
+        color: var(--white);
+      }
+      .sidebar-nav-item.active i { color: var(--white); }
+
+      /* ---- Mi Perfil ---- */
+      .perfil-hero { display: flex; align-items: center; gap: var(--spacing-6); background: var(--white); border: 2px solid var(--gray-200); border-radius: var(--radius-xl); padding: var(--spacing-6); margin-bottom: var(--spacing-5); }
+      .perfil-avatar-wrap { position: relative; flex-shrink: 0; }
+      .perfil-avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-red); }
+      .perfil-avatar-edit { position: absolute; bottom: 2px; right: 2px; width: 28px; height: 28px; border-radius: 50%; background: var(--primary-red); border: none; color: var(--white); font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform var(--transition-base); }
+      .perfil-avatar-edit:hover { transform: scale(1.1); }
+      .perfil-name-row { display: flex; align-items: center; gap: var(--spacing-3); flex-wrap: wrap; margin-bottom: var(--spacing-1); }
+      .perfil-name { font-size: var(--font-size-xl); font-weight: 800; color: var(--gray-900); margin: 0; }
+      .perfil-verified-badge { display: inline-flex; align-items: center; gap: 4px; background: #e6f7ee; color: #16a34a; font-size: var(--font-size-xs); font-weight: 700; padding: 3px 10px; border-radius: var(--radius-full); border: 1.5px solid #bbf7d0; }
+      .perfil-verified-badge i { font-size: 13px; }
+      .perfil-since { font-size: var(--font-size-sm); color: var(--gray-500); margin-bottom: var(--spacing-4); }
+      .perfil-stats { display: flex; gap: var(--spacing-5); }
+      .perfil-stat { text-align: center; }
+      .perfil-stat-value { display: block; font-size: var(--font-size-xl); font-weight: 800; color: var(--primary-red); }
+      .perfil-stat-label { font-size: var(--font-size-xs); color: var(--gray-500); }
+      .perfil-card { background: var(--white); border: 2px solid var(--gray-200); border-radius: var(--radius-xl); padding: var(--spacing-5); }
+      .perfil-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-5); padding-bottom: var(--spacing-4); border-bottom: 1px solid var(--gray-100); }
+      .perfil-card-header h5 { margin: 0; font-weight: 700; color: var(--gray-900); }
+      .perfil-card-header h5 i { color: var(--primary-red); }
+      .address-list { display: flex; flex-direction: column; gap: var(--spacing-3); }
+      .address-list:empty::after { content: 'No hay direcciones guardadas.'; display: block; color: var(--gray-500); font-size: var(--font-size-sm); padding: var(--spacing-4) 0; }
+      .address-card { background: var(--gray-50); border: 2px solid var(--gray-200); border-radius: var(--radius-lg); padding: var(--spacing-4); transition: box-shadow var(--transition-base); }
+      .address-card.address-default { border-color: var(--primary-red); background: rgba(229,62,62,.04); }
+      .address-badge { display: inline-flex; align-items: center; gap: 4px; font-size: var(--font-size-xs); font-weight: 700; padding: 2px 10px; border-radius: var(--radius-full); margin-bottom: var(--spacing-3); }
+      .address-badge.badge-principal { background: var(--gradient-primary); color: var(--white); }
+      .address-badge.badge-secundaria { background: var(--gray-200); color: var(--gray-700); }
+      .address-line { font-size: var(--font-size-sm); color: var(--gray-700); margin-bottom: var(--spacing-1); }
+      .address-line i { color: var(--primary-red); }
+      /* Modal dirección */
+      .address-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 9999; align-items: center; justify-content: center; }
+      .address-modal-overlay.open { display: flex; }
+      .address-modal { background: var(--white); border-radius: var(--radius-xl); padding: var(--spacing-6); width: 100%; max-width: 540px; box-shadow: var(--shadow-xl); }
+      .address-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-5); }
+      .address-modal-header h5 { margin: 0; font-weight: 700; }
+      .address-modal-close { background: none; border: none; font-size: 18px; color: var(--gray-500); cursor: pointer; line-height: 1; }
+      .address-modal-close:hover { color: var(--primary-red); }
+      .address-type-selector { display: flex; gap: var(--spacing-3); }
+      .address-type-option { flex: 1; cursor: pointer; }
+      .address-type-option input { display: none; }
+      .address-type-label { display: flex; align-items: center; justify-content: center; gap: var(--spacing-2); padding: var(--spacing-3); border: 2px solid var(--gray-200); border-radius: var(--radius-lg); font-weight: 600; font-size: var(--font-size-sm); color: var(--gray-600); transition: all var(--transition-base); }
+      .address-type-option input:checked + .address-type-label { border-color: var(--primary-red); color: var(--primary-red); background: rgba(229,62,62,.06); }
+      @media (max-width: 576px) {
+        .perfil-hero { flex-direction: column; text-align: center; }
+        .perfil-stats { justify-content: center; }
+      }
+
+      /* ---- Mis Compras ---- */
+      .filter-tabs { display: flex; gap: var(--spacing-2); flex-wrap: wrap; margin-bottom: var(--spacing-5); }
+      .filter-tab { padding: var(--spacing-2) var(--spacing-4); border: 2px solid var(--gray-200); background: var(--white); color: var(--gray-700); border-radius: var(--radius-full); font-size: var(--font-size-sm); font-weight: 600; cursor: pointer; transition: all var(--transition-base); }
+      .filter-tab.active, .filter-tab:hover { background: var(--gradient-primary); border-color: transparent; color: var(--white); }
+      .orders-list { display: flex; flex-direction: column; gap: var(--spacing-4); }
+      .order-card { background: var(--white); border: 2px solid var(--gray-200); border-radius: var(--radius-xl); padding: var(--spacing-5); transition: all var(--transition-base); }
+      .order-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+      .order-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--spacing-3); margin-bottom: var(--spacing-4); }
+      .order-id { font-weight: 700; color: var(--gray-900); font-size: var(--font-size-lg); }
+      .order-date { font-size: var(--font-size-sm); color: var(--gray-500); }
+      .order-status { padding: var(--spacing-2) var(--spacing-4); border-radius: var(--radius-full); font-size: var(--font-size-sm); font-weight: 700; }
+      .status-delivered { background: rgba(34,197,94,.12); color: #16a34a; }
+      .status-processing { background: rgba(59,130,246,.12); color: #1d4ed8; }
+      .status-cancelled { background: rgba(239,68,68,.12); color: #dc2626; }
+      .order-row { display: flex; align-items: center; gap: var(--spacing-3); margin-bottom: var(--spacing-4); }
+      .order-item-img { width: 64px; height: 64px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--gray-100); flex-shrink: 0; }
+      .order-item-name { font-weight: 600; color: var(--gray-800); }
+      .order-item-qty { font-size: var(--font-size-sm); color: var(--gray-500); }
+      .order-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-3); padding-top: var(--spacing-4); border-top: 1px solid var(--gray-100); }
+      .order-total { font-size: var(--font-size-lg); font-weight: 800; color: var(--gray-900); }
+      .order-total small { display: block; font-size: var(--font-size-xs); font-weight: 500; color: var(--gray-500); }
+
+      /* ---- Centro de Ayuda ---- */
+      .help-search-banner { background: var(--gradient-primary); border-radius: var(--radius-xl); padding: var(--spacing-8) var(--spacing-6); text-align: center; color: var(--white); margin-bottom: var(--spacing-6); }
+      .help-search-banner h4 { font-weight: 800; }
+      .help-search-banner p { opacity: .85; margin-bottom: 0; }
+      .help-cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px,1fr)); gap: var(--spacing-3); margin-bottom: var(--spacing-6); }
+      .empresa-banner { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-4); background: linear-gradient(135deg,#fff7ed,#fff); border: 2px solid #fed7aa; border-radius: var(--radius-xl); padding: var(--spacing-5); margin-bottom: var(--spacing-2); flex-wrap: wrap; }
+      .empresa-banner-info { display: flex; align-items: flex-start; gap: var(--spacing-3); }
+      .empresa-banner-info i { font-size: 28px; color: #ea580c; flex-shrink: 0; }
+      .empresa-banner-info b { display: block; font-size: var(--font-size-base); color: var(--gray-900); margin-bottom: 2px; }
+      .empresa-banner-info p { margin: 0; font-size: var(--font-size-sm); color: var(--gray-600); }
+      .empresa-form-card { background: var(--white); border: 2px solid var(--gray-200); border-radius: var(--radius-xl); padding: var(--spacing-5); }
+      .help-cat-card { background: var(--white); border: 2px solid var(--gray-200); border-radius: var(--radius-xl); padding: var(--spacing-5) var(--spacing-4); text-align: center; cursor: pointer; transition: all var(--transition-base); display: flex; flex-direction: column; align-items: center; gap: var(--spacing-2); }
+      .help-cat-card:hover { border-color: var(--primary-red); transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+      .help-cat-card i { font-size: 28px; color: var(--primary-red); }
+      .help-cat-card b { font-size: var(--font-size-sm); color: var(--gray-900); }
+      .help-cat-card small { color: var(--gray-500); font-size: var(--font-size-xs); }
+      .accordion-button:not(.collapsed) { background: var(--primary-red-light); color: var(--primary-red); box-shadow: none; }
+      .accordion-button:focus { box-shadow: none; }
+      .accordion-item { border: 2px solid var(--gray-200); border-radius: var(--radius-lg) !important; margin-bottom: var(--spacing-2); overflow: hidden; }
+      .accordion-button { font-weight: 600; }
+
+      /* ---- Contacto ---- */
+      .contact-layout { display: grid; grid-template-columns: 1fr 280px; gap: var(--spacing-6); }
+      @media (max-width:900px) { .contact-layout { grid-template-columns: 1fr; } }
+      .contact-form-box { background: var(--white); border: 2px solid var(--gray-200); border-radius: var(--radius-xl); padding: var(--spacing-6); }
+      .contact-info-box { background: var(--gradient-primary); border-radius: var(--radius-xl); padding: var(--spacing-6); color: var(--white); display: flex; flex-direction: column; gap: var(--spacing-4); }
+      .contact-info-item-row { display: flex; align-items: center; gap: var(--spacing-3); }
+      .contact-info-item-row i { font-size: 20px; opacity: .9; flex-shrink: 0; }
+      .contact-info-item-row small { opacity: .75; display: block; font-size: 11px; }
+      .contact-info-item-row b { display: block; }
+      .success-msg { background: rgba(34,197,94,.1); border: 2px solid rgba(34,197,94,.3); border-radius: var(--radius-lg); padding: var(--spacing-4); margin-bottom: var(--spacing-4); display: flex; align-items: center; gap: var(--spacing-3); font-weight: 600; }
+      .success-msg i { color: #16a34a; font-size: 20px; }
+      .form-control:focus, .form-select:focus { border-color: var(--primary-red); box-shadow: 0 0 0 3px rgba(214,48,49,.12); }
+
+      /* ---- Reportar Problema ---- */
+      .report-box { max-width: 680px; }
+      .problem-types { display: flex; flex-wrap: wrap; gap: var(--spacing-2); margin-top: var(--spacing-2); }
+      .prob-btn { padding: var(--spacing-2) var(--spacing-4); border: 2px solid var(--gray-200); background: var(--gray-50); border-radius: var(--radius-lg); font-weight: 600; font-size: var(--font-size-sm); cursor: pointer; transition: all var(--transition-base); }
+      .prob-btn:hover, .prob-btn.active { border-color: var(--primary-red); background: var(--primary-red-light); color: var(--primary-red); }
+      .severity-btns { display: flex; gap: var(--spacing-2); flex-wrap: wrap; margin-top: var(--spacing-2); }
+      .sev-btn { flex: 1; min-width: 100px; padding: var(--spacing-2) var(--spacing-3); border: 2px solid var(--gray-200); background: var(--gray-50); border-radius: var(--radius-lg); font-weight: 700; font-size: var(--font-size-sm); cursor: pointer; transition: all var(--transition-base); }
+      .sev-btn.sev-low { color: #16a34a; }
+      .sev-btn.sev-med { color: #d97706; }
+      .sev-btn.sev-high { color: var(--primary-red); }
+      .sev-btn.active.sev-low { border-color: #22c55e; background: rgba(34,197,94,.1); }
+      .sev-btn.active.sev-med { border-color: #f59e0b; background: rgba(245,158,11,.1); }
+      .sev-btn.active.sev-high { border-color: var(--primary-red); background: var(--primary-red-light); }
+      .ticket-badge { background: var(--gray-100); border-radius: var(--radius-lg); padding: var(--spacing-3) var(--spacing-6); display: inline-block; font-family: monospace; font-weight: 700; font-size: var(--font-size-lg); margin-top: var(--spacing-3); }
+
+      /* ---- Estado del Servicio ---- */
+      .overall-ok { display: flex; align-items: center; gap: var(--spacing-4); background: rgba(34,197,94,.1); border: 2px solid rgba(34,197,94,.3); border-radius: var(--radius-xl); padding: var(--spacing-5); margin-bottom: var(--spacing-6); }
+      .overall-ok i { font-size: 36px; color: #16a34a; flex-shrink: 0; }
+      .overall-ok b { display: block; font-weight: 700; color: #15803d; }
+      .overall-ok p { margin: 0; font-size: var(--font-size-sm); color: var(--gray-600); }
+      .services-list { display: flex; flex-direction: column; gap: var(--spacing-3); }
+      .svc-row { display: flex; align-items: center; gap: var(--spacing-3); background: var(--white); border: 2px solid var(--gray-200); border-radius: var(--radius-xl); padding: var(--spacing-4) var(--spacing-5); }
+      .svc-icon { font-size: 22px; flex-shrink: 0; color: var(--gray-500); }
+      .svc-info { flex: 1; }
+      .svc-info b { display: block; font-weight: 700; color: var(--gray-900); }
+      .svc-info small { color: var(--gray-500); font-size: var(--font-size-xs); }
+      .uptime-pct { font-size: var(--font-size-xs); color: var(--gray-400); font-weight: 600; white-space: nowrap; }
+      .svc-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+      .svc-dot.operational { background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,.25); }
+      .svc-dot.maintenance { background: #3b82f6; }
+      .svc-lbl { padding: 3px 10px; border-radius: var(--radius-full); font-size: 11px; font-weight: 700; white-space: nowrap; }
+      .lbl-ok { background: rgba(34,197,94,.12); color: #15803d; }
+      .lbl-maint { background: rgba(59,130,246,.12); color: #1d4ed8; }
+      .incident-item { display: flex; gap: var(--spacing-4); padding: var(--spacing-4) 0; border-bottom: 1px solid var(--gray-100); }
+      .incident-date { font-size: var(--font-size-xs); color: var(--gray-500); font-weight: 700; white-space: nowrap; min-width: 90px; padding-top: 2px; }
+      .resolved-badge { display: inline-flex; align-items: center; font-size: 12px; font-weight: 700; color: #15803d; background: rgba(34,197,94,.1); padding: 2px 10px; border-radius: var(--radius-full); }
+
+      /* ---- Seguridad ---- */
+      .security-sections { display: flex; flex-direction: column; gap: var(--spacing-5); max-width: 700px; }
+      .sec-card { background: var(--white); border: 2px solid var(--gray-200); border-radius: var(--radius-xl); overflow: hidden; }
+      .sec-card-head { display: flex; align-items: center; gap: var(--spacing-4); padding: var(--spacing-4) var(--spacing-5); background: var(--gray-50); border-bottom: 1px solid var(--gray-100); }
+      .sec-card-icon { width: 40px; height: 40px; background: var(--gradient-primary); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: var(--white); font-size: 18px; flex-shrink: 0; }
+      .sec-card-head b { display: block; font-weight: 700; color: var(--gray-900); }
+      .sec-card-head small { color: var(--gray-500); font-size: var(--font-size-xs); }
+      .sec-card-body { padding: var(--spacing-5); }
+      .pass-strength-bar { height: 4px; background: var(--gray-200); border-radius: var(--radius-full); overflow: hidden; }
+      .pass-strength-bar div { height: 100%; border-radius: var(--radius-full); width: 0; transition: all .3s; }
+      .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: var(--spacing-3) 0; border-bottom: 1px solid var(--gray-100); }
+      .toggle-row:last-child { border-bottom: none; }
+      .form-check-input:checked { background-color: var(--primary-red) !important; border-color: var(--primary-red) !important; }
+      .session-row { display: flex; align-items: center; gap: var(--spacing-3); padding: var(--spacing-3) 0; border-bottom: 1px solid var(--gray-100); }
+      .session-row:last-of-type { border-bottom: none; }
+      .sess-icon { font-size: 22px; flex-shrink: 0; color: var(--gray-500); }
+      .current-badge { background: rgba(34,197,94,.15); color: #15803d; padding: 1px 8px; border-radius: var(--radius-full); font-size: 11px; font-weight: 700; }
+    </style>
+
+    <script>
+      // Inicializar AOS
+      AOS.init({ duration: 800, once: true, offset: 100 });
+
+      // ===== NAVEGACIÓN DE SECCIONES =====
+      const allSections = ['notifications','mi-perfil','mis-compras','centro-ayuda','contacto','reportar-problema','estado-servicio','seguridad'];
+
+      function showSection(name) {
+        allSections.forEach(s => {
+          const el = document.getElementById('view-' + s);
+          if (el) el.style.display = s === name ? '' : 'none';
+        });
+        // Activar item del sidebar
+        document.querySelectorAll('.sidebar-nav-item').forEach(a => {
+          a.classList.toggle('active', a.dataset.section === name);
+        });
+        // Desactivar filter-items si no es notifications
+        document.querySelectorAll('.filter-item').forEach(b => {
+          if (name !== 'notifications') b.classList.remove('active');
+        });
+        // Mostrar/ocultar botones de acción del header
+        const headerActions = document.querySelector('.header-actions');
+        if (headerActions) headerActions.style.display = name === 'notifications' ? '' : 'none';
+      }
+
+      // Sidebar nav items
+      document.querySelectorAll('.sidebar-nav-item[data-section]').forEach(link => {
+        link.addEventListener('click', e => {
+          e.preventDefault();
+          showSection(link.dataset.section);
+        });
+      });
+
+      // Al hacer clic en un filtro de notificaciones, volver a la vista de notificaciones
+      document.querySelectorAll('.filter-item').forEach(btn => {
+        btn.addEventListener('click', () => showSection('notifications'));
+      });
+
+      // ===== MIS COMPRAS: tabs =====
+      document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+        });
+      });
+
+      // ===== REPORTAR PROBLEMA =====
+      document.querySelectorAll('.prob-btn').forEach(b => {
+        b.addEventListener('click', () => { document.querySelectorAll('.prob-btn').forEach(x => x.classList.remove('active')); b.classList.add('active'); });
+      });
+      document.querySelectorAll('.sev-btn').forEach(b => {
+        b.addEventListener('click', () => { document.querySelectorAll('.sev-btn').forEach(x => x.classList.remove('active')); b.classList.add('active'); });
+      });
+      document.getElementById('reportForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        document.getElementById('ticketNum').textContent = Math.floor(10000 + Math.random() * 90000);
+        this.closest('#reportFormState').style.display = 'none';
+        document.getElementById('reportSuccessState').style.display = '';
+      });
+
+      // ===== EMPRESA =====
+      document.getElementById('empresaRegistroForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        this.innerHTML = '<div class="text-center py-4"><i class="bi bi-check-circle-fill text-success" style="font-size:2rem"></i><p class="mt-3 fw-bold">¡Solicitud enviada!</p><p class="text-muted">Nos contactaremos en menos de 48 horas hábiles.</p></div>';
+      });
+
+      // ===== CONTACTO =====
+      document.getElementById('contactForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        document.getElementById('contactSuccess').style.display = 'flex';
+        this.reset();
+      });
+
+      // ===== SEGURIDAD: medidor de contraseña =====
+      document.getElementById('newPass')?.addEventListener('input', function() {
+        const v = this.value;
+        let s = 0;
+        if (v.length >= 8) s++;
+        if (/[A-Z]/.test(v)) s++;
+        if (/[0-9]/.test(v)) s++;
+        if (/[^A-Za-z0-9]/.test(v)) s++;
+        const bars = [['0%','transparent','Ingresá tu nueva contraseña'],['25%','#ef4444','Débil'],['50%','#f59e0b','Regular'],['75%','#3b82f6','Buena'],['100%','#22c55e','Fuerte ✓']];
+        const fill = document.getElementById('strengthFill');
+        const txt = document.getElementById('strengthTxt');
+        if (fill) { fill.style.width = bars[s][0]; fill.style.background = bars[s][1]; }
+        if (txt)  { txt.textContent = bars[s][2]; txt.style.color = bars[s][1]; }
+      });
+      document.getElementById('passForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (window.DaleDeal?.utils?.showNotification) {
+          window.DaleDeal.utils.showNotification('Contraseña actualizada correctamente', 'success');
+        }
+        this.reset();
+      });
+
+      // ===== MI PERFIL =====
+      document.getElementById('perfilForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (window.DaleDeal?.utils?.showNotification) {
+          window.DaleDeal.utils.showNotification('Perfil actualizado correctamente', 'success');
+        }
+      });
+
+      document.getElementById('avatarInput')?.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = e => { document.getElementById('perfilAvatarImg').src = e.target.result; };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // ===== DIRECCIONES =====
+      let addresses = [
+        { calle: 'Av. Corrientes 1234', piso: 'Piso 3, Dpto B', cp: '1043', ciudad: 'Buenos Aires', provincia: 'CABA', tipo: 'principal' }
+      ];
+
+      function renderAddresses() {
+        const list = document.getElementById('addressList');
+        if (!list) return;
+        list.innerHTML = addresses.map((a, i) => `
+          <div class="address-card ${a.tipo === 'principal' ? 'address-default' : ''}">
+            <div class="address-badge ${a.tipo === 'principal' ? 'badge-principal' : 'badge-secundaria'}">
+              <i class="bi bi-${a.tipo === 'principal' ? 'star-fill' : 'geo-alt'}"></i>
+              ${a.tipo === 'principal' ? 'Principal' : 'Secundaria'}
+            </div>
+            <p class="address-line"><i class="bi bi-house me-2"></i>${a.calle}${a.piso ? ', ' + a.piso : ''}</p>
+            <p class="address-line"><i class="bi bi-geo me-2"></i>${a.ciudad}, ${a.provincia} · CP ${a.cp}</p>
+            <div class="d-flex gap-2 mt-3">
+              ${a.tipo !== 'principal' ? `<button class="btn btn-outline-secondary btn-sm" onclick="setAddressPrincipal(${i})"><i class="bi bi-star me-1"></i>Hacer principal</button>` : ''}
+              <button class="btn btn-outline-secondary btn-sm" onclick="editAddress(${i})"><i class="bi bi-pencil me-1"></i>Editar</button>
+              <button class="btn btn-outline-danger btn-sm" onclick="deleteAddress(${i})"><i class="bi bi-trash me-1"></i>Eliminar</button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      function openAddressModal(editIndex = -1) {
+        const overlay = document.getElementById('addressModalOverlay');
+        const form = document.getElementById('addressForm');
+        document.getElementById('addressEditIndex').value = editIndex;
+        if (editIndex >= 0) {
+          const a = addresses[editIndex];
+          document.getElementById('addrCalle').value = a.calle;
+          document.getElementById('addrPiso').value = a.piso;
+          document.getElementById('addrCP').value = a.cp;
+          document.getElementById('addrCiudad').value = a.ciudad;
+          document.getElementById('addrProvincia').value = a.provincia;
+          document.querySelector(`input[name="addrTipo"][value="${a.tipo}"]`).checked = true;
+          document.getElementById('addressModalTitle').textContent = 'Editar dirección';
+        } else {
+          form.reset();
+          document.getElementById('tipoSecundaria').checked = true;
+          document.getElementById('addressModalTitle').textContent = 'Agregar dirección';
+        }
+        overlay.classList.add('open');
+      }
+
+      function closeAddressModal() {
+        document.getElementById('addressModalOverlay').classList.remove('open');
+      }
+
+      window.editAddress = i => openAddressModal(i);
+
+      window.deleteAddress = i => {
+        if (addresses[i].tipo === 'principal' && addresses.length > 1) {
+          addresses.splice(i, 1);
+          addresses[0].tipo = 'principal';
+        } else {
+          addresses.splice(i, 1);
+        }
+        renderAddresses();
+      };
+
+      window.setAddressPrincipal = i => {
+        addresses.forEach(a => a.tipo = 'secundaria');
+        addresses[i].tipo = 'principal';
+        renderAddresses();
+      };
+
+      document.getElementById('btnAgregarDireccion')?.addEventListener('click', () => openAddressModal());
+      document.getElementById('addressModalClose')?.addEventListener('click', closeAddressModal);
+      document.getElementById('addressModalCancel')?.addEventListener('click', closeAddressModal);
+      document.getElementById('addressModalOverlay')?.addEventListener('click', function(e) {
+        if (e.target === this) closeAddressModal();
+      });
+
+      document.getElementById('addressForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const idx = parseInt(document.getElementById('addressEditIndex').value);
+        const tipo = document.querySelector('input[name="addrTipo"]:checked').value;
+        const newAddr = {
+          calle: document.getElementById('addrCalle').value.trim(),
+          piso: document.getElementById('addrPiso').value.trim(),
+          cp: document.getElementById('addrCP').value.trim(),
+          ciudad: document.getElementById('addrCiudad').value.trim(),
+          provincia: document.getElementById('addrProvincia').value.trim(),
+          tipo
+        };
+        if (tipo === 'principal') addresses.forEach(a => a.tipo = 'secundaria');
+        if (idx >= 0) {
+          addresses[idx] = newAddr;
+        } else {
+          addresses.push(newAddr);
+        }
+        closeAddressModal();
+        renderAddresses();
+      });
+
+      renderAddresses();
+
+      // Navegar a sección según hash (al cargar y al cambiar)
+      function navigateToHash() {
+        const section = window.location.hash.replace('#', '');
+        if (section && allSections.includes(section)) {
+          showSection(section);
+        }
+      }
+      navigateToHash();
+      window.addEventListener('hashchange', navigateToHash);
+    </script>
+  </body>
+</html>
