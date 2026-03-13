@@ -211,6 +211,70 @@
         margin-bottom: 1.5rem;
       }
       .success-msg i { font-size: 1.5rem; color: var(--success); }
+
+      /* Sección publicidad */
+      .promo-section { background: var(--gray-50); border-top: 1px solid var(--gray-100); }
+      .promo-badge {
+        display: inline-block; background: var(--primary-red-light); color: var(--primary-red);
+        font-weight: 700; font-size: 0.85rem; padding: 0.35rem 1rem; border-radius: 20px; margin-bottom: 1rem;
+      }
+      .promo-title { font-size: 1.8rem; font-weight: 800; color: var(--gray-800); margin-bottom: 0.5rem; }
+      .promo-subtitle { color: var(--gray-500); font-size: 1rem; }
+
+      .plan-card {
+        background: white; border-radius: 16px; padding: 2rem 1.5rem;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06); border: 2px solid transparent;
+        height: 100%; display: flex; flex-direction: column; position: relative;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .plan-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+      .plan-card-featured { border-color: var(--primary-red); }
+      .plan-badge-rec {
+        position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+        background: var(--primary-red); color: white; font-size: 0.75rem; font-weight: 700;
+        padding: 0.25rem 1rem; border-radius: 20px; white-space: nowrap;
+      }
+      .plan-header { text-align: center; margin-bottom: 1.5rem; }
+      .plan-icon {
+        width: 56px; height: 56px; border-radius: 50%; background: var(--gray-100);
+        display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+        margin: 0 auto 0.75rem;
+      }
+      .plan-icon-blue { background: #e8f4fd; color: #009ee3; }
+      .plan-icon-red { background: var(--primary-red-light); color: var(--primary-red); }
+      .plan-name { font-weight: 700; font-size: 1.1rem; color: var(--gray-800); margin-bottom: 0.5rem; }
+      .plan-price { font-size: 1.8rem; font-weight: 800; color: var(--gray-900); }
+      .plan-price span { font-size: 0.9rem; font-weight: 400; color: var(--gray-400); }
+      .plan-features { list-style: none; padding: 0; margin: 0 0 1.5rem; flex: 1; }
+      .plan-features li { display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 0; font-size: 0.9rem; color: var(--gray-600); }
+      .plan-features li i { font-size: 0.9rem; flex-shrink: 0; }
+      .plan-btn { width: 100%; padding: 0.7rem; border-radius: 10px; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; }
+      .plan-btn-outline { background: none; border: 2px solid var(--gray-200); color: var(--gray-400); cursor: default; }
+      .plan-btn-primary { background: #e8f4fd; color: #009ee3; }
+      .plan-btn-primary:hover { background: #009ee3; color: white; }
+      .plan-btn-red { background: var(--gradient-primary); color: white; }
+      .plan-btn-red:hover { opacity: 0.9; }
+
+      /* Modal de pago */
+      .payment-methods { display: flex; flex-direction: column; gap: 0.75rem; }
+      .payment-option {
+        display: flex; align-items: center; gap: 1rem; padding: 0.9rem 1rem;
+        border: 1.5px solid var(--gray-200); border-radius: 10px; cursor: pointer;
+        transition: border-color 0.2s; position: relative;
+      }
+      .payment-option:has(input:checked) { border-color: var(--primary-red); background: var(--primary-red-light); }
+      .payment-option input { position: absolute; opacity: 0; }
+      .payment-content { display: flex; align-items: center; gap: 0.75rem; flex: 1; }
+      .payment-content div { display: flex; flex-direction: column; }
+      .payment-content strong { font-size: 0.9rem; }
+      .payment-content small { color: var(--gray-400); font-size: 0.8rem; }
+      .payment-icon { font-size: 1.5rem; }
+      .payment-check { display: none; color: var(--primary-red); font-size: 1.1rem; }
+      .payment-option:has(input:checked) .payment-check { display: block; }
+      .pago-resumen {
+        background: var(--gray-50); border-radius: 10px; padding: 1rem;
+        border: 1px solid var(--gray-100);
+      }
     </style>
   </head>
 
@@ -648,6 +712,166 @@
 
     </div>
 
+    <!-- Sección Publicidad -->
+    <section class="promo-section">
+      <div class="container py-5">
+
+        <div class="text-center mb-5">
+          <span class="promo-badge"><i class="bi bi-megaphone-fill me-2"></i>Destacá tu publicación</span>
+          <h2 class="promo-title">Llegá a más compradores con publicidad</h2>
+          <p class="promo-subtitle">Potenciá tu publicación y multiplicá tus ventas con nuestros planes de promoción</p>
+        </div>
+
+        <!-- Planes -->
+        <div class="row g-4 justify-content-center mb-5">
+
+          <!-- Plan Gratuito -->
+          <div class="col-md-4 col-lg-3">
+            <div class="plan-card">
+              <div class="plan-header">
+                <div class="plan-icon"><i class="bi bi-box"></i></div>
+                <h3 class="plan-name">Gratis</h3>
+                <div class="plan-price">$0<span>/mes</span></div>
+              </div>
+              <ul class="plan-features">
+                <li><i class="bi bi-check-circle-fill text-success"></i> Publicación estándar</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> Visible en el catálogo</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> Hasta 10 fotos</li>
+                <li><i class="bi bi-x-circle-fill text-muted"></i> Sin destacado</li>
+                <li><i class="bi bi-x-circle-fill text-muted"></i> Sin posición prioritaria</li>
+              </ul>
+              <button class="plan-btn plan-btn-outline" disabled>Plan actual</button>
+            </div>
+          </div>
+
+          <!-- Plan Básico -->
+          <div class="col-md-4 col-lg-3">
+            <div class="plan-card">
+              <div class="plan-header">
+                <div class="plan-icon plan-icon-blue"><i class="bi bi-rocket"></i></div>
+                <h3 class="plan-name">Básico</h3>
+                <div class="plan-price">$2.999<span>/mes</span></div>
+              </div>
+              <ul class="plan-features">
+                <li><i class="bi bi-check-circle-fill text-success"></i> Todo lo del plan Gratis</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> Etiqueta "Destacado"</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> Posición superior en búsquedas</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas básicas</li>
+                <li><i class="bi bi-x-circle-fill text-muted"></i> Sin banner en home</li>
+              </ul>
+              <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Básico', 2999)">Contratar</button>
+            </div>
+          </div>
+
+          <!-- Plan Pro (recomendado) -->
+          <div class="col-md-4 col-lg-3">
+            <div class="plan-card plan-card-featured">
+              <div class="plan-badge-rec">Recomendado</div>
+              <div class="plan-header">
+                <div class="plan-icon plan-icon-red"><i class="bi bi-star-fill"></i></div>
+                <h3 class="plan-name">Pro</h3>
+                <div class="plan-price">$6.999<span>/mes</span></div>
+              </div>
+              <ul class="plan-features">
+                <li><i class="bi bi-check-circle-fill text-success"></i> Todo lo del plan Básico</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> Banner en página de inicio</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> Prioridad máxima en búsquedas</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas avanzadas</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> Soporte prioritario</li>
+              </ul>
+              <button class="plan-btn plan-btn-red" onclick="seleccionarPlan('Pro', 6999)">Contratar</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Modal de pago -->
+        <div class="modal fade" id="pagoModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
+            <div class="modal-content">
+              <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold"><i class="bi bi-credit-card me-2" style="color:var(--primary-red)"></i>Contratar plan <span id="pagoModalPlan"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body pt-0">
+                <p class="text-muted small mb-4">Elegí tu método de pago preferido</p>
+
+                <div class="payment-methods">
+
+                  <label class="payment-option">
+                    <input type="radio" name="payment" value="mercadopago" checked>
+                    <div class="payment-content">
+                      <i class="bi bi-wallet2 payment-icon" style="color:#009ee3"></i>
+                      <div>
+                        <strong>MercadoPago</strong>
+                        <small>Tarjeta, débito o saldo</small>
+                      </div>
+                    </div>
+                    <span class="payment-check"><i class="bi bi-check-lg"></i></span>
+                  </label>
+
+                  <label class="payment-option">
+                    <input type="radio" name="payment" value="transferencia">
+                    <div class="payment-content">
+                      <i class="bi bi-bank payment-icon" style="color:#2ecc71"></i>
+                      <div>
+                        <strong>Transferencia bancaria</strong>
+                        <small>CBU / CVU / Alias</small>
+                      </div>
+                    </div>
+                    <span class="payment-check"><i class="bi bi-check-lg"></i></span>
+                  </label>
+
+                  <label class="payment-option">
+                    <input type="radio" name="payment" value="tarjeta">
+                    <div class="payment-content">
+                      <i class="bi bi-credit-card payment-icon" style="color:#e74c3c"></i>
+                      <div>
+                        <strong>Tarjeta de crédito</strong>
+                        <small>Visa, Mastercard, Amex</small>
+                      </div>
+                    </div>
+                    <span class="payment-check"><i class="bi bi-check-lg"></i></span>
+                  </label>
+
+                  <label class="payment-option">
+                    <input type="radio" name="payment" value="crypto">
+                    <div class="payment-content">
+                      <i class="bi bi-currency-bitcoin payment-icon" style="color:#f39c12"></i>
+                      <div>
+                        <strong>Criptomonedas</strong>
+                        <small>BTC, ETH, USDT</small>
+                      </div>
+                    </div>
+                    <span class="payment-check"><i class="bi bi-check-lg"></i></span>
+                  </label>
+
+                </div>
+
+                <div class="pago-resumen mt-4">
+                  <div class="d-flex justify-content-between">
+                    <span>Plan <strong id="pagoResumenPlan"></strong></span>
+                    <span class="fw-bold" id="pagoResumenPrecio"></span>
+                  </div>
+                  <div class="d-flex justify-content-between text-muted small mt-1">
+                    <span>Duración</span>
+                    <span>30 días</span>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary px-4" onclick="confirmarPago()">
+                  <i class="bi bi-lock-fill me-2"></i>Pagar ahora
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -674,6 +898,20 @@
           };
           reader.readAsDataURL(file);
         });
+      }
+
+      function seleccionarPlan(nombre, precio) {
+        document.getElementById('pagoModalPlan').textContent = nombre;
+        document.getElementById('pagoResumenPlan').textContent = nombre;
+        document.getElementById('pagoResumenPrecio').textContent = '$' + precio.toLocaleString('es-AR');
+        new bootstrap.Modal(document.getElementById('pagoModal')).show();
+      }
+
+      function confirmarPago() {
+        const metodo = document.querySelector('input[name="payment"]:checked')?.value;
+        const plan = document.getElementById('pagoResumenPlan').textContent;
+        bootstrap.Modal.getInstance(document.getElementById('pagoModal')).hide();
+        alert(`✅ Solicitud de pago recibida\nPlan: ${plan}\nMétodo: ${metodo}\n\nTe contactaremos para completar el proceso.`);
       }
 
       // Drag & drop visual feedback
