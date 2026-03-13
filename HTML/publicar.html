@@ -586,19 +586,33 @@
                 </div>
               </div>
 
-              <!-- Imágenes -->
+              <!-- Fotos y Videos -->
               <div class="publish-card" data-aos="fade-up" data-aos-delay="100">
-                <h5><i class="bi bi-images"></i>Imágenes del servicio</h5>
-                <div class="form-text mb-3">Fotos de trabajos anteriores, certificados, etc.</div>
-                <div class="image-url-list" id="s-image-list">
-                  <div class="image-url-row">
-                    <input type="url" class="form-control" placeholder="https://..." />
-                    <button type="button" class="btn-remove-image" onclick="removeImageRow(this)"><i class="bi bi-x-circle"></i></button>
+                <h5><i class="bi bi-images"></i>Fotos y videos</h5>
+
+                <!-- Fotos -->
+                <label class="form-label">Fotos del servicio</label>
+                <div class="media-upload-area" id="s-photo-area">
+                  <input type="file" id="s-photos" accept="image/*" multiple onchange="handleMediaUpload(this, 's-photo-previews', 'image')">
+                  <div class="media-upload-icon"><i class="bi bi-camera"></i></div>
+                  <div class="media-upload-text">
+                    <strong>Hacé clic o arrastrá</strong> fotos aquí<br>
+                    <small>Trabajos anteriores, certificados — hasta 10 fotos</small>
                   </div>
                 </div>
-                <button type="button" class="btn-add-image" onclick="addImageRow('s-image-list')">
-                  <i class="bi bi-plus-circle me-1"></i> Agregar otra imagen
-                </button>
+                <div class="media-previews" id="s-photo-previews"></div>
+
+                <!-- Videos -->
+                <label class="form-label mt-3">Video del servicio <span class="text-muted fw-normal">(opcional)</span></label>
+                <div class="media-upload-area" id="s-video-area">
+                  <input type="file" id="s-video" accept="video/*" onchange="handleMediaUpload(this, 's-video-previews', 'video')">
+                  <div class="media-upload-icon"><i class="bi bi-camera-video"></i></div>
+                  <div class="media-upload-text">
+                    <strong>Hacé clic o arrastrá</strong> un video aquí<br>
+                    <small>MP4, MOV, AVI — máx. 1 video</small>
+                  </div>
+                </div>
+                <div class="media-previews" id="s-video-previews"></div>
               </div>
 
             </div>
