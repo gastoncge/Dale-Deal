@@ -24,6 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const target = tab.dataset.tab;
       document.getElementById('form-producto').style.display = target === 'producto' ? 'block' : 'none';
       document.getElementById('form-servicio').style.display = target === 'servicio' ? 'block' : 'none';
+      document.getElementById('planes-producto').style.display = target === 'producto' ? 'block' : 'none';
+      document.getElementById('planes-servicio').style.display = target === 'servicio' ? 'block' : 'none';
     });
   });
 
@@ -54,6 +56,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Cargar categorías ────────────────────────────────────────────────
   loadCategories();
+
+  // ── Campo "Otros" en productos ──────────────────────────────────────
+  document.getElementById('p-category')?.addEventListener('change', function () {
+    const otherWrap = document.getElementById('p-category-other-wrap');
+    const selectedText = this.options[this.selectedIndex]?.text || '';
+    if (selectedText.toLowerCase().includes('otros')) {
+      otherWrap.classList.remove('d-none');
+      document.getElementById('p-category-other').focus();
+    } else {
+      otherWrap.classList.add('d-none');
+      document.getElementById('p-category-other').value = '';
+    }
+  });
+
+  // ── Campo "Otros servicios" ──────────────────────────────────────────
+  document.getElementById('s-category')?.addEventListener('change', function () {
+    const otherWrap = document.getElementById('s-category-other-wrap');
+    const selectedText = this.options[this.selectedIndex]?.text || '';
+    if (selectedText.toLowerCase().includes('otros')) {
+      otherWrap.classList.remove('d-none');
+      document.getElementById('s-category-other').focus();
+    } else {
+      otherWrap.classList.add('d-none');
+      document.getElementById('s-category-other').value = '';
+    }
+  });
 
   // ── Formulario de Producto ───────────────────────────────────────────
   document.getElementById('productForm')?.addEventListener('submit', async (e) => {
@@ -136,6 +164,13 @@ async function submitProduct() {
     stock: parseInt(document.getElementById('p-stock').value) || 1,
     condition: document.getElementById('p-condition').value,
     category_id: document.getElementById('p-category').value || null,
+    category_other: (() => {
+      const sel = document.getElementById('p-category');
+      const selectedText = sel.options[sel.selectedIndex]?.text || '';
+      return selectedText.toLowerCase().includes('otros')
+        ? document.getElementById('p-category-other').value.trim()
+        : null;
+    })(),
     location: document.getElementById('p-location').value.trim(),
     images: getImageUrls('p-image-list'),
     currency: 'ARS',
@@ -179,6 +214,13 @@ async function submitService() {
     price_to: parseFloat(document.getElementById('s-price-to').value) || null,
     price_type: document.getElementById('s-price-type').value,
     category_id: document.getElementById('s-category').value || null,
+    category_other: (() => {
+      const sel = document.getElementById('s-category');
+      const selectedText = sel.options[sel.selectedIndex]?.text || '';
+      return selectedText.toLowerCase().includes('otros')
+        ? document.getElementById('s-category-other').value.trim()
+        : null;
+    })(),
     location: document.getElementById('s-location').value.trim(),
     zones_covered: zones,
     images: getImageUrls('s-image-list'),

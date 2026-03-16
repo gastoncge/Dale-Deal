@@ -176,32 +176,18 @@ class ProductsPageLoader {
       return;
     }
 
-    // Renderizar productos usando el renderizador del home
+    // Renderizar productos directamente en el grid (sin products-row)
     if (window.HomePageLoader?.renderProductCard) {
-      const productsPerRow = 3;
-
-      for (let i = 0; i < this.filteredProducts.length; i += productsPerRow) {
-        const rowProducts = this.filteredProducts.slice(i, i + productsPerRow);
-
-        const row = document.createElement('div');
-        row.className = 'products-row';
-
-        rowProducts.forEach(product => {
-          row.innerHTML += window.HomePageLoader.renderProductCard(product);
-        });
-
-        productsGrid.appendChild(row);
-      }
+      this.filteredProducts.forEach(product => {
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = window.HomePageLoader.renderProductCard(product);
+        const card = wrapper.firstElementChild;
+        if (card) productsGrid.appendChild(card);
+      });
 
       // Reinicializar listeners
       if (window.HomePageLoader?.initializeProductListeners) {
         window.HomePageLoader.initializeProductListeners();
-      }
-
-      // Scroll suave al top de productos
-      const productsSection = document.querySelector('.products-section');
-      if (productsSection) {
-        productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     }
   }

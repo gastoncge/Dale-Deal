@@ -251,18 +251,11 @@ class NotificationManager {
   dismissNotification(notificationId) {
     const index = this.notifications.findIndex(n => n.id === notificationId);
     if (index !== -1) {
-      const notification = this.notifications[index];
-      const confirmed = confirm(`¿Eliminar la notificación "${notification.title}"?`);
-      
-      if (confirmed) {
-        this.notifications.splice(index, 1);
-        this.selectedNotifications.delete(notificationId);
-        this.saveNotifications();
-        this.renderNotifications();
-        this.updateBadge();
-        
-        this.showToast('Notificación eliminada', 'info');
-      }
+      this.notifications.splice(index, 1);
+      this.selectedNotifications.delete(notificationId);
+      this.saveNotifications();
+      this.renderNotifications();
+      this.updateBadge();
     }
   }
 
