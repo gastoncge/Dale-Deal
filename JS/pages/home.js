@@ -78,7 +78,6 @@ function renderProductCard(product) {
   const badges = product.badges || [];
   const customBadges = badges.filter(b => typeof b === 'object' && b.text);
   const legacyBadges = badges.filter(b => typeof b === 'string');
-  const hasDiscount = product.discount && product.discount > 0;
 
   // Superior izquierda: descuento del campo discount (sin duplicar con strings OFF) + badges personalizados
   const legacyOfferBadges = hasDiscount ? [] : legacyBadges.filter(b => b.includes('OFF'));
