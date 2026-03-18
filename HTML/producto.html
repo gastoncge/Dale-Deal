@@ -688,6 +688,9 @@
             <p class="section-subtitle">Otros productos publicados por el mismo vendedor</p>
           </div>
           <div class="similar-products-carousel-container" data-aos="fade-up" data-aos-delay="200">
+            <button class="section-nav-btn section-nav-prev" id="sellerPrev" type="button">
+              <div class="carousel-control-icon"><i class="bi bi-chevron-left"></i></div>
+            </button>
             <div id="sellerProductsCarousel" class="custom-carousel">
               <div class="carousel-inner" id="sellerProductsGrid">
                 <div class="loading-similar-products">
@@ -696,13 +699,10 @@
                   </div>
                 </div>
               </div>
-              <button class="carousel-control-prev" type="button">
-                <div class="carousel-control-icon"><i class="bi bi-chevron-left"></i></div>
-              </button>
-              <button class="carousel-control-next" type="button">
-                <div class="carousel-control-icon"><i class="bi bi-chevron-right"></i></div>
-              </button>
             </div>
+            <button class="section-nav-btn section-nav-next" id="sellerNext" type="button">
+              <div class="carousel-control-icon"><i class="bi bi-chevron-right"></i></div>
+            </button>
           </div>
         </div>
       </section>
@@ -718,6 +718,9 @@
 
           <!-- Similar Products Carousel -->
           <div class="similar-products-carousel-container" data-aos="fade-up" data-aos-delay="200">
+            <button class="section-nav-btn section-nav-prev" id="similarPrev" type="button">
+              <div class="carousel-control-icon"><i class="bi bi-chevron-left"></i></div>
+            </button>
             <div id="similarProductsCarousel" class="custom-carousel">
               <div class="carousel-inner" id="similarProductsGrid">
                 <div class="loading-similar-products">
@@ -727,13 +730,10 @@
                   <p class="mt-3 text-muted">Buscando productos similares...</p>
                 </div>
               </div>
-              <button class="carousel-control-prev" type="button">
-                <div class="carousel-control-icon"><i class="bi bi-chevron-left"></i></div>
-              </button>
-              <button class="carousel-control-next" type="button">
-                <div class="carousel-control-icon"><i class="bi bi-chevron-right"></i></div>
-              </button>
             </div>
+            <button class="section-nav-btn section-nav-next" id="similarNext" type="button">
+              <div class="carousel-control-icon"><i class="bi bi-chevron-right"></i></div>
+            </button>
           </div>
 
           <!-- View More Button -->
@@ -757,6 +757,9 @@
 
           <!-- Recently Viewed Carousel -->
           <div class="recently-viewed-carousel-container" data-aos="fade-up" data-aos-delay="200">
+            <button class="section-nav-btn section-nav-prev" id="recentPrev" type="button">
+              <div class="carousel-control-icon"><i class="bi bi-chevron-left"></i></div>
+            </button>
             <div id="recentlyViewedCarousel" class="custom-carousel">
               <div class="carousel-inner" id="recentlyViewedGrid">
                 <div class="no-recent-products text-center py-5">
@@ -769,13 +772,10 @@
                   </a>
                 </div>
               </div>
-              <button class="carousel-control-prev" type="button">
-                <div class="carousel-control-icon"><i class="bi bi-chevron-left"></i></div>
-              </button>
-              <button class="carousel-control-next" type="button">
-                <div class="carousel-control-icon"><i class="bi bi-chevron-right"></i></div>
-              </button>
             </div>
+            <button class="section-nav-btn section-nav-next" id="recentNext" type="button">
+              <div class="carousel-control-icon"><i class="bi bi-chevron-right"></i></div>
+            </button>
           </div>
         </div>
       </section>
@@ -840,6 +840,7 @@
     <script src="../JS/notifications.js"></script>
     <script src="../JS/favorites.js"></script>
     <script src="../JS/product-data.js"></script>
+    <script src="../JS/product-carousel.js"></script>
     <script src="../JS/product-page.js"></script>
     <script src="../JS/dropdown-fix.js"></script>
     <script src="../JS/component-loader.js" defer></script>

@@ -513,22 +513,34 @@ class ProductPage {
 
     const render = () => {
       grid.innerHTML = `<div class="row justify-content-center">${pages[current].map(p => this.renderProductCard(p, isRecent)).join('')}</div>`;
-      setTimeout(() => window.favoritesManager?.updateFavoriteButtons(), 100);
+
+      // Inicializar mini-carruseles de imágenes dentro de las cards
+      setTimeout(() => {
+        if (window.ProductCarousel) {
+          window.productCarousel = new window.ProductCarousel();
+        }
+        window.favoritesManager?.updateFavoriteButtons();
+      }, 300);
+
+      // Click en card → navegar al producto
+      grid.querySelectorAll('.product-card[data-clickable="true"]').forEach(card => {
+        card.addEventListener('click', e => {
+          if (e.target.closest('.action-heart') || e.target.closest('.carousel-control') || e.target.closest('.carousel-indicators')) return;
+          const id = card.dataset.id;
+          if (id) { localStorage.setItem('selectedProductId', id); window.location.href = `producto.html?id=${id}`; }
+        });
+      });
     };
 
     render();
 
-    const prev = carousel.querySelector('.carousel-control-prev');
-    const next = carousel.querySelector('.carousel-control-next');
+    // Buttons are siblings of the carousel inside the container
+    const container = carousel.parentElement;
+    const prev = container?.querySelector('.section-nav-prev');
+    const next = container?.querySelector('.section-nav-next');
 
-    if (prev) {
-      prev.style.display = 'flex';
-      prev.onclick = () => { current = (current - 1 + pages.length) % pages.length; render(); };
-    }
-    if (next) {
-      next.style.display = 'flex';
-      next.onclick = () => { current = (current + 1) % pages.length; render(); };
-    }
+    if (prev) prev.onclick = () => { current = (current - 1 + pages.length) % pages.length; render(); };
+    if (next) next.onclick = () => { current = (current + 1) % pages.length; render(); };
   }
 
   // ── Seller products ────────────────────────────────────────────────────────

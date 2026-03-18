@@ -1668,25 +1668,45 @@
   z-index: 10;
 }
 
-/* Controles específicos para custom carousels */
-.custom-carousel .carousel-control-prev,
-.custom-carousel .carousel-control-next {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+/* Flechas de sección (fuera del custom-carousel, sin conflictos Bootstrap) */
+.section-nav-btn {
+  flex-shrink: 0;
+  width: 50px;
+  height: 50px;
+  background: var(--white);
+  border: 2px solid var(--gray-300);
+  border-radius: 50%;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  color: var(--gray-700);
+  z-index: 10;
 }
 
-.custom-carousel .carousel-control-prev:hover,
-.custom-carousel .carousel-control-next:hover {
-  transform: translateY(-50%) scale(1.1);
-  animation: none;
+.section-nav-btn:hover {
+  background: var(--primary-red);
+  border-color: var(--primary-red);
+  color: var(--white);
+  transform: scale(1.1);
+  box-shadow: var(--shadow-xl);
 }
 
 
-/* Contenedor: da espacio lateral para las flechas */
+/* Contenedor: flexbox con flechas a los costados */
 .similar-products-carousel-container,
 .recently-viewed-carousel-container {
-  padding: 0 64px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.similar-products-carousel-container .custom-carousel,
+.recently-viewed-carousel-container .custom-carousel {
+  flex: 1;
+  min-width: 0;
 }
 
 /* Custom carousel: relative para las flechas absolutas, overflow visible para que sobresalgan */
@@ -1699,14 +1719,6 @@
   overflow: hidden;
 }
 
-/* Flechas bien afuera de las cards */
-.custom-carousel .carousel-control-prev {
-  left: -56px;
-}
-
-.custom-carousel .carousel-control-next {
-  right: -56px;
-}
 
 /* Badges más pequeños dentro de las secciones de tarjetas */
 .similar-products-section .badge-offer,
