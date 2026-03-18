@@ -627,9 +627,6 @@
 
 /* ===== TOTAL DEL CARRITO ===== */
 .cart-total {
-  border-top: 2px solid var(--gray-200);
-  padding-top: var(--spacing-4);
-  margin-top: var(--spacing-4);
 }
 
 .cart-total-row {
@@ -2002,19 +1999,14 @@
 /* Acciones del producto */
 .product-actions {
   position: absolute;
-  top: var(--spacing-3);
-  right: var(--spacing-3);
+  top: 8px;
+  right: 8px;
   z-index: 2;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-1);
   opacity: 0;
   transition: all var(--transition-base);
-}
-
-/* Cuando hay badge de oferta, mover el corazón hacia la izquierda */
-.product-card.has-offer .product-actions {
-  right: calc(var(--spacing-3) + 90px) !important ;
 }
 
 .product-card:hover .product-actions {
@@ -2461,6 +2453,7 @@
 
 /* Estilos base para badges - Idénticos a productos */
 .service-badges [class^="badge-"] {
+  position: static;
   padding: var(--spacing-2) var(--spacing-3);
   border-radius: var(--radius-md);
   font-size: var(--font-size-xs);
@@ -2472,6 +2465,21 @@
   display: inline-block;
   width: fit-content;
   max-width: max-content;
+}
+
+/* Badge personalizado (desde formulario de publicar) */
+.badge-custom {
+  color: white;
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  box-shadow: var(--shadow-md);
+  display: inline-block;
+  width: fit-content;
 }
 
 /* Badges específicos para servicios - Con degradados */
@@ -2548,7 +2556,6 @@
 .badge-emergency {
   background: linear-gradient(135deg, #ef4444, #dc2626);
   color: var(--white);
-  animation: pulse 2s infinite;
 }
 
 .badge-deep-clean {

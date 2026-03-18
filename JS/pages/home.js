@@ -76,13 +76,24 @@ function renderProductCard(product) {
 
   // Determinar badges
   const badges = product.badges || [];
-  const badgesHTML = badges.map(badge => {
-    if (badge.includes('OFF')) {
-      return `<span class="badge-offer">${badge}</span>`;
-    } else {
-      return `<span class="badge-featured">${badge}</span>`;
-    }
-  }).join('');
+  const customBadges = badges.filter(b => typeof b === 'object' && b.text);
+  const legacyBadges = badges.filter(b => typeof b === 'string');
+  const hasDiscount = product.discount && product.discount > 0;
+
+  // Superior izquierda: descuento del campo discount (sin duplicar con strings OFF) + badges personalizados
+  const legacyOfferBadges = hasDiscount ? [] : legacyBadges.filter(b => b.includes('OFF'));
+  const platformBadges = legacyBadges.filter(b => !b.includes('OFF') && ['DESTACADO', 'MÁS VENDIDO', 'NUEVO', 'RECOMENDADO'].includes(b.toUpperCase()));
+  const topLeftInner = [
+    ...customBadges.map(b => `<span class="badge-custom" style="background:${b.color}">${b.text}</span>`),
+    hasDiscount ? `<span class="badge-offer">-${product.discount}%</span>` : '',
+    ...legacyOfferBadges.map(b => `<span class="badge-offer">${b}</span>`),
+  ].filter(Boolean).join('');
+  const topLeftHTML = topLeftInner ? `<div class="service-badges">${topLeftInner}</div>` : '';
+
+  // Inferior derecha: solo badges de plataforma reconocidos
+  const bottomRightHTML = platformBadges.map(b => `<span class="badge-featured">${b}</span>`).join('');
+
+  const badgesHTML = topLeftHTML + bottomRightHTML;
 
   // Renderizar imágenes
   let imagesHTML = '';

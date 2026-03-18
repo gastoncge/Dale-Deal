@@ -20,6 +20,7 @@ class ProductPage {
     this.setupImageGallery();
     this.updatePrice();
     this.updateFavoriteButton();
+    this.loadSellerProducts();
     this.loadSimilarProducts();
     this.loadRecentlyViewed();
     this.saveToRecentlyViewed();
@@ -264,35 +265,18 @@ class ProductPage {
     // selectedStorage already set in loadProductData
   }
 
-  // ── Description tab — fully dynamic ───────────────────────────────────────
+  // ── Description tab — muestra el contenido tal como fue escrito ───────────
   updateDescriptionTab() {
     const descContent = document.querySelector('.description-content');
     if (!descContent) return;
 
     const p = this.currentProduct;
-    const icons = ['bi-camera', 'bi-cpu', 'bi-battery-charging', 'bi-wifi', 'bi-shield-check', 'bi-star'];
-
-    const featureCards = (p.features || []).slice(0, 3).map((feat, i) => {
-      const words = feat.split(' ');
-      const cardTitle = words.slice(0, 3).join(' ');
-      return `
-        <div class="feature-card">
-          <i class="bi ${icons[i] || 'bi-check-circle'}"></i>
-          <h5>${cardTitle}</h5>
-          <p>${feat}</p>
-        </div>`;
-    }).join('');
-
-    const featuresListHTML = (p.features || [])
-      .map(f => `<li>${f}</li>`)
-      .join('');
-
-    descContent.innerHTML = `
-      <h3>${p.title}</h3>
-      <p>${p.description}</p>
-      ${featuresListHTML ? `<h4>Características destacadas</h4><ul>${featuresListHTML}</ul>` : ''}
-      ${featureCards ? `<div class="feature-grid">${featureCards}</div>` : ''}
-    `;
+    // Si la descripción contiene HTML (editor rico), se renderiza directo.
+    // Si es texto plano, se respetan los saltos de línea.
+    const isHTML = /<[a-z][\s\S]*>/i.test(p.description || '');
+    descContent.innerHTML = isHTML
+      ? p.description
+      : `<p style="white-space:pre-line;line-height:1.8;color:var(--gray-700)">${p.description || ''}</p>`;
   }
 
   // ── Specifications tab — dynamic ───────────────────────────────────────────
@@ -513,119 +497,154 @@ class ProductPage {
     }, 150);
   }
 
+  // ── Custom paged carousel (sin Bootstrap JS) ──────────────────────────────
+  _buildCarousel(carouselId, gridId, products, isRecent = false) {
+    const carousel = document.getElementById(carouselId);
+    const grid = document.getElementById(gridId);
+    if (!carousel || !grid || products.length === 0) return;
+
+    const pps = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 4;
+    const pages = [];
+    for (let i = 0; i < products.length; i += pps) {
+      pages.push(products.slice(i, i + pps));
+    }
+
+    let current = 0;
+
+    const render = () => {
+      grid.innerHTML = `<div class="row justify-content-center">${pages[current].map(p => this.renderProductCard(p, isRecent)).join('')}</div>`;
+      setTimeout(() => window.favoritesManager?.updateFavoriteButtons(), 100);
+    };
+
+    render();
+
+    const prev = carousel.querySelector('.carousel-control-prev');
+    const next = carousel.querySelector('.carousel-control-next');
+
+    if (prev) {
+      prev.style.display = 'flex';
+      prev.onclick = () => { current = (current - 1 + pages.length) % pages.length; render(); };
+    }
+    if (next) {
+      next.style.display = 'flex';
+      next.onclick = () => { current = (current + 1) % pages.length; render(); };
+    }
+  }
+
+  // ── Seller products ────────────────────────────────────────────────────────
+  async loadSellerProducts() {
+    const section = document.getElementById('sellerProductsSection');
+    if (!section || !this.currentProduct) return;
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 400));
+      const allProducts = window.getAllProducts ? window.getAllProducts() : [];
+      const sellerProducts = allProducts
+        .filter(p => p.category === this.currentProduct.category && p.id !== this.currentProduct.id)
+        .slice(0, 8);
+
+      if (sellerProducts.length === 0) return;
+      section.style.display = '';
+      this._buildCarousel('sellerProductsCarousel', 'sellerProductsGrid', sellerProducts);
+    } catch (err) {
+      DaleDeal.error('Error cargando productos del vendedor:', err);
+    }
+  }
+
   // ── Similar products ───────────────────────────────────────────────────────
   async loadSimilarProducts() {
-    const similarGrid = document.getElementById('similarProductsGrid');
-    if (!similarGrid || !this.currentProduct) return;
+    if (!this.currentProduct) return;
 
     try {
       await new Promise(resolve => setTimeout(resolve, 800));
       const allProducts = window.getAllProducts ? window.getAllProducts() : [];
       let similar = allProducts
         .filter(p => p.category === this.currentProduct.category && p.id !== this.currentProduct.id)
-        .slice(0, 4);
+        .slice(0, 8);
 
       if (similar.length === 0) {
         similar = allProducts
           .filter(p => p.id !== this.currentProduct.id)
           .sort(() => 0.5 - Math.random())
-          .slice(0, 4);
-        this.renderSimilarProducts(similar, true);
-      } else {
-        this.renderSimilarProducts(similar, false);
+          .slice(0, 8);
       }
+      this._buildCarousel('similarProductsCarousel', 'similarProductsGrid', similar);
     } catch (err) {
       DaleDeal.error('Error cargando similares:', err);
-      similarGrid.innerHTML = `
-        <div class="carousel-item active">
-          <div class="text-center py-5">
-            <i class="bi bi-exclamation-triangle display-4 text-warning mb-3"></i>
-            <p class="text-muted">Error cargando productos similares</p>
-          </div>
-        </div>`;
     }
-  }
-
-  renderSimilarProducts(products, isRandom = false) {
-    const similarGrid = document.getElementById('similarProductsGrid');
-    if (!similarGrid) return;
-
-    const pps = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 4;
-    const slides = [];
-    for (let i = 0; i < products.length; i += pps) {
-      const batch = products.slice(i, i + pps);
-      slides.push(`
-        <div class="carousel-item ${i === 0 ? 'active' : ''}">
-          <div class="row justify-content-center">
-            ${batch.map(p => this.renderProductCard(p)).join('')}
-          </div>
-          ${isRandom && i === 0 ? `
-            <div class="text-center mt-3">
-              <small class="text-muted">
-                <i class="bi bi-info-circle me-1"></i>
-                Productos recomendados
-              </small>
-            </div>` : ''}
-        </div>`);
-    }
-    similarGrid.innerHTML = slides.join('');
-    this._toggleCarouselControls('similarProductsCarousel', slides.length);
-    setTimeout(() => window.favoritesManager?.updateFavoriteButtons(), 100);
   }
 
   // ── Recently viewed ────────────────────────────────────────────────────────
   loadRecentlyViewed() {
-    const grid = document.getElementById('recentlyViewedGrid');
-    if (!grid) return;
     try {
       const recentIds = this.getRecentlyViewed()
         .filter(id => id !== String(this.currentProduct.id))
-        .slice(0, 4);
-
+        .slice(0, 8);
       if (!recentIds.length) return;
-
-      const productsData = recentIds
+      const products = recentIds
         .map(id => window.getProductById ? window.getProductById(parseInt(id)) : null)
         .filter(Boolean);
-
-      if (productsData.length) this.renderRecentlyViewed(productsData);
+      if (products.length) this._buildCarousel('recentlyViewedCarousel', 'recentlyViewedGrid', products, true);
     } catch (err) {
       DaleDeal.error('Error cargando recientes:', err);
     }
   }
 
-  renderRecentlyViewed(products) {
-    const grid = document.getElementById('recentlyViewedGrid');
-    if (!grid) return;
-
-    const pps = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 4;
-    const slides = [];
-    for (let i = 0; i < products.length; i += pps) {
-      const batch = products.slice(i, i + pps);
-      slides.push(`
-        <div class="carousel-item ${i === 0 ? 'active' : ''}">
-          <div class="row justify-content-center">
-            ${batch.map(p => this.renderProductCard(p, true)).join('')}
-          </div>
-        </div>`);
-    }
-    grid.innerHTML = slides.join('');
-    this._toggleCarouselControls('recentlyViewedCarousel', slides.length);
-    setTimeout(() => window.favoritesManager?.updateFavoriteButtons(), 100);
-  }
-
-  // ── Shared card renderer (similar & recent) ────────────────────────────────
+  // ── Shared card renderer (similar, seller & recent) ──────────────────────
   renderProductCard(product, isRecent = false) {
+    const hasDiscount = product.discount && product.discount > 0;
+    const hasMultipleImages = product.images?.gallery?.length > 1;
+
+    // Badges — top-left: custom + offer (sin duplicar descuento); bottom-right: solo badges de plataforma (sin texto personalizado)
+    const badges = product.badges || [];
+    const customBadges = badges.filter(b => typeof b === 'object' && b.text);
+    const legacyBadges = badges.filter(b => typeof b === 'string');
+    // Si ya hay discount en el campo, ignorar strings tipo "X% OFF" para no duplicar
+    const legacyOfferBadges = hasDiscount ? [] : legacyBadges.filter(b => b.includes('OFF'));
+    const platformBadges = legacyBadges.filter(b => !b.includes('OFF') && ['DESTACADO', 'MÁS VENDIDO', 'NUEVO', 'RECOMENDADO'].includes(b.toUpperCase()));
+    const topLeftInner = [
+      ...customBadges.map(b => `<span class="badge-custom" style="background:${b.color}">${b.text}</span>`),
+      hasDiscount ? `<span class="badge-offer">-${product.discount}%</span>` : '',
+      ...legacyOfferBadges.map(b => `<span class="badge-offer">${b}</span>`),
+    ].filter(Boolean).join('');
+    const topLeftHTML = topLeftInner ? `<div class="service-badges">${topLeftInner}</div>` : '';
+    const bottomRightHTML = platformBadges.map(b => `<span class="badge-featured">${b}</span>`).join('');
+
+    // Images
+    let imagesHTML = '';
+    if (hasMultipleImages) {
+      imagesHTML = `
+        <div class="product-image-carousel" data-current-image="0">
+          ${product.images.gallery.map((img, i) => `
+            <img src="${img}" alt="${product.title} - Vista ${i + 1}" class="product-image ${i === 0 ? 'active' : ''}" />
+          `).join('')}
+          <button class="carousel-control carousel-prev" data-direction="prev"><i class="bi bi-chevron-left"></i></button>
+          <button class="carousel-control carousel-next" data-direction="next"><i class="bi bi-chevron-right"></i></button>
+          <div class="carousel-indicators">
+            ${product.images.gallery.map((_, i) => `<span class="indicator ${i === 0 ? 'active' : ''}" data-index="${i}"></span>`).join('')}
+          </div>
+        </div>`;
+    } else {
+      imagesHTML = `<img src="${product.images.main}" alt="${product.title}" class="product-image" />`;
+    }
+
     const desc = product.description
       ? (product.description.length > 80 ? product.description.substring(0, 80) + '…' : product.description)
-      : 'Producto de alta calidad.';
+      : '';
+
+    const priceHTML = hasDiscount
+      ? `<span class="product-current-price">${this.formatPrice(product.price)}</span>
+         <span class="product-original-price">${this.formatPrice(product.originalPrice)}</span>`
+      : `<span class="product-current-price">${this.formatPrice(product.price)}</span>`;
+
     return `
       <div class="col-12 col-md-6 col-lg-3 mb-4 d-flex">
-        <div class="product-card ${isRecent ? 'recent-product-card' : 'similar-product-card'} w-100"
+        <div class="product-card ${hasDiscount ? 'has-offer' : ''} w-100"
              data-id="${product.id}" data-clickable="true">
           <div class="product-image-container">
-            <img src="${product.images.main}" alt="${product.title}" class="product-image" />
-            ${product.discount ? `<div class="product-badges"><span class="badge-offer">-${product.discount}%</span></div>` : ''}
+            ${imagesHTML}
+            ${topLeftHTML}
+            ${bottomRightHTML}
             ${isRecent ? `<div class="recently-viewed-badge"><i class="bi bi-clock-history"></i></div>` : ''}
             <div class="product-actions">
               <button class="action-heart" title="Agregar a favoritos" data-product-id="${product.id}">
@@ -640,27 +659,21 @@ class ProductPage {
               <div class="product-rating">
                 <div class="stars">${this.renderProductStars(product.rating)}</div>
                 <span class="reviews-count">(${product.reviewCount.toLocaleString('es-AR')})</span>
+                ${product.shipping?.free ? `<span class="shipping-badge"><i class="bi bi-truck"></i> Envío gratis</span>` : ''}
+              </div>
+              <div class="product-location">
+                <i class="bi bi-geo-alt-fill"></i>
+                <span>CABA</span>
+                ${product.shipping?.speed === 'today' ? `<span class="shipping-badge"><i class="bi bi-lightning-charge-fill"></i> Llega hoy</span>` : ''}
+                ${product.shipping?.speed === 'tomorrow' ? `<span class="shipping-badge"><i class="bi bi-clock-fill"></i> Llega mañana</span>` : ''}
               </div>
             </div>
             <div class="product-pricing-wrapper">
-              <div class="product-pricing">
-                <span class="product-current-price">${this.formatPrice(product.price)}</span>
-                ${product.originalPrice ? `<span class="product-original-price">${this.formatPrice(product.originalPrice)}</span>` : ''}
-              </div>
+              <div class="product-pricing">${priceHTML}</div>
             </div>
           </div>
         </div>
       </div>`;
-  }
-
-  _toggleCarouselControls(carouselId, slideCount) {
-    const carousel = document.getElementById(carouselId);
-    if (!carousel) return;
-    const show = slideCount > 1;
-    const prev = carousel.querySelector('.carousel-control-prev');
-    const next = carousel.querySelector('.carousel-control-next');
-    if (prev) prev.style.display = show ? 'flex' : 'none';
-    if (next) next.style.display = show ? 'flex' : 'none';
   }
 
   // ── Recently viewed persistence ────────────────────────────────────────────

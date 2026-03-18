@@ -16,18 +16,23 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ── Tabs: Producto / Servicio ────────────────────────────────────────
-  document.querySelectorAll('#publishTabs .nav-link').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('#publishTabs .nav-link').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
+  function switchTab(target) {
+    document.querySelectorAll('#publishTabs .nav-link').forEach(t => t.classList.remove('active'));
+    const activeBtn = document.querySelector(`#publishTabs .nav-link[data-tab="${target}"]`);
+    if (activeBtn) activeBtn.classList.add('active');
+    document.getElementById('form-producto').style.display = target === 'producto' ? 'block' : 'none';
+    document.getElementById('form-servicio').style.display = target === 'servicio' ? 'block' : 'none';
+    document.getElementById('planes-producto').style.display = target === 'producto' ? 'block' : 'none';
+    document.getElementById('planes-servicio').style.display = target === 'servicio' ? 'block' : 'none';
+  }
 
-      const target = tab.dataset.tab;
-      document.getElementById('form-producto').style.display = target === 'producto' ? 'block' : 'none';
-      document.getElementById('form-servicio').style.display = target === 'servicio' ? 'block' : 'none';
-      document.getElementById('planes-producto').style.display = target === 'producto' ? 'block' : 'none';
-      document.getElementById('planes-servicio').style.display = target === 'servicio' ? 'block' : 'none';
-    });
+  document.querySelectorAll('#publishTabs .nav-link').forEach(tab => {
+    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
   });
+
+  // Leer parámetro ?tab= de la URL para abrir el tab correcto
+  const urlTab = new URLSearchParams(window.location.search).get('tab');
+  if (urlTab === 'servicio') switchTab('servicio');
 
   // ── Condición del producto ───────────────────────────────────────────
   document.querySelectorAll('.condition-btn').forEach(btn => {
@@ -174,6 +179,7 @@ async function submitProduct() {
     location: document.getElementById('p-location').value.trim(),
     images: getImageUrls('p-image-list'),
     currency: 'ARS',
+    badges: getBadges('p'),
   };
 
   setLoading(btn, true, 'Publicando...');
@@ -225,6 +231,7 @@ async function submitService() {
     zones_covered: zones,
     images: getImageUrls('s-image-list'),
     currency: 'ARS',
+    badges: getBadges('s'),
   };
 
   setLoading(btn, true, 'Publicando...');
@@ -288,6 +295,27 @@ function resetImageList(listId) {
       </button>
     </div>
   `;
+}
+
+// =====================================================
+// CARTELES PERSONALIZADOS
+// =====================================================
+function updateBadgePreview(id) {
+  const text = document.getElementById(id + '-text').value.trim();
+  const color = document.getElementById(id + '-color').value;
+  const preview = document.getElementById(id + '-preview');
+  if (!preview) return;
+  preview.style.background = color;
+  preview.textContent = text || 'VISTA';
+}
+
+function getBadges(prefix) {
+  return [1, 2]
+    .map(n => ({
+      text: document.getElementById(`${prefix}-badge-${n}-text`)?.value.trim() || '',
+      color: document.getElementById(`${prefix}-badge-${n}-color`)?.value || '#ef4444',
+    }))
+    .filter(b => b.text);
 }
 
 // =====================================================

@@ -76,6 +76,14 @@
             </a>
           </div>
 
+          <!-- Publicar Button -->
+          <div class="action-item d-none d-md-flex">
+            <a href="./publicar.html" class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-3" title="Publicar producto o servicio" style="border-radius: 20px; font-weight: 600;">
+              <i class="bi bi-plus-circle-fill"></i>
+              <span>Publicar</span>
+            </a>
+          </div>
+
           <!-- Notifications -->
           <div class="action-item dropdown">
             <button class="action-btn" id="notificationBtn" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" title="Notificaciones">
@@ -490,20 +498,9 @@
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a 
-                    class="nav-link" 
-                    data-bs-toggle="tab" 
-                    href="#specifications"
-                    role="tab"
-                  >
-                    <i class="bi bi-list-ul me-2"></i>
-                    <span>Especificaciones</span>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a 
-                    class="nav-link" 
-                    data-bs-toggle="tab" 
+                  <a
+                    class="nav-link"
+                    data-bs-toggle="tab"
                     href="#reviews"
                     role="tab"
                   >
@@ -512,9 +509,9 @@
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a 
-                    class="nav-link" 
-                    data-bs-toggle="tab" 
+                  <a
+                    class="nav-link"
+                    data-bs-toggle="tab"
                     href="#questions"
                     role="tab"
                   >
@@ -530,119 +527,9 @@
               <!-- Description Tab -->
               <div class="tab-pane fade show active" id="description">
                 <div class="description-content">
-                  <h3>iPhone 15 Pro Max - La evolución de la innovación</h3>
-                  <p>
-                    El iPhone 15 Pro Max redefine lo que es posible en un
-                    smartphone. Con el revolucionario chip A17 Pro, el primer
-                    chip de 3 nanómetros en un smartphone, experimentarás un
-                    rendimiento sin precedentes y una eficiencia energética
-                    excepcional.
+                  <p id="product-description-text" style="white-space: pre-line; line-height: 1.8; color: var(--gray-700);">
+                    El iPhone 15 Pro Max redefine lo que es posible en un smartphone. Con el revolucionario chip A17 Pro, el primer chip de 3 nanómetros en un smartphone, experimentarás un rendimiento sin precedentes y una eficiencia energética excepcional.
                   </p>
-
-                  <h4>Características destacadas</h4>
-                  <ul>
-                    <li>
-                      Chip A17 Pro con GPU de 6 núcleos para gráficos de nivel
-                      profesional
-                    </li>
-                    <li>Sistema de cámaras Pro con teleobjetivo de 120mm</li>
-                    <li>Pantalla Super Retina XDR de 6.7" con ProMotion</li>
-                    <li>Diseño en titanio de grado aeroespacial</li>
-                    <li>Botón de Acción personalizable</li>
-                    <li>USB-C con velocidades de transferencia hasta 10Gb/s</li>
-                  </ul>
-
-                  <div class="feature-grid">
-                    <div class="feature-card">
-                      <i class="bi bi-camera"></i>
-                      <h5>Sistema de cámaras Pro</h5>
-                      <p>
-                        Captura fotos y videos con calidad profesional gracias
-                        al sistema de tres cámaras avanzado.
-                      </p>
-                    </div>
-                    <div class="feature-card">
-                      <i class="bi bi-cpu"></i>
-                      <h5>Chip A17 Pro</h5>
-                      <p>
-                        El chip más avanzado jamás creado para un smartphone,
-                        con rendimiento de nivel desktop.
-                      </p>
-                    </div>
-                    <div class="feature-card">
-                      <i class="bi bi-battery-charging"></i>
-                      <h5>Batería todo el día</h5>
-                      <p>
-                        Hasta 29 horas de reproducción de video con carga rápida
-                        y carga inalámbrica MagSafe.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Specifications Tab -->
-              <div class="tab-pane fade" id="specifications">
-                <div class="specifications-content">
-                  <div class="spec-group">
-                    <h4>Pantalla</h4>
-                    <div class="spec-item">
-                      <span class="spec-label">Tamaño</span>
-                      <span class="spec-value">6.7 pulgadas</span>
-                    </div>
-                    <div class="spec-item">
-                      <span class="spec-label">Tecnología</span>
-                      <span class="spec-value">Super Retina XDR OLED</span>
-                    </div>
-                    <div class="spec-item">
-                      <span class="spec-label">Resolución</span>
-                      <span class="spec-value">2796 x 1290 píxeles</span>
-                    </div>
-                    <div class="spec-item">
-                      <span class="spec-label">Densidad</span>
-                      <span class="spec-value">460 ppi</span>
-                    </div>
-                  </div>
-
-                  <div class="spec-group">
-                    <h4>Rendimiento</h4>
-                    <div class="spec-item">
-                      <span class="spec-label">Chip</span>
-                      <span class="spec-value">A17 Pro</span>
-                    </div>
-                    <div class="spec-item">
-                      <span class="spec-label">CPU</span>
-                      <span class="spec-value">6 núcleos</span>
-                    </div>
-                    <div class="spec-item">
-                      <span class="spec-label">GPU</span>
-                      <span class="spec-value">6 núcleos</span>
-                    </div>
-                    <div class="spec-item">
-                      <span class="spec-label">Neural Engine</span>
-                      <span class="spec-value">16 núcleos</span>
-                    </div>
-                  </div>
-
-                  <div class="spec-group">
-                    <h4>Cámara</h4>
-                    <div class="spec-item">
-                      <span class="spec-label">Principal</span>
-                      <span class="spec-value">48MP f/1.78</span>
-                    </div>
-                    <div class="spec-item">
-                      <span class="spec-label">Ultra gran angular</span>
-                      <span class="spec-value">12MP f/2.2</span>
-                    </div>
-                    <div class="spec-item">
-                      <span class="spec-label">Teleobjetivo</span>
-                      <span class="spec-value">12MP f/2.8</span>
-                    </div>
-                    <div class="spec-item">
-                      <span class="spec-label">Zoom óptico</span>
-                      <span class="spec-value">5x</span>
-                    </div>
-                  </div>
                 </div>
               </div>
 
@@ -793,6 +680,33 @@
         </div>
       </section>
 
+      <!-- Seller Products Section -->
+      <section class="similar-products-section seller-products-section" id="sellerProductsSection" style="display:none;">
+        <div class="container">
+          <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title">Más productos del vendedor</h2>
+            <p class="section-subtitle">Otros productos publicados por el mismo vendedor</p>
+          </div>
+          <div class="similar-products-carousel-container" data-aos="fade-up" data-aos-delay="200">
+            <div id="sellerProductsCarousel" class="custom-carousel">
+              <div class="carousel-inner" id="sellerProductsGrid">
+                <div class="loading-similar-products">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando productos del vendedor...</span>
+                  </div>
+                </div>
+              </div>
+              <button class="carousel-control-prev" type="button">
+                <div class="carousel-control-icon"><i class="bi bi-chevron-left"></i></div>
+              </button>
+              <button class="carousel-control-next" type="button">
+                <div class="carousel-control-icon"><i class="bi bi-chevron-right"></i></div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Similar Products Section -->
       <section class="similar-products-section">
         <div class="container">
@@ -804,31 +718,20 @@
 
           <!-- Similar Products Carousel -->
           <div class="similar-products-carousel-container" data-aos="fade-up" data-aos-delay="200">
-            <div id="similarProductsCarousel" class="carousel slide" data-bs-ride="false">
+            <div id="similarProductsCarousel" class="custom-carousel">
               <div class="carousel-inner" id="similarProductsGrid">
-                <!-- Los productos similares se cargarán dinámicamente aquí -->
-                <div class="carousel-item active">
-                  <div class="loading-similar-products">
-                    <div class="spinner-border text-primary" role="status">
-                      <span class="visually-hidden">Cargando productos similares...</span>
-                    </div>
-                    <p class="mt-3 text-muted">Buscando productos similares...</p>
+                <div class="loading-similar-products">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando productos similares...</span>
                   </div>
+                  <p class="mt-3 text-muted">Buscando productos similares...</p>
                 </div>
               </div>
-              
-              <!-- Carousel Controls -->
-              <button class="carousel-control-prev" type="button" data-bs-target="#similarProductsCarousel" data-bs-slide="prev">
-                <div class="carousel-control-icon">
-                  <i class="bi bi-chevron-left"></i>
-                </div>
-                <span class="visually-hidden">Anterior</span>
+              <button class="carousel-control-prev" type="button">
+                <div class="carousel-control-icon"><i class="bi bi-chevron-left"></i></div>
               </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#similarProductsCarousel" data-bs-slide="next">
-                <div class="carousel-control-icon">
-                  <i class="bi bi-chevron-right"></i>
-                </div>
-                <span class="visually-hidden">Siguiente</span>
+              <button class="carousel-control-next" type="button">
+                <div class="carousel-control-icon"><i class="bi bi-chevron-right"></i></div>
               </button>
             </div>
           </div>
@@ -854,34 +757,23 @@
 
           <!-- Recently Viewed Carousel -->
           <div class="recently-viewed-carousel-container" data-aos="fade-up" data-aos-delay="200">
-            <div id="recentlyViewedCarousel" class="carousel slide" data-bs-ride="false">
+            <div id="recentlyViewedCarousel" class="custom-carousel">
               <div class="carousel-inner" id="recentlyViewedGrid">
-                <!-- Los productos vistos recientemente se cargarán dinámicamente aquí -->
-                <div class="carousel-item active">
-                  <div class="no-recent-products text-center py-5">
-                    <i class="bi bi-clock-history display-4 text-muted mb-3"></i>
-                    <h5 class="text-muted">No hay productos vistos recientemente</h5>
-                    <p class="text-muted">Los productos que veas aparecerán aquí</p>
-                    <a href="../index.html" class="btn btn-primary">
-                      <i class="bi bi-house me-2"></i>
-                      Ir al inicio
-                    </a>
-                  </div>
+                <div class="no-recent-products text-center py-5">
+                  <i class="bi bi-clock-history display-4 text-muted mb-3"></i>
+                  <h5 class="text-muted">No hay productos vistos recientemente</h5>
+                  <p class="text-muted">Los productos que veas aparecerán aquí</p>
+                  <a href="../index.html" class="btn btn-primary">
+                    <i class="bi bi-house me-2"></i>
+                    Ir al inicio
+                  </a>
                 </div>
               </div>
-              
-              <!-- Carousel Controls -->
-              <button class="carousel-control-prev" type="button" data-bs-target="#recentlyViewedCarousel" data-bs-slide="prev">
-                <div class="carousel-control-icon">
-                  <i class="bi bi-chevron-left"></i>
-                </div>
-                <span class="visually-hidden">Anterior</span>
+              <button class="carousel-control-prev" type="button">
+                <div class="carousel-control-icon"><i class="bi bi-chevron-left"></i></div>
               </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#recentlyViewedCarousel" data-bs-slide="next">
-                <div class="carousel-control-icon">
-                  <i class="bi bi-chevron-right"></i>
-                </div>
-                <span class="visually-hidden">Siguiente</span>
+              <button class="carousel-control-next" type="button">
+                <div class="carousel-control-icon"><i class="bi bi-chevron-right"></i></div>
               </button>
             </div>
           </div>

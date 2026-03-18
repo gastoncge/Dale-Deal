@@ -1538,35 +1538,44 @@
   min-height: 400px;
 }
 
-#similarProductsCarousel {
+#similarProductsCarousel,
+#sellerProductsCarousel {
   overflow: hidden;
 }
 
-#similarProductsCarousel .carousel-inner {
+#similarProductsCarousel .carousel-inner,
+#sellerProductsCarousel .carousel-inner {
   padding: var(--spacing-4) 0;
 }
 
-#similarProductsCarousel .carousel-item {
+#similarProductsCarousel .carousel-item,
+#sellerProductsCarousel .carousel-item {
   min-height: 360px;
-  display: flex;
-  align-items: stretch;
 }
 
-#similarProductsCarousel .carousel-item .row {
+#similarProductsCarousel .carousel-item .row,
+#sellerProductsCarousel .carousel-item .row {
   width: 100%;
+  display: flex;
   align-items: stretch;
 }
 
 #similarProductsCarousel .carousel-item .col-12,
 #similarProductsCarousel .carousel-item .col-md-6,
-#similarProductsCarousel .carousel-item .col-lg-3 {
+#similarProductsCarousel .carousel-item .col-lg-3,
+#sellerProductsCarousel .carousel-item .col-12,
+#sellerProductsCarousel .carousel-item .col-md-6,
+#sellerProductsCarousel .carousel-item .col-lg-3 {
   display: flex !important;
   align-items: stretch;
 }
 
 #similarProductsCarousel .carousel-item .col-12 .product-card,
 #similarProductsCarousel .carousel-item .col-md-6 .product-card,
-#similarProductsCarousel .carousel-item .col-lg-3 .product-card {
+#similarProductsCarousel .carousel-item .col-lg-3 .product-card,
+#sellerProductsCarousel .carousel-item .col-12 .product-card,
+#sellerProductsCarousel .carousel-item .col-md-6 .product-card,
+#sellerProductsCarousel .carousel-item .col-lg-3 .product-card {
   width: 100%;
   height: 100%;
 }
@@ -1659,13 +1668,59 @@
   z-index: 10;
 }
 
-/* Controles específicos para productos similares y recientes */
-#similarProductsCarousel .carousel-control-prev,
-#similarProductsCarousel .carousel-control-next,
-#recentlyViewedCarousel .carousel-control-prev,
-#recentlyViewedCarousel .carousel-control-next {
-  top: 160px;
+/* Controles específicos para custom carousels */
+.custom-carousel .carousel-control-prev,
+.custom-carousel .carousel-control-next {
+  position: absolute;
+  top: 50%;
   transform: translateY(-50%);
+}
+
+.custom-carousel .carousel-control-prev:hover,
+.custom-carousel .carousel-control-next:hover {
+  transform: translateY(-50%) scale(1.1);
+  animation: none;
+}
+
+
+/* Contenedor: da espacio lateral para las flechas */
+.similar-products-carousel-container,
+.recently-viewed-carousel-container {
+  padding: 0 64px;
+}
+
+/* Custom carousel: relative para las flechas absolutas, overflow visible para que sobresalgan */
+.custom-carousel {
+  position: relative;
+  overflow: visible;
+}
+
+.custom-carousel .carousel-inner {
+  overflow: hidden;
+}
+
+/* Flechas bien afuera de las cards */
+.custom-carousel .carousel-control-prev {
+  left: -56px;
+}
+
+.custom-carousel .carousel-control-next {
+  right: -56px;
+}
+
+/* Badges más pequeños dentro de las secciones de tarjetas */
+.similar-products-section .badge-offer,
+.similar-products-section .badge-featured,
+.similar-products-section .badge-custom {
+  font-size: 0.65rem;
+  padding: 3px 7px;
+}
+
+/* Título de producto más chico en las secciones de tarjetas */
+.similar-products-section .product-title {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  line-height: 1.3;
 }
 
 .carousel-control-prev {

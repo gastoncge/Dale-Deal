@@ -777,10 +777,13 @@
   font-size: var(--font-size-xs);
 }
 
+/* Badge de plataforma (DESTACADO, MÁS VENDIDO) — esquina inferior derecha, no personalizable */
 .products-section .badge-featured {
   position: absolute;
-  top: var(--spacing-3);
-  left: var(--spacing-3);
+  bottom: var(--spacing-3);
+  right: var(--spacing-3);
+  top: auto;
+  left: auto;
   background: var(--gradient-primary);
   color: var(--white);
   padding: var(--spacing-2) var(--spacing-3);
@@ -793,10 +796,8 @@
   box-shadow: var(--shadow-md);
 }
 
+/* Badge de oferta/descuento — esquina superior izquierda (dentro de .service-badges) */
 .products-section .badge-offer {
-  position: absolute;
-  top: var(--spacing-3);
-  right: var(--spacing-3);
   background: var(--primary-red);
   color: var(--white);
   padding: var(--spacing-2) var(--spacing-3);
@@ -807,23 +808,6 @@
   box-shadow: var(--shadow-md);
 }
 
-.products-section .product-card.has-offer .badge-offer {
-  top: var(--spacing-3);
-  right: var(--spacing-3);
-  left: auto;
-}
-
-.products-section .product-card.has-offer .product-actions {
-  top: var(--spacing-3);
-  right: calc(var(--spacing-3) + 50px + 10px);
-  left: auto;
-}
-
-.products-section .product-card:not(.has-offer) .product-actions {
-  top: var(--spacing-3);
-  right: var(--spacing-3);
-  left: auto;
-}
 
 .products-section .product-pricing {
   display: flex;
@@ -847,8 +831,8 @@
 
 .products-section .product-actions {
   position: absolute;
-  top: var(--spacing-3);
-  right: var(--spacing-3);
+  top: 8px;
+  right: 8px;
   z-index: 4;
   display: flex;
   flex-direction: column;
@@ -870,7 +854,6 @@
   transition: all var(--transition-base);
   backdrop-filter: blur(10px);
   box-shadow: var(--shadow-md);
-  margin-top: -4px;
 }
 
 .products-section .action-heart:hover {

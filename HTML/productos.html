@@ -82,6 +82,14 @@
             </a>
           </div>
 
+          <!-- Publicar Button -->
+          <div class="action-item d-none d-md-flex">
+            <a href="./publicar.html" class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-3" title="Publicar producto o servicio" style="border-radius: 20px; font-weight: 600;">
+              <i class="bi bi-plus-circle-fill"></i>
+              <span>Publicar</span>
+            </a>
+          </div>
+
           <!-- Notifications -->
           <div class="action-item dropdown">
             <button class="action-btn" id="notificationBtn" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" title="Notificaciones">
@@ -2361,10 +2369,13 @@
         color: var(--gray-500);
       }
 
+      /* Badge de plataforma — esquina inferior derecha, no personalizable */
       .badge-featured {
         position: absolute;
-        top: var(--spacing-3);
-        left: var(--spacing-3);
+        bottom: var(--spacing-3);
+        right: var(--spacing-3);
+        top: auto;
+        left: auto;
         background: var(--gradient-primary);
         color: var(--white);
         padding: var(--spacing-2) var(--spacing-3);
@@ -2377,11 +2388,8 @@
         box-shadow: var(--shadow-md);
       }
 
-      /* Badge de descuento - posición por defecto (esquina superior derecha) */
+      /* Badge de oferta/descuento — dentro de .service-badges (superior izquierda) */
       .badge-offer {
-        position: absolute;
-        top: var(--spacing-3);
-        right: var(--spacing-3);
         background: var(--primary-red);
         color: var(--white);
         padding: var(--spacing-2) var(--spacing-3);
@@ -2392,22 +2400,7 @@
         box-shadow: var(--shadow-md);
       }
 
-      /* Cuando hay descuento, el badge se posiciona a la derecha */
-      .product-card.has-offer .badge-offer {
-        top: var(--spacing-3);
-        right: var(--spacing-3);
-        left: auto;
-      }
-
-      /* Botón de favoritos se posiciona al lado del badge de descuento con un pequeño margen */
-      .product-card.has-offer .product-actions {
-        top: var(--spacing-3);
-        /* Espacio del badge (~50px) + margen entre elementos (10px) + spacing-3 del borde */
-        right: calc(var(--spacing-3) + 50px + 10px);
-        left: auto;
-      }
-
-      /* Cuando NO hay descuento, el botón de favoritos está en posición original (derecha) */
+      /* Botón de favoritos siempre en esquina superior derecha */
       .product-card:not(.has-offer) .product-actions {
         top: var(--spacing-3);
         right: var(--spacing-3);
@@ -3024,15 +3017,21 @@
           }
 
           // Create badges
-          const badges = [];
+          // Superior izquierda: ofertas + personalizados
+          const offerBadges = [];
           if (product.isOffer && product.discount) {
-            badges.push(`<span class="badge-offer">${product.discount}% OFF</span>`);
+            offerBadges.push(`<span class="badge-offer">${product.discount}% OFF</span>`);
           }
-          if (product.featured) {
-            badges.push(`<span class="badge-featured">MÁS VENDIDO</span>`);
-          }
+          (product.badges || []).filter(b => typeof b === 'object' && b.text).forEach(b => {
+            offerBadges.push(`<span class="badge-custom" style="background:${b.color}">${b.text}</span>`);
+          });
+          const topLeftHtml = offerBadges.length ? `<div class="service-badges">${offerBadges.join('')}</div>` : '';
 
-          const badgesHtml = badges.length > 0 ? badges.join('') : '';
+          // Inferior derecha: badges de plataforma
+          const platformBadges = [];
+          if (product.featured) platformBadges.push(`<span class="badge-featured">MÁS VENDIDO</span>`);
+
+          const badgesHtml = topLeftHtml + platformBadges.join('');
 
           // Handle multiple images or single image
           const images = product.images || [product.image];
