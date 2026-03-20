@@ -3155,6 +3155,14 @@
             ? (service.description.length > 80 ? service.description.substring(0, 80) + '...' : service.description)
             : '';
 
+          const provider = service.provider || {};
+          const providerHTML = provider.name ? `
+            <div class="product-provider">
+              <img src="${provider.avatar}" alt="${provider.name}" class="product-provider-avatar" />
+              <span class="product-provider-name">${provider.name}</span>
+              ${provider.verified ? '<i class="bi bi-patch-check-fill product-provider-verified"></i>' : ''}
+            </div>` : '';
+
           card.innerHTML = `
             <div class="product-image-container">
               <img src="${service.image}" alt="${service.title}" class="product-image active" loading="lazy" />
@@ -3167,6 +3175,7 @@
             </div>
             <div class="product-info">
               <h3 class="product-title">${service.title}</h3>
+              ${providerHTML}
               <p class="product-description">${shortDesc}</p>
               <div class="product-meta-group">
                 <div class="product-rating">
@@ -3189,6 +3198,8 @@
 
           card.addEventListener('click', (e) => {
             if (e.target.closest('.action-heart')) return;
+            localStorage.setItem('selectedServiceId', service.id);
+            window.location.href = `servicio.html?id=${service.id}`;
           });
 
           return card;

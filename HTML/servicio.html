@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Servicio Profesional - DALE DEAL</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Servicio profesional al mejor precio. Prestadores verificados, pago seguro y satisfacción garantizada en Dale Deal." />
+    <meta name="keywords" content="servicio profesional, prestador, dale deal, marketplace" />
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+
+    <!-- AOS (Animate On Scroll) -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../CSS/variables.css" />
+    <link rel="stylesheet" href="../CSS/components.css" />
+    <link rel="stylesheet" href="../CSS/pages/product.css" />
+    <link rel="stylesheet" href="../CSS/pages/service.css" />
+    <link rel="stylesheet" href="../CSS/responsive.css" />
+  </head>
+
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
+      <div class="container-fluid px-4">
+        <!-- Logo -->
+        <a class="navbar-brand" href="../index.html" data-aos="fade-right">
+          <img src="../IMG/LOGO-2.png" alt="Dale Deal" class="logo-navbar" />
+          <span class="brand-text">DALE DEAL</span>
+        </a>
+
+        <!-- Search Bar -->
+        <div class="search-container mx-auto" data-aos="fade-up" data-aos-delay="100">
+          <div class="search-wrapper">
+            <i class="bi bi-search search-icon"></i>
+            <input type="text" class="search-input" placeholder="¿Qué servicio buscás?" id="searchInput" />
+          </div>
+        </div>
+
+        <!-- User Actions -->
+        <div class="navbar-actions" data-aos="fade-left" data-aos-delay="200">
+          <!-- Products Link -->
+          <div class="action-item">
+            <a href="./productos.html" class="action-link" title="Productos">
+              <i class="bi bi-bag me-1"></i>
+              <span class="action-text">Productos</span>
+            </a>
+          </div>
+
+          <!-- Services Link -->
+          <div class="action-item">
+            <a href="./servicios.html" class="action-link" title="Servicios Profesionales">
+              <i class="bi bi-tools me-1"></i>
+              <span class="action-text">Servicios</span>
+            </a>
+          </div>
+
+          <!-- Publicar Button -->
+          <div class="action-item d-none d-md-flex">
+            <a href="./publicar.html" class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-3" title="Publicar producto o servicio" style="border-radius: 20px; font-weight: 600;">
+              <i class="bi bi-plus-circle-fill"></i>
+              <span>Publicar</span>
+            </a>
+          </div>
+
+          <!-- Notifications -->
+          <div class="action-item dropdown">
+            <button class="action-btn" id="notificationBtn" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" title="Notificaciones">
+              <i class="bi bi-bell"></i>
+              <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end notifications-dropdown" aria-labelledby="notificationBtn">
+              <div class="notifications-header">
+                <h6 class="mb-0">
+                  <i class="bi bi-bell me-2"></i>Notificaciones
+                  <span class="notifications-count" id="notificationsCount">3</span>
+                </h6>
+              </div>
+              <div class="notifications-filter">
+                <button class="filter-chip active" data-filter="all">Todas</button>
+                <button class="filter-chip" data-filter="unread">No leídas</button>
+                <button class="filter-chip" data-filter="orders">Pedidos</button>
+                <button class="filter-chip" data-filter="offers">Ofertas</button>
+              </div>
+              <div class="notifications-body" id="notificationsDropdownBody">
+                <div class="notification-item unread" data-id="1" data-type="orders">
+                  <div class="notification-icon bg-success">
+                    <i class="bi bi-check-circle text-white"></i>
+                  </div>
+                  <div class="notification-content">
+                    <h6>Pedido confirmado</h6>
+                    <p>Tu pedido #12345 ha sido confirmado</p>
+                    <small>Hace 2 horas</small>
+                  </div>
+                  <button class="notification-close" data-action="dismiss"><i class="bi bi-x"></i></button>
+                </div>
+                <div class="notification-item unread" data-id="2" data-type="orders">
+                  <div class="notification-icon bg-info">
+                    <i class="bi bi-tools text-white"></i>
+                  </div>
+                  <div class="notification-content">
+                    <h6>Servicio programado</h6>
+                    <p>Tu servicio está confirmado para mañana</p>
+                    <small>Hace 1 día</small>
+                  </div>
+                  <button class="notification-close" data-action="dismiss"><i class="bi bi-x"></i></button>
+                </div>
+                <div class="notification-item unread" data-id="3" data-type="offers">
+                  <div class="notification-icon bg-warning">
+                    <i class="bi bi-star text-white"></i>
+                  </div>
+                  <div class="notification-content">
+                    <h6>Nueva oferta disponible</h6>
+                    <p>20% de descuento en servicios de instalación</p>
+                    <small>Hace 2 días</small>
+                  </div>
+                  <button class="notification-close" data-action="dismiss"><i class="bi bi-x"></i></button>
+                </div>
+              </div>
+              <div class="notifications-footer">
+                <a href="./notificaciones.html" class="btn btn-outline-secondary btn-sm w-100 mb-2">
+                  <i class="bi bi-list me-2"></i>Ver todas
+                </a>
+                <button type="button" class="btn btn-primary btn-sm w-100" id="markAllAsRead">
+                  <i class="bi bi-check-all me-2"></i>Marcar todas como leídas
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cart -->
+          <div class="action-item dropdown">
+            <button class="action-btn" id="cartBtn" data-bs-toggle="dropdown" data-bs-display="static" data-bs-auto-close="outside" aria-expanded="false" title="Carrito de compras">
+              <i class="bi bi-cart3"></i>
+              <span class="cart-badge" id="cartBadge" style="display: none;">0</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end cart-dropdown" aria-labelledby="cartBtn">
+              <div class="cart-header">
+                <h6 class="mb-0">
+                  <i class="bi bi-cart3 me-2"></i>Mi Carrito
+                  <span class="cart-count" id="cartCount">0</span>
+                </h6>
+              </div>
+              <div class="cart-body" id="cartDropdownBody"></div>
+              <div class="cart-footer">
+                <div class="cart-total mb-3">
+                  <div class="cart-total-row cart-total-final">
+                    <span class="cart-total-label">Total:</span>
+                    <span class="cart-total-value" id="cartTotal">$0</span>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-outline-secondary btn-sm w-100 mb-2" id="viewFullCart">
+                  <i class="bi bi-eye me-2"></i>Ver carrito completo
+                </button>
+                <button type="button" class="btn btn-primary btn-sm w-100" id="proceedToCheckout">
+                  <i class="bi bi-credit-card me-2"></i>Finalizar compra
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile -->
+          <div class="action-item dropdown">
+            <button class="action-btn profile-btn" id="profileDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" title="Mi cuenta">
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" alt="Perfil" class="profile-image" />
+              <span class="profile-name">Usuario</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+              <li class="dropdown-header">
+                <h6 class="mb-0">Mi Cuenta</h6>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <a class="dropdown-item" href="./notificaciones.html#mi-perfil">
+                  <i class="bi bi-person me-2"></i>Mi Perfil
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#" id="favoritesLink">
+                  <i class="bi bi-heart me-2"></i>Favoritos
+                </a>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <a class="dropdown-item" href="./login.html">
+                  <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item text-danger" href="#" id="logoutBtn" style="display: none">
+                  <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+      <div class="container">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="../index.html">Inicio</a></li>
+          <li class="breadcrumb-item"><a href="./servicios.html">Servicios</a></li>
+          <li class="breadcrumb-item active" id="breadcrumbServiceName">Instalación Técnica Profesional</li>
+        </ol>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- ===== SERVICE HERO SECTION ===== -->
+      <section class="service-hero">
+        <div class="container">
+          <div class="row">
+
+            <!-- ── Galería del Servicio (IZQUIERDA) ── -->
+            <div class="col-md-6">
+              <div class="service-gallery">
+                <!-- Imagen Principal -->
+                <div class="main-image-container">
+                  <img
+                    src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=700&h=500&fit=crop"
+                    alt="Trabajo del servicio"
+                    class="main-product-image"
+                    id="mainServiceImage"
+                  />
+                  <span class="product-badge sale" id="serviceBadgeTop" style="display:none;">Destacado</span>
+                </div>
+
+                <!-- Miniaturas de trabajos realizados -->
+                <div class="thumbnail-container">
+                  <img src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=120&h=120&fit=crop" alt="Trabajo 1" class="thumbnail active" data-full="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=700&h=500&fit=crop" />
+                  <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=120&h=120&fit=crop" alt="Trabajo 2" class="thumbnail" data-full="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&h=500&fit=crop" />
+                  <img src="https://images.unsplash.com/photo-1609692814858-f7cd2f0afa4f?w=120&h=120&fit=crop" alt="Trabajo 3" class="thumbnail" data-full="https://images.unsplash.com/photo-1609692814858-f7cd2f0afa4f?w=700&h=500&fit=crop" />
+                  <img src="https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=120&h=120&fit=crop" alt="Trabajo 4" class="thumbnail" data-full="https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=700&h=500&fit=crop" />
+                </div>
+
+                <!-- Nota de galería -->
+                <p class="text-muted text-center mt-2" style="font-size:0.8rem;">
+                  <i class="bi bi-images me-1"></i>Fotos reales de trabajos realizados por el prestador
+                </p>
+              </div>
+            </div>
+
+            <!-- ── Información del Servicio (DERECHA) ── -->
+            <div class="col-md-6">
+              <div class="svc-info">
+
+                <!-- Tarjeta del Prestador -->
+                <div class="provider-card" data-aos="fade-left">
+                  <img
+                    id="providerAvatar"
+                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face"
+                    alt="Prestador"
+                    class="provider-avatar"
+                  />
+                  <div class="provider-details">
+                    <div class="provider-name-row">
+                      <span class="provider-name provider-name-text">Alejandro R.</span>
+                      <i class="bi bi-patch-check-fill provider-verified" title="Prestador verificado"></i>
+                      <span class="provider-member-badge">Pro</span>
+                    </div>
+                    <div class="provider-stats" id="providerStats">
+                      <span class="stars">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-half"></i>
+                      </span>
+                      <strong>4.9</strong> · 127 reseñas
+                    </div>
+                    <div class="provider-response-time mb-1">
+                      <i class="bi bi-clock-fill"></i>
+                      <span id="providerResponseTime">Responde en &lt; 30 min</span>
+                    </div>
+                    <div class="provider-location">
+                      <i class="bi bi-geo-alt-fill"></i>
+                      <span id="providerLocation">CABA</span>
+                      &nbsp;·&nbsp;
+                      <span id="providerMemberSince">Miembro desde 2021</span>
+                      &nbsp;·&nbsp;
+                      <span id="providerCompletedJobs">312 trabajos</span>
+                    </div>
+                  </div>
+                  <div class="provider-card-actions">
+                    <a href="#" class="btn-view-profile">Ver perfil</a>
+                  </div>
+                </div>
+
+                <!-- Título del Servicio -->
+                <div class="service-header" data-aos="fade-left" data-aos-delay="100">
+                  <h1 class="svc-title">Instalación Técnica Profesional</h1>
+                  <div class="svc-meta">
+                    <div class="service-rating">
+                      <div class="stars">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-half"></i>
+                      </div>
+                      <span class="rating-text">4.9 (127 reseñas)</span>
+                    </div>
+                    <div class="service-contracted">
+                      <i class="bi bi-check-circle-fill"></i>
+                      <span>+127 servicios prestados</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tags / Badges del servicio -->
+                <div class="service-tags" data-aos="fade-left" data-aos-delay="150">
+                  <span class="service-tag"><i class="bi bi-check-circle-fill me-1"></i>Certificado</span>
+                  <span class="service-tag"><i class="bi bi-check-circle-fill me-1"></i>Garantía 1 año</span>
+                  <span class="service-tag"><i class="bi bi-check-circle-fill me-1"></i>Presupuesto gratis</span>
+                </div>
+
+                <!-- Disponibilidad -->
+                <div class="service-availability" id="serviceAvailability" data-aos="fade-left" data-aos-delay="175">
+                  <span class="availability-dot available"></span>
+                  Disponible esta semana · Responde en &lt; 30 min
+                </div>
+
+                <!-- Sección de Precio -->
+                <div class="service-price-section" data-aos="fade-left" data-aos-delay="200">
+                  <div class="service-price-row">
+                    <span class="service-current-price">$15.999</span>
+                    <span class="service-price-type">/ visita</span>
+                  </div>
+                  <p class="service-price-note">
+                    <i class="bi bi-info-circle me-1"></i>El precio final puede variar según el trabajo a realizar
+                  </p>
+                  <div class="service-installments">
+                    Hasta <strong>6 cuotas sin interés</strong> de $2.666
+                  </div>
+                </div>
+
+                <!-- Acciones del Servicio -->
+                <div class="svc-actions" data-aos="fade-left" data-aos-delay="250">
+                  <button class="btn-hire-now">
+                    <i class="bi bi-calendar-check-fill me-2"></i>
+                    Contratar Ahora
+                  </button>
+                  <button class="btn-chat-provider">
+                    <i class="bi bi-chat-dots-fill me-2"></i>
+                    Enviar Mensaje
+                  </button>
+                  <button class="btn-save-service" title="Guardar en favoritos">
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+
+                <!-- Medios de Pago -->
+                <div class="payment-methods" data-aos="fade-left" data-aos-delay="300">
+                  <h6>Medios de pago</h6>
+                  <div class="payment-icons">
+                    <i class="bi bi-credit-card" title="Tarjetas de crédito"></i>
+                    <i class="bi bi-credit-card-2-front" title="Tarjetas de débito"></i>
+                    <i class="bi bi-bank" title="Transferencia bancaria"></i>
+                    <i class="bi bi-cash" title="Efectivo"></i>
+                    <i class="bi bi-phone" title="Mercado Pago"></i>
+                  </div>
+                </div>
+
+                <!-- Garantías del Servicio -->
+                <div class="service-guarantees" data-aos="fade-left" data-aos-delay="350">
+                  <div class="guarantee-item">
+                    <i class="bi bi-shield-check"></i>
+                    <div>
+                      <strong>Servicio garantizado</strong>
+                      <p>Satisfacción garantizada o te devolvemos el dinero</p>
+                    </div>
+                  </div>
+                  <div class="guarantee-item">
+                    <i class="bi bi-patch-check-fill"></i>
+                    <div>
+                      <strong>Prestador verificado</strong>
+                      <p>Identidad y credenciales verificadas por Dale Deal</p>
+                    </div>
+                  </div>
+                  <div class="guarantee-item">
+                    <i class="bi bi-headset"></i>
+                    <div>
+                      <strong>Soporte 24/7</strong>
+                      <p>Asistencia ante cualquier inconveniente con el servicio</p>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SECCIÓN DE DETALLES (TABS) ===== -->
+      <section class="service-details-section">
+        <div class="container">
+
+          <!-- Section Header -->
+          <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title">Información del Servicio</h2>
+            <p class="section-subtitle">Todo lo que necesitás saber antes de contratar</p>
+          </div>
+
+          <div class="service-tabs">
+            <!-- Tabs Navigation -->
+            <div class="tabs-nav-wrapper">
+              <ul class="nav nav-tabs custom-tabs" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" data-bs-toggle="tab" href="#description" role="tab">
+                    <i class="bi bi-file-text me-2"></i><span>Descripción</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-bs-toggle="tab" href="#reviews" role="tab">
+                    <i class="bi bi-star me-2"></i><span>Reseñas</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Tabs Content -->
+            <div class="tab-content">
+
+              <!-- ── Tab: Descripción ── -->
+              <div class="tab-pane fade show active" id="description">
+                <div class="description-content">
+                  <div class="service-description-text">
+                    <p style="white-space: pre-line; line-height: 1.8; color: var(--gray-700);">
+                      Ofrecemos instalación y configuración profesional de todos tus dispositivos y sistemas tecnológicos del hogar u oficina. Nuestros técnicos certificados cuentan con más de 10 años de experiencia y garantizan un trabajo prolijo y seguro.
+                    </p>
+                  </div>
+
+                  <!-- Qué incluye -->
+                  <div class="mt-5">
+                    <h4 style="font-size:var(--font-size-xl);font-weight:700;color:var(--gray-900);margin-bottom:var(--spacing-4);">
+                      <i class="bi bi-check2-all me-2 text-danger"></i>¿Qué incluye?
+                    </h4>
+                    <ul style="list-style:none;padding:0;">
+                      <li style="padding:var(--spacing-2) 0;color:var(--gray-700);padding-left:var(--spacing-6);position:relative;font-size:var(--font-size-base);">
+                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;"></i>
+                        Visita de evaluación previa sin cargo
+                      </li>
+                      <li style="padding:var(--spacing-2) 0;color:var(--gray-700);padding-left:var(--spacing-6);position:relative;font-size:var(--font-size-base);">
+                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;"></i>
+                        Instalación completa con materiales de primera calidad
+                      </li>
+                      <li style="padding:var(--spacing-2) 0;color:var(--gray-700);padding-left:var(--spacing-6);position:relative;font-size:var(--font-size-base);">
+                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;"></i>
+                        Configuración y prueba del sistema instalado
+                      </li>
+                      <li style="padding:var(--spacing-2) 0;color:var(--gray-700);padding-left:var(--spacing-6);position:relative;font-size:var(--font-size-base);">
+                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;"></i>
+                        Garantía de 1 año sobre la mano de obra
+                      </li>
+                      <li style="padding:var(--spacing-2) 0;color:var(--gray-700);padding-left:var(--spacing-6);position:relative;font-size:var(--font-size-base);">
+                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;"></i>
+                        Soporte post-instalación sin costo adicional
+                      </li>
+                      <li style="padding:var(--spacing-2) 0;color:var(--gray-700);padding-left:var(--spacing-6);position:relative;font-size:var(--font-size-base);">
+                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;"></i>
+                        Limpieza total del área de trabajo al finalizar
+                      </li>
+                    </ul>
+                  </div>
+
+                  <!-- Características destacadas -->
+                  <div class="feature-grid mt-5">
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                      <i class="bi bi-award-fill"></i>
+                      <h5>Técnico Certificado</h5>
+                      <p>10+ años de experiencia con certificaciones oficiales</p>
+                    </div>
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                      <i class="bi bi-geo-alt-fill"></i>
+                      <h5>A Domicilio</h5>
+                      <p>Nos trasladamos a tu hogar u oficina en toda el área</p>
+                    </div>
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                      <i class="bi bi-clock-fill"></i>
+                      <h5>Respuesta Rápida</h5>
+                      <p>Confirmación en menos de 30 minutos y turno en 24-48 horas</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ── Tab: Reseñas ── -->
+              <div class="tab-pane fade" id="reviews">
+                <div class="reviews-content">
+                  <!-- Resumen de calificaciones -->
+                  <div class="reviews-summary">
+                    <div class="rating-overview">
+                      <div class="overall-rating">
+                        <span class="rating-number">4.9</span>
+                        <div class="rating-stars">
+                          <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                          <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                          <i class="bi bi-star-half"></i>
+                        </div>
+                        <div class="rating-count">127 reseñas</div>
+                      </div>
+                      <div class="rating-breakdown">
+                        <div class="rating-bar">
+                          <span>5</span>
+                          <div class="progress"><div class="progress-bar" style="width: 82%"></div></div>
+                          <span>82%</span>
+                        </div>
+                        <div class="rating-bar">
+                          <span>4</span>
+                          <div class="progress"><div class="progress-bar" style="width: 12%"></div></div>
+                          <span>12%</span>
+                        </div>
+                        <div class="rating-bar">
+                          <span>3</span>
+                          <div class="progress"><div class="progress-bar" style="width: 4%"></div></div>
+                          <span>4%</span>
+                        </div>
+                        <div class="rating-bar">
+                          <span>2</span>
+                          <div class="progress"><div class="progress-bar" style="width: 1%"></div></div>
+                          <span>1%</span>
+                        </div>
+                        <div class="rating-bar">
+                          <span>1</span>
+                          <div class="progress"><div class="progress-bar" style="width: 1%"></div></div>
+                          <span>1%</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Reseña 1 -->
+                  <div class="review-item">
+                    <div class="review-header">
+                      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=48&h=48&fit=crop&crop=face" alt="Usuario" class="review-avatar" />
+                      <div class="review-info">
+                        <h6>Martín S.</h6>
+                        <div class="review-meta">
+                          <div class="review-rating">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                          </div>
+                          <span class="review-date">Hace 3 días</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="review-content">
+                      <h6 class="review-title">Excelente trabajo, muy profesional</h6>
+                      <p class="review-text">
+                        Alejandro llegó puntual, trabajó de forma muy ordenada y explicó todo lo que iba haciendo.
+                        El resultado fue perfecto, quedé muy satisfecho con la instalación. Totalmente recomendable.
+                      </p>
+                    </div>
+                  </div>
+
+                  <!-- Reseña 2 -->
+                  <div class="review-item">
+                    <div class="review-header">
+                      <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=48&h=48&fit=crop&crop=face" alt="Usuario" class="review-avatar" />
+                      <div class="review-info">
+                        <h6>Laura G.</h6>
+                        <div class="review-meta">
+                          <div class="review-rating">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                          </div>
+                          <span class="review-date">Hace 1 semana</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="review-content">
+                      <h6 class="review-title">Muy recomendable, rápido y limpio</h6>
+                      <p class="review-text">
+                        Contraté el servicio para instalar varios dispositivos en mi oficina. Todo quedó
+                        funcionando a la perfección. Lo mejor es que limpió todo al terminar, como si nunca
+                        hubiera pasado. Definitivamente lo volvería a contratar.
+                      </p>
+                    </div>
+                  </div>
+
+                  <!-- Reseña 3 -->
+                  <div class="review-item">
+                    <div class="review-header">
+                      <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=48&h=48&fit=crop&crop=face" alt="Usuario" class="review-avatar" />
+                      <div class="review-info">
+                        <h6>Roberto P.</h6>
+                        <div class="review-meta">
+                          <div class="review-rating">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star"></i>
+                          </div>
+                          <span class="review-date">Hace 2 semanas</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="review-content">
+                      <h6 class="review-title">Buen servicio, precio justo</h6>
+                      <p class="review-text">
+                        El trabajo estuvo bien hecho. Tardó un poco más de lo estimado pero el resultado fue el
+                        esperado. El precio es muy razonable para la calidad del servicio brindado.
+                      </p>
+                    </div>
+                  </div>
+
+                  <button class="btn-load-more-reviews">
+                    <i class="bi bi-arrow-down-circle me-2"></i>Ver más reseñas
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== OTROS SERVICIOS DEL PRESTADOR ===== -->
+      <section class="provider-services-section" id="providerServicesSection">
+        <div class="container">
+          <div class="section-header text-center mb-5">
+            <h2 class="section-title">Más servicios del prestador</h2>
+            <p class="section-subtitle">
+              Otros servicios que ofrece <strong class="provider-name-text">Alejandro R.</strong>
+            </p>
+          </div>
+
+          <div class="provider-services-carousel-container">
+            <button class="section-nav-btn section-nav-prev" id="providerPrev" type="button">
+              <div class="carousel-control-icon"><i class="bi bi-chevron-left"></i></div>
+            </button>
+            <div id="providerServicesCarousel" class="custom-carousel">
+              <div class="carousel-inner" id="providerServicesGrid">
+                <div class="loading-related-services">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando otros servicios…</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button class="section-nav-btn section-nav-next" id="providerNext" type="button">
+              <div class="carousel-control-icon"><i class="bi bi-chevron-right"></i></div>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SERVICIOS RELACIONADOS ===== -->
+      <section class="related-services-section" id="relatedServicesSection">
+        <div class="container">
+          <div class="section-header text-center mb-5">
+            <h2 class="section-title">Servicios Similares</h2>
+            <p class="section-subtitle">Otros prestadores que también pueden ayudarte</p>
+          </div>
+
+          <div class="related-services-carousel-container">
+            <button class="section-nav-btn section-nav-prev" id="relatedPrev" type="button">
+              <div class="carousel-control-icon"><i class="bi bi-chevron-left"></i></div>
+            </button>
+            <div id="relatedServicesCarousel" class="custom-carousel">
+              <div class="carousel-inner" id="relatedServicesGrid">
+                <div class="loading-related-services">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando servicios similares…</span>
+                  </div>
+                  <p class="mt-3 text-muted">Buscando servicios similares…</p>
+                </div>
+              </div>
+            </div>
+            <button class="section-nav-btn section-nav-next" id="relatedNext" type="button">
+              <div class="carousel-control-icon"><i class="bi bi-chevron-right"></i></div>
+            </button>
+          </div>
+
+          <div class="text-center mt-5">
+            <button class="btn btn-outline-primary btn-lg" id="viewAllRelatedBtn">
+              <i class="bi bi-grid-3x3-gap me-2"></i>
+              Ver todos los servicios de esta categoría
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ===== CHAT FLOTANTE ===== -->
+    <div class="chat-float-widget" id="chatFloatWidget">
+      <!-- Bubble button -->
+      <button class="chat-float-btn" id="chatFloatBtn" title="Chatear con el prestador">
+        <img class="chat-float-logo" src="../IMG/LOGO.png" alt="Dale Deal" />
+        <span class="chat-float-badge" id="chatFloatBadge">1</span>
+      </button>
+
+      <!-- Chat panel -->
+      <div class="chat-float-panel" id="chatFloatPanel">
+
+        <!-- ── VISTA: Lista de chats ── -->
+        <div class="chat-list-view" id="chatListView" style="display:none;">
+          <div class="chat-list-header">
+            <span class="chat-list-title">Mensajes</span>
+            <button class="chat-float-close" id="chatListClose" title="Cerrar">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+          <div class="chat-list-body" id="chatListBody">
+            <!-- generado por JS -->
+          </div>
+        </div>
+
+        <!-- ── VISTA: Conversación ── -->
+        <div class="chat-conversation-view" id="chatConversationView">
+          <!-- Header -->
+          <div class="chat-header">
+            <button class="chat-back-btn" id="chatBackBtn" title="Volver a chats">
+              <i class="bi bi-arrow-left"></i>
+            </button>
+            <img
+              id="providerChatAvatar"
+              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face"
+              alt="Prestador"
+              class="chat-header-avatar"
+            />
+            <div class="chat-header-info">
+              <p class="chat-header-name" id="chatProviderName">Alejandro R.</p>
+              <div class="chat-header-status">
+                <span class="chat-status-dot"></span>
+                En línea
+              </div>
+            </div>
+            <button class="chat-float-close" id="chatFloatClose" title="Cerrar">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+
+          <!-- Mensajes -->
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-date-separator">Hoy</div>
+          </div>
+
+          <!-- Emoji picker -->
+          <div class="chat-emoji-picker" id="chatEmojiPicker" style="display:none;"></div>
+
+          <!-- Preview adjunto -->
+          <div class="chat-attach-preview" id="chatAttachPreview" style="display:none;"></div>
+
+          <!-- Input -->
+          <div class="chat-input-area">
+            <input type="file" id="chatFileInput" accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx" style="display:none;" />
+            <div class="chat-input-wrapper">
+              <button class="chat-attach-btn" id="chatAttachBtn" title="Adjuntar archivo">
+                <i class="bi bi-paperclip"></i>
+              </button>
+              <textarea
+                id="chatInput"
+                class="chat-input"
+                placeholder="Escribí tu mensaje…"
+                rows="1"
+              ></textarea>
+              <button class="chat-attach-btn" id="chatEmojiBtn" title="Emoji">
+                <i class="bi bi-emoji-smile"></i>
+              </button>
+            </div>
+            <button class="chat-send-btn" id="chatSendBtn" disabled title="Enviar">
+              <i class="bi bi-send-fill"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="../JS/utils.js"></script>
+    <script src="../JS/auth.js"></script>
+    <script src="../JS/cart.js"></script>
+    <script src="../JS/notifications.js"></script>
+    <script src="../JS/favorites.js"></script>
+    <script src="../JS/services-data.js"></script>
+    <script src="../JS/service-page.js"></script>
+    <script src="../JS/dropdown-fix.js"></script>
+    <script src="../JS/component-loader.js" defer></script>
+
+    <script>
+      // Initialize AOS
+      AOS.init({
+        duration: 800,
+        easing: 'ease-out-cubic',
+        once: true,
+        offset: 50,
+      });
+
+      // Initialize notifications dropdown
+      document.addEventListener('DOMContentLoaded', () => {
+        const notificationBtn = document.getElementById('notificationBtn');
+        if (notificationBtn) {
+          notificationBtn.addEventListener('shown.bs.dropdown', () => {
+            if (window.notificationManager) {
+              window.notificationManager.renderNotifications();
+            }
+          });
+        }
+
+      });
+    </script>
+  </body>
+</html>

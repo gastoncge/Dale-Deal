@@ -13,7 +13,11 @@ const servicesData = [
     reviewCount: 127,
     location: 'Córdoba Capital',
     image: 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=400&h=300&fit=crop',
-    badges: ['Certificado', 'Garantía 1 año'],
+    badges: [
+      { text: 'Certificado', color: '#3b82f6' },
+      { text: 'Garantía 1 año', color: '#22c55e' }
+    ],
+    provider: { name: 'Alejandro R.', avatar: 'https://i.pravatar.cc/40?img=12', verified: true },
     featured: true
   },
   {
@@ -22,12 +26,16 @@ const servicesData = [
     description: 'Asistencia técnica 24/7 para resolver cualquier problema con tus dispositivos.',
     category: 'consultation',
     price: 8999,
-    priceType: 'monthly', // Para mostrar "/mes"
+    priceType: 'monthly',
     rating: 4.6,
     reviewCount: 89,
     location: 'Todo el país',
     image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop',
-    badges: ['24/7', 'Remoto'],
+    badges: [
+      { text: '24/7', color: '#8b5cf6' },
+      { text: 'Remoto', color: '#14b8a6' }
+    ],
+    provider: { name: 'Martín G.', avatar: 'https://i.pravatar.cc/40?img=33', verified: true },
     featured: true
   },
   {
@@ -40,7 +48,11 @@ const servicesData = [
     reviewCount: 234,
     location: 'Buenos Aires',
     image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop',
-    badges: ['Artesanal', 'Personalizado'],
+    badges: [
+      { text: 'Artesanal', color: '#ec4899' },
+      { text: 'Personalizado', color: '#f97316' }
+    ],
+    provider: { name: 'Laura M.', avatar: 'https://i.pravatar.cc/40?img=5', verified: true },
     featured: true
   },
   {
@@ -53,7 +65,11 @@ const servicesData = [
     reviewCount: 156,
     location: 'Capital Federal',
     image: 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=400&h=300&fit=crop',
-    badges: ['Premium', 'Chef certificado'],
+    badges: [
+      { text: 'Premium', color: '#f59e0b' },
+      { text: 'Chef certificado', color: '#ef4444' }
+    ],
+    provider: { name: 'Federico T.', avatar: 'https://i.pravatar.cc/40?img=68', verified: true },
     topRated: true,
     featured: true
   },
@@ -63,12 +79,16 @@ const servicesData = [
     description: 'Servicios de albañilería, reformas, ampliaciones con materiales de calidad y acabados profesionales.',
     category: 'construction',
     price: 45999,
-    priceType: 'per_m2', // Para mostrar "/m²"
+    priceType: 'per_m2',
     rating: 4.7,
     reviewCount: 203,
     location: 'Zona Sur GBA',
     image: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=400&h=300&fit=crop',
-    badges: ['Profesional', 'Garantía obra'],
+    badges: [
+      { text: 'Profesional', color: '#6366f1' },
+      { text: 'Garantía obra', color: '#22c55e' }
+    ],
+    provider: { name: 'Pablo S.', avatar: 'https://i.pravatar.cc/40?img=52', verified: true },
     featured: true
   },
   {
@@ -81,7 +101,11 @@ const servicesData = [
     reviewCount: 312,
     location: 'CABA y GBA',
     image: 'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=400&h=300&fit=crop',
-    badges: ['Emergencias 24h', 'Matriculado'],
+    badges: [
+      { text: 'Emergencias 24h', color: '#ef4444' },
+      { text: 'Matriculado', color: '#3b82f6' }
+    ],
+    provider: { name: 'Roberto V.', avatar: 'https://i.pravatar.cc/40?img=60', verified: true },
     emergency: true,
     featured: true
   },
@@ -95,7 +119,11 @@ const servicesData = [
     reviewCount: 267,
     location: 'CABA',
     image: 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=400&h=300&fit=crop',
-    badges: ['Matriculado', 'Garantía'],
+    badges: [
+      { text: 'Matriculado', color: '#f59e0b' },
+      { text: 'Garantía', color: '#22c55e' }
+    ],
+    provider: { name: 'Alejandro R.', avatar: 'https://i.pravatar.cc/40?img=12', verified: true },
     featured: true
   },
   {
@@ -108,7 +136,11 @@ const servicesData = [
     reviewCount: 189,
     location: 'Zona Norte GBA',
     image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop',
-    badges: ['Eco-friendly', 'Profesional'],
+    badges: [
+      { text: 'Eco-friendly', color: '#22c55e' },
+      { text: 'Sin químicos', color: '#14b8a6' }
+    ],
+    provider: { name: 'Sofía P.', avatar: 'https://i.pravatar.cc/40?img=25', verified: true },
     featured: true
   },
   {
@@ -121,7 +153,11 @@ const servicesData = [
     reviewCount: 445,
     location: 'CABA y GBA',
     image: 'https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=400&h=300&fit=crop',
-    badges: ['Verificado', 'Eco'],
+    badges: [
+      { text: 'Verificado', color: '#3b82f6' },
+      { text: 'Eco', color: '#10b981' }
+    ],
+    provider: { name: 'Valeria C.', avatar: 'https://i.pravatar.cc/40?img=9', verified: true },
     featured: true
   },
   {
@@ -130,12 +166,16 @@ const servicesData = [
     description: 'Pintura profesional de casas, departamentos y oficinas con materiales de primera calidad.',
     category: 'maintenance',
     price: 25999,
-    priceType: 'per_room', // Para mostrar "/ambiente"
+    priceType: 'per_room',
     rating: 4.9,
     reviewCount: 321,
     location: 'CABA y GBA',
     image: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=400&h=300&fit=crop',
-    badges: ['Profesional', 'Garantía obra'],
+    badges: [
+      { text: 'Profesional', color: '#8b5cf6' },
+      { text: 'Pintura premium', color: '#f97316' }
+    ],
+    provider: { name: 'Diego F.', avatar: 'https://i.pravatar.cc/40?img=47', verified: true },
     featured: true
   },
   {
@@ -148,7 +188,11 @@ const servicesData = [
     reviewCount: 178,
     location: 'Zona Oeste GBA',
     image: 'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=400&h=300&fit=crop',
-    badges: ['A medida', 'Garantía'],
+    badges: [
+      { text: 'A medida', color: '#f59e0b' },
+      { text: 'Diseño incluido', color: '#6366f1' }
+    ],
+    provider: { name: 'Nicolás B.', avatar: 'https://i.pravatar.cc/40?img=57', verified: true },
     featured: true
   },
   {
@@ -161,7 +205,11 @@ const servicesData = [
     reviewCount: 523,
     location: 'Todo el país',
     image: 'https://images.unsplash.com/photo-1600518464441-9154a4dea21b?w=400&h=300&fit=crop',
-    badges: ['Asegurado', 'Profesional'],
+    badges: [
+      { text: 'Asegurado', color: '#3b82f6' },
+      { text: 'Larga distancia', color: '#14b8a6' }
+    ],
+    provider: { name: 'Gustavo H.', avatar: 'https://i.pravatar.cc/40?img=70', verified: true },
     nationwide: true,
     featured: true
   },
@@ -175,12 +223,35 @@ const servicesData = [
     reviewCount: 298,
     location: 'CABA y GBA',
     image: 'https://images.unsplash.com/photo-1631545804657-2c2f0b4122bf?w=400&h=300&fit=crop',
-    badges: ['Certificado', 'Garantía 2 años'],
+    badges: [
+      { text: 'Certificado', color: '#06b6d4' },
+      { text: 'Garantía 2 años', color: '#22c55e' }
+    ],
+    provider: { name: 'Alejandro R.', avatar: 'https://i.pravatar.cc/40?img=12', verified: true },
     featured: true
   }
 ];
 
+// ── Helpers de acceso ─────────────────────────────────────────────────────────
+
+/**
+ * Obtener un servicio por su ID de cadena.
+ * @param {string} id
+ * @returns {object|null}
+ */
+function getServiceById(id) {
+  return servicesData.find(s => s.id === id) || null;
+}
+
+/**
+ * Obtener todos los servicios.
+ * @returns {object[]}
+ */
+function getAllServices() {
+  return servicesData;
+}
+
 // Exportar para uso en otros archivos
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { servicesData };
+  module.exports = { servicesData, getServiceById, getAllServices };
 }

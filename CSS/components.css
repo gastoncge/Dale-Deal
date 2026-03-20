@@ -1060,6 +1060,38 @@
   background: var(--white);
 }
 
+.product-provider {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-2);
+  margin-bottom: var(--spacing-1);
+}
+
+.product-provider-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid var(--gray-200);
+}
+
+.product-provider-name {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--gray-600);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product-provider-verified {
+  color: var(--primary-red);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
 .product-title {
   font-size: var(--font-size-base);
   font-weight: 600;
