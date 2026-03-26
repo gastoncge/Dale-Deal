@@ -289,6 +289,39 @@
             <!-- Product Info -->
             <div class="col-md-6">
               <div class="product-info">
+
+                <!-- Seller Card -->
+                <div class="provider-card" id="sellerCard" data-aos="fade-left">
+                  <img id="sellerCardAvatar" src="" alt="Vendedor" class="provider-avatar" />
+                  <div class="provider-details">
+                    <div class="provider-name-row">
+                      <span class="provider-name provider-name-text" id="sellerCardName">Vendedor</span>
+                      <i class="bi bi-patch-check-fill provider-verified" id="sellerCardVerified" title="Vendedor verificado"></i>
+                      <span class="provider-member-badge" id="sellerCardProBadge" style="display:none;">Pro</span>
+                    </div>
+                    <div class="provider-stats" id="sellerCardStats">
+                      <span class="stars">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-half"></i>
+                      </span>
+                      <strong id="sellerCardRating">4.8</strong> · <span id="sellerCardReviews">2.847</span> reseñas
+                    </div>
+                    <div class="provider-response-time mb-1">
+                      <i class="bi bi-clock-fill"></i>
+                      <span>Responde en &lt; 1h</span>
+                    </div>
+                    <div class="provider-location">
+                      <i class="bi bi-geo-alt-fill"></i>
+                      <span>CABA</span>
+                      &nbsp;·&nbsp;
+                      <span>Miembro desde 2023</span>
+                      &nbsp;·&nbsp;
+                      <span id="sellerCardSold">0 ventas</span>
+                    </div>
+                  </div>
+                </div>
+
                 <!-- Product Header -->
                 <div class="product-header">
                   <h1 class="product-title">iPhone 15 Pro Max 256GB</h1>
@@ -319,95 +352,6 @@
                   </div>
                   <div class="installments">
                     Hasta <strong>12 cuotas sin interés</strong> de $108.333
-                  </div>
-                </div>
-
-                <!-- Product Options -->
-                <div class="product-options">
-                  <!-- Color Selection -->
-                  <div class="option-group">
-                    <label class="option-label">Color</label>
-                    <div class="color-options">
-                      <div
-                        class="color-option active"
-                        data-color="natural"
-                        style="background: #f5f5dc"
-                        title="Titanio Natural"
-                      ></div>
-                      <div
-                        class="color-option"
-                        data-color="blue"
-                        style="background: #1e3a8a"
-                        title="Titanio Azul"
-                      ></div>
-                      <div
-                        class="color-option"
-                        data-color="white"
-                        style="background: #f8fafc"
-                        title="Titanio Blanco"
-                      ></div>
-                      <div
-                        class="color-option"
-                        data-color="black"
-                        style="background: #1f2937"
-                        title="Titanio Negro"
-                      ></div>
-                    </div>
-                  </div>
-
-                  <!-- Storage Selection -->
-                  <div class="option-group">
-                    <label class="option-label">Almacenamiento</label>
-                    <div class="storage-options">
-                      <div class="storage-option" data-storage="128">
-                        128GB
-                        <span class="extra-cost">Base</span>
-                      </div>
-                      <div class="storage-option active" data-storage="256">
-                        256GB
-                        <span class="extra-cost">+$100.000</span>
-                      </div>
-                      <div class="storage-option" data-storage="512">
-                        512GB
-                        <span class="extra-cost">+$200.000</span>
-                      </div>
-                      <div class="storage-option" data-storage="1024">
-                        1TB
-                        <span class="extra-cost">+$400.000</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Quantity -->
-                  <div class="option-group">
-                    <label class="option-label">Cantidad</label>
-                    <div class="quantity-selector">
-                      <button
-                        type="button"
-                        class="quantity-btn"
-                        id="decreaseBtn"
-                      >
-                        -
-                      </button>
-                      <input
-                        type="number"
-                        class="quantity-input"
-                        id="quantityInput"
-                        value="1"
-                        min="1"
-                        max="10"
-                      />
-                      <button
-                        type="button"
-                        class="quantity-btn"
-                        id="increaseBtn"
-                      >
-                        +
-                      </button>
-                    </div>
-                    <small class="stock-info"
-                      >Stock disponible: 15 unidades</small
-                    >
                   </div>
                 </div>
 
@@ -685,7 +629,7 @@
         <div class="container">
           <div class="section-header text-center mb-5" data-aos="fade-up">
             <h2 class="section-title">Más productos del vendedor</h2>
-            <p class="section-subtitle">Otros productos publicados por el mismo vendedor</p>
+            <p class="section-subtitle" id="sellerProductsSubtitle">Otros productos publicados por el mismo vendedor</p>
           </div>
           <div class="similar-products-carousel-container">
             <button class="section-nav-btn section-nav-prev" id="sellerPrev" type="button">
@@ -737,7 +681,7 @@
           </div>
 
           <!-- View More Button -->
-          <div class="text-center mt-5" data-aos="fade-up">
+          <div class="text-center mt-5">
             <button class="btn btn-outline-primary btn-lg" id="viewMoreSimilarBtn">
               <i class="bi bi-grid-3x3-gap me-2"></i>
               Ver todos los productos de esta categoría
@@ -747,6 +691,51 @@
       </section>
 
     </main>
+
+    <!-- ===== CHAT FLOTANTE ===== -->
+    <div class="chat-float-widget" id="chatFloatWidget">
+      <button class="chat-float-btn" id="chatFloatBtn" title="Chatear con el vendedor">
+        <img class="chat-float-logo" src="../IMG/LOGO.png" alt="Dale Deal" />
+        <span class="chat-float-badge" id="chatFloatBadge">1</span>
+      </button>
+      <div class="chat-float-panel" id="chatFloatPanel">
+        <div class="chat-list-view" id="chatListView" style="display:none;">
+          <div class="chat-list-header">
+            <span class="chat-list-title">Mensajes</span>
+            <button class="chat-float-close" id="chatListClose" title="Cerrar"><i class="bi bi-x-lg"></i></button>
+          </div>
+          <div class="chat-list-body" id="chatListBody"></div>
+        </div>
+        <div class="chat-conversation-view" id="chatConversationView">
+          <div class="chat-header">
+            <button class="chat-back-btn" id="chatBackBtn" title="Volver a chats"><i class="bi bi-arrow-left"></i></button>
+            <img id="providerChatAvatar" src="" alt="Vendedor" class="chat-header-avatar" />
+            <div class="chat-header-info">
+              <p class="chat-header-name" id="chatProviderName">Vendedor</p>
+              <div class="chat-header-status">
+                <span class="chat-status-dot"></span>
+                En línea
+              </div>
+            </div>
+            <button class="chat-float-close" id="chatFloatClose" title="Cerrar"><i class="bi bi-x-lg"></i></button>
+          </div>
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-date-separator">Hoy</div>
+          </div>
+          <div class="chat-emoji-picker" id="chatEmojiPicker" style="display:none;"></div>
+          <div class="chat-attach-preview" id="chatAttachPreview" style="display:none;"></div>
+          <div class="chat-input-area">
+            <input type="file" id="chatFileInput" accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx" style="display:none;" />
+            <div class="chat-input-wrapper">
+              <button class="chat-attach-btn" id="chatAttachBtn" title="Adjuntar archivo"><i class="bi bi-paperclip"></i></button>
+              <textarea id="chatInput" class="chat-input" placeholder="Escribí tu mensaje…" rows="1"></textarea>
+              <button class="chat-attach-btn" id="chatEmojiBtn" title="Emoji"><i class="bi bi-emoji-smile"></i></button>
+            </div>
+            <button class="chat-send-btn" id="chatSendBtn" disabled title="Enviar"><i class="bi bi-send-fill"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Favorites Modal -->
     <div class="modal fade" id="favoritesModal" tabindex="-1" aria-labelledby="favoritesModalLabel" aria-hidden="true">

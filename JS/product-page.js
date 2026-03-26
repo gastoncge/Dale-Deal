@@ -9,6 +9,7 @@ class ProductPage {
     this.selectedStorage = '';
     this.quantity = 1;
     this.currentImageIndex = 0;
+    this.chatMessages = [];
 
     this.init();
   }
@@ -20,6 +21,8 @@ class ProductPage {
     this.setupImageGallery();
     this.updatePrice();
     this.updateFavoriteButton();
+    this.setupSellerCard();
+    this.setupChat();
     this.loadSellerProducts();
     this.loadSimilarProducts();
     this.loadRecentlyViewed();
@@ -68,6 +71,7 @@ class ProductPage {
       features: productData.features || [],
       specifications: productData.specifications || {},
       badges: productData.badges || [],
+      seller: productData.seller || null,
       colors: {},
       storage: {},
       images: productData.images
@@ -501,44 +505,40 @@ class ProductPage {
     const grid = document.getElementById(gridId);
     if (!carousel || !grid || products.length === 0) return;
 
-    const pps = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 4;
-    const pages = [];
-    for (let i = 0; i < products.length; i += pps) {
-      pages.push(products.slice(i, i + pps));
-    }
-
+    const visible = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 3;
+    const cardPct = 100 / visible;
     let current = 0;
+    const maxIndex = Math.max(0, products.length - visible);
 
-    const render = () => {
-      grid.innerHTML = `<div class="row justify-content-center">${pages[current].map(p => this.renderProductCard(p, isRecent)).join('')}</div>`;
+    const track = document.createElement('div');
+    track.className = 'carousel-track';
+    track.innerHTML = products.map(p => `<div class="carousel-slide-item" style="width:${cardPct}%">${this.renderProductCard(p, isRecent)}</div>`).join('');
 
-      // Inicializar mini-carruseles de imágenes dentro de las cards
-      setTimeout(() => {
-        if (window.ProductCarousel) {
-          window.productCarousel = new window.ProductCarousel();
-        }
-        window.favoritesManager?.updateFavoriteButtons();
-      }, 300);
+    grid.style.overflow = 'hidden';
+    grid.innerHTML = '';
+    grid.appendChild(track);
 
-      // Click en card → navegar al producto
-      grid.querySelectorAll('.product-card[data-clickable="true"]').forEach(card => {
-        card.addEventListener('click', e => {
-          if (e.target.closest('.action-heart') || e.target.closest('.carousel-control') || e.target.closest('.carousel-indicators')) return;
-          const id = card.dataset.id;
-          if (id) { localStorage.setItem('selectedProductId', id); window.location.href = `producto.html?id=${id}`; }
-        });
+    setTimeout(() => {
+      if (window.ProductCarousel) window.productCarousel = new window.ProductCarousel();
+      window.favoritesManager?.updateFavoriteButtons();
+    }, 300);
+
+    track.querySelectorAll('.product-card[data-clickable="true"]').forEach(card => {
+      card.addEventListener('click', e => {
+        if (e.target.closest('.action-heart') || e.target.closest('.carousel-control') || e.target.closest('.carousel-indicators')) return;
+        const id = card.dataset.id;
+        if (id) { localStorage.setItem('selectedProductId', id); window.location.href = `producto.html?id=${id}`; }
       });
-    };
+    });
 
-    render();
+    const updateTrack = () => { track.style.transform = `translateX(-${current * cardPct}%)`; };
 
-    // Buttons are siblings of the carousel inside the container
     const container = carousel.parentElement;
     const prev = container?.querySelector('.section-nav-prev');
     const next = container?.querySelector('.section-nav-next');
 
-    if (prev) prev.onclick = () => { current = (current - 1 + pages.length) % pages.length; render(); };
-    if (next) next.onclick = () => { current = (current + 1) % pages.length; render(); };
+    if (prev) prev.onclick = () => { current = Math.max(0, current - 1); updateTrack(); };
+    if (next) next.onclick = () => { current = Math.min(maxIndex, current + 1); updateTrack(); };
   }
 
   // ── Seller products ────────────────────────────────────────────────────────
@@ -648,7 +648,6 @@ class ProductPage {
       : `<span class="product-current-price">${this.formatPrice(product.price)}</span>`;
 
     return `
-      <div class="col-12 col-md-6 col-lg-3 mb-4 d-flex">
         <div class="product-card ${hasDiscount ? 'has-offer' : ''} w-100"
              data-id="${product.id}" data-clickable="true">
           <div class="product-image-container">
@@ -688,8 +687,7 @@ class ProductPage {
               <div class="product-pricing">${priceHTML}</div>
             </div>
           </div>
-        </div>
-      </div>`;
+        </div>`;
   }
 
   // ── Recently viewed persistence ────────────────────────────────────────────
@@ -783,6 +781,269 @@ class ProductPage {
     }
     DaleDeal.log(`[${type.toUpperCase()}] ${message}`);
   }
+
+  // ── Seller card ──────────────────────────────────────────────────────────
+  setupSellerCard() {
+    const p = this.currentProduct;
+    if (!p?.seller) return;
+
+    const avatar = document.getElementById('sellerCardAvatar');
+    const name = document.getElementById('sellerCardName');
+    const verified = document.getElementById('sellerCardVerified');
+    const rating = document.getElementById('sellerCardRating');
+    const reviews = document.getElementById('sellerCardReviews');
+    const chatAvatar = document.getElementById('providerChatAvatar');
+    const chatName = document.getElementById('chatProviderName');
+
+    if (avatar) { avatar.src = p.seller.avatar; avatar.alt = p.seller.name; }
+    if (name) name.textContent = p.seller.name;
+    if (verified) verified.style.display = p.seller.verified ? '' : 'none';
+    if (rating) rating.textContent = p.rating ?? '4.8';
+    if (reviews) reviews.textContent = (p.reviewCount ?? 0).toLocaleString('es-AR');
+    if (chatAvatar) { chatAvatar.src = p.seller.avatar; chatAvatar.alt = p.seller.name; }
+    if (chatName) chatName.textContent = p.seller.name;
+    const sold = document.getElementById('sellerCardSold');
+    if (sold && p.salesCount) sold.textContent = `${p.salesCount.toLocaleString('es-AR')} ventas`;
+    const proBadge = document.getElementById('sellerCardProBadge');
+    if (proBadge) proBadge.style.display = p.seller.pro ? '' : 'none';
+    const subtitle = document.getElementById('sellerProductsSubtitle');
+    if (subtitle) subtitle.innerHTML = `Otros productos que ofrece <strong class="provider-name-text">${p.seller.name}</strong>`;
+
+    const badge = document.getElementById('chatFloatBadge');
+    if (badge) badge.style.display = 'flex';
+  }
+
+  // ── Chat flotante ─────────────────────────────────────────────────────────
+  setupChat() {
+    const p = this.currentProduct;
+    if (!p) return;
+
+    const sellerName = p.seller?.name || 'Vendedor';
+
+    // Mensajes iniciales
+    const initial = [
+      { from: 'provider', text: `¡Hola! Soy ${sellerName}. Estoy disponible para responder tus preguntas sobre ${p.title}.`, time: this._chatTimeAgo(30) },
+      { from: 'provider', text: 'Podés preguntarme sobre el estado, envío o cualquier detalle del producto.', time: this._chatTimeAgo(29) },
+    ];
+    initial.forEach(m => this._addChatMessage(m.from, m.text, m.time));
+
+    const chatInput    = document.getElementById('chatInput');
+    const sendBtn      = document.getElementById('chatSendBtn');
+    const attachBtn    = document.getElementById('chatAttachBtn');
+    const fileInput    = document.getElementById('chatFileInput');
+    const emojiBtn     = document.getElementById('chatEmojiBtn');
+    const emojiPicker  = document.getElementById('chatEmojiPicker');
+    const attachPreview= document.getElementById('chatAttachPreview');
+    let pendingFile = null;
+
+    const updateSendBtn = () => { if (sendBtn) sendBtn.disabled = !chatInput?.value.trim() && !pendingFile; };
+
+    const showTyping = () => {
+      const el = document.createElement('div');
+      el.className = 'chat-message received chat-typing-indicator';
+      el.innerHTML = `<div class="chat-bubble chat-typing-bubble"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>`;
+      const msgs = document.getElementById('chatMessages');
+      msgs?.appendChild(el);
+      if (msgs) msgs.scrollTop = msgs.scrollHeight;
+      return el;
+    };
+
+    const hideTyping = (el) => el?.remove();
+
+    const animateStatus = (msgEl) => {
+      const s = msgEl?.querySelector('.chat-msg-status');
+      if (!s) return;
+      setTimeout(() => { s.textContent = 'Entregado'; s.className = 'chat-msg-status chat-status-delivered'; }, 800);
+      setTimeout(() => { s.textContent = 'Leído'; s.className = 'chat-msg-status chat-status-read'; }, 2500);
+    };
+
+    const sendMessage = () => {
+      const text = chatInput?.value.trim();
+      if (!text && !pendingFile) return;
+      let msgEl = null;
+      if (pendingFile) {
+        msgEl = this._addChatFile('user', pendingFile);
+        pendingFile = null;
+        if (attachPreview) attachPreview.style.display = 'none';
+      }
+      if (text) {
+        msgEl = this._addChatMessage('user', text);
+        chatInput.value = '';
+        chatInput.style.height = 'auto';
+      }
+      updateSendBtn();
+      if (emojiPicker) emojiPicker.style.display = 'none';
+      animateStatus(msgEl);
+      const typingEl = showTyping();
+      setTimeout(() => {
+        hideTyping(typingEl);
+        const responses = [
+          '¡Gracias por tu consulta! Te respondo enseguida.',
+          'Claro, el producto está disponible y puedo enviarlo hoy.',
+          'Hola, sí! Está en perfectas condiciones. ¿Tenés alguna pregunta más?',
+          'Por supuesto, el envío es gratis a todo el país.',
+          'Sí, acepto pagos con tarjeta y transferencia. ¿Necesitás más info?',
+        ];
+        this._addChatMessage('provider', responses[Math.floor(Math.random() * responses.length)]);
+      }, 1200 + Math.random() * 800);
+    };
+
+    sendBtn?.addEventListener('click', sendMessage);
+    chatInput?.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+    chatInput?.addEventListener('input', () => {
+      updateSendBtn();
+      chatInput.style.height = 'auto';
+      chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
+    });
+
+    attachBtn?.addEventListener('click', () => { if (emojiPicker) emojiPicker.style.display = 'none'; fileInput?.click(); });
+
+    fileInput?.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+      pendingFile = file;
+      fileInput.value = '';
+      if (attachPreview) {
+        attachPreview.style.display = 'flex';
+        const isImage = file.type.startsWith('image/');
+        if (isImage) {
+          const reader = new FileReader();
+          reader.onload = e => {
+            attachPreview.innerHTML = `<img src="${e.target.result}" class="chat-attach-thumb" /><span class="chat-attach-name">${file.name}</span><button class="chat-attach-remove" id="chatAttachRemove"><i class="bi bi-x"></i></button>`;
+            document.getElementById('chatAttachRemove')?.addEventListener('click', () => { pendingFile = null; attachPreview.style.display = 'none'; updateSendBtn(); });
+          };
+          reader.readAsDataURL(file);
+        } else {
+          attachPreview.innerHTML = `<i class="bi bi-file-earmark-text chat-attach-file-icon"></i><span class="chat-attach-name">${file.name}</span><button class="chat-attach-remove" id="chatAttachRemove"><i class="bi bi-x"></i></button>`;
+          document.getElementById('chatAttachRemove')?.addEventListener('click', () => { pendingFile = null; attachPreview.style.display = 'none'; updateSendBtn(); });
+        }
+      }
+      updateSendBtn();
+    });
+
+    const EMOJIS = ['😀','😂','😊','😍','🥰','😎','🤩','😅','😭','😤','👍','👎','👏','🙌','🤝','💪','🙏','❤️','🔥','⭐','✅','❌','📷','📎','💬','📞','🏠','🔧','⚡','🎉','🚀','💡','📋','🗓️','💰','🏆','🛍️','📦','🔑','🎁'];
+    if (emojiPicker) {
+      emojiPicker.innerHTML = EMOJIS.map(e => `<button class="emoji-item" type="button">${e}</button>`).join('');
+      emojiPicker.querySelectorAll('.emoji-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (!chatInput) return;
+          const pos = chatInput.selectionStart ?? chatInput.value.length;
+          chatInput.value = chatInput.value.slice(0, pos) + btn.textContent + chatInput.value.slice(pos);
+          chatInput.focus();
+          chatInput.selectionStart = chatInput.selectionEnd = pos + btn.textContent.length;
+          updateSendBtn();
+        });
+      });
+    }
+    emojiBtn?.addEventListener('click', e => { e.stopPropagation(); if (emojiPicker) emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'grid' : 'none'; });
+    document.addEventListener('click', e => { if (emojiPicker && !emojiPicker.contains(e.target) && e.target !== emojiBtn) emojiPicker.style.display = 'none'; });
+
+    const panel        = document.getElementById('chatFloatPanel');
+    const floatBtn     = document.getElementById('chatFloatBtn');
+    const closeBtn     = document.getElementById('chatFloatClose');
+    const badge        = document.getElementById('chatFloatBadge');
+    const backBtn      = document.getElementById('chatBackBtn');
+    const listView     = document.getElementById('chatListView');
+    const convView     = document.getElementById('chatConversationView');
+    const listClose    = document.getElementById('chatListClose');
+
+    const openChat = () => {
+      panel?.classList.add('chat-float-open');
+      if (badge) badge.style.display = 'none';
+      if (listView) listView.style.display = 'none';
+      if (convView) convView.style.display = 'flex';
+      setTimeout(() => chatInput?.focus(), 250);
+    };
+    const closeChat = () => { panel?.classList.remove('chat-float-open'); if (emojiPicker) emojiPicker.style.display = 'none'; };
+    const showChatList = () => {
+      if (emojiPicker) emojiPicker.style.display = 'none';
+      if (listView) listView.style.display = 'flex';
+      if (convView) convView.style.display = 'none';
+      this._renderChatList();
+    };
+    const showConversation = () => { if (listView) listView.style.display = 'none'; if (convView) convView.style.display = 'flex'; setTimeout(() => chatInput?.focus(), 150); };
+
+    floatBtn?.addEventListener('click', () => panel?.classList.contains('chat-float-open') ? closeChat() : openChat());
+    closeBtn?.addEventListener('click', closeChat);
+    listClose?.addEventListener('click', closeChat);
+    backBtn?.addEventListener('click', showChatList);
+    document.getElementById('contactSellerBtn')?.addEventListener('click', openChat);
+    this._showConversation = showConversation;
+  }
+
+  _renderChatList() {
+    const listBody = document.getElementById('chatListBody');
+    if (!listBody) return;
+    const p = this.currentProduct;
+    const contacts = [
+      { name: p?.seller?.name || 'Vendedor', avatar: p?.seller?.avatar || '', preview: 'Podés preguntarme sobre el estado, envío o cualquier detalle…', time: 'Ahora', unread: 0, online: true },
+    ];
+    listBody.innerHTML = contacts.map(c => `
+      <div class="chat-list-item">
+        <div class="chat-list-avatar-wrap">
+          <img src="${c.avatar}" alt="${c.name}" class="chat-list-avatar" />
+          ${c.online ? '<span class="chat-list-online"></span>' : ''}
+        </div>
+        <div class="chat-list-info">
+          <div class="chat-list-name">${c.name}</div>
+          <div class="chat-list-preview">${c.preview}</div>
+        </div>
+        <div class="chat-list-meta">
+          <span class="chat-list-time">${c.time}</span>
+          ${c.unread > 0 ? `<span class="chat-list-unread">${c.unread}</span>` : ''}
+        </div>
+      </div>
+    `).join('');
+    listBody.querySelectorAll('.chat-list-item').forEach(item => {
+      item.addEventListener('click', () => { if (this._showConversation) this._showConversation(); });
+    });
+  }
+
+  _addChatMessage(from, text, time = null) {
+    const msgs = document.getElementById('chatMessages');
+    if (!msgs) return null;
+    const isProvider = from === 'provider';
+    const timeStr = time || this._chatTimeNow();
+    const senderName = isProvider ? (this.currentProduct?.seller?.name || 'Vendedor') : 'Vos';
+    const msgEl = document.createElement('div');
+    msgEl.className = `chat-message ${isProvider ? 'received' : 'sent'}`;
+    msgEl.innerHTML = `
+      ${isProvider ? `<div class="chat-sender-name">${senderName}</div>` : ''}
+      <div class="chat-bubble">${this._escapeHtml(text)}</div>
+      <div class="chat-time">${timeStr}${!isProvider ? ' <span class="chat-msg-status chat-status-sent">Enviado</span>' : ''}</div>
+    `;
+    msgs.appendChild(msgEl);
+    msgs.scrollTop = msgs.scrollHeight;
+    this.chatMessages.push({ from, text, time: timeStr });
+    return msgEl;
+  }
+
+  _addChatFile(from, file) {
+    const msgs = document.getElementById('chatMessages');
+    if (!msgs) return null;
+    const isProvider = from === 'provider';
+    const timeStr = this._chatTimeNow();
+    const statusHTML = !isProvider ? '<span class="chat-msg-status chat-status-sent">Enviado</span>' : '';
+    const msgEl = document.createElement('div');
+    msgEl.className = `chat-message ${isProvider ? 'received' : 'sent'}`;
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        msgEl.innerHTML = `<div class="chat-bubble chat-bubble-image"><img src="${e.target.result}" class="chat-img-preview" alt="${file.name}" /></div><div class="chat-time">${timeStr} ${statusHTML}</div>`;
+        msgs.scrollTop = msgs.scrollHeight;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      msgEl.innerHTML = `<div class="chat-bubble chat-bubble-file"><i class="bi bi-file-earmark-text"></i><span>${file.name}</span></div><div class="chat-time">${timeStr} ${statusHTML}</div>`;
+    }
+    msgs.appendChild(msgEl);
+    msgs.scrollTop = msgs.scrollHeight;
+    return msgEl;
+  }
+
+  _chatTimeAgo(minutesAgo) { const d = new Date(Date.now() - minutesAgo * 60 * 1000); return d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }); }
+  _chatTimeNow() { return new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }); }
+  _escapeHtml(text) { const d = document.createElement('div'); d.appendChild(document.createTextNode(text)); return d.innerHTML; }
 }
 
 // ── Bootstrap ────────────────────────────────────────────────────────────────

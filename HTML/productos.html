@@ -2777,7 +2777,8 @@
             reviews: product.reviewCount || 0,
             featured: product.badges?.includes('Premium') || product.badges?.includes('MÁS VENDIDO') || false,
             isOffer: product.discount > 0,
-            shipping: product.shipping || { free: true, speed: 'tomorrow' }
+            shipping: product.shipping || { free: true, speed: 'tomorrow' },
+            seller: product.seller || null
           }));
         }
 
