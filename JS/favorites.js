@@ -100,24 +100,16 @@ class FavoritesManager {
     const productCard = button.closest('.product-card');
     const serviceCard = button.closest('.service-card');
 
-    // Determinar si es producto o servicio
-    if (productCard) {
-      const productId = productCard.dataset.id;
-      const productData = this.extractProductData(productCard);
+    // Una card con data-type="service" o data-service-id se trata como servicio
+    const isServiceCard = serviceCard ||
+      (productCard && (productCard.dataset.type === 'service' || productCard.dataset.serviceId));
+    const card = isServiceCard ? (serviceCard || productCard) : productCard;
 
-      if (this.isFavorite(productId)) {
-        this.removeFromFavorites(productId);
-        this.showToast(`${productData.title} eliminado de favoritos`, 'info');
-      } else {
-        this.addToFavorites(productData);
-        this.showToast(`${productData.title} agregado a favoritos`, 'success');
-      }
+    if (!card) return;
 
-      this.updateFavoriteButton(button, this.isFavorite(productId));
-      this.animateHeart(button);
-    } else if (serviceCard) {
-      const serviceId = serviceCard.dataset.id;
-      const serviceData = this.extractServiceData(serviceCard);
+    if (isServiceCard) {
+      const serviceId = card.dataset.id || card.dataset.serviceId;
+      const serviceData = this.extractServiceData(card);
 
       if (this.isFavorite(serviceId)) {
         this.removeFromFavorites(serviceId);
@@ -128,6 +120,20 @@ class FavoritesManager {
       }
 
       this.updateFavoriteButton(button, this.isFavorite(serviceId));
+      this.animateHeart(button);
+    } else {
+      const productId = card.dataset.id;
+      const productData = this.extractProductData(card);
+
+      if (this.isFavorite(productId)) {
+        this.removeFromFavorites(productId);
+        this.showToast(`${productData.title} eliminado de favoritos`, 'info');
+      } else {
+        this.addToFavorites(productData);
+        this.showToast(`${productData.title} agregado a favoritos`, 'success');
+      }
+
+      this.updateFavoriteButton(button, this.isFavorite(productId));
       this.animateHeart(button);
     }
   }
@@ -214,7 +220,7 @@ class FavoritesManager {
     const originalPriceText = productCard.querySelector('.product-original-price')?.textContent || '';
     const imageUrl = productCard.querySelector('.product-image')?.src || '';
     const rating = this.extractRating(productCard);
-    const ratingCount = productCard.querySelector('.rating-count')?.textContent || '(0)';
+    const ratingCount = productCard.querySelector('.reviews-count')?.textContent || '(0)';
 
     return {
       id,
@@ -230,17 +236,43 @@ class FavoritesManager {
   }
 
   // Extraer datos del servicio
+  // Soporta tanto .service-card (servicio.html) como .product-card[data-type="service"] (servicios.html)
   extractServiceData(serviceCard) {
-    const id = serviceCard.dataset.id;
-    const title = serviceCard.querySelector('.service-title')?.textContent?.trim() || '';
-    const priceText = serviceCard.querySelector('.service-price-badge')?.textContent?.trim() || '';
-    const imageUrl = serviceCard.querySelector('.service-image')?.src || '';
+    const id = serviceCard.dataset.id || serviceCard.dataset.serviceId;
+    const title =
+      serviceCard.querySelector('.service-title')?.textContent?.trim() ||
+      serviceCard.querySelector('.product-title')?.textContent?.trim() || '';
+    const priceText =
+      serviceCard.querySelector('.service-price-badge')?.textContent?.trim() ||
+      serviceCard.querySelector('.product-current-price')?.textContent?.trim() || '';
+    const imageUrl =
+      serviceCard.querySelector('.service-image')?.src ||
+      serviceCard.querySelector('.product-image')?.src || '';
     const rating = this.extractRating(serviceCard);
-    const ratingText = serviceCard.querySelector('.service-rating-text')?.textContent?.trim() || '0 (0)';
-    const location = serviceCard.querySelector('.service-location span')?.textContent?.trim() || '';
+    const ratingText =
+      serviceCard.querySelector('.service-rating-text')?.textContent?.trim() ||
+      serviceCard.querySelector('.reviews-count')?.textContent?.trim() || '(0)';
+    const location =
+      serviceCard.querySelector('.service-location span')?.textContent?.trim() ||
+      serviceCard.querySelector('.product-location span')?.textContent?.trim() || '';
+    const description =
+      serviceCard.querySelector('.service-description')?.textContent?.trim() ||
+      serviceCard.querySelector('.product-description')?.textContent?.trim() || '';
+
+    // Provider
+    const providerName = serviceCard.querySelector('.product-provider-name')?.textContent?.trim() || '';
+    const providerAvatar = serviceCard.querySelector('.product-provider-avatar')?.src || '';
+    const providerVerified = !!serviceCard.querySelector('.product-provider-verified');
+    const provider = providerName ? { name: providerName, avatar: providerAvatar, verified: providerVerified } : null;
+
+    // Badges — capturamos texto y color inline de cada badge
+    const badges = Array.from(serviceCard.querySelectorAll('.service-badges span')).map(el => ({
+      text: el.textContent.trim(),
+      color: el.style.background || el.style.backgroundColor || ''
+    })).filter(b => b.text);
 
     return {
-      id: id || `service-${Date.now()}`,
+      id: String(id || `service-${Date.now()}`),
       type: 'service',
       title,
       priceText,
@@ -249,6 +281,9 @@ class FavoritesManager {
       rating,
       ratingCount: ratingText,
       location,
+      description,
+      provider,
+      badges,
       dateAdded: Date.now()
     };
   }
@@ -262,7 +297,7 @@ class FavoritesManager {
 
   // Verificar si es favorito
   isFavorite(productId) {
-    return this.favorites.some(fav => fav.id === productId);
+    return this.favorites.some(fav => String(fav.id) === String(productId));
   }
 
   // Agregar a favoritos
@@ -275,7 +310,7 @@ class FavoritesManager {
 
   // Remover de favoritos
   removeFromFavorites(productId) {
-    this.favorites = this.favorites.filter(fav => fav.id !== productId);
+    this.favorites = this.favorites.filter(fav => String(fav.id) !== String(productId));
     this.saveFavorites();
   }
 
@@ -284,14 +319,12 @@ class FavoritesManager {
     document.querySelectorAll('.action-heart').forEach(button => {
       const productCard = button.closest('.product-card');
       const serviceCard = button.closest('.service-card');
-
-      if (productCard) {
-        const productId = productCard.dataset.id;
-        this.updateFavoriteButton(button, this.isFavorite(productId));
-      } else if (serviceCard) {
-        const serviceId = serviceCard.dataset.id;
-        this.updateFavoriteButton(button, this.isFavorite(serviceId));
-      }
+      const isServiceCard = serviceCard ||
+        (productCard && (productCard.dataset.type === 'service' || productCard.dataset.serviceId));
+      const card = isServiceCard ? (serviceCard || productCard) : productCard;
+      if (!card) return;
+      const id = card.dataset.id || card.dataset.serviceId;
+      if (id) this.updateFavoriteButton(button, this.isFavorite(id));
     });
   }
 
@@ -460,42 +493,86 @@ class FavoritesManager {
 
   // Renderizar tarjeta de servicio favorito
   renderFavoriteService(favorite) {
+    const isInHtml = window.location.pathname.includes('/HTML/');
+    const href = isInHtml
+      ? `./servicio.html?id=${favorite.id}`
+      : `./HTML/servicio.html?id=${favorite.id}`;
+
+    // Intentar enriquecer con datos completos si services-data.js está cargado
+    const fullService = (typeof getServiceById === 'function') ? getServiceById(favorite.id) : null;
+
+    const imageUrl  = fullService?.image      || favorite.imageUrl  || '';
+    const title     = fullService?.title      || favorite.title     || '';
+    const location  = fullService?.location   || favorite.location  || '';
+    const rating    = fullService?.rating     ?? favorite.rating    ?? 0;
+    const ratingCount = fullService?.reviewCount
+      ? `(${fullService.reviewCount.toLocaleString('es-AR')})`
+      : (favorite.ratingCount || '(0)');
+    const description = (() => {
+      const raw = fullService?.description || favorite.description || '';
+      return raw.length > 80 ? raw.substring(0, 80) + '...' : raw;
+    })();
+    const provider = fullService?.provider || favorite.provider || null;
+    const badges   = fullService?.badges   || favorite.badges   || [];
+
+    // Badges HTML
+    const badgesInner = badges.map(b => {
+      if (typeof b === 'object' && b.text) {
+        const bg = b.color ? `style="background:${b.color}"` : '';
+        return `<span class="badge-custom" ${bg}>${b.text.toUpperCase()}</span>`;
+      }
+      return `<span class="badge-featured">${String(b).toUpperCase()}</span>`;
+    }).join('');
+    const badgesHTML = badgesInner ? `<div class="service-badges">${badgesInner}</div>` : '';
+
+    // Provider HTML
+    const providerHTML = provider?.name ? `
+      <div class="product-provider">
+        <img src="${provider.avatar}" alt="${provider.name}" class="product-provider-avatar" />
+        <span class="product-provider-name">${provider.name}</span>
+        ${provider.verified ? '<i class="bi bi-patch-check-fill product-provider-verified"></i>' : ''}
+      </div>` : '';
+
     return `
       <div class="col-md-6 col-lg-4 mb-4">
-        <div class="service-card favorite-service-card" data-id="${favorite.id}">
-          <div class="service-image-container">
-            <img src="${favorite.imageUrl}" alt="${favorite.title}" class="service-image">
-
+        <div class="product-card favorite-service-card" data-id="${favorite.id}" data-type="service"
+             style="cursor:pointer;" onclick="window.location.href='${href}'">
+          <div class="product-image-container">
+            <img src="${imageUrl}" alt="${title}" class="product-image active" />
+            ${badgesHTML}
             <div class="product-actions-favorite">
-              <button class="action-remove-favorite" title="Eliminar de favoritos" onclick="event.stopPropagation(); window.favoritesManager.removeFromFavoritesModal('${favorite.id}')">
+              <button class="action-remove-favorite" title="Eliminar de favoritos"
+                onclick="event.stopPropagation(); window.favoritesManager.removeFromFavoritesModal('${favorite.id}')">
                 <i class="bi bi-x"></i>
               </button>
             </div>
           </div>
-
-          <div class="service-info">
-            <h3 class="service-title">${favorite.title}</h3>
-
-            <div class="service-meta">
-              <div class="service-rating">
-                <div class="stars">${this.renderStars(favorite.rating)}</div>
-                <span class="service-rating-text">${favorite.ratingCount}</span>
+          <div class="product-info">
+            <h3 class="product-title">${title}</h3>
+            ${providerHTML}
+            ${description ? `<p class="product-description">${description}</p>` : ''}
+            <div class="product-meta-group">
+              <div class="product-rating">
+                <div class="stars">${this.renderStars(rating)}</div>
+                <span class="reviews-count">${ratingCount}</span>
               </div>
-              <div class="service-info-row">
-                ${favorite.location ? `
-                  <div class="service-location">
-                    <i class="bi bi-geo-alt-fill"></i>
-                    <span>${favorite.location}</span>
-                  </div>
-                ` : ''}
-                <span class="service-price-badge">${favorite.priceText}</span>
-              </div>
+              ${location ? `
+                <div class="product-location">
+                  <i class="bi bi-geo-alt-fill"></i>
+                  <span>${location}</span>
+                </div>
+              ` : ''}
             </div>
-
-            <div class="favorite-actions-buttons">
-              <button class="btn-contact-service" onclick="event.stopPropagation();">
-                <i class="bi bi-chat-dots me-2"></i>Ver más
-              </button>
+            <div class="product-pricing-wrapper">
+              <div class="product-pricing">
+                <span class="product-current-price">${favorite.priceText || ''}</span>
+              </div>
+              <div class="favorite-actions-buttons">
+                <button class="btn-add-to-cart"
+                  onclick="event.stopPropagation(); window.location.href='${href}'">
+                  <i class="bi bi-eye me-2"></i>Ver servicio
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -579,13 +656,14 @@ class FavoritesManager {
       const price = favorite.priceText ? parseFloat(favorite.priceText.replace(/[^0-9,.]/g, '').replace(/\./g, '').replace(',', '.')) || 0 : 0;
       
       const product = {
-        id: `favorite-${favorite.id}`,
+        id: String(favorite.id),
         title: favorite.title,
         price: price,
+        priceText: favorite.priceText,
         image: favorite.imageUrl,
         quantity: 1
       };
-      
+
       window.cartManager.addItem(product);
       this.showToast(`${favorite.title} agregado al carrito`, 'success');
     } catch (error) {
@@ -609,14 +687,21 @@ class FavoritesManager {
     let addedCount = 0;
     this.favorites.forEach(favorite => {
       try {
-        // Extraer el precio numérico del texto formateado
-        const priceMatch = favorite.priceText.match(/[\d,]+/);
-        const price = priceMatch ? parseFloat(priceMatch[0].replace(/,/g, '')) : 0;
-        
+        // Parsear precio ARS: quitar símbolo/espacios, eliminar '.' (miles), reemplazar ',' por '.'
+        const price = favorite.priceText
+          ? parseFloat(
+              favorite.priceText
+                .replace(/[^0-9,.]/g, '')
+                .replace(/\./g, '')
+                .replace(',', '.')
+            ) || 0
+          : 0;
+
         const product = {
-          id: `favorite-${favorite.id}`,
+          id: String(favorite.id),
           title: favorite.title,
           price: price,
+          priceText: favorite.priceText,
           image: favorite.imageUrl,
           quantity: 1
         };
@@ -875,153 +960,9 @@ favoritesStyle.textContent = `
     color: var(--primary-red);
   }
 
-  /* Estilos para service-card en favoritos */
+  /* favorite-service-card hereda todos los estilos de .product-card / .favorite-product-card */
   .favorite-service-card {
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    background: var(--white);
-    border-radius: var(--radius-2xl);
-    overflow: hidden;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--gray-100);
-    position: relative;
     cursor: pointer;
-    height: auto;
-    min-height: 420px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .favorite-service-card:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-2xl);
-  }
-
-  .favorite-service-card .service-image-container {
-    position: relative;
-    width: 100%;
-    height: 250px;
-    overflow: hidden;
-  }
-
-  .favorite-service-card .service-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform var(--transition-slow);
-  }
-
-  .favorite-service-card:hover .service-image {
-    transform: scale(1.05);
-  }
-
-  .favorite-service-card .service-info {
-    padding: var(--spacing-4);
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-3);
-  }
-
-  .favorite-service-card .service-title {
-    font-size: var(--font-size-lg);
-    font-weight: 600;
-    color: var(--gray-900);
-    margin-bottom: 0;
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .favorite-service-card .service-meta {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-2);
-  }
-
-  .favorite-service-card .service-rating {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-2);
-    font-size: var(--font-size-sm);
-  }
-
-  .favorite-service-card .service-rating .stars {
-    display: flex;
-    gap: 1px;
-  }
-
-  .favorite-service-card .service-rating .stars i {
-    font-size: var(--font-size-sm);
-    color: var(--primary-yellow);
-  }
-
-  .favorite-service-card .service-rating-text {
-    font-size: var(--font-size-xs);
-    color: var(--gray-600);
-    font-weight: 600;
-  }
-
-  .favorite-service-card .service-info-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--spacing-2);
-  }
-
-  .favorite-service-card .service-location {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-1);
-    color: var(--gray-600);
-    font-size: var(--font-size-sm);
-  }
-
-  .favorite-service-card .service-location i {
-    color: var(--primary-red);
-  }
-
-  .favorite-service-card .service-price-badge {
-    background: var(--gradient-primary);
-    color: var(--white);
-    padding: var(--spacing-1) var(--spacing-3);
-    border-radius: var(--radius-full);
-    font-size: var(--font-size-sm);
-    font-weight: 600;
-  }
-
-  .favorite-service-card .btn-contact-service {
-    width: 100%;
-    background: var(--gradient-primary);
-    color: var(--white);
-    border: none;
-    padding: var(--spacing-2) var(--spacing-3);
-    border-radius: var(--radius-lg);
-    font-size: var(--font-size-sm);
-    font-weight: 600;
-    cursor: pointer;
-    transition: all var(--transition-base);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: auto;
-  }
-
-  .favorite-service-card .btn-contact-service:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-  }
-
-  @media (max-width: 768px) {
-    .favorite-service-card {
-      min-height: 380px;
-    }
-
-    .favorite-service-card .service-image-container {
-      height: 200px;
-    }
   }
 `;
 

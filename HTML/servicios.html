@@ -2647,8 +2647,8 @@
             priceMax: null,
             rating: null,
             certified: false,
-            verified: false,
-            warranty: false
+            warranty: false,
+            available247: false
           };
 
           this.init();
@@ -2691,7 +2691,8 @@
             priceType: service.priceType || null,
             topRated: service.topRated || false,
             emergency: service.emergency || false,
-            nationwide: service.nationwide || false
+            nationwide: service.nationwide || false,
+            provider: service.provider || null
           }));
         }
 
@@ -2755,6 +2756,9 @@
           const verifiedCb = document.getElementById('conditionNew');
           const warrantyCb = document.getElementById('conditionUsed');
 
+          // freeShipping  → Certificado → filters.certified
+          // conditionNew  → Con garantía → filters.warranty
+          // conditionUsed → Disponible 24/7 → filters.available247
           if (certifiedCb) {
             certifiedCb.addEventListener('change', (e) => {
               self.filters.certified = e.target.checked;
@@ -2763,13 +2767,13 @@
           }
           if (verifiedCb) {
             verifiedCb.addEventListener('change', (e) => {
-              self.filters.verified = e.target.checked;
+              self.filters.warranty = e.target.checked;
               self.applyFilters();
             });
           }
           if (warrantyCb) {
             warrantyCb.addEventListener('change', (e) => {
-              self.filters.warranty = e.target.checked;
+              self.filters.available247 = e.target.checked;
               self.applyFilters();
             });
           }
@@ -2884,20 +2888,28 @@
             filtered = filtered.filter(s => s.rating >= this.filters.rating);
           }
 
-          // Certifications
+          // Normalizar badge a texto (soporta strings y objetos {text, color})
+          const badgeText = b => (b !== null && typeof b === 'object') ? (b.text || '') : String(b ?? '');
+
+          // "Certificado": badge con 'Certificado'/'Matriculado' o prestador verificado
           if (this.filters.certified) {
             filtered = filtered.filter(s =>
-              s.badges?.some(b => b.includes('Certificado') || b.includes('Matriculado'))
+              s.badges?.some(b => {
+                const t = badgeText(b);
+                return t.includes('Certificado') || t.includes('Matriculado');
+              }) || s.provider?.verified === true
             );
           }
-          if (this.filters.verified) {
-            filtered = filtered.filter(s =>
-              s.badges?.some(b => b.includes('Verificado')) || s.featured
-            );
-          }
+          // "Con garantía": badge cuyo texto incluye 'Garantía'
           if (this.filters.warranty) {
             filtered = filtered.filter(s =>
-              s.badges?.some(b => b.includes('Garantía'))
+              s.badges?.some(b => badgeText(b).includes('Garantía'))
+            );
+          }
+          // "Disponible 24/7": badge con '24/7' o flag emergency
+          if (this.filters.available247) {
+            filtered = filtered.filter(s =>
+              s.badges?.some(b => badgeText(b).includes('24/7')) || s.emergency === true
             );
           }
 
@@ -2934,8 +2946,8 @@
             priceMax: null,
             rating: null,
             certified: false,
-            verified: false,
-            warranty: false
+            warranty: false,
+            available247: false
           };
 
           // Reset UI elements
@@ -3115,6 +3127,7 @@
           const card = document.createElement('div');
           card.className = 'product-card';
           card.setAttribute('data-id', service.id);
+          card.setAttribute('data-type', 'service');
 
           // Price with type suffix
           let priceText = window.DaleDeal?.utils?.formatCurrency
@@ -3210,21 +3223,8 @@
         // ===========================================
 
         initializeFavoritesListeners() {
-          document.querySelectorAll('#servicesGrid .action-heart').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-              e.stopPropagation();
-              const icon = btn.querySelector('i');
-              if (icon.classList.contains('bi-heart')) {
-                icon.classList.remove('bi-heart');
-                icon.classList.add('bi-heart-fill');
-                btn.classList.add('active');
-              } else {
-                icon.classList.remove('bi-heart-fill');
-                icon.classList.add('bi-heart');
-                btn.classList.remove('active');
-              }
-            });
-          });
+          // La delegación global en favorites.js maneja los clics; aquí solo sincronizamos el estado visual
+          window.favoritesManager?.updateFavoriteButtons();
         }
 
         findServiceById(id) {
@@ -3274,13 +3274,17 @@
         const urlParams = new URLSearchParams(window.location.search);
         const categoryParam = urlParams.get('category');
         if (categoryParam) {
-          setTimeout(() => {
+          // Poll until the catalog has rendered its first batch of cards
+          const applyUrlCategory = (attempts = 0) => {
             const radio = document.querySelector(`input[name="category"][value="${categoryParam}"]`);
             if (radio) {
               radio.checked = true;
               radio.dispatchEvent(new Event('change'));
+            } else if (attempts < 20) {
+              setTimeout(() => applyUrlCategory(attempts + 1), 100);
             }
-          }, 200);
+          };
+          applyUrlCategory();
         }
       });
     </script>

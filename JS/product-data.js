@@ -21,6 +21,7 @@ const PRODUCTS_DATA = {
     reviewCount: 2847,
     soldCount: 500,
     stock: 15,
+    seller: { name: "Martín G.", avatar: "https://i.pravatar.cc/40?img=11", verified: true },
     images: {
       main: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=600&fit=crop",
       gallery: [
@@ -92,6 +93,7 @@ const PRODUCTS_DATA = {
     reviewCount: 1534,
     soldCount: 320,
     stock: 23,
+    seller: { name: "Laura S.", avatar: "https://i.pravatar.cc/40?img=23", verified: true },
     images: {
       main: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=600&h=600&fit=crop",
       gallery: [
@@ -159,6 +161,7 @@ const PRODUCTS_DATA = {
     reviewCount: 987,
     soldCount: 150,
     stock: 8,
+    seller: { name: "Diego F.", avatar: "https://i.pravatar.cc/40?img=35", verified: true },
     images: {
       main: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=600&h=600&fit=crop",
       gallery: [
@@ -226,6 +229,7 @@ const PRODUCTS_DATA = {
     reviewCount: 3421,
     soldCount: 890,
     stock: 5,
+    seller: { name: "Sofía R.", avatar: "https://i.pravatar.cc/40?img=44", verified: false },
     images: {
       main: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=600&h=600&fit=crop",
       gallery: [
@@ -287,6 +291,7 @@ const PRODUCTS_DATA = {
     reviewCount: 4256,
     soldCount: 750,
     stock: 20,
+    seller: { name: "Carlos M.", avatar: "https://i.pravatar.cc/40?img=56", verified: true },
     images: {
       main: "https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=600&h=600&fit=crop",
       gallery: [
@@ -349,6 +354,7 @@ const PRODUCTS_DATA = {
     reviewCount: 1789,
     soldCount: 230,
     stock: 12,
+    seller: { name: "Ana B.", avatar: "https://i.pravatar.cc/40?img=62", verified: true },
     images: {
       main: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=600&h=600&fit=crop",
       gallery: [

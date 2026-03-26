@@ -157,10 +157,19 @@ function renderProductCard(product) {
           <button class="action-heart" title="Agregar a favoritos" data-product-id="${product.id}">
             <i class="bi bi-heart"></i>
           </button>
+          <button class="action-quick-view" title="Vista rápida" data-product-id="${product.id}">
+            <i class="bi bi-eye"></i>
+          </button>
         </div>
       </div>
       <div class="product-info">
         <h3 class="product-title">${product.title}</h3>
+        ${product.seller ? `
+        <div class="product-provider">
+          <img src="${product.seller.avatar}" alt="${product.seller.name}" class="product-provider-avatar" />
+          <span class="product-provider-name">${product.seller.name}</span>
+          ${product.seller.verified ? '<i class="bi bi-patch-check-fill product-provider-verified"></i>' : ''}
+        </div>` : ''}
         <p class="product-description">${shortDescription}</p>
 
         <div class="product-meta-group">
@@ -259,6 +268,7 @@ function initializeProductListeners() {
     card.addEventListener('click', (e) => {
       // Ignorar si se hizo click en botones o controles
       if (e.target.closest('.action-heart') ||
+          e.target.closest('.action-quick-view') ||
           e.target.closest('.carousel-control') ||
           e.target.closest('.carousel-indicators')) {
         return;
@@ -291,21 +301,21 @@ function initializeProductListeners() {
 /**
  * Inicializar cuando el DOM esté listo
  */
+// Solo cargar en home/index; las páginas de catálogo tienen su propio loader
+function _isHomePage() {
+  const p = window.location.pathname;
+  return p.endsWith('/') || p.includes('index.html') || !p.includes('.html');
+}
+
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    // Esperar a que la API esté disponible
-    if (window.DaleDeal?.api) {
+    if (_isHomePage() && window.DaleDeal?.api) {
       loadProducts();
-    } else {
-      DaleDeal.error('API de productos no disponible');
     }
   });
 } else {
-  // DOM ya está listo
-  if (window.DaleDeal?.api) {
+  if (_isHomePage() && window.DaleDeal?.api) {
     loadProducts();
-  } else {
-    DaleDeal.error('API de productos no disponible');
   }
 }
 

@@ -18,6 +18,9 @@ class ServicePage {
     this.setupImageGallery();
     this.setupChat();
     this.setupEventListeners();
+    // Sincronizar botón guardar con el estado persisto en favoritos
+    this.isSaved = window.favoritesManager?.isFavorite(String(this.currentService.id)) || false;
+    this._updateSaveButton();
     this.loadRelatedServices();
     this.loadProviderServices();
   }
@@ -177,7 +180,10 @@ class ServicePage {
     const tagsContainer = document.querySelector('.service-tags');
     if (tagsContainer && s.badges?.length) {
       tagsContainer.innerHTML = s.badges
-        .map(b => `<span class="service-tag"><i class="bi bi-check-circle-fill me-1"></i>${b}</span>`)
+        .map(b => {
+          const label = typeof b === 'object' ? b.text : b;
+          return `<span class="service-tag"><i class="bi bi-check-circle-fill me-1"></i>${label}</span>`;
+        })
         .join('');
     }
 
@@ -575,22 +581,58 @@ class ServicePage {
     });
 
     // Guardar servicio
-    document.querySelector('.btn-save-service')?.addEventListener('click', (e) => {
-      this.isSaved = !this.isSaved;
-      const btn = e.currentTarget;
-      btn.classList.toggle('active', this.isSaved);
-      btn.querySelector('i').className = this.isSaved ? 'bi bi-heart-fill' : 'bi bi-heart';
-      this._showNotification(
-        this.isSaved ? 'Servicio guardado en favoritos' : 'Servicio eliminado de favoritos',
-        this.isSaved ? 'success' : 'info'
-      );
+    document.querySelector('.btn-save-service')?.addEventListener('click', () => {
+      this._toggleSaveService();
     });
 
     // Ver todos relacionados
     document.getElementById('viewAllRelatedBtn')?.addEventListener('click', () => {
-      window.location.href = `./servicios.html?categoria=${encodeURIComponent(this.currentService.category)}`;
+      window.location.href = `./servicios.html?category=${encodeURIComponent(this.currentService.category)}`;
     });
 
+  }
+
+  // ── Guardar/quitar servicio en favoritos ───────────────────────────────────
+  _toggleSaveService() {
+    const s = this.currentService;
+    if (!s) return;
+    const fm = window.favoritesManager;
+    if (!fm) { this._showNotification('Sistema de favoritos no disponible', 'error'); return; }
+
+    const serviceId = String(s.id);
+    const favoriteData = {
+      id: serviceId,
+      type: 'service',
+      title: s.title,
+      priceText: this._formatPrice(s.price),
+      originalPriceText: '',
+      imageUrl: s.images?.main || '',
+      rating: s.rating,
+      ratingCount: `(${s.reviewCount?.toLocaleString('es-AR') || 0})`,
+      location: s.location || '',
+      dateAdded: Date.now()
+    };
+
+    if (fm.isFavorite(serviceId)) {
+      fm.removeFromFavorites(serviceId);
+      this._showNotification('Servicio eliminado de favoritos', 'info');
+    } else {
+      fm.addToFavorites(favoriteData);
+      this._showNotification('Servicio guardado en favoritos', 'success');
+    }
+
+    this.isSaved = fm.isFavorite(serviceId);
+    this._updateSaveButton();
+  }
+
+  // ── Sincronizar estado visual del botón guardar ────────────────────────────
+  _updateSaveButton() {
+    const btn = document.querySelector('.btn-save-service');
+    if (!btn) return;
+    const saved = this.isSaved;
+    btn.classList.toggle('active', saved);
+    btn.querySelector('i').className = saved ? 'bi bi-heart-fill' : 'bi bi-heart';
+    btn.title = saved ? 'Quitar de favoritos' : 'Guardar en favoritos';
   }
 
   // ── Cargar servicios relacionados (misma categoría) ───────────────────────
@@ -655,28 +697,36 @@ class ServicePage {
     const grid = document.getElementById(gridId);
     if (!carousel || !grid || !services.length) return;
 
-    const pps = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 4;
-    const pages = [];
-    for (let i = 0; i < services.length; i += pps) pages.push(services.slice(i, i + pps));
-
+    const visible = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 3;
+    const cardPct = 100 / visible;
     let current = 0;
-    const render = () => {
-      grid.innerHTML = `<div class="row justify-content-center">${pages[current].map(s => this._renderServiceCard(s)).join('')}</div>`;
-      grid.querySelectorAll('.product-card[data-service-id]').forEach(card => {
-        card.addEventListener('click', () => {
-          const id = card.dataset.serviceId;
-          if (id) { localStorage.setItem('selectedServiceId', id); window.location.href = `servicio.html?id=${id}`; }
-        });
-      });
-    };
+    const maxIndex = Math.max(0, services.length - visible);
 
-    render();
+    const track = document.createElement('div');
+    track.className = 'carousel-track';
+    track.innerHTML = services.map(s =>
+      `<div class="carousel-slide-item" style="width:${cardPct}%">${this._renderServiceCard(s)}</div>`
+    ).join('');
+    grid.innerHTML = '';
+    grid.appendChild(track);
+
+    track.querySelectorAll('.product-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('.action-heart')) return;
+        const id = card.dataset.serviceId;
+        if (id) window.location.href = `servicio.html?id=${id}`;
+      });
+    });
+
+    const updateTrack = () => {
+      track.style.transform = `translateX(-${current * cardPct}%)`;
+    };
 
     const container = carousel.parentElement;
     const prev = container?.querySelector(`#${prevId}`) || container?.querySelector('.section-nav-prev');
     const next = container?.querySelector(`#${nextId}`) || container?.querySelector('.section-nav-next');
-    if (prev) prev.onclick = () => { current = (current - 1 + pages.length) % pages.length; render(); };
-    if (next) next.onclick = () => { current = (current + 1) % pages.length; render(); };
+    if (prev) prev.onclick = () => { current = Math.max(0, current - 1); updateTrack(); };
+    if (next) next.onclick = () => { current = Math.min(maxIndex, current + 1); updateTrack(); };
   }
 
   // ── Renderizar tarjeta de servicio ─────────────────────────────────────────
@@ -722,13 +772,12 @@ class ServicePage {
       </div>` : '';
 
     return `
-      <div class="col-12 col-sm-6 col-lg-4 mb-4 d-flex">
-        <div class="product-card w-100" data-service-id="${service.id}" style="cursor:pointer;" onclick="localStorage.setItem('selectedServiceId','${service.id}');window.location.href='servicio.html?id=${service.id}'">
+      <div class="product-card w-100" data-id="${service.id}" data-service-id="${service.id}" data-type="service" style="cursor:pointer;">
           <div class="product-image-container">
             <img src="${service.image}" alt="${service.title}" class="product-image active" loading="lazy" />
             ${badgesHTML}
             <div class="product-actions">
-              <button class="action-heart" title="Guardar" onclick="event.stopPropagation()">
+              <button class="action-heart" title="Guardar">
                 <i class="bi bi-heart"></i>
               </button>
             </div>
@@ -754,8 +803,7 @@ class ServicePage {
               </div>
             </div>
           </div>
-        </div>
-      </div>`;
+        </div>`;
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────

@@ -22,10 +22,15 @@ class NotificationManager {
     const stored = localStorage.getItem('daledealt_notifications');
     if (stored) {
       try {
-        this.notifications = JSON.parse(stored);
+        const parsed = JSON.parse(stored);
+        this.notifications = Array.isArray(parsed) ? parsed : [];
+        if (!Array.isArray(parsed)) {
+          localStorage.removeItem('daledealt_notifications');
+        }
       } catch (e) {
-        DaleDeal.error('Error al parsear notificaciones del localStorage:', e);
-        this.notifications = null;
+        console.error('Error al parsear notificaciones del localStorage:', e);
+        localStorage.removeItem('daledealt_notifications');
+        this.notifications = [];
       }
     } else {
       // Datos de ejemplo

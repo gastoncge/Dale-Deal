@@ -638,7 +638,7 @@
     <script src="../JS/api.js"></script>
     <script src="../JS/search.js"></script>
     <script src="../JS/pages/home.js"></script>
-    <script src="../JS/pages/products.js"></script>
+    <script src="../JS/filters.js"></script>
 
     <style>
       /* Fondo uniforme */
@@ -2735,23 +2735,25 @@
             // Transform API data to match expected format
             this.products = this.transformProductsData(productsData);
 
+            // Conectar productFilters de forma síncrona — fuente única de verdad
+            if (window.productFilters) {
+              window.productFilters.renderProducts = () => this.renderFilteredProducts();
+              window.productFilters.products = this.createFilterableProducts();
+              window.productFilters.originalProducts = [...window.productFilters.products];
+
+              // Aplicar ?category= de la URL ahora que los datos están listos
+              const categoryParam = new URLSearchParams(window.location.search).get('category');
+              if (categoryParam && categoryParam !== 'all') {
+                window.productFilters.currentCategory = categoryParam;
+                const radio = document.querySelector(`input[name="category"][value="${categoryParam}"]`);
+                if (radio) radio.checked = true;
+              }
+            }
+
             // Hide loading and render products
             this.showLoading(false);
             this.createProductCards();
             this.updateResultsCount();
-
-            // Wait for ProductFilters to initialize, then override its render method
-            setTimeout(() => {
-              if (window.productFilters) {
-                // Override the renderProducts method to use our grid layout
-                window.productFilters.originalRenderProducts = window.productFilters.renderProducts;
-                window.productFilters.renderProducts = () => this.renderFilteredProducts();
-
-                // Load products into the filter system
-                window.productFilters.products = this.createFilterableProducts();
-                window.productFilters.originalProducts = [...window.productFilters.products];
-              }
-            }, 100);
 
           } catch (error) {
             DaleDeal.error('Error loading products:', error);
@@ -3083,6 +3085,13 @@
                 : product.description)
             : '';
 
+          const sellerHTML = product.seller ? `
+            <div class="product-provider">
+              <img src="${product.seller.avatar}" alt="${product.seller.name}" class="product-provider-avatar" />
+              <span class="product-provider-name">${product.seller.name}</span>
+              ${product.seller.verified ? '<i class="bi bi-patch-check-fill product-provider-verified"></i>' : ''}
+            </div>` : '';
+
           card.innerHTML = `
             <div class="product-image-container">
               ${imageCarouselHtml}
@@ -3091,10 +3100,14 @@
                 <button class="action-heart" title="Agregar a favoritos" data-product-id="${product.id}">
                   <i class="bi bi-heart"></i>
                 </button>
+                <button class="action-quick-view" title="Vista rápida" data-product-id="${product.id}">
+                  <i class="bi bi-eye"></i>
+                </button>
               </div>
             </div>
             <div class="product-info">
               <h3 class="product-title">${product.title}</h3>
+              ${sellerHTML}
               <p class="product-description">${shortDescription}</p>
 
               <div class="product-meta-group">
@@ -3119,10 +3132,9 @@
             </div>
           `;
 
-          // Product click (el favorito lo maneja FavoritesManager)
+          // Product click (favorito y vista rápida los maneja su propio manager)
           card.addEventListener('click', (e) => {
-            // No navegar si se hizo clic en el botón de favoritos
-            if (e.target.closest('.action-heart')) {
+            if (e.target.closest('.action-heart') || e.target.closest('.action-quick-view')) {
               return;
             }
             window.location.href = `./producto.html?id=${product.id}`;

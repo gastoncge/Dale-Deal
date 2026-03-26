@@ -45,7 +45,7 @@ class QuickViewManager {
     const originalPrice = productCard.querySelector('.product-original-price')?.textContent || '';
     const mainImage = productCard.querySelector('.product-image')?.src || '';
     const rating = this.extractRating(productCard);
-    const ratingCount = productCard.querySelector('.rating-count')?.textContent || '(0)';
+    const ratingCount = productCard.querySelector('.reviews-count')?.textContent || '(0)';
     const features = this.extractFeatures(productCard);
     const badges = this.extractBadges(productCard);
 
@@ -192,6 +192,7 @@ class QuickViewManager {
     this.closeQuickView();
 
     const modal = document.createElement('div');
+    modal.id = 'quickViewModal';
     modal.className = 'quick-view-modal';
     modal.innerHTML = `
       <div class="quick-view-backdrop"></div>
@@ -360,13 +361,15 @@ class QuickViewManager {
         window.favoritesManager.removeFromFavorites(productId);
       } else {
         const productData = {
-          id: productId,
+          id: String(productId),
+          type: 'product',
           title: this.currentProduct.title,
           priceText: this.currentProduct.currentPrice,
-          originalPriceText: this.currentProduct.originalPrice,
+          originalPriceText: this.currentProduct.originalPrice || '',
           imageUrl: this.currentProduct.mainImage,
           rating: this.currentProduct.rating,
-          ratingCount: this.currentProduct.ratingCount
+          ratingCount: this.currentProduct.ratingCount,
+          dateAdded: Date.now()
         };
         window.favoritesManager.addToFavorites(productData);
       }

@@ -1712,6 +1712,10 @@
   box-shadow: var(--shadow-xl);
 }
 
+.section-nav-btn:hover .carousel-control-icon {
+  color: var(--white);
+}
+
 
 /* Contenedor: flexbox con flechas a los costados */
 .similar-products-carousel-container,

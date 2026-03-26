@@ -38,13 +38,14 @@ class CartManager {
   // Agregar producto al carrito
   addItem(product) {
     try {
-      const existingItem = this.items.find((item) => item.id === product.id);
+      const normalizedId = String(product.id);
+      const existingItem = this.items.find((item) => String(item.id) === normalizedId);
 
       if (existingItem) {
         existingItem.quantity += product.quantity || 1;
       } else {
         this.items.push({
-          id: product.id,
+          id: normalizedId,
           title: product.title,
           price: product.price,
           priceText: product.priceText,
@@ -67,7 +68,8 @@ class CartManager {
   // Remover producto del carrito
   removeItem(productId) {
     try {
-      const itemIndex = this.items.findIndex((item) => item.id === productId);
+      const normalizedId = String(productId);
+      const itemIndex = this.items.findIndex((item) => String(item.id) === normalizedId);
       if (itemIndex > -1) {
         const removedItem = this.items.splice(itemIndex, 1)[0];
         this.saveCart();
@@ -88,7 +90,8 @@ class CartManager {
   // Actualizar cantidad de producto
   updateQuantity(productId, newQuantity) {
     try {
-      const item = this.items.find((item) => item.id === productId);
+      const normalizedId = String(productId);
+      const item = this.items.find((item) => String(item.id) === normalizedId);
       if (item && newQuantity > 0) {
         const oldQuantity = item.quantity;
         item.quantity = newQuantity;
@@ -295,16 +298,17 @@ class CartManager {
           const action = target.dataset.action;
           
           switch (action) {
-            case 'increase':
-              const currentItem = this.items.find(item => item.id === productId);
+            case 'increase': {
+              const currentItem = this.items.find(item => String(item.id) === productId);
               if (currentItem) {
                 DaleDeal.log(`Incrementando cantidad para ${currentItem.title}: ${currentItem.quantity} → ${currentItem.quantity + 1}`);
                 this.updateQuantity(productId, currentItem.quantity + 1);
               }
               break;
-              
-            case 'decrease':
-              const currentItemDec = this.items.find(item => item.id === productId);
+            }
+
+            case 'decrease': {
+              const currentItemDec = this.items.find(item => String(item.id) === productId);
               if (currentItemDec && currentItemDec.quantity > 1) {
                 DaleDeal.log(`Decrementando cantidad para ${currentItemDec.title}: ${currentItemDec.quantity} → ${currentItemDec.quantity - 1}`);
                 this.updateQuantity(productId, currentItemDec.quantity - 1);
@@ -313,7 +317,8 @@ class CartManager {
                 this.removeItem(productId);
               }
               break;
-              
+            }
+
             case 'remove':
               this.removeItem(productId);
               break;

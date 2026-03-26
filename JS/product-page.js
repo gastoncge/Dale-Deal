@@ -85,8 +85,7 @@ class ProductPage {
     const colorKeys = Object.keys(this.currentProduct.colors);
     const storageKeys = Object.keys(this.currentProduct.storage);
     this.selectedColor = colorKeys[0] || '';
-    // Prefer second storage option when multiple exist (mirrors product title e.g. "256GB")
-    this.selectedStorage = storageKeys.length > 1 ? storageKeys[1] : (storageKeys[0] || '');
+    this.selectedStorage = this._defaultStorage(storageKeys);
 
     this.updatePageContent();
   }
@@ -249,12 +248,10 @@ class ProductPage {
 
     const storageKeys = Object.keys(this.currentProduct.storage);
     container.innerHTML = '';
-    storageKeys.forEach((key, i) => {
+    storageKeys.forEach((key) => {
       const s = this.currentProduct.storage[key];
       const div = document.createElement('div');
-      // Edge case: single option → always active at index 0
-      const isActive = storageKeys.length === 1 ? i === 0 : i === 1;
-      div.className = `storage-option ${isActive ? 'active' : ''}`;
+      div.className = `storage-option ${key === this.selectedStorage ? 'active' : ''}`;
       div.dataset.storage = key;
       const priceText = s.price === 0
         ? 'Base'
@@ -412,10 +409,11 @@ class ProductPage {
   updatePrice() {
     if (!this.currentProduct) return;
 
-    // Safety guards: reset selection to first valid option if stale
+    // Safety guard: reset to base if current selection is no longer valid
     const storageKeys = Object.keys(this.currentProduct.storage);
     if (!this.currentProduct.storage[this.selectedStorage]) {
-      this.selectedStorage = storageKeys.length > 1 ? storageKeys[1] : (storageKeys[0] || '');
+      const base = storageKeys.find(k => this.currentProduct.storage[k].price === 0);
+      this.selectedStorage = base || storageKeys[0] || '';
     }
     const colorKeys = Object.keys(this.currentProduct.colors);
     if (!this.currentProduct.colors[this.selectedColor]) {
@@ -666,6 +664,12 @@ class ProductPage {
           </div>
           <div class="product-info">
             <h3 class="product-title">${product.title}</h3>
+            ${product.seller ? `
+            <div class="product-provider">
+              <img src="${product.seller.avatar}" alt="${product.seller.name}" class="product-provider-avatar" />
+              <span class="product-provider-name">${product.seller.name}</span>
+              ${product.seller.verified ? '<i class="bi bi-patch-check-fill product-provider-verified"></i>' : ''}
+            </div>` : ''}
             <p class="product-description">${desc}</p>
             <div class="product-meta-group">
               <div class="product-rating">
@@ -710,11 +714,40 @@ class ProductPage {
     }
   }
 
+  // ── Default storage deduction ──────────────────────────────────────────────
+  // 1. Match against the size mentioned in the product title (e.g. "256GB", "1TB")
+  // 2. Fall back to the base option (price === 0)
+  // 3. Last resort: first key
+  _defaultStorage(storageKeys) {
+    if (!storageKeys.length) return '';
+    if (storageKeys.length === 1) return storageKeys[0];
+
+    const titleMatch = this.currentProduct.title.match(/\b(\d+\s*(?:GB|TB))\b/i);
+    if (titleMatch) {
+      const sizeInTitle = titleMatch[1].replace(/\s+/g, '').toUpperCase();
+      const fromTitle = storageKeys.find(
+        k => k.replace(/\s+/g, '').toUpperCase() === sizeInTitle
+      );
+      if (fromTitle) return fromTitle;
+    }
+
+    const base = storageKeys.find(k => this.currentProduct.storage[k].price === 0);
+    return base || storageKeys[0];
+  }
+
   // ── Category navigation ────────────────────────────────────────────────────
   goToCategory() {
-    // Navigate to productos.html filtered by category
-    window.location.href =
-      `./productos.html?category=${encodeURIComponent(this.currentProduct.category)}`;
+    // Map raw category names to the slugs used by productos.html
+    const slugMap = {
+      'Electrónicos': 'electronics',
+      'Moda': 'fashion',
+      'Hogar': 'home',
+      'Deportes': 'sports',
+      'Libros': 'books'
+    };
+    const slug = slugMap[this.currentProduct.category]
+      || this.currentProduct.category.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    window.location.href = `./productos.html?category=${encodeURIComponent(slug)}`;
   }
 
   // ── Stars renderer ─────────────────────────────────────────────────────────

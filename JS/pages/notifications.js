@@ -23,7 +23,17 @@ class NotificationsCenterManager {
   loadNotifications() {
     const stored = localStorage.getItem('daledealt_notifications');
     if (stored) {
-      this.notifications = JSON.parse(stored);
+      try {
+        const parsed = JSON.parse(stored);
+        this.notifications = Array.isArray(parsed) ? parsed : [];
+        if (!Array.isArray(parsed)) {
+          localStorage.removeItem('daledealt_notifications');
+        }
+      } catch (e) {
+        console.error('Error al parsear notificaciones del localStorage:', e);
+        localStorage.removeItem('daledealt_notifications');
+        this.notifications = [];
+      }
     } else {
       // Datos de ejemplo más completos
       this.notifications = [
@@ -544,7 +554,7 @@ class NotificationsCenterManager {
 
   // Crear HTML de notificación
   createNotificationHTML(notification) {
-    const actionsHTML = notification.actions.map(action => `
+    const actionsHTML = (notification.actions || []).map(action => `
       <button class="notification-action-btn ${action.isPrimary ? 'primary' : ''}"
               data-action="${action.action}">
         ${action.label}
@@ -571,7 +581,7 @@ class NotificationsCenterManager {
                 ${notification.time}
               </div>
             </div>
-            ${notification.actions.length > 0 ? `
+            ${(notification.actions?.length > 0) ? `
               <div class="notification-actions">
                 ${actionsHTML}
               </div>

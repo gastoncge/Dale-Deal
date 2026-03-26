@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Verificar autenticación ──────────────────────────────────────────
   const authWarning = document.getElementById('authWarning');
-  const isLogged    = !!localStorage.getItem('daledeal_token');
+  const isLogged    = !!localStorage.getItem('daledealer_user');
 
   if (!isLogged && authWarning) {
     authWarning.style.display = 'flex';
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Formulario de Producto ───────────────────────────────────────────
   document.getElementById('productForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (!localStorage.getItem('daledeal_token')) {
+    if (!localStorage.getItem('daledealer_user')) {
       showError('product-error', 'Necesitás iniciar sesión para publicar.');
       return;
     }
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Formulario de Servicio ───────────────────────────────────────────
   document.getElementById('serviceForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (!localStorage.getItem('daledeal_token')) {
+    if (!localStorage.getItem('daledealer_user')) {
       showError('service-error', 'Necesitás iniciar sesión para publicar.');
       return;
     }
@@ -113,30 +113,19 @@ document.addEventListener('DOMContentLoaded', () => {
 // =====================================================
 // CARGAR CATEGORÍAS DESDE LA API
 // =====================================================
-async function loadCategories() {
-  try {
-    const [productCats, serviceCats] = await Promise.all([
-      window.DaleDeal.api.apiFetch('/products/categories'),
-      window.DaleDeal.api.apiFetch('/services/categories'),
-    ]);
-
-    fillSelect('p-category', productCats);
-    fillSelect('s-category', serviceCats);
-  } catch (err) {
-    // Fallback con categorías hardcodeadas si la API falla
-    fillSelect('p-category', [
-      { id: 1, name: 'Electrónica' }, { id: 2, name: 'Ropa y accesorios' },
-      { id: 3, name: 'Hogar y jardín' }, { id: 4, name: 'Deportes' },
-      { id: 5, name: 'Juguetes' }, { id: 6, name: 'Vehículos' }, { id: 8, name: 'Otros' }
-    ]);
-    fillSelect('s-category', [
-      { id: 1, name: 'Plomería' }, { id: 2, name: 'Electricidad' },
-      { id: 3, name: 'Gasista' }, { id: 4, name: 'Peluquería' },
-      { id: 5, name: 'Limpieza' }, { id: 6, name: 'Pintura' },
-      { id: 7, name: 'Carpintería' }, { id: 8, name: 'Mecánica' },
-      { id: 9, name: 'Informática' }, { id: 10, name: 'Otros servicios' }
-    ]);
-  }
+function loadCategories() {
+  fillSelect('p-category', [
+    { id: 1, name: 'Electrónica' }, { id: 2, name: 'Ropa y accesorios' },
+    { id: 3, name: 'Hogar y jardín' }, { id: 4, name: 'Deportes' },
+    { id: 5, name: 'Juguetes' }, { id: 6, name: 'Vehículos' }, { id: 7, name: 'Otros' }
+  ]);
+  fillSelect('s-category', [
+    { id: 1, name: 'Plomería' }, { id: 2, name: 'Electricidad' },
+    { id: 3, name: 'Gasista' }, { id: 4, name: 'Peluquería' },
+    { id: 5, name: 'Limpieza' }, { id: 6, name: 'Pintura' },
+    { id: 7, name: 'Carpintería' }, { id: 8, name: 'Mecánica' },
+    { id: 9, name: 'Informática' }, { id: 10, name: 'Otros servicios' }
+  ]);
 }
 
 function fillSelect(selectId, items) {
@@ -177,7 +166,7 @@ async function submitProduct() {
         : null;
     })(),
     location: document.getElementById('p-location').value.trim(),
-    images: getImageUrls('p-image-list'),
+    images: getImageUrls('p'),
     currency: 'ARS',
     badges: getBadges('p'),
   };
@@ -193,7 +182,7 @@ async function submitProduct() {
     document.querySelectorAll('.condition-btn').forEach((b, i) => {
       b.classList.toggle('active', i === 0);
     });
-    resetImageList('p-image-list');
+    resetMediaInputs('p');
   } catch (err) {
     showError('product-error', err.message || 'Error al publicar. Intentá nuevamente.');
   } finally {
@@ -229,7 +218,7 @@ async function submitService() {
     })(),
     location: document.getElementById('s-location').value.trim(),
     zones_covered: zones,
-    images: getImageUrls('s-image-list'),
+    images: getImageUrls('s'),
     currency: 'ARS',
     badges: getBadges('s'),
   };
@@ -245,7 +234,7 @@ async function submitService() {
     document.querySelectorAll('.price-type-btn').forEach((b, i) => {
       b.classList.toggle('active', i === 0);
     });
-    resetImageList('s-image-list');
+    resetMediaInputs('s');
   } catch (err) {
     showError('service-error', err.message || 'Error al publicar. Intentá nuevamente.');
   } finally {
@@ -254,47 +243,26 @@ async function submitService() {
 }
 
 // =====================================================
-// HELPERS DE IMÁGENES
+// HELPERS DE IMÁGENES / MEDIA
 // =====================================================
-function getImageUrls(listId) {
-  const inputs = document.querySelectorAll(`#${listId} input[type="url"]`);
-  return Array.from(inputs)
-    .map(i => i.value.trim())
-    .filter(url => url.length > 0);
+
+// Devuelve los src de las imágenes ya previsualizadas en el contenedor
+function getImageUrls(prefix) {
+  const container = document.getElementById(`${prefix}-photo-previews`);
+  if (!container) return [];
+  return Array.from(container.querySelectorAll('img')).map(img => img.src);
 }
 
-function addImageRow(listId) {
-  const list = document.getElementById(listId);
-  const row = document.createElement('div');
-  row.className = 'image-url-row';
-  row.innerHTML = `
-    <input type="url" class="form-control" placeholder="https://..." />
-    <button type="button" class="btn-remove-image" onclick="removeImageRow(this)">
-      <i class="bi bi-x-circle"></i>
-    </button>
-  `;
-  list.appendChild(row);
-}
-
-function removeImageRow(btn) {
-  const list = btn.closest('.image-url-list');
-  if (list.querySelectorAll('.image-url-row').length > 1) {
-    btn.closest('.image-url-row').remove();
-  } else {
-    btn.closest('.image-url-row').querySelector('input').value = '';
-  }
-}
-
-function resetImageList(listId) {
-  const list = document.getElementById(listId);
-  list.innerHTML = `
-    <div class="image-url-row">
-      <input type="url" class="form-control" placeholder="https://..." />
-      <button type="button" class="btn-remove-image" onclick="removeImageRow(this)">
-        <i class="bi bi-x-circle"></i>
-      </button>
-    </div>
-  `;
+// Limpia previews y resetea los file inputs
+function resetMediaInputs(prefix) {
+  const photoPreview = document.getElementById(`${prefix}-photo-previews`);
+  const videoPreview = document.getElementById(`${prefix}-video-previews`);
+  const photoInput   = document.getElementById(`${prefix}-photos`);
+  const videoInput   = document.getElementById(`${prefix}-video`);
+  if (photoPreview) photoPreview.innerHTML = '';
+  if (videoPreview) videoPreview.innerHTML = '';
+  if (photoInput)   photoInput.value = '';
+  if (videoInput)   videoInput.value = '';
 }
 
 // =====================================================

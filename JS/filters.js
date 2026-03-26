@@ -14,9 +14,8 @@ class ProductFilters {
   }
 
   init() {
-    this.loadProducts();
+    // No leemos tarjetas del DOM ni renderizamos: ProductCatalog inyectará los datos
     this.bindEvents();
-    this.renderProducts();
   }
 
   // Cargar productos desde el DOM
@@ -122,13 +121,7 @@ class ProductFilters {
       resizeTimer = setTimeout(() => this.renderProducts(), 200);
     });
 
-    // Búsqueda
-    document.getElementById('searchInput')?.addEventListener('input', (e) => this.handleSearch(e));
-    document.getElementById('searchInput')?.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        this.handleSearch(e);
-      }
-    });
+    // La búsqueda la maneja el script inline de la página para evitar listeners duplicados
   }
 
   // Manejar filtro de categoría
@@ -162,12 +155,29 @@ class ProductFilters {
       filtered = filtered.filter(product => product.category === this.currentCategory);
     }
 
-    // Filtro por búsqueda
-    if (this.searchQuery) {
-      filtered = filtered.filter(product => 
-        product.title.toLowerCase().includes(this.searchQuery) ||
-        product.badges.some(badge => badge.toLowerCase().includes(this.searchQuery))
+    // Filtro por búsqueda — acepta searchTerm (setado por inline script) o searchQuery
+    const term = (this.searchTerm || this.searchQuery || '').toLowerCase();
+    if (term) {
+      filtered = filtered.filter(product =>
+        product.title.toLowerCase().includes(term) ||
+        (product.badges || []).some(badge => String(badge).toLowerCase().includes(term))
       );
+    }
+
+    // Filtro por rango de precio
+    if (this.minPrice != null) {
+      filtered = filtered.filter(p => p.price >= this.minPrice);
+    }
+    if (this.maxPrice != null) {
+      filtered = filtered.filter(p => p.price <= this.maxPrice);
+    }
+
+    // Filtro por rating mínimo
+    if (this.currentRating && this.currentRating !== 'all') {
+      const minRating = parseFloat(this.currentRating);
+      if (!isNaN(minRating)) {
+        filtered = filtered.filter(p => (p.rating || 0) >= minRating);
+      }
     }
 
     // Ordenar productos
@@ -179,9 +189,9 @@ class ProductFilters {
   // Ordenar productos
   sortProducts(products) {
     switch (this.currentSort) {
-      case 'price-asc':
+      case 'price-low':
         return products.sort((a, b) => a.price - b.price);
-      case 'price-desc':
+      case 'price-high':
         return products.sort((a, b) => b.price - a.price);
       case 'rating':
         return products.sort((a, b) => b.rating - a.rating);
@@ -731,8 +741,8 @@ class ProductFilters {
   getSortName() {
     const sorts = {
       'featured': 'Destacados',
-      'price-asc': 'Menor precio',
-      'price-desc': 'Mayor precio',
+      'price-low': 'Menor precio',
+      'price-high': 'Mayor precio',
       'rating': 'Mejor valorados',
       'newest': 'Más nuevos',
       'name': 'A-Z'

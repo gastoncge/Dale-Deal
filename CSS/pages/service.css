@@ -1154,6 +1154,19 @@
 .provider-services-carousel-container .custom-carousel {
   flex: 1;
   min-width: 0;
+  overflow: hidden;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.4s ease;
+  will-change: transform;
+}
+
+.carousel-slide-item {
+  flex-shrink: 0;
+  padding: 0 8px;
+  box-sizing: border-box;
 }
 
 /* Badge genérico para carruseles de servicios */
@@ -1558,4 +1571,18 @@
     min-width: 48px;
     min-height: 48px;
   }
+}
+
+/* ===== CARDS EN SECCIONES DE CAROUSELS (reset estilos de product.css) ===== */
+.provider-services-section .product-card .product-info,
+.related-services-section .product-card .product-info {
+  padding: var(--spacing-4);
+}
+
+.provider-services-section .product-card .product-title,
+.related-services-section .product-card .product-title {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  letter-spacing: 0;
+  margin-bottom: 0;
 }

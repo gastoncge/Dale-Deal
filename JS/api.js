@@ -62,11 +62,47 @@ async function searchProducts(searchTerm) {
   }
 }
 
+// =====================================================
+// PUBLICAR — stubs locales (sin backend)
+// =====================================================
+
+/**
+ * Simula la creación de un producto.
+ * Guarda en localStorage y devuelve el objeto creado.
+ */
+async function createProduct(data) {
+  await new Promise(r => setTimeout(r, 600));
+  const product = { ...data, id: Date.now(), createdAt: new Date().toISOString() };
+  try {
+    const existing = JSON.parse(localStorage.getItem('daledeal_my_products') || '[]');
+    existing.push(product);
+    localStorage.setItem('daledeal_my_products', JSON.stringify(existing));
+  } catch (_) { /* quota o parse error — ignorar */ }
+  return product;
+}
+
+/**
+ * Simula la creación de un servicio.
+ * Guarda en localStorage y devuelve el objeto creado.
+ */
+async function createService(data) {
+  await new Promise(r => setTimeout(r, 600));
+  const service = { ...data, id: Date.now(), createdAt: new Date().toISOString() };
+  try {
+    const existing = JSON.parse(localStorage.getItem('daledeal_my_services') || '[]');
+    existing.push(service);
+    localStorage.setItem('daledeal_my_services', JSON.stringify(existing));
+  } catch (_) { /* quota o parse error — ignorar */ }
+  return service;
+}
+
 // Exportar funciones para uso global
 if (typeof window !== 'undefined') {
   window.DaleDeal = window.DaleDeal || {};
   window.DaleDeal.api = {
     fetchProducts,
     searchProducts,
+    createProduct,
+    createService,
   };
 }

@@ -694,6 +694,7 @@ let authManager;
 function initializeAuth() {
   if (!authManager) {
     authManager = new AuthManager();
+    window.authManager = authManager;
   }
 
   // Setup específico según la página
@@ -716,5 +717,4 @@ if (document.readyState === "loading") {
 }
 
 // Exportar para uso global
-window.authManager = authManager;
 window.AuthManager = AuthManager;
