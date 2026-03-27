@@ -98,6 +98,11 @@
   box-shadow: 0 0 0 2px var(--primary-red-light);
 }
 
+.thumbnail:focus-visible {
+  outline: 3px solid var(--primary-red);
+  outline-offset: 2px;
+}
+
 /* ===== INFORMACIÓN DEL PRODUCTO ===== */
 .product-info {
   padding-left: var(--spacing-8);
@@ -465,6 +470,11 @@
   border-color: var(--primary-red);
   transform: translateY(-3px);
   box-shadow: var(--shadow-lg);
+}
+
+.btn-wishlist:focus-visible {
+  outline: 3px solid var(--primary-red);
+  outline-offset: 2px;
 }
 
 .btn-wishlist.active {
@@ -1716,6 +1726,10 @@
   color: var(--white);
 }
 
+.section-nav-btn:focus-visible {
+  outline: 3px solid var(--primary-red);
+  outline-offset: 2px;
+}
 
 /* Contenedor: flexbox con flechas a los costados */
 .similar-products-carousel-container,

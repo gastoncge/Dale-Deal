@@ -353,23 +353,23 @@
               <div class="sidebar-divider"></div>
               <p class="sidebar-section-label">Centro de Ayuda</p>
               <nav class="sidebar-nav-list">
-                <a href="#" class="sidebar-nav-item" data-section="centro-ayuda">
+                <a href="./centro-ayuda.html" class="sidebar-nav-item">
                   <i class="bi bi-question-circle me-2"></i>
                   <span>Ayuda</span>
                 </a>
-                <a href="#" class="sidebar-nav-item" data-section="contacto">
+                <a href="./contacto.html" class="sidebar-nav-item">
                   <i class="bi bi-envelope me-2"></i>
                   <span>Contacto</span>
                 </a>
-                <a href="#" class="sidebar-nav-item" data-section="reportar-problema">
+                <a href="./reportar-problema.html" class="sidebar-nav-item">
                   <i class="bi bi-flag me-2"></i>
                   <span>Reportar problema</span>
                 </a>
-                <a href="#" class="sidebar-nav-item" data-section="estado-servicio">
+                <a href="./estado-servicio.html" class="sidebar-nav-item">
                   <i class="bi bi-activity me-2"></i>
                   <span>Estado del servicio</span>
                 </a>
-                <a href="#" class="sidebar-nav-item" data-section="seguridad">
+                <a href="./seguridad.html" class="sidebar-nav-item">
                   <i class="bi bi-shield-lock me-2"></i>
                   <span>Seguridad</span>
                 </a>
@@ -425,7 +425,7 @@
               <div class="perfil-hero">
                 <div class="perfil-avatar-wrap">
                   <img src="https://ui-avatars.com/api/?name=Usuario&background=e53e3e&color=fff&size=128" alt="Avatar" class="perfil-avatar" id="perfilAvatarImg">
-                  <button class="perfil-avatar-edit" title="Cambiar foto" onclick="document.getElementById('avatarInput').click()">
+                  <button class="perfil-avatar-edit" title="Cambiar foto" id="avatarEditBtn">
                     <i class="bi bi-camera-fill"></i>
                   </button>
                   <input type="file" id="avatarInput" accept="image/*" style="display:none">
@@ -757,7 +757,7 @@
                   <h4 class="fw-bold">¡Reporte enviado!</h4>
                   <p class="text-muted mb-3">Nuestro equipo técnico lo revisará a la brevedad.</p>
                   <div class="ticket-badge">Ticket #RPT-<span id="ticketNum"></span></div>
-                  <button class="btn btn-outline-secondary mt-4" onclick="document.getElementById('reportFormState').style.display='block';document.getElementById('reportSuccessState').style.display='none';document.getElementById('reportForm').reset()">Nuevo reporte</button>
+                  <button class="btn btn-outline-secondary mt-4" id="nuevoReporteBtn">Nuevo reporte</button>
                 </div>
               </div>
             </div>
@@ -813,9 +813,9 @@
                   <div class="sec-card-head"><div class="sec-card-icon"><i class="bi bi-laptop"></i></div><div><b>Sesiones activas</b><small>Dispositivos con sesión iniciada</small></div></div>
                   <div class="sec-card-body">
                     <div class="session-row"><i class="bi bi-laptop sess-icon"></i><div><b>Windows · Chrome 122 <span class="current-badge">Este dispositivo</span></b><small class="text-muted d-block">Buenos Aires · Ahora</small></div></div>
-                    <div class="session-row"><i class="bi bi-phone sess-icon"></i><div><b>iPhone 15 · Safari</b><small class="text-muted d-block">Buenos Aires · Hace 2 horas</small></div><button class="btn btn-outline-danger btn-sm ms-auto" onclick="this.closest('.session-row').remove()">Cerrar</button></div>
-                    <div class="session-row"><i class="bi bi-phone sess-icon"></i><div><b>Android · Chrome Mobile</b><small class="text-muted d-block">Córdoba · Hace 3 días</small></div><button class="btn btn-outline-danger btn-sm ms-auto" onclick="this.closest('.session-row').remove()">Cerrar</button></div>
-                    <button class="btn btn-outline-danger btn-sm mt-3"><i class="bi bi-box-arrow-right me-2"></i>Cerrar todas las otras sesiones</button>
+                    <div class="session-row"><i class="bi bi-phone sess-icon"></i><div><b>iPhone 15 · Safari</b><small class="text-muted d-block">Buenos Aires · Hace 2 horas</small></div><button class="btn btn-outline-danger btn-sm ms-auto" data-action="close-session">Cerrar</button></div>
+                    <div class="session-row"><i class="bi bi-phone sess-icon"></i><div><b>Android · Chrome Mobile</b><small class="text-muted d-block">Córdoba · Hace 3 días</small></div><button class="btn btn-outline-danger btn-sm ms-auto" data-action="close-session">Cerrar</button></div>
+                    <button class="btn btn-outline-danger btn-sm mt-3" id="notifCloseAllSessions"><i class="bi bi-box-arrow-right me-2"></i>Cerrar todas las otras sesiones</button>
                   </div>
                 </div>
               </div>
@@ -994,7 +994,7 @@
                       <li><i class="bi bi-check-circle-fill"></i> Alianzas estratégicas</li>
                       <li><i class="bi bi-check-circle-fill"></i> Condiciones personalizadas</li>
                     </ul>
-                    <button class="pub-card-btn" onclick="document.querySelector('[data-section=contacto]').click()">Contactar</button>
+                    <button class="pub-card-btn" id="pubColabContactarBtn">Contactar</button>
                   </div>
 
                 </div>
@@ -1422,6 +1422,42 @@
       });
 
       renderAddresses();
+
+      // ===== AVATAR EDIT =====
+      document.getElementById('avatarEditBtn')?.addEventListener('click', () => {
+        document.getElementById('avatarInput').click();
+      });
+
+      // ===== NUEVO REPORTE =====
+      document.getElementById('nuevoReporteBtn')?.addEventListener('click', () => {
+        document.getElementById('reportFormState').style.display = 'block';
+        document.getElementById('reportSuccessState').style.display = 'none';
+        document.getElementById('reportForm').reset();
+      });
+
+      // ===== PUBLICIDAD: COLABORACIÓN → CONTACTO =====
+      document.getElementById('pubColabContactarBtn')?.addEventListener('click', () => {
+        showSection('contacto');
+      });
+
+      // ===== SESIONES — no disponible en esta versión =====
+      document.querySelectorAll('[data-action="close-session"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          window.DaleDeal?.utils?.showNotification('La gestión de sesiones remotas no está disponible en esta versión.', 'info');
+        });
+      });
+
+      document.getElementById('notifCloseAllSessions')?.addEventListener('click', () => {
+        window.DaleDeal?.utils?.showNotification('La gestión de sesiones remotas no está disponible en esta versión.', 'info');
+      });
+
+      // ===== 2FA / ALERTAS — no disponible en esta versión =====
+      document.querySelectorAll('#view-seguridad .form-check-input').forEach(inp => {
+        inp.addEventListener('change', function() {
+          this.checked = !this.checked; // revert visual state
+          window.DaleDeal?.utils?.showNotification('Esta configuración no está disponible en la versión actual.', 'info');
+        });
+      });
 
       // Navegar a sección según hash (al cargar y al cambiar)
       function navigateToHash() {

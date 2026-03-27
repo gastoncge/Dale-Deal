@@ -14,6 +14,27 @@
       name="keywords"
       content="iPhone 15 Pro Max, smartphone, Apple, celular, tecnología"
     />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://daledeal.com/HTML/producto.html" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="product" />
+    <meta property="og:site_name" content="Dale Deal" />
+    <meta property="og:title" content="iPhone 15 Pro Max 256GB — Dale Deal" />
+    <meta property="og:description" content="iPhone 15 Pro Max 256GB al mejor precio. Chip A17 Pro, cámara 48MP, titanio y USB-C. Envío gratis y 12 cuotas sin interés." />
+    <meta property="og:url" content="https://daledeal.com/HTML/producto.html" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=1200&h=630&fit=crop" />
+    <meta property="og:locale" content="es_AR" />
+    <meta property="product:price:amount" content="1299999" />
+    <meta property="product:price:currency" content="ARS" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="iPhone 15 Pro Max 256GB — Dale Deal" />
+    <meta name="twitter:description" content="iPhone 15 Pro Max 256GB al mejor precio. Envío gratis y 12 cuotas sin interés en Dale Deal." />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=1200&h=630&fit=crop" />
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
@@ -38,6 +59,33 @@
     <link rel="stylesheet" href="../CSS/components.css" />
     <link rel="stylesheet" href="../CSS/pages/product.css" />
     <link rel="stylesheet" href="../CSS/responsive.css" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": "iPhone 15 Pro Max 256GB",
+      "description": "El smartphone más avanzado de Apple con chip A17 Pro, cámara de 48MP, cuerpo de titanio y USB-C.",
+      "image": "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=400&fit=crop",
+      "brand": { "@type": "Brand", "name": "Apple" },
+      "category": "Electrónicos > Smartphones",
+      "offers": {
+        "@type": "Offer",
+        "url": "https://daledeal.com/HTML/producto.html",
+        "priceCurrency": "ARS",
+        "price": "1299999",
+        "availability": "https://schema.org/InStock",
+        "seller": { "@type": "Organization", "name": "Dale Deal" }
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "reviewCount": "2847",
+        "bestRating": "5"
+      }
+    }
+    </script>
   </head>
 
   <body>
@@ -257,30 +305,42 @@
                 </div>
 
                 <!-- Thumbnails -->
-                <div class="thumbnail-container">
+                <div class="thumbnail-container" role="group" aria-label="Fotos del producto">
                   <img
                     src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=100&h=100&fit=crop"
-                    alt="iPhone 15 Pro Max"
+                    alt="Ver foto 1 de iPhone 15 Pro Max"
                     class="thumbnail active"
                     data-full="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=600&fit=crop"
+                    role="button"
+                    tabindex="0"
+                    aria-pressed="true"
                   />
                   <img
                     src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=100&h=100&fit=crop"
-                    alt="iPhone 15 Pro Max"
+                    alt="Ver foto 2 de iPhone 15 Pro Max"
                     class="thumbnail"
                     data-full="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&h=600&fit=crop"
+                    role="button"
+                    tabindex="0"
+                    aria-pressed="false"
                   />
                   <img
                     src="https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=100&h=100&fit=crop"
-                    alt="iPhone 15 Pro Max"
+                    alt="Ver foto 3 de iPhone 15 Pro Max"
                     class="thumbnail"
                     data-full="https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=600&h=600&fit=crop"
+                    role="button"
+                    tabindex="0"
+                    aria-pressed="false"
                   />
                   <img
                     src="https://images.unsplash.com/photo-1567581935884-3349723552ca?w=100&h=100&fit=crop"
-                    alt="iPhone 15 Pro Max"
+                    alt="Ver foto 4 de iPhone 15 Pro Max"
                     class="thumbnail"
                     data-full="https://images.unsplash.com/photo-1567581935884-3349723552ca?w=600&h=600&fit=crop"
+                    role="button"
+                    tabindex="0"
+                    aria-pressed="false"
                   />
                 </div>
               </div>
@@ -296,23 +356,23 @@
                   <div class="provider-details">
                     <div class="provider-name-row">
                       <span class="provider-name provider-name-text" id="sellerCardName">Vendedor</span>
-                      <i class="bi bi-patch-check-fill provider-verified" id="sellerCardVerified" title="Vendedor verificado"></i>
+                      <i class="bi bi-patch-check-fill provider-verified" id="sellerCardVerified" aria-label="Vendedor verificado"></i>
                       <span class="provider-member-badge" id="sellerCardProBadge" style="display:none;">Pro</span>
                     </div>
                     <div class="provider-stats" id="sellerCardStats">
-                      <span class="stars">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-half"></i>
+                      <span class="stars" role="img" aria-label="4.8 de 5 estrellas">
+                        <i class="bi bi-star-fill" aria-hidden="true"></i><i class="bi bi-star-fill" aria-hidden="true"></i>
+                        <i class="bi bi-star-fill" aria-hidden="true"></i><i class="bi bi-star-fill" aria-hidden="true"></i>
+                        <i class="bi bi-star-half" aria-hidden="true"></i>
                       </span>
                       <strong id="sellerCardRating">4.8</strong> · <span id="sellerCardReviews">2.847</span> reseñas
                     </div>
                     <div class="provider-response-time mb-1">
-                      <i class="bi bi-clock-fill"></i>
+                      <i class="bi bi-clock-fill" aria-hidden="true"></i>
                       <span>Responde en &lt; 1h</span>
                     </div>
                     <div class="provider-location">
-                      <i class="bi bi-geo-alt-fill"></i>
+                      <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
                       <span>CABA</span>
                       &nbsp;·&nbsp;
                       <span>Miembro desde 2023</span>
@@ -327,17 +387,17 @@
                   <h1 class="product-title">iPhone 15 Pro Max 256GB</h1>
                   <div class="product-meta">
                     <div class="product-rating">
-                      <div class="stars">
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-half"></i>
+                      <div class="stars" role="img" aria-label="4.8 de 5 estrellas">
+                        <i class="bi bi-star-fill" aria-hidden="true"></i>
+                        <i class="bi bi-star-fill" aria-hidden="true"></i>
+                        <i class="bi bi-star-fill" aria-hidden="true"></i>
+                        <i class="bi bi-star-fill" aria-hidden="true"></i>
+                        <i class="bi bi-star-half" aria-hidden="true"></i>
                       </div>
                       <span class="rating-text">4.8 (2,847 reseñas)</span>
                     </div>
                     <div class="product-sold">
-                      <i class="bi bi-fire"></i>
+                      <i class="bi bi-fire" aria-hidden="true"></i>
                       <span>+500 vendidos</span>
                     </div>
                   </div>
@@ -365,8 +425,8 @@
                     <i class="bi bi-cart-plus me-2"></i>
                     Agregar al Carrito
                   </button>
-                  <button class="btn-wishlist" title="Agregar a favoritos">
-                    <i class="bi bi-heart"></i>
+                  <button class="btn-wishlist" aria-label="Agregar a favoritos">
+                    <i class="bi bi-heart" aria-hidden="true"></i>
                   </button>
                 </div>
 
@@ -374,37 +434,31 @@
                 <div class="payment-methods">
                   <h6>Medios de pago</h6>
                   <div class="payment-icons">
-                    <i
-                      class="bi bi-credit-card"
-                      title="Tarjetas de crédito"
-                    ></i>
-                    <i
-                      class="bi bi-credit-card-2-front"
-                      title="Tarjetas de débito"
-                    ></i>
-                    <i class="bi bi-bank" title="Transferencia bancaria"></i>
-                    <i class="bi bi-cash" title="Efectivo"></i>
+                    <span role="img" aria-label="Tarjetas de crédito"><i class="bi bi-credit-card" aria-hidden="true"></i></span>
+                    <span role="img" aria-label="Tarjetas de débito"><i class="bi bi-credit-card-2-front" aria-hidden="true"></i></span>
+                    <span role="img" aria-label="Transferencia bancaria"><i class="bi bi-bank" aria-hidden="true"></i></span>
+                    <span role="img" aria-label="Efectivo"><i class="bi bi-cash" aria-hidden="true"></i></span>
                   </div>
                 </div>
 
                 <!-- Shipping Info -->
                 <div class="shipping-info">
                   <div class="shipping-item">
-                    <i class="bi bi-truck"></i>
+                    <i class="bi bi-truck" aria-hidden="true"></i>
                     <div>
                       <strong>Envío gratis</strong>
                       <p>Llega mañana si pedís en las próximas 3 horas</p>
                     </div>
                   </div>
                   <div class="shipping-item">
-                    <i class="bi bi-shield-check"></i>
+                    <i class="bi bi-shield-check" aria-hidden="true"></i>
                     <div>
                       <strong>Compra protegida</strong>
                       <p>Garantía oficial Apple de 1 año</p>
                     </div>
                   </div>
                   <div class="shipping-item">
-                    <i class="bi bi-arrow-return-left"></i>
+                    <i class="bi bi-arrow-return-left" aria-hidden="true"></i>
                     <div>
                       <strong>Devolución gratis</strong>
                       <p>Tenés 30 días desde que lo recibís</p>
@@ -433,33 +487,39 @@
                 <li class="nav-item">
                   <a
                     class="nav-link active"
+                    id="tab-description"
                     data-bs-toggle="tab"
                     href="#description"
                     role="tab"
+                    aria-selected="true"
                   >
-                    <i class="bi bi-file-text me-2"></i>
+                    <i class="bi bi-file-text me-2" aria-hidden="true"></i>
                     <span>Descripción</span>
                   </a>
                 </li>
                 <li class="nav-item">
                   <a
                     class="nav-link"
+                    id="tab-reviews"
                     data-bs-toggle="tab"
                     href="#reviews"
                     role="tab"
+                    aria-selected="false"
                   >
-                    <i class="bi bi-star me-2"></i>
+                    <i class="bi bi-star me-2" aria-hidden="true"></i>
                     <span>Reseñas</span>
                   </a>
                 </li>
                 <li class="nav-item">
                   <a
                     class="nav-link"
+                    id="tab-questions"
                     data-bs-toggle="tab"
                     href="#questions"
                     role="tab"
+                    aria-selected="false"
                   >
-                    <i class="bi bi-question-circle me-2"></i>
+                    <i class="bi bi-question-circle me-2" aria-hidden="true"></i>
                     <span>Preguntas</span>
                   </a>
                 </li>
@@ -469,7 +529,7 @@
             <!-- Tabs Content -->
             <div class="tab-content">
               <!-- Description Tab -->
-              <div class="tab-pane fade show active" id="description">
+              <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="tab-description" tabindex="0">
                 <div class="description-content">
                   <p id="product-description-text" style="white-space: pre-line; line-height: 1.8; color: var(--gray-700);">
                     El iPhone 15 Pro Max redefine lo que es posible en un smartphone. Con el revolucionario chip A17 Pro, el primer chip de 3 nanómetros en un smartphone, experimentarás un rendimiento sin precedentes y una eficiencia energética excepcional.
@@ -478,19 +538,19 @@
               </div>
 
               <!-- Reviews Tab -->
-              <div class="tab-pane fade" id="reviews">
+              <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="tab-reviews" tabindex="0">
                 <div class="reviews-content">
                   <!-- Reviews Summary -->
                   <div class="reviews-summary">
                     <div class="rating-overview">
                       <div class="overall-rating">
                         <span class="rating-number">4.8</span>
-                        <div class="rating-stars">
-                          <i class="bi bi-star-fill"></i>
-                          <i class="bi bi-star-fill"></i>
-                          <i class="bi bi-star-fill"></i>
-                          <i class="bi bi-star-fill"></i>
-                          <i class="bi bi-star-half"></i>
+                        <div class="rating-stars" role="img" aria-label="4.8 de 5 estrellas">
+                          <i class="bi bi-star-fill" aria-hidden="true"></i>
+                          <i class="bi bi-star-fill" aria-hidden="true"></i>
+                          <i class="bi bi-star-fill" aria-hidden="true"></i>
+                          <i class="bi bi-star-fill" aria-hidden="true"></i>
+                          <i class="bi bi-star-half" aria-hidden="true"></i>
                         </div>
                         <div class="rating-count">2,847 reseñas</div>
                       </div>
@@ -573,7 +633,7 @@
               </div>
 
               <!-- Questions Tab -->
-              <div class="tab-pane fade" id="questions">
+              <div class="tab-pane fade" id="questions" role="tabpanel" aria-labelledby="tab-questions" tabindex="0">
                 <div class="questions-content">
                   <!-- Ask Question Form -->
                   <div class="ask-question">
@@ -581,6 +641,7 @@
                     <form class="question-form">
                       <textarea
                         placeholder="Escribe tu pregunta sobre este producto..."
+                        aria-label="Tu pregunta sobre este producto"
                         required
                       ></textarea>
                       <button type="submit" class="btn-ask">
@@ -632,8 +693,8 @@
             <p class="section-subtitle" id="sellerProductsSubtitle">Otros productos publicados por el mismo vendedor</p>
           </div>
           <div class="similar-products-carousel-container">
-            <button class="section-nav-btn section-nav-prev" id="sellerPrev" type="button">
-              <div class="carousel-control-icon"><i class="bi bi-chevron-left"></i></div>
+            <button class="section-nav-btn section-nav-prev" id="sellerPrev" type="button" aria-label="Anterior">
+              <div class="carousel-control-icon"><i class="bi bi-chevron-left" aria-hidden="true"></i></div>
             </button>
             <div id="sellerProductsCarousel" class="custom-carousel">
               <div class="carousel-inner" id="sellerProductsGrid">
@@ -644,8 +705,8 @@
                 </div>
               </div>
             </div>
-            <button class="section-nav-btn section-nav-next" id="sellerNext" type="button">
-              <div class="carousel-control-icon"><i class="bi bi-chevron-right"></i></div>
+            <button class="section-nav-btn section-nav-next" id="sellerNext" type="button" aria-label="Siguiente">
+              <div class="carousel-control-icon"><i class="bi bi-chevron-right" aria-hidden="true"></i></div>
             </button>
           </div>
         </div>
@@ -662,8 +723,8 @@
 
           <!-- Similar Products Carousel -->
           <div class="similar-products-carousel-container">
-            <button class="section-nav-btn section-nav-prev" id="similarPrev" type="button">
-              <div class="carousel-control-icon"><i class="bi bi-chevron-left"></i></div>
+            <button class="section-nav-btn section-nav-prev" id="similarPrev" type="button" aria-label="Anterior">
+              <div class="carousel-control-icon"><i class="bi bi-chevron-left" aria-hidden="true"></i></div>
             </button>
             <div id="similarProductsCarousel" class="custom-carousel">
               <div class="carousel-inner" id="similarProductsGrid">
@@ -675,8 +736,8 @@
                 </div>
               </div>
             </div>
-            <button class="section-nav-btn section-nav-next" id="similarNext" type="button">
-              <div class="carousel-control-icon"><i class="bi bi-chevron-right"></i></div>
+            <button class="section-nav-btn section-nav-next" id="similarNext" type="button" aria-label="Siguiente">
+              <div class="carousel-control-icon"><i class="bi bi-chevron-right" aria-hidden="true"></i></div>
             </button>
           </div>
 
@@ -727,11 +788,11 @@
           <div class="chat-input-area">
             <input type="file" id="chatFileInput" accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx" style="display:none;" />
             <div class="chat-input-wrapper">
-              <button class="chat-attach-btn" id="chatAttachBtn" title="Adjuntar archivo"><i class="bi bi-paperclip"></i></button>
-              <textarea id="chatInput" class="chat-input" placeholder="Escribí tu mensaje…" rows="1"></textarea>
-              <button class="chat-attach-btn" id="chatEmojiBtn" title="Emoji"><i class="bi bi-emoji-smile"></i></button>
+              <button class="chat-attach-btn" id="chatAttachBtn" aria-label="Adjuntar archivo"><i class="bi bi-paperclip" aria-hidden="true"></i></button>
+              <textarea id="chatInput" class="chat-input" placeholder="Escribí tu mensaje…" aria-label="Mensaje de chat" rows="1"></textarea>
+              <button class="chat-attach-btn" id="chatEmojiBtn" aria-label="Insertar emoji"><i class="bi bi-emoji-smile" aria-hidden="true"></i></button>
             </div>
-            <button class="chat-send-btn" id="chatSendBtn" disabled title="Enviar"><i class="bi bi-send-fill"></i></button>
+            <button class="chat-send-btn" id="chatSendBtn" disabled aria-label="Enviar mensaje"><i class="bi bi-send-fill" aria-hidden="true"></i></button>
           </div>
         </div>
       </div>
@@ -801,35 +862,6 @@
     <script src="../JS/dropdown-fix.js"></script>
     <script src="../JS/component-loader.js" defer></script>
 
-    <script>
-      // Initialize AOS
-      AOS.init({
-        duration: 800,
-        easing: "ease-out-cubic",
-        once: true,
-        offset: 50,
-      });
-
-      // Initialize notifications dropdown
-      document.addEventListener("DOMContentLoaded", () => {
-        // El dropdown ahora se maneja automáticamente por Bootstrap
-        // Solo necesitamos cargar las notificaciones cuando se abre
-        const notificationBtn = document.getElementById("notificationBtn");
-        if (notificationBtn) {
-          notificationBtn.addEventListener("shown.bs.dropdown", () => {
-            if (window.notificationManager) {
-              window.notificationManager.renderNotifications();
-            }
-          });
-        }
-
-        // Actualizar el botón de favoritos después de que todo esté cargado
-        setTimeout(() => {
-          if (window.favoritesManager) {
-            window.favoritesManager.updateWishlistButton();
-          }
-        }, 300);
-      });
-    </script>
+    <script src="../JS/init-aos.js"></script>
   </body>
 </html>

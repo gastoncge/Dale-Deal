@@ -329,3 +329,131 @@ if (typeof window !== 'undefined') {
     renderShippingBadges
   };
 }
+
+// =====================================================
+// SERVICE FILTERS (home page services grid)
+// =====================================================
+class ServiceFilters {
+  constructor() {
+    this.currentCategory = 'all';
+    this.currentSort = 'featured';
+    this.services = [];
+    this.init();
+  }
+
+  init() {
+    this.loadServices();
+    this.bindEvents();
+  }
+
+  loadServices() {
+    const serviceCards = document.querySelectorAll('.service-card');
+    this.services = Array.from(serviceCards).map(card => ({
+      element: card,
+      category: card.dataset.serviceCategory,
+      price: parseInt(card.dataset.servicePrice) || 0,
+      title: card.querySelector('.service-title')?.textContent || ''
+    }));
+  }
+
+  bindEvents() {
+    document.querySelectorAll('.service-filter-tab').forEach(tab => {
+      tab.addEventListener('click', (e) => this.handleCategoryFilter(e));
+    });
+
+    document.getElementById('serviceSortBtn')?.addEventListener('click', () => {
+      this.currentSort = this.currentSort === 'price-asc' ? 'price-desc' : 'price-asc';
+      this.filterAndRender();
+    });
+
+    document.querySelector('.services-grid')?.addEventListener('click', (e) => {
+      if (e.target.closest('.action-heart')) return;
+      const card = e.target.closest('.service-card');
+      if (!card) return;
+      const id = card.dataset.id;
+      if (id) window.location.href = `./HTML/servicio.html?id=${id}`;
+    });
+  }
+
+  handleCategoryFilter(e) {
+    e.preventDefault();
+    document.querySelectorAll('.service-filter-tab').forEach(tab => tab.classList.remove('active'));
+    e.target.classList.add('active');
+    this.currentCategory = e.target.dataset.serviceCategory;
+    this.filterAndRender();
+  }
+
+  filterAndRender() {
+    let filtered = [...this.services];
+    if (this.currentCategory && this.currentCategory !== 'all') {
+      filtered = filtered.filter(s => s.category === this.currentCategory);
+    }
+    if (this.currentSort === 'price-asc') {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (this.currentSort === 'price-desc') {
+      filtered.sort((a, b) => b.price - a.price);
+    }
+    this.renderServices(filtered);
+  }
+
+  renderServices(filtered) {
+    this.services.forEach(s => { s.element.style.display = 'none'; });
+    filtered.forEach((s, i) => {
+      s.element.style.display = 'block';
+      s.element.style.animationDelay = `${i * 0.1}s`;
+    });
+  }
+}
+
+// =====================================================
+// HOME PAGE INIT
+// =====================================================
+document.addEventListener('DOMContentLoaded', () => {
+  // Notification dropdown
+  const notificationBtn = document.getElementById('notificationBtn');
+  if (notificationBtn) {
+    notificationBtn.addEventListener('shown.bs.dropdown', () => {
+      if (window.notificationManager) window.notificationManager.renderNotifications();
+    });
+  }
+
+  // Newsletter form
+  document.getElementById('footerNewsletterForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const emailInput = this.querySelector('input[type="email"]');
+    if (emailInput?.value) {
+      const btn = this.querySelector('.newsletter-btn');
+      const originalHTML = btn.innerHTML;
+      btn.innerHTML = '<i class="bi bi-check-circle"></i>';
+      btn.disabled = true;
+      btn.style.background = 'var(--success-600)';
+      setTimeout(() => {
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+        btn.style.background = '';
+        this.reset();
+      }, 2000);
+    }
+  });
+
+  // Flash-sale notification after 10s
+  setTimeout(() => {
+    if (window.notificationManager) {
+      window.notificationManager.addNotification({
+        type: 'offers',
+        title: 'Flash Sale!',
+        message: '¡Solo por hoy! 30% de descuento en smartphones',
+        time: 'Ahora mismo',
+        icon: 'bi-lightning-fill',
+        iconColor: 'bg-warning',
+        actions: [
+          { label: 'Ver ofertas', action: 'view', data: { sale: 'flash2024' } },
+          { label: 'Recordar más tarde', action: 'remind', data: { remindIn: '1h' } }
+        ]
+      });
+    }
+  }, 10000);
+
+  // Service filters
+  new ServiceFilters();
+});

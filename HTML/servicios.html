@@ -15,6 +15,25 @@
       content="servicios profesionales, instalación, reparación, chef, repostería, albañilería, jardinería, plomería, limpieza"
     />
     <meta name="author" content="Dale Deal" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://daledeal.com/HTML/servicios.html" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Dale Deal" />
+    <meta property="og:title" content="Servicios Profesionales — Dale Deal" />
+    <meta property="og:description" content="Encontrá servicios profesionales verificados en Dale Deal. Instalación, reparaciones, gastronomía, construcción y más en Argentina." />
+    <meta property="og:url" content="https://daledeal.com/HTML/servicios.html" />
+    <meta property="og:image" content="https://daledeal.com/IMG/LOGO.png" />
+    <meta property="og:locale" content="es_AR" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Servicios Profesionales — Dale Deal" />
+    <meta name="twitter:description" content="Encontrá servicios profesionales verificados en Dale Deal. Instalación, reparaciones, gastronomía y más." />
+    <meta name="twitter:image" content="https://daledeal.com/IMG/LOGO.png" />
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
@@ -2022,6 +2041,19 @@
       }
 
     </style>
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "Servicios Profesionales — Dale Deal",
+      "description": "Encontrá servicios profesionales verificados en Dale Deal. Instalación, reparaciones, gastronomía, construcción y más en Argentina.",
+      "url": "https://daledeal.com/HTML/servicios.html",
+      "inLanguage": "es-AR",
+      "isPartOf": { "@id": "https://daledeal.com/#website" }
+    }
+    </script>
   </head>
 
   <body>
@@ -2593,6 +2625,7 @@
 
     <!-- AOS JS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="../JS/init-aos.js"></script>
 
     <!-- Custom Scripts -->
     <script src="../JS/utils.js"></script>
@@ -2602,6 +2635,8 @@
     <script src="../JS/notifications.js"></script>
     <script src="../JS/dropdown-fix.js"></script>
     <script src="../JS/services-data.js"></script>
+    <script src="../JS/api.js"></script>
+    <script src="../JS/search.js"></script>
     <script src="../JS/component-loader.js" defer></script>
     <script>
       window.onFooterLoaded = function() {
@@ -2619,14 +2654,6 @@
     </script>
 
     <script>
-      // Initialize AOS
-      AOS.init({
-        duration: 800,
-        easing: "ease-out-cubic",
-        once: true,
-        offset: 50,
-      });
-
       // =====================================================
       // SERVICE CATALOG - Full controller (analogous to ProductCatalog)
       // =====================================================

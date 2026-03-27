@@ -15,6 +15,25 @@
       content="marketplace, comprar, vender, productos, servicios, Argentina"
     />
     <meta name="author" content="Dale Deal" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://daledeal.com/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Dale Deal" />
+    <meta property="og:title" content="Dale Deal — Tu Marketplace de Productos y Servicios en Argentina" />
+    <meta property="og:description" content="Descubrí miles de productos al mejor precio y servicios profesionales de calidad. Compra, vende y contrata con la mejor experiencia online en Argentina." />
+    <meta property="og:url" content="https://daledeal.com/" />
+    <meta property="og:image" content="https://daledeal.com/IMG/LOGO.png" />
+    <meta property="og:locale" content="es_AR" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Dale Deal — Tu Marketplace de Productos y Servicios en Argentina" />
+    <meta name="twitter:description" content="Descubrí miles de productos al mejor precio y servicios profesionales de calidad en Argentina." />
+    <meta name="twitter:image" content="https://daledeal.com/IMG/LOGO.png" />
 
     <!-- Favicon -->
     <link rel="icon" href="./IMG/LOGO.png" type="image/png" />
@@ -40,11 +59,54 @@
     <link rel="stylesheet" href="./CSS/pages/home.css" />
     <link rel="stylesheet" href="./CSS/responsive.css" />
 
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://daledeal.com/#website",
+          "url": "https://daledeal.com/",
+          "name": "Dale Deal",
+          "description": "Marketplace de productos y servicios en Argentina",
+          "inLanguage": "es-AR",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://daledeal.com/HTML/productos.html?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://daledeal.com/#organization",
+          "name": "Dale Deal",
+          "url": "https://daledeal.com/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://daledeal.com/IMG/LOGO.png"
+          },
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+54-9-11-3798-5881",
+            "contactType": "customer service",
+            "email": "contacto@daledeal.com",
+            "areaServed": "AR"
+          },
+          "sameAs": ["https://www.instagram.com/daledeal.ar/"]
+        }
+      ]
+    }
+    </script>
+
   </head>
 
   <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
+    <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar" aria-label="Navegación principal">
       <div class="container-fluid px-4">
         <!-- Logo -->
         <a class="navbar-brand" href="./index.html" data-aos="fade-right">
@@ -54,13 +116,14 @@
 
         <!-- Search Bar -->
         <div class="search-container mx-auto" data-aos="fade-up" data-aos-delay="100">
-          <div class="search-wrapper">
-            <i class="bi bi-search search-icon"></i>
+          <div class="search-wrapper" role="search">
+            <i class="bi bi-search search-icon" aria-hidden="true"></i>
             <input
               type="text"
               class="search-input"
               placeholder="¿Qué estás buscando hoy?"
               id="searchInput"
+              aria-label="Buscar productos y servicios"
             />
           </div>
         </div>
@@ -99,28 +162,28 @@
               data-bs-toggle="dropdown"
               data-bs-display="static"
               aria-expanded="false"
-              title="Notificaciones"
+              aria-label="Notificaciones"
             >
-              <i class="bi bi-bell"></i>
-              <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+              <i class="bi bi-bell" aria-hidden="true"></i>
+              <span class="notification-badge" id="notificationBadge" aria-live="polite" style="display: none;">0</span>
             </button>
             <div class="dropdown-menu dropdown-menu-end notifications-dropdown" aria-labelledby="notificationBtn">
               <div class="notifications-header">
                 <h6 class="mb-0">
-                  <i class="bi bi-bell me-2"></i>
+                  <i class="bi bi-bell me-2" aria-hidden="true"></i>
                   Notificaciones
                   <span class="notifications-count" id="notificationsCount">3</span>
                 </h6>
               </div>
-              <div class="notifications-filter">
-                <button class="filter-chip active" data-filter="all">Todas</button>
-                <button class="filter-chip" data-filter="unread">No leídas</button>
-                <button class="filter-chip" data-filter="orders">Pedidos</button>
-                <button class="filter-chip" data-filter="offers">Ofertas</button>
+              <div class="notifications-filter" role="group" aria-label="Filtrar notificaciones">
+                <button class="filter-chip active" data-filter="all" aria-pressed="true">Todas</button>
+                <button class="filter-chip" data-filter="unread" aria-pressed="false">No leídas</button>
+                <button class="filter-chip" data-filter="orders" aria-pressed="false">Pedidos</button>
+                <button class="filter-chip" data-filter="offers" aria-pressed="false">Ofertas</button>
               </div>
               <div class="notifications-body" id="notificationsDropdownBody">
                 <div class="notification-item unread" data-id="1" data-type="orders">
-                  <div class="notification-icon bg-success">
+                  <div class="notification-icon bg-success" aria-hidden="true">
                     <i class="bi bi-check-circle text-white"></i>
                   </div>
                   <div class="notification-content">
@@ -128,12 +191,12 @@
                     <p>Tu pedido #12345 ha sido confirmado</p>
                     <small>Hace 2 horas</small>
                   </div>
-                  <button class="notification-close" data-action="dismiss">
-                    <i class="bi bi-x"></i>
+                  <button class="notification-close" data-action="dismiss" aria-label="Cerrar notificación: Pedido confirmado">
+                    <i class="bi bi-x" aria-hidden="true"></i>
                   </button>
                 </div>
                 <div class="notification-item unread" data-id="2" data-type="orders">
-                  <div class="notification-icon bg-info">
+                  <div class="notification-icon bg-info" aria-hidden="true">
                     <i class="bi bi-truck text-white"></i>
                   </div>
                   <div class="notification-content">
@@ -141,12 +204,12 @@
                     <p>Tu pedido #12340 está siendo preparado</p>
                     <small>Hace 1 día</small>
                   </div>
-                  <button class="notification-close" data-action="dismiss">
-                    <i class="bi bi-x"></i>
+                  <button class="notification-close" data-action="dismiss" aria-label="Cerrar notificación: Envío en camino">
+                    <i class="bi bi-x" aria-hidden="true"></i>
                   </button>
                 </div>
                 <div class="notification-item unread" data-id="3" data-type="offers">
-                  <div class="notification-icon bg-warning">
+                  <div class="notification-icon bg-warning" aria-hidden="true">
                     <i class="bi bi-star text-white"></i>
                   </div>
                   <div class="notification-content">
@@ -154,17 +217,17 @@
                     <p>20% de descuento en electrónicos</p>
                     <small>Hace 2 días</small>
                   </div>
-                  <button class="notification-close" data-action="dismiss">
-                    <i class="bi bi-x"></i>
+                  <button class="notification-close" data-action="dismiss" aria-label="Cerrar notificación: Nueva oferta disponible">
+                    <i class="bi bi-x" aria-hidden="true"></i>
                   </button>
                 </div>
               </div>
               <div class="notifications-footer">
                 <a href="./HTML/notificaciones.html" class="btn btn-outline-secondary btn-sm w-100 mb-2">
-                  <i class="bi bi-list me-2"></i>Ver todas
+                  <i class="bi bi-list me-2" aria-hidden="true"></i>Ver todas
                 </a>
                 <button type="button" class="btn btn-primary btn-sm w-100" id="markAllAsRead">
-                  <i class="bi bi-check-all me-2"></i>Marcar todas como leídas
+                  <i class="bi bi-check-all me-2" aria-hidden="true"></i>Marcar todas como leídas
                 </button>
               </div>
             </div>
@@ -172,14 +235,14 @@
 
           <!-- Cart -->
           <div class="action-item dropdown">
-            <button class="action-btn" id="cartBtn" data-bs-toggle="dropdown" data-bs-display="static" data-bs-auto-close="outside" aria-expanded="false" title="Carrito de compras">
-              <i class="bi bi-cart3"></i>
-              <span class="cart-badge" id="cartBadge" style="display: none;">0</span>
+            <button class="action-btn" id="cartBtn" data-bs-toggle="dropdown" data-bs-display="static" data-bs-auto-close="outside" aria-expanded="false" aria-label="Carrito de compras">
+              <i class="bi bi-cart3" aria-hidden="true"></i>
+              <span class="cart-badge" id="cartBadge" aria-live="polite" style="display: none;">0</span>
             </button>
             <div class="dropdown-menu dropdown-menu-end cart-dropdown" aria-labelledby="cartBtn">
               <div class="cart-header">
                 <h6 class="mb-0">
-                  <i class="bi bi-cart3 me-2"></i>
+                  <i class="bi bi-cart3 me-2" aria-hidden="true"></i>
                   Mi Carrito
                   <span class="cart-count" id="cartCount">0</span>
                 </h6>
@@ -207,7 +270,7 @@
               data-bs-toggle="dropdown"
               data-bs-display="static"
               aria-expanded="false"
-              title="Mi cuenta"
+              aria-label="Mi cuenta"
             >
               <img
                 src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
@@ -216,30 +279,30 @@
               />
               <span class="profile-name">Usuario</span>
             </button>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown" role="menu">
               <li class="dropdown-header">
                 <h6 class="mb-0">Mi Cuenta</h6>
               </li>
               <li><hr class="dropdown-divider" /></li>
               <li>
-                <a class="dropdown-item" href="./HTML/notificaciones.html#mi-perfil">
-                  <i class="bi bi-person me-2"></i>Mi Perfil
+                <a class="dropdown-item" href="./HTML/notificaciones.html#mi-perfil" role="menuitem">
+                  <i class="bi bi-person me-2" aria-hidden="true"></i>Mi Perfil
                 </a>
               </li>
               <li>
-                <a class="dropdown-item" href="#" id="favoritesLink">
-                  <i class="bi bi-heart me-2"></i>Favoritos
+                <a class="dropdown-item" href="#" id="favoritesLink" role="menuitem">
+                  <i class="bi bi-heart me-2" aria-hidden="true"></i>Favoritos
                 </a>
               </li>
               <li><hr class="dropdown-divider" /></li>
               <li>
-                <a class="dropdown-item" href="./HTML/login.html">
-                  <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+                <a class="dropdown-item" href="./HTML/login.html" role="menuitem">
+                  <i class="bi bi-box-arrow-in-right me-2" aria-hidden="true"></i>Iniciar Sesión
                 </a>
               </li>
               <li>
-                <a class="dropdown-item text-danger" href="#" id="logoutBtn" style="display: none">
-                  <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+                <a class="dropdown-item text-danger" href="#" id="logoutBtn" role="menuitem" style="display: none">
+                  <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Cerrar Sesión
                 </a>
               </li>
             </ul>
@@ -250,21 +313,10 @@
 
     <!-- Main Content -->
     <main class="main-content">
-      <!-- Hero Carousel -->
-      <section class="hero-carousel-section">
-        <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
-          <div class="carousel-indicators">
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="3"></button>
-          </div>
-          
-          <div class="carousel-inner">
-            <!-- Slide 1: Sobre Dale Deal -->
-            <div class="carousel-item active">
-              <div class="hero-slide hero-slide-main">
-                <div class="container">
+      <!-- Hero -->
+      <section class="hero-section">
+        <div class="hero-slide hero-slide-main">
+          <div class="container">
                   <div class="row align-items-center">
                     <div class="col-lg-6">
                       <div class="hero-content" data-aos="fade-right">
@@ -275,173 +327,57 @@
                           Compra, vende y contrata servicios con la mejor experiencia online en Argentina.
                         </p>
                         <div class="hero-actions">
-                          <button class="btn btn-primary btn-lg" id="heroShopBtn">
+                          <a href="./HTML/productos.html" class="btn btn-primary btn-lg">
                             <i class="bi bi-bag me-2"></i>Explorar productos
-                          </button>
-                          <button class="btn btn-outline-light btn-lg" id="heroServicesBtn">
+                          </a>
+                          <a href="./HTML/servicios.html" class="btn btn-outline-light btn-lg">
                             <i class="bi bi-tools me-2"></i>Ver servicios
-                          </button>
+                          </a>
                         </div>
                       </div>
                     </div>
-                    <div class="col-lg-6">
-                      <div class="hero-image" data-aos="fade-left">
-                        <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop" 
+                    <div class="col-lg-6 d-none d-lg-block">
+                      <div class="hero-image">
+                        <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop"
                              alt="Dale Deal Marketplace" class="img-fluid rounded-4">
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+      </section>
 
-            <!-- Slide 2: Ofertas del día -->
-            <div class="carousel-item">
-              <div class="hero-slide hero-slide-offers">
-                <div class="container">
-                  <div class="row align-items-center">
-                    <div class="col-lg-6">
-                      <div class="hero-content" data-aos="fade-right">
-                        <span class="hero-badge offer-badge"><i class="bi bi-lightning-fill me-2"></i>Ofertas del día</span>
-                        <h1 class="hero-title">Hasta 50% OFF</h1>
-                        <p class="hero-subtitle">
-                          Aprovechá las mejores ofertas que cambian cada día. 
-                          Productos seleccionados con descuentos únicos por tiempo limitado.
-                        </p>
-                        <div class="hero-stats">
-                          <div class="stat-item">
-                            <span class="stat-number"><i class="bi bi-clock me-2"></i>48</span>
-                            <span class="stat-label">Horas restantes</span>
-                          </div>
-                          <div class="stat-item">
-                            <span class="stat-number"><i class="bi bi-tag me-2"></i>127</span>
-                            <span class="stat-label">Productos en oferta</span>
-                          </div>
-                        </div>
-                        <div class="hero-actions">
-                          <button class="btn btn-primary btn-lg" id="heroOffersBtn">
-                            <i class="bi bi-lightning me-2"></i>Ver ofertas
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-lg-6">
-                      <div class="hero-image" data-aos="fade-left">
-                        <img src="https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=600&h=400&fit=crop" 
-                             alt="Ofertas del día" class="img-fluid rounded-4">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+      <!-- Trust Band -->
+      <section class="trust-band">
+        <div class="container-fluid px-4">
+          <div class="trust-items">
+            <div class="trust-item">
+              <i class="bi bi-shield-check" aria-hidden="true"></i>
+              <span>Compras protegidas</span>
             </div>
-
-            <!-- Slide 3: Producto del mes -->
-            <div class="carousel-item">
-              <div class="hero-slide hero-slide-product">
-                <div class="container">
-                  <div class="row align-items-center">
-                    <div class="col-lg-6">
-                      <div class="hero-content" data-aos="fade-right">
-                        <span class="hero-badge product-badge"><i class="bi bi-star-fill me-2"></i>Producto del mes</span>
-                        <h1 class="hero-title">iPhone 15 Pro Max</h1>
-                        <p class="hero-subtitle">
-                          El smartphone más avanzado de Apple. Titanio, cámara profesional, 
-                          USB-C y el chip A17 Pro más poderoso que nunca.
-                        </p>
-                        <div class="product-features">
-                          <div class="feature">✓ Chip A17 Pro</div>
-                          <div class="feature">✓ Cámara de 48MP</div>
-                          <div class="feature">✓ Titanio espacial</div>
-                          <div class="feature">✓ USB-C</div>
-                        </div>
-                        <div class="hero-price">
-                          <span class="current-price">$1.299.999</span>
-                          <span class="original-price">$1.529.999</span>
-                          <span class="discount">-15%</span>
-                        </div>
-                        <div class="hero-actions">
-                          <button class="btn btn-primary btn-lg" id="heroProductBtn">
-                            <i class="bi bi-cart-plus me-2"></i>Agregar al carrito
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-lg-6">
-                      <div class="hero-image" data-aos="fade-left">
-                        <img src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=400&fit=crop" 
-                             alt="iPhone 15 Pro Max" class="img-fluid rounded-4">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div class="trust-item">
+              <i class="bi bi-truck" aria-hidden="true"></i>
+              <span>Envío en miles de productos</span>
             </div>
-
-            <!-- Slide 4: Servicio profesional -->
-            <div class="carousel-item">
-              <div class="hero-slide hero-slide-service">
-                <div class="container">
-                  <div class="row align-items-center">
-                    <div class="col-lg-6">
-                      <div class="hero-content" data-aos="fade-right">
-                        <span class="hero-badge service-badge"><i class="bi bi-tools me-2"></i>Servicio más pedido</span>
-                        <h1 class="hero-title">Instalación Técnica</h1>
-                        <p class="hero-subtitle">
-                          Nuestro servicio de instalación profesional es el más solicitado. 
-                          Técnicos certificados instalan y configuran tus dispositivos.
-                        </p>
-                        <div class="service-stats">
-                          <div class="stat-item">
-                            <span class="stat-number"><i class="bi bi-star me-2"></i>4.9</span>
-                            <span class="stat-label">Calificación</span>
-                          </div>
-                          <div class="stat-item">
-                            <span class="stat-number"><i class="bi bi-check-circle me-2"></i>2,847</span>
-                            <span class="stat-label">Servicios realizados</span>
-                          </div>
-                          <div class="stat-item">
-                            <span class="stat-number"><i class="bi bi-clock me-2"></i>24h</span>
-                            <span class="stat-label">Disponibilidad</span>
-                          </div>
-                        </div>
-                        <div class="hero-actions">
-                          <button class="btn btn-primary btn-lg" id="heroServiceBtn">
-                            <i class="bi bi-calendar-check me-2"></i>Reservar cita
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-lg-6">
-                      <div class="hero-image" data-aos="fade-left">
-                        <img src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=600&h=400&fit=crop" 
-                             alt="Instalación Técnica" class="img-fluid rounded-4">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div class="trust-item">
+              <i class="bi bi-patch-check" aria-hidden="true"></i>
+              <span>Prestadores verificados</span>
+            </div>
+            <div class="trust-item">
+              <i class="bi bi-arrow-return-left" aria-hidden="true"></i>
+              <span>Devoluciones hasta 30 días</span>
             </div>
           </div>
-
-          <!-- Controles del carrusel -->
-          <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
-            <span class="visually-hidden">Anterior</span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon"></span>
-            <span class="visually-hidden">Siguiente</span>
-          </button>
         </div>
       </section>
 
       <!-- Products Section -->
       <section class="products-section">
         <div class="container">
-          <!-- Título de la sección -->
           <div class="section-header text-center mb-5" data-aos="fade-up">
             <h2 class="section-title">Productos Destacados</h2>
+            <p class="section-subtitle">Lo más buscado por la comunidad Dale Deal</p>
+            <a href="./HTML/productos.html" class="section-link">Ver catálogo completo <i class="bi bi-arrow-right ms-1"></i></a>
           </div>
           
           <div class="products-grid" id="productsGrid">
@@ -463,10 +399,10 @@
 
           <!-- View All Products Button -->
           <div class="text-center mb-5">
-            <button class="btn btn-outline-primary btn-lg" id="viewAllProductsBtn">
+            <a href="./HTML/productos.html" class="btn btn-outline-primary btn-lg" id="viewAllProductsBtn">
               <i class="bi bi-bag me-2"></i>
               Ver más productos
-            </button>
+            </a>
           </div>
         </div>
       </section>
@@ -474,8 +410,10 @@
       <!-- Services Section -->
       <section class="services-section">
         <div class="container">
-          <div class="section-header text-center mb-5">
-            <h2 class="section-title">Servicios Destacados</h2>
+          <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title">Servicios Profesionales</h2>
+            <p class="section-subtitle">Encontrá al profesional que necesitás, cerca tuyo</p>
+            <a href="./HTML/servicios.html" class="section-link">Ver todos los servicios <i class="bi bi-arrow-right ms-1"></i></a>
           </div>
 
 
@@ -540,7 +478,7 @@
             </div>
 
             <!-- Servicio 2 - Soporte Técnico -->
-            <div class="service-card" data-aos="fade-up" data-aos-delay="100" data-service-category="consultation" data-service-price="8000" data-id="tech-support">
+            <div class="service-card" data-aos="fade-up" data-aos-delay="100" data-service-category="consultation" data-service-price="8000" data-id="tech-support" style="display:none">
               <div class="service-image-container">
                 <img
                   src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop"
@@ -599,7 +537,7 @@
             </div>
 
             <!-- Servicio 3 - Reparaciones -->
-            <div class="service-card" data-aos="fade-up" data-aos-delay="200" data-service-category="repair" data-service-price="12000" data-id="repair-express">
+            <div class="service-card" data-aos="fade-up" data-aos-delay="200" data-service-category="repair" data-service-price="12000" data-id="repair-express" style="display:none">
               <div class="service-image-container">
                 <img
                   src="https://images.unsplash.com/photo-1597733153203-a54d0fbc47de?w=400&h=300&fit=crop"
@@ -658,7 +596,7 @@
             </div>
 
             <!-- Servicio 4 - Setup Personalizado -->
-            <div class="service-card" data-aos="fade-up" data-aos-delay="300" data-service-category="installation" data-service-price="20000" data-id="setup-gaming">
+            <div class="service-card" data-aos="fade-up" data-aos-delay="300" data-service-category="installation" data-service-price="20000" data-id="setup-gaming" style="display:none">
               <div class="service-image-container">
                 <img
                   src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=300&fit=crop"
@@ -717,7 +655,7 @@
             </div>
 
             <!-- Servicio 5 - Mantenimiento -->
-            <div class="service-card" data-aos="fade-up" data-aos-delay="400" data-service-category="maintenance" data-service-price="10000" data-id="maintenance-preventive">
+            <div class="service-card" data-aos="fade-up" data-aos-delay="400" data-service-category="maintenance" data-service-price="10000" data-id="maintenance-preventive" style="display:none">
               <div class="service-image-container">
                 <img
                   src="https://images.unsplash.com/photo-1603899122634-f086ca5f5ddd?w=400&h=300&fit=crop"
@@ -776,7 +714,7 @@
             </div>
 
             <!-- Servicio 6 - Recuperación de Datos -->
-            <div class="service-card" data-aos="fade-up" data-aos-delay="500" data-service-category="repair" data-service-price="18000" data-id="data-recovery">
+            <div class="service-card" data-aos="fade-up" data-aos-delay="500" data-service-category="repair" data-service-price="18000" data-id="data-recovery" style="display:none">
               <div class="service-image-container">
                 <img
                   src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop"
@@ -894,7 +832,7 @@
             </div>
 
             <!-- Servicio 8 - Chef a Domicilio -->
-            <div class="service-card" data-aos="fade-up" data-aos-delay="700" data-service-category="catering" data-service-price="45000" data-id="home-chef">
+            <div class="service-card" data-aos="fade-up" data-aos-delay="700" data-service-category="catering" data-service-price="45000" data-id="home-chef" style="display:none">
               <div class="service-image-container">
                 <img
                   src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=400&h=300&fit=crop"
@@ -1012,7 +950,7 @@
             </div>
 
             <!-- Servicio 10 - Jardinería y Paisajismo -->
-            <div class="service-card" data-aos="fade-up" data-aos-delay="900" data-service-category="maintenance" data-service-price="20000" data-id="gardening-service">
+            <div class="service-card" data-aos="fade-up" data-aos-delay="900" data-service-category="maintenance" data-service-price="20000" data-id="gardening-service" style="display:none">
               <div class="service-image-container">
                 <img
                   src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=300&fit=crop"
@@ -1071,7 +1009,7 @@
             </div>
 
             <!-- Servicio 11 - Plomería y Gasfitería -->
-            <div class="service-card" data-aos="fade-up" data-aos-delay="1000" data-service-category="repair" data-service-price="15000" data-id="plumbing-service">
+            <div class="service-card" data-aos="fade-up" data-aos-delay="1000" data-service-category="repair" data-service-price="15000" data-id="plumbing-service" style="display:none">
               <div class="service-image-container">
                 <img
                   src="https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=400&h=300&fit=crop"
@@ -1130,7 +1068,7 @@
             </div>
 
             <!-- Servicio 12 - Limpieza Profunda -->
-            <div class="service-card" data-aos="fade-up" data-aos-delay="1100" data-service-category="maintenance" data-service-price="12000" data-id="cleaning-service">
+            <div class="service-card" data-aos="fade-up" data-aos-delay="1100" data-service-category="maintenance" data-service-price="12000" data-id="cleaning-service" style="display:none">
               <div class="service-image-container">
                 <img
                   src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop"
@@ -1190,10 +1128,10 @@
           </div>
 
           <div class="text-center mb-5">
-            <button class="btn btn-outline-primary btn-lg" id="viewAllServicesBtn">
+            <a href="./HTML/servicios.html" class="btn btn-outline-primary btn-lg">
               <i class="bi bi-grid-3x3-gap me-2"></i>
-              Ver más servicios
-            </button>
+              Ver todos los servicios
+            </a>
           </div>
 
         </div>
@@ -1217,16 +1155,16 @@
                   Compra, vende productos y contrata servicios profesionales de calidad.
                 </p>
                 <div class="footer-social">
-                  <a href="#" class="social-link" title="Facebook">
+                  <a aria-disabled="true" tabindex="-1" class="social-link" title="Facebook — próximamente" style="opacity:.45;cursor:default;pointer-events:none;">
                     <i class="bi bi-facebook"></i>
                   </a>
                   <a href="https://www.instagram.com/daledeal.ar/" class="social-link" title="Instagram" target="_blank" rel="noopener noreferrer">
                     <i class="bi bi-instagram"></i>
                   </a>
-                  <a href="#" class="social-link" title="Twitter">
+                  <a aria-disabled="true" tabindex="-1" class="social-link" title="Twitter/X — próximamente" style="opacity:.45;cursor:default;pointer-events:none;">
                     <i class="bi bi-twitter"></i>
                   </a>
-                  <a href="#" class="social-link" title="LinkedIn">
+                  <a aria-disabled="true" tabindex="-1" class="social-link" title="LinkedIn — próximamente" style="opacity:.45;cursor:default;pointer-events:none;">
                     <i class="bi bi-linkedin"></i>
                   </a>
                 </div>
@@ -1241,17 +1179,17 @@
                   <div class="col-6">
                     <ul class="footer-links">
                       <li><a href="./HTML/notificaciones.html">Notificaciones</a></li>
-                      <li><a href="./HTML/notificaciones.html#centro-ayuda">Ayuda</a></li>
-                      <li><a href="./HTML/notificaciones.html#contacto">Contacto</a></li>
-                      <li><a href="./HTML/notificaciones.html#reportar-problema">Reportar problema</a></li>
-                      <li><a href="./HTML/notificaciones.html#estado-servicio">Estado del servicio</a></li>
-                      <li><a href="./HTML/notificaciones.html#seguridad">Seguridad</a></li>
+                      <li><a href="./HTML/centro-ayuda.html">Ayuda</a></li>
+                      <li><a href="./HTML/contacto.html">Contacto</a></li>
+                      <li><a href="./HTML/reportar-problema.html">Reportar problema</a></li>
+                      <li><a href="./HTML/estado-servicio.html">Estado del servicio</a></li>
+                      <li><a href="./HTML/seguridad.html">Seguridad</a></li>
                     </ul>
                   </div>
                   <div class="col-6">
                     <ul class="footer-links">
                       <li><a href="./HTML/notificaciones.html#publicidad">Publicidad en el sitio</a></li>
-                      <li><a href="./HTML/notificaciones.html#centro-ayuda">Soy una empresa</a></li>
+                      <li><a href="./HTML/signup.html#empresa">Soy una empresa</a></li>
                       <li><a href="./HTML/publicar.html?tab=producto">Publicar productos</a></li>
                       <li><a href="./HTML/publicar.html?tab=servicio">Publicar servicios</a></li>
                       <li><a href="./HTML/notificaciones.html#mis-compras">Mis compras</a></li>
@@ -1294,11 +1232,11 @@
                 <div class="footer-apps mt-3">
                   <p class="footer-apps-title">Descarga la app</p>
                   <div class="app-links">
-                    <a href="#" class="app-link">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" class="app-badge">
+                    <a aria-disabled="true" tabindex="-1" class="app-link" title="Google Play — app próximamente" style="opacity:.45;cursor:default;pointer-events:none;">
+                      <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play — próximamente" class="app-badge">
                     </a>
-                    <a href="#" class="app-link">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" class="app-badge">
+                    <a aria-disabled="true" tabindex="-1" class="app-link" title="App Store — app próximamente" style="opacity:.45;cursor:default;pointer-events:none;">
+                      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store — próximamente" class="app-badge">
                     </a>
                   </div>
                 </div>
@@ -1324,10 +1262,11 @@
                       class="form-control newsletter-input"
                       placeholder="Ingresa tu email"
                       id="footerNewsletterEmail"
+                      aria-label="Tu dirección de correo electrónico"
                       required
                     >
-                    <button class="btn btn-primary newsletter-btn" type="submit">
-                      <i class="bi bi-arrow-right"></i>
+                    <button class="btn btn-primary newsletter-btn" type="submit" aria-label="Suscribirse al newsletter">
+                      <i class="bi bi-arrow-right" aria-hidden="true"></i>
                     </button>
                   </div>
                 </form>
@@ -1351,11 +1290,11 @@
                 <div class="col-md-4">
                   <div class="footer-legal">
                     <div class="legal-links-group">
-                      <a href="#" class="legal-link">Términos y Condiciones</a>
+                      <a href="./HTML/terminos.html" class="legal-link">Términos y Condiciones</a>
                       <span class="text-muted mx-2">•</span>
-                      <a href="#" class="legal-link">Política de Privacidad</a>
+                      <a href="./HTML/privacidad.html" class="legal-link">Política de Privacidad</a>
                       <span class="text-muted mx-2">•</span>
-                      <a href="#" class="legal-link">Política de Cookies</a>
+                      <a href="./HTML/cookies.html" class="legal-link">Política de Cookies</a>
                     </div>
                   </div>
                 </div>
@@ -1431,225 +1370,6 @@
     <script src="./JS/search.js"></script>
     <script src="./JS/pages/home.js"></script>
 
-    <script>
-      // Initialize AOS
-      AOS.init({
-        duration: 800,
-        easing: "ease-out-cubic",
-        once: true,
-        offset: 50,
-      });
-
-      // Newsletter form handlers
-      const handleNewsletterSubmit = function(e) {
-        e.preventDefault();
-        const emailInput = this.querySelector('input[type="email"]');
-        const email = emailInput?.value;
-
-        if (email) {
-          // Simulate newsletter subscription
-          const btn = this.querySelector('.newsletter-btn');
-          const originalHTML = btn.innerHTML;
-
-          btn.innerHTML = '<i class="bi bi-check-circle"></i>';
-          btn.disabled = true;
-          btn.style.background = 'var(--success-600)';
-
-          setTimeout(() => {
-            btn.innerHTML = originalHTML;
-            btn.disabled = false;
-            btn.style.background = '';
-            this.reset();
-          }, 2000);
-        }
-      };
-
-      // Apply to footer newsletter form
-      document.getElementById('footerNewsletterForm')?.addEventListener('submit', handleNewsletterSubmit);
-
-      // Initialize notifications dropdown
-      document.addEventListener("DOMContentLoaded", () => {
-        // El dropdown ahora se maneja automáticamente por Bootstrap
-        // Solo necesitamos cargar las notificaciones cuando se abre
-        const notificationBtn = document.getElementById("notificationBtn");
-        if (notificationBtn) {
-          notificationBtn.addEventListener("shown.bs.dropdown", () => {
-            if (window.notificationManager) {
-              window.notificationManager.renderNotifications();
-            }
-          });
-        }
-
-        // Ejemplo: Agregar nuevas notificaciones después de 10 segundos
-        setTimeout(() => {
-          if (window.notificationManager) {
-            window.notificationManager.addNotification({
-              type: 'offers',
-              title: 'Flash Sale!',
-              message: '¡Solo por hoy! 30% de descuento en smartphones',
-              time: 'Ahora mismo',
-              icon: 'bi-lightning-fill',
-              iconColor: 'bg-warning',
-              actions: [
-                { label: 'Ver ofertas', action: 'view', data: { sale: 'flash2024' } },
-                { label: 'Recordar más tarde', action: 'remind', data: { remindIn: '1h' } }
-              ]
-            });
-          }
-        }, 10000);
-
-        // Funcionalidad de botones del carrusel
-        document.getElementById('heroShopBtn')?.addEventListener('click', () => {
-          document.querySelector('.products-section')?.scrollIntoView({ behavior: 'smooth' });
-        });
-
-        document.getElementById('heroServicesBtn')?.addEventListener('click', () => {
-          document.querySelector('.services-section')?.scrollIntoView({ behavior: 'smooth' });
-        });
-
-        document.getElementById('heroOffersBtn')?.addEventListener('click', () => {
-          // Activar filtro de ofertas y navegar a productos
-          setTimeout(() => {
-            if (window.productFilters) {
-              window.productFilters.currentCategory = 'all';
-              window.productFilters.currentSort = 'featured';
-              window.productFilters.filterAndRender();
-            }
-          }, 500);
-          document.querySelector('.products-section')?.scrollIntoView({ behavior: 'smooth' });
-        });
-
-        document.getElementById('heroProductBtn')?.addEventListener('click', () => {
-          // Agregar iPhone al carrito
-          if (window.cartManager) {
-            const iphoneProduct = {
-              id: 'hero-iphone',
-              title: 'iPhone 15 Pro Max 256GB',
-              price: 1299999,
-              image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=400&fit=crop',
-              quantity: 1
-            };
-            window.cartManager.addItem(iphoneProduct);
-          }
-        });
-
-        document.getElementById('heroServiceBtn')?.addEventListener('click', () => {
-          document.querySelector('.services-section')?.scrollIntoView({ behavior: 'smooth' });
-        });
-
-        // Filtros de servicios
-        class ServiceFilters {
-          constructor() {
-            this.currentCategory = 'all';
-            this.currentSort = 'featured';
-            this.services = [];
-            this.init();
-          }
-
-          init() {
-            this.loadServices();
-            this.bindEvents();
-          }
-
-          loadServices() {
-            const serviceCards = document.querySelectorAll('.service-card');
-            this.services = Array.from(serviceCards).map(card => {
-              const category = card.dataset.serviceCategory;
-              const price = parseInt(card.dataset.servicePrice) || 0;
-              const title = card.querySelector('.service-title')?.textContent || '';
-              
-              return {
-                element: card,
-                category,
-                price,
-                title
-              };
-            });
-          }
-
-          bindEvents() {
-            // Filtros de categoría
-            document.querySelectorAll('.service-filter-tab').forEach(tab => {
-              tab.addEventListener('click', (e) => this.handleCategoryFilter(e));
-            });
-
-            // Botón de ordenar (simplificado)
-            document.getElementById('serviceSortBtn')?.addEventListener('click', () => {
-              this.currentSort = this.currentSort === 'price-asc' ? 'price-desc' : 'price-asc';
-              this.filterAndRender();
-            });
-
-            // Navegación al detalle de servicio
-            document.querySelector('.services-grid')?.addEventListener('click', (e) => {
-              if (e.target.closest('.action-heart')) return;
-              const card = e.target.closest('.service-card');
-              if (!card) return;
-              const id = card.dataset.id;
-              if (id) window.location.href = `./HTML/servicio.html?id=${id}`;
-            });
-          }
-
-          handleCategoryFilter(e) {
-            e.preventDefault();
-            
-            // Actualizar estado visual
-            document.querySelectorAll('.service-filter-tab').forEach(tab => tab.classList.remove('active'));
-            e.target.classList.add('active');
-            
-            // Actualizar categoría actual
-            this.currentCategory = e.target.dataset.serviceCategory;
-            
-            // Filtrar y renderizar
-            this.filterAndRender();
-          }
-
-          filterAndRender() {
-            let filteredServices = [...this.services];
-
-            // Filtro por categoría
-            if (this.currentCategory && this.currentCategory !== 'all') {
-              filteredServices = filteredServices.filter(service => 
-                service.category === this.currentCategory
-              );
-            }
-
-            // Ordenar
-            if (this.currentSort === 'price-asc') {
-              filteredServices.sort((a, b) => a.price - b.price);
-            } else if (this.currentSort === 'price-desc') {
-              filteredServices.sort((a, b) => b.price - a.price);
-            }
-
-            this.renderServices(filteredServices);
-          }
-
-          renderServices(filteredServices) {
-            // Ocultar todos los servicios
-            this.services.forEach(service => {
-              service.element.style.display = 'none';
-            });
-
-            // Mostrar servicios filtrados
-            filteredServices.forEach((service, index) => {
-              service.element.style.display = 'block';
-              service.element.style.animationDelay = `${index * 0.1}s`;
-            });
-          }
-        }
-
-        // Botón ver todos los productos
-        document.getElementById('viewAllProductsBtn')?.addEventListener('click', () => {
-          // Crear página de productos o redirigir a una sección específica
-          window.location.href = './HTML/productos.html';
-        });
-
-        // Inicializar filtros de servicios
-        new ServiceFilters();
-      });
-    </script>
-
-    <!-- Component Loader - DESHABILITADO
-    <script src="./JS/component-loader.js" defer></script>
-    -->
+    <script src="./JS/init-aos.js"></script>
   </body>
 </html>

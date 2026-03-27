@@ -176,7 +176,7 @@ async function submitProduct() {
 
   try {
     const result = await window.DaleDeal.api.createProduct(productData);
-    showSuccess('product-success', 'product-success-msg', `"${result.title}" publicado correctamente.`);
+    showSuccess('product-success', 'product-success-msg', `"${result.title}" guardado localmente (demo). No es visible para otros usuarios hasta que haya un backend real.`);
     document.getElementById('productForm').reset();
     document.getElementById('p-condition').value = 'new';
     document.querySelectorAll('.condition-btn').forEach((b, i) => {
@@ -228,7 +228,7 @@ async function submitService() {
 
   try {
     const result = await window.DaleDeal.api.createService(serviceData);
-    showSuccess('service-success', 'service-success-msg', `"${result.title}" publicado correctamente.`);
+    showSuccess('service-success', 'service-success-msg', `"${result.title}" guardado localmente (demo). No es visible para otros usuarios hasta que haya un backend real.`);
     document.getElementById('serviceForm').reset();
     document.getElementById('s-price-type').value = 'fixed';
     document.querySelectorAll('.price-type-btn').forEach((b, i) => {
@@ -317,4 +317,87 @@ function showSuccess(containerId, msgId, msg) {
   setTimeout(() => {
     if (container) container.style.display = 'none';
   }, 6000);
+}
+
+// =====================================================
+// QUILL RICH TEXT EDITORS
+// =====================================================
+document.addEventListener('DOMContentLoaded', () => {
+  const quillToolbar = [
+    [{ 'font': [] }, { 'size': ['small', false, 'large', 'huge'] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ 'color': [] }, { 'background': [] }],
+    [{ 'align': [] }],
+    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+    ['link', 'image'],
+    ['clean']
+  ];
+
+  if (document.getElementById('p-description-editor')) {
+    const quillProduct = new Quill('#p-description-editor', {
+      theme: 'snow',
+      placeholder: 'Describí el estado, características, accesorios incluidos...',
+      modules: { toolbar: quillToolbar }
+    });
+    quillProduct.on('text-change', () => {
+      document.getElementById('p-description').value = quillProduct.getSemanticHTML();
+    });
+  }
+
+  if (document.getElementById('s-description-editor')) {
+    const quillService = new Quill('#s-description-editor', {
+      theme: 'snow',
+      placeholder: 'Experiencia, certificaciones, qué incluye el servicio...',
+      modules: { toolbar: quillToolbar }
+    });
+    quillService.on('text-change', () => {
+      document.getElementById('s-description').value = quillService.getSemanticHTML();
+    });
+  }
+
+  // Drag & drop visual feedback on media upload areas
+  document.querySelectorAll('.media-upload-area').forEach(area => {
+    area.addEventListener('dragover', e => { e.preventDefault(); area.classList.add('dragover'); });
+    area.addEventListener('dragleave', () => area.classList.remove('dragover'));
+    area.addEventListener('drop', () => area.classList.remove('dragover'));
+  });
+});
+
+// =====================================================
+// MEDIA UPLOAD PREVIEW
+// =====================================================
+function handleMediaUpload(input, previewContainerId, type) {
+  const container = document.getElementById(previewContainerId);
+  const files = Array.from(input.files);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const item = document.createElement('div');
+      item.className = 'media-preview-item';
+      item.innerHTML = type === 'image'
+        ? `<img src="${e.target.result}" alt="preview"><button type="button" class="media-preview-remove" onclick="this.parentElement.remove()"><i class="bi bi-x"></i></button>`
+        : `<video src="${e.target.result}" muted></video><button type="button" class="media-preview-remove" onclick="this.parentElement.remove()"><i class="bi bi-x"></i></button>`;
+      container.appendChild(item);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// =====================================================
+// PLAN / PAGO MODAL
+// =====================================================
+function seleccionarPlan(nombre, precio) {
+  document.getElementById('pagoModalPlan').textContent = nombre;
+  document.getElementById('pagoResumenPlan').textContent = nombre;
+  document.getElementById('pagoResumenPrecio').textContent = '$' + precio.toLocaleString('es-AR');
+  new bootstrap.Modal(document.getElementById('pagoModal')).show();
+}
+
+function confirmarPago() {
+  const plan = document.getElementById('pagoResumenPlan').textContent;
+  bootstrap.Modal.getInstance(document.getElementById('pagoModal')).hide();
+  window.DemoAdapter?.notify(
+    `Interés registrado localmente para el plan <strong>${plan}</strong>. No se procesó ningún pago (versión demo).`,
+    'warning'
+  );
 }

@@ -200,7 +200,7 @@
                   <div class="session-device">iPhone 15 · Safari</div>
                   <div class="session-meta"><i class="bi bi-geo-alt me-1"></i>Buenos Aires, Argentina · Hace 2 horas</div>
                 </div>
-                <button class="btn btn-outline-danger btn-sm" onclick="this.closest('.session-item').remove()">Cerrar</button>
+                <button class="btn btn-outline-danger btn-sm" data-action="close-session">Cerrar</button>
               </div>
               <div class="session-item">
                 <div class="session-device-icon">📱</div>
@@ -208,10 +208,10 @@
                   <div class="session-device">Android · Chrome Mobile</div>
                   <div class="session-meta"><i class="bi bi-geo-alt me-1"></i>Córdoba, Argentina · Hace 3 días</div>
                 </div>
-                <button class="btn btn-outline-danger btn-sm" onclick="this.closest('.session-item').remove()">Cerrar</button>
+                <button class="btn btn-outline-danger btn-sm" data-action="close-session">Cerrar</button>
               </div>
               <div class="mt-4">
-                <button class="btn btn-outline-danger btn-sm"><i class="bi bi-box-arrow-right me-2"></i>Cerrar todas las otras sesiones</button>
+                <button class="btn btn-outline-danger btn-sm" id="closeAllSessionsBtn"><i class="bi bi-box-arrow-right me-2"></i>Cerrar todas las otras sesiones</button>
               </div>
             </div>
           </div>
@@ -231,7 +231,7 @@
                   <h6 class="fw-bold mb-1">Eliminar mi cuenta</h6>
                   <p class="text-muted small mb-0">Eliminás permanentemente tu cuenta y todos tus datos. Esta acción no puede deshacerse.</p>
                 </div>
-                <button class="btn btn-outline-danger" onclick="if(confirm('¿Estás seguro? Esta acción es irreversible.')) alert('Contactá a soporte para completar este proceso.')">
+                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
                   <i class="bi bi-trash me-2"></i>Eliminar cuenta
                 </button>
               </div>
@@ -241,6 +241,34 @@
         </div>
       </div>
     </main>
+
+    <!-- Delete Account Modal -->
+    <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header border-bottom-0 pb-0">
+            <h5 class="modal-title text-danger" id="deleteAccountModalLabel">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>Eliminar cuenta
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <p class="mb-3">La eliminación de cuentas no está disponible de forma automática en esta versión de la plataforma.</p>
+            <p class="mb-0">Para solicitar la eliminación de tu cuenta y todos tus datos, escribinos a
+              <a href="mailto:soporte@daledeal.com" class="fw-bold">soporte@daledeal.com</a>
+              con el asunto <strong>"Solicitud de eliminación de cuenta"</strong>.
+              Procesamos todas las solicitudes en menos de 72 horas hábiles.
+            </p>
+          </div>
+          <div class="modal-footer border-top-0 pt-0">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <a href="mailto:soporte@daledeal.com?subject=Solicitud+de+eliminaci%C3%B3n+de+cuenta" class="btn btn-outline-danger">
+              <i class="bi bi-envelope me-2"></i>Contactar soporte
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div id="footer-placeholder"></div>
 
@@ -255,7 +283,7 @@
     <script>
       AOS.init({ duration: 800, once: true, offset: 100 });
 
-      // Password strength meter
+      // ── Password strength meter ───────────────────────────────────────────
       document.getElementById('newPassword').addEventListener('input', function() {
         const val = this.value;
         const bar = document.getElementById('strengthBar');
@@ -278,12 +306,32 @@
         txt.style.color = levels[strength].c;
       });
 
+      // ── Password form ─────────────────────────────────────────────────────
       document.getElementById('passwordForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        alert('Contraseña actualizada correctamente');
+        window.DaleDeal?.utils?.showNotification('Contraseña actualizada correctamente', 'success');
         this.reset();
         document.getElementById('strengthBar').style.width = '0';
         document.getElementById('strengthText').textContent = 'Ingresá tu nueva contraseña';
+      });
+
+      // ── 2FA / alert toggles — no backend, revert and inform ──────────────
+      ['switch2fa', 'switchLogin', 'switchChanges'].forEach(id => {
+        document.getElementById(id)?.addEventListener('change', function() {
+          this.checked = !this.checked; // revert visual state
+          window.DaleDeal?.utils?.showNotification('Esta configuración no está disponible en la versión actual.', 'info');
+        });
+      });
+
+      // ── Session management — no backend, inform honestly ──────────────────
+      document.querySelectorAll('[data-action="close-session"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          window.DaleDeal?.utils?.showNotification('La gestión de sesiones remotas no está disponible en esta versión.', 'info');
+        });
+      });
+
+      document.getElementById('closeAllSessionsBtn')?.addEventListener('click', () => {
+        window.DaleDeal?.utils?.showNotification('La gestión de sesiones remotas no está disponible en esta versión.', 'info');
       });
     </script>
   </body>

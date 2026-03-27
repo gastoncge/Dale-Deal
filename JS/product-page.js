@@ -1049,4 +1049,25 @@ class ProductPage {
 // ── Bootstrap ────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   new ProductPage();
+
+  const notificationBtn = document.getElementById('notificationBtn');
+  if (notificationBtn) {
+    notificationBtn.addEventListener('shown.bs.dropdown', () => {
+      if (window.notificationManager) window.notificationManager.renderNotifications();
+    });
+  }
+
+  setTimeout(() => {
+    if (window.favoritesManager) window.favoritesManager.updateWishlistButton();
+  }, 300);
+
+  // Keyboard accessibility for thumbnails (Enter/Space triggers click)
+  document.querySelectorAll('.thumbnail[role="button"]').forEach(thumb => {
+    thumb.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        thumb.click();
+      }
+    });
+  });
 });

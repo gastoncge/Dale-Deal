@@ -14,6 +14,25 @@
       name="keywords"
       content="productos, comprar, electrónicos, hogar, moda, Argentina, marketplace"
     />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://daledeal.com/HTML/productos.html" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Dale Deal" />
+    <meta property="og:title" content="Catálogo de Productos — Dale Deal" />
+    <meta property="og:description" content="Descubrí miles de productos al mejor precio en Dale Deal. Electrónicos, hogar, moda y mucho más con envío rápido a todo el país." />
+    <meta property="og:url" content="https://daledeal.com/HTML/productos.html" />
+    <meta property="og:image" content="https://daledeal.com/IMG/LOGO.png" />
+    <meta property="og:locale" content="es_AR" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Catálogo de Productos — Dale Deal" />
+    <meta name="twitter:description" content="Descubrí miles de productos al mejor precio en Dale Deal. Electrónicos, hogar, moda y mucho más." />
+    <meta name="twitter:image" content="https://daledeal.com/IMG/LOGO.png" />
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
@@ -39,6 +58,19 @@
     <link rel="stylesheet" href="../CSS/pages/home.css" />
     <link rel="stylesheet" href="../CSS/pages/product.css" />
     <link rel="stylesheet" href="../CSS/responsive.css" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "Catálogo de Productos — Dale Deal",
+      "description": "Descubrí miles de productos al mejor precio en Dale Deal. Electrónicos, hogar, moda y mucho más con envío rápido a todo el país.",
+      "url": "https://daledeal.com/HTML/productos.html",
+      "inLanguage": "es-AR",
+      "isPartOf": { "@id": "https://daledeal.com/#website" }
+    }
+    </script>
   </head>
 
   <body>
@@ -607,6 +639,7 @@
     
     <!-- AOS JS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="../JS/init-aos.js"></script>
 
     <!-- Custom Scripts -->
     <script src="../JS/utils.js"></script>
@@ -2682,14 +2715,6 @@
     </style>
 
     <script>
-      // Initialize AOS
-      AOS.init({
-        duration: 800,
-        easing: "ease-out-cubic",
-        once: true,
-        offset: 50,
-      });
-
       // Newsletter form handler
       document.getElementById('newsletterForm')?.addEventListener('submit', function(e) {
         e.preventDefault();

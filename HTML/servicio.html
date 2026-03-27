@@ -3,11 +3,30 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Servicio Profesional - DALE DEAL</title>
+    <title>Instalación Técnica Profesional - DALE DEAL</title>
 
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Servicio profesional al mejor precio. Prestadores verificados, pago seguro y satisfacción garantizada en Dale Deal." />
-    <meta name="keywords" content="servicio profesional, prestador, dale deal, marketplace" />
+    <meta name="description" content="Instalación técnica profesional en CABA. Técnicos certificados, calificación 4.9 estrellas, +127 servicios prestados. Satisfacción garantizada en Dale Deal." />
+    <meta name="keywords" content="instalación técnica, servicio profesional, técnico, CABA, dale deal" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://daledeal.com/HTML/servicio.html" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Dale Deal" />
+    <meta property="og:title" content="Instalación Técnica Profesional — Dale Deal" />
+    <meta property="og:description" content="Servicio de instalación técnica profesional. Técnicos certificados, calificación 4.9 estrellas, +127 servicios prestados en CABA." />
+    <meta property="og:url" content="https://daledeal.com/HTML/servicio.html" />
+    <meta property="og:image" content="https://daledeal.com/IMG/LOGO.png" />
+    <meta property="og:locale" content="es_AR" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Instalación Técnica Profesional — Dale Deal" />
+    <meta name="twitter:description" content="Técnicos certificados para instalación y configuración de dispositivos. 4.9 estrellas, disponible en CABA." />
+    <meta name="twitter:image" content="https://daledeal.com/IMG/LOGO.png" />
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
@@ -27,6 +46,35 @@
     <link rel="stylesheet" href="../CSS/pages/product.css" />
     <link rel="stylesheet" href="../CSS/pages/service.css" />
     <link rel="stylesheet" href="../CSS/responsive.css" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "name": "Instalación Técnica Profesional",
+      "description": "Servicio de instalación técnica profesional. Técnicos certificados instalan y configuran dispositivos en CABA.",
+      "provider": {
+        "@type": "Person",
+        "name": "Alejandro R.",
+        "jobTitle": "Técnico instalador",
+        "areaServed": "Buenos Aires, Argentina"
+      },
+      "areaServed": { "@type": "City", "name": "Buenos Aires" },
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "ARS",
+        "price": "15999",
+        "availability": "https://schema.org/InStock"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "127",
+        "bestRating": "5"
+      }
+    }
+    </script>
   </head>
 
   <body>
@@ -241,11 +289,11 @@
                 </div>
 
                 <!-- Miniaturas de trabajos realizados -->
-                <div class="thumbnail-container">
-                  <img src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=120&h=120&fit=crop" alt="Trabajo 1" class="thumbnail active" data-full="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=700&h=500&fit=crop" />
-                  <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=120&h=120&fit=crop" alt="Trabajo 2" class="thumbnail" data-full="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&h=500&fit=crop" />
-                  <img src="https://images.unsplash.com/photo-1609692814858-f7cd2f0afa4f?w=120&h=120&fit=crop" alt="Trabajo 3" class="thumbnail" data-full="https://images.unsplash.com/photo-1609692814858-f7cd2f0afa4f?w=700&h=500&fit=crop" />
-                  <img src="https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=120&h=120&fit=crop" alt="Trabajo 4" class="thumbnail" data-full="https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=700&h=500&fit=crop" />
+                <div class="thumbnail-container" role="group" aria-label="Fotos de trabajos realizados">
+                  <img src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=120&h=120&fit=crop" alt="Ver foto 1 de trabajos realizados" class="thumbnail active" data-full="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=700&h=500&fit=crop" role="button" tabindex="0" aria-pressed="true" />
+                  <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=120&h=120&fit=crop" alt="Ver foto 2 de trabajos realizados" class="thumbnail" data-full="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&h=500&fit=crop" role="button" tabindex="0" aria-pressed="false" />
+                  <img src="https://images.unsplash.com/photo-1609692814858-f7cd2f0afa4f?w=120&h=120&fit=crop" alt="Ver foto 3 de trabajos realizados" class="thumbnail" data-full="https://images.unsplash.com/photo-1609692814858-f7cd2f0afa4f?w=700&h=500&fit=crop" role="button" tabindex="0" aria-pressed="false" />
+                  <img src="https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=120&h=120&fit=crop" alt="Ver foto 4 de trabajos realizados" class="thumbnail" data-full="https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=700&h=500&fit=crop" role="button" tabindex="0" aria-pressed="false" />
                 </div>
 
                 <!-- Nota de galería -->
@@ -274,19 +322,19 @@
                       <span class="provider-member-badge">Pro</span>
                     </div>
                     <div class="provider-stats" id="providerStats">
-                      <span class="stars">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-half"></i>
+                      <span class="stars" role="img" aria-label="4.9 de 5 estrellas">
+                        <i class="bi bi-star-fill" aria-hidden="true"></i><i class="bi bi-star-fill" aria-hidden="true"></i>
+                        <i class="bi bi-star-fill" aria-hidden="true"></i><i class="bi bi-star-fill" aria-hidden="true"></i>
+                        <i class="bi bi-star-half" aria-hidden="true"></i>
                       </span>
                       <strong>4.9</strong> · 127 reseñas
                     </div>
                     <div class="provider-response-time mb-1">
-                      <i class="bi bi-clock-fill"></i>
+                      <i class="bi bi-clock-fill" aria-hidden="true"></i>
                       <span id="providerResponseTime">Responde en &lt; 30 min</span>
                     </div>
                     <div class="provider-location">
-                      <i class="bi bi-geo-alt-fill"></i>
+                      <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
                       <span id="providerLocation">CABA</span>
                       &nbsp;·&nbsp;
                       <span id="providerMemberSince">Miembro desde 2021</span>
@@ -301,15 +349,15 @@
                   <h1 class="svc-title">Instalación Técnica Profesional</h1>
                   <div class="svc-meta">
                     <div class="service-rating">
-                      <div class="stars">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-half"></i>
+                      <div class="stars" role="img" aria-label="4.9 de 5 estrellas">
+                        <i class="bi bi-star-fill" aria-hidden="true"></i><i class="bi bi-star-fill" aria-hidden="true"></i>
+                        <i class="bi bi-star-fill" aria-hidden="true"></i><i class="bi bi-star-fill" aria-hidden="true"></i>
+                        <i class="bi bi-star-half" aria-hidden="true"></i>
                       </div>
                       <span class="rating-text">4.9 (127 reseñas)</span>
                     </div>
                     <div class="service-contracted">
-                      <i class="bi bi-check-circle-fill"></i>
+                      <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
                       <span>+127 servicios prestados</span>
                     </div>
                   </div>
@@ -338,8 +386,8 @@
                     <i class="bi bi-chat-dots-fill me-2"></i>
                     Enviar Mensaje
                   </button>
-                  <button class="btn-save-service" title="Guardar en favoritos">
-                    <i class="bi bi-heart"></i>
+                  <button class="btn-save-service" aria-label="Guardar en favoritos">
+                    <i class="bi bi-heart" aria-hidden="true"></i>
                   </button>
                 </div>
 
@@ -347,10 +395,10 @@
                 <div class="payment-methods" data-aos="fade-left" data-aos-delay="300">
                   <h6>Medios de pago</h6>
                   <div class="payment-icons">
-                    <i class="bi bi-credit-card" title="Tarjetas de crédito"></i>
-                    <i class="bi bi-credit-card-2-front" title="Tarjetas de débito"></i>
-                    <i class="bi bi-bank" title="Transferencia bancaria"></i>
-                    <i class="bi bi-cash" title="Efectivo"></i>
+                    <span role="img" aria-label="Tarjetas de crédito"><i class="bi bi-credit-card" aria-hidden="true"></i></span>
+                    <span role="img" aria-label="Tarjetas de débito"><i class="bi bi-credit-card-2-front" aria-hidden="true"></i></span>
+                    <span role="img" aria-label="Transferencia bancaria"><i class="bi bi-bank" aria-hidden="true"></i></span>
+                    <span role="img" aria-label="Efectivo"><i class="bi bi-cash" aria-hidden="true"></i></span>
                     <i class="bi bi-phone" title="Mercado Pago"></i>
                   </div>
                 </div>
@@ -358,21 +406,21 @@
                 <!-- Garantías del Servicio -->
                 <div class="service-guarantees" data-aos="fade-left" data-aos-delay="350">
                   <div class="guarantee-item">
-                    <i class="bi bi-shield-check"></i>
+                    <i class="bi bi-shield-check" aria-hidden="true"></i>
                     <div>
                       <strong>Servicio garantizado</strong>
                       <p>Satisfacción garantizada o te devolvemos el dinero</p>
                     </div>
                   </div>
                   <div class="guarantee-item">
-                    <i class="bi bi-patch-check-fill"></i>
+                    <i class="bi bi-patch-check-fill" aria-hidden="true"></i>
                     <div>
                       <strong>Prestador verificado</strong>
                       <p>Identidad y credenciales verificadas por Dale Deal</p>
                     </div>
                   </div>
                   <div class="guarantee-item">
-                    <i class="bi bi-headset"></i>
+                    <i class="bi bi-headset" aria-hidden="true"></i>
                     <div>
                       <strong>Soporte 24/7</strong>
                       <p>Asistencia ante cualquier inconveniente con el servicio</p>
@@ -402,13 +450,13 @@
             <div class="tabs-nav-wrapper">
               <ul class="nav nav-tabs custom-tabs" role="tablist">
                 <li class="nav-item">
-                  <a class="nav-link active" data-bs-toggle="tab" href="#description" role="tab">
-                    <i class="bi bi-file-text me-2"></i><span>Descripción</span>
+                  <a class="nav-link active" id="tab-description" data-bs-toggle="tab" href="#description" role="tab" aria-selected="true">
+                    <i class="bi bi-file-text me-2" aria-hidden="true"></i><span>Descripción</span>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" data-bs-toggle="tab" href="#reviews" role="tab">
-                    <i class="bi bi-star me-2"></i><span>Reseñas</span>
+                  <a class="nav-link" id="tab-reviews" data-bs-toggle="tab" href="#reviews" role="tab" aria-selected="false">
+                    <i class="bi bi-star me-2" aria-hidden="true"></i><span>Reseñas</span>
                   </a>
                 </li>
               </ul>
@@ -418,7 +466,7 @@
             <div class="tab-content">
 
               <!-- ── Tab: Descripción ── -->
-              <div class="tab-pane fade show active" id="description">
+              <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="tab-description" tabindex="0">
                 <div class="description-content">
                   <div class="service-description-text">
                     <p style="white-space: pre-line; line-height: 1.8; color: var(--gray-700);">
@@ -429,31 +477,31 @@
                   <!-- Qué incluye -->
                   <div class="mt-5">
                     <h4 style="font-size:var(--font-size-xl);font-weight:700;color:var(--gray-900);margin-bottom:var(--spacing-4);">
-                      <i class="bi bi-check2-all me-2 text-danger"></i>¿Qué incluye?
+                      <i class="bi bi-check2-all me-2 text-danger" aria-hidden="true"></i>¿Qué incluye?
                     </h4>
                     <ul style="list-style:none;padding:0;">
                       <li style="padding:var(--spacing-2) 0;color:var(--gray-700);padding-left:var(--spacing-6);position:relative;font-size:var(--font-size-base);">
-                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;"></i>
+                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;" aria-hidden="true"></i>
                         Visita de evaluación previa sin cargo
                       </li>
                       <li style="padding:var(--spacing-2) 0;color:var(--gray-700);padding-left:var(--spacing-6);position:relative;font-size:var(--font-size-base);">
-                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;"></i>
+                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;" aria-hidden="true"></i>
                         Instalación completa con materiales de primera calidad
                       </li>
                       <li style="padding:var(--spacing-2) 0;color:var(--gray-700);padding-left:var(--spacing-6);position:relative;font-size:var(--font-size-base);">
-                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;"></i>
+                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;" aria-hidden="true"></i>
                         Configuración y prueba del sistema instalado
                       </li>
                       <li style="padding:var(--spacing-2) 0;color:var(--gray-700);padding-left:var(--spacing-6);position:relative;font-size:var(--font-size-base);">
-                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;"></i>
+                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;" aria-hidden="true"></i>
                         Garantía de 1 año sobre la mano de obra
                       </li>
                       <li style="padding:var(--spacing-2) 0;color:var(--gray-700);padding-left:var(--spacing-6);position:relative;font-size:var(--font-size-base);">
-                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;"></i>
+                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;" aria-hidden="true"></i>
                         Soporte post-instalación sin costo adicional
                       </li>
                       <li style="padding:var(--spacing-2) 0;color:var(--gray-700);padding-left:var(--spacing-6);position:relative;font-size:var(--font-size-base);">
-                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;"></i>
+                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;" aria-hidden="true"></i>
                         Limpieza total del área de trabajo al finalizar
                       </li>
                     </ul>
@@ -462,17 +510,17 @@
                   <!-- Características destacadas -->
                   <div class="feature-grid mt-5">
                     <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
-                      <i class="bi bi-award-fill"></i>
+                      <i class="bi bi-award-fill" aria-hidden="true"></i>
                       <h5>Técnico Certificado</h5>
                       <p>10+ años de experiencia con certificaciones oficiales</p>
                     </div>
                     <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
-                      <i class="bi bi-geo-alt-fill"></i>
+                      <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
                       <h5>A Domicilio</h5>
                       <p>Nos trasladamos a tu hogar u oficina en toda el área</p>
                     </div>
                     <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
-                      <i class="bi bi-clock-fill"></i>
+                      <i class="bi bi-clock-fill" aria-hidden="true"></i>
                       <h5>Respuesta Rápida</h5>
                       <p>Confirmación en menos de 30 minutos y turno en 24-48 horas</p>
                     </div>
@@ -481,17 +529,17 @@
               </div>
 
               <!-- ── Tab: Reseñas ── -->
-              <div class="tab-pane fade" id="reviews">
+              <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="tab-reviews" tabindex="0">
                 <div class="reviews-content">
                   <!-- Resumen de calificaciones -->
                   <div class="reviews-summary">
                     <div class="rating-overview">
                       <div class="overall-rating">
                         <span class="rating-number">4.9</span>
-                        <div class="rating-stars">
-                          <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                          <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                          <i class="bi bi-star-half"></i>
+                        <div class="rating-stars" role="img" aria-label="4.9 de 5 estrellas">
+                          <i class="bi bi-star-fill" aria-hidden="true"></i><i class="bi bi-star-fill" aria-hidden="true"></i>
+                          <i class="bi bi-star-fill" aria-hidden="true"></i><i class="bi bi-star-fill" aria-hidden="true"></i>
+                          <i class="bi bi-star-half" aria-hidden="true"></i>
                         </div>
                         <div class="rating-count">127 reseñas</div>
                       </div>
@@ -623,8 +671,8 @@
           </div>
 
           <div class="provider-services-carousel-container">
-            <button class="section-nav-btn section-nav-prev" id="providerPrev" type="button">
-              <div class="carousel-control-icon"><i class="bi bi-chevron-left"></i></div>
+            <button class="section-nav-btn section-nav-prev" id="providerPrev" type="button" aria-label="Anterior">
+              <div class="carousel-control-icon"><i class="bi bi-chevron-left" aria-hidden="true"></i></div>
             </button>
             <div id="providerServicesCarousel" class="custom-carousel">
               <div class="carousel-inner" id="providerServicesGrid">
@@ -635,8 +683,8 @@
                 </div>
               </div>
             </div>
-            <button class="section-nav-btn section-nav-next" id="providerNext" type="button">
-              <div class="carousel-control-icon"><i class="bi bi-chevron-right"></i></div>
+            <button class="section-nav-btn section-nav-next" id="providerNext" type="button" aria-label="Siguiente">
+              <div class="carousel-control-icon"><i class="bi bi-chevron-right" aria-hidden="true"></i></div>
             </button>
           </div>
         </div>
@@ -651,8 +699,8 @@
           </div>
 
           <div class="related-services-carousel-container">
-            <button class="section-nav-btn section-nav-prev" id="relatedPrev" type="button">
-              <div class="carousel-control-icon"><i class="bi bi-chevron-left"></i></div>
+            <button class="section-nav-btn section-nav-prev" id="relatedPrev" type="button" aria-label="Anterior">
+              <div class="carousel-control-icon"><i class="bi bi-chevron-left" aria-hidden="true"></i></div>
             </button>
             <div id="relatedServicesCarousel" class="custom-carousel">
               <div class="carousel-inner" id="relatedServicesGrid">
@@ -664,8 +712,8 @@
                 </div>
               </div>
             </div>
-            <button class="section-nav-btn section-nav-next" id="relatedNext" type="button">
-              <div class="carousel-control-icon"><i class="bi bi-chevron-right"></i></div>
+            <button class="section-nav-btn section-nav-next" id="relatedNext" type="button" aria-label="Siguiente">
+              <div class="carousel-control-icon"><i class="bi bi-chevron-right" aria-hidden="true"></i></div>
             </button>
           </div>
 
@@ -825,27 +873,6 @@
     <script src="../JS/dropdown-fix.js"></script>
     <script src="../JS/component-loader.js" defer></script>
 
-    <script>
-      // Initialize AOS
-      AOS.init({
-        duration: 800,
-        easing: 'ease-out-cubic',
-        once: true,
-        offset: 50,
-      });
-
-      // Initialize notifications dropdown
-      document.addEventListener('DOMContentLoaded', () => {
-        const notificationBtn = document.getElementById('notificationBtn');
-        if (notificationBtn) {
-          notificationBtn.addEventListener('shown.bs.dropdown', () => {
-            if (window.notificationManager) {
-              window.notificationManager.renderNotifications();
-            }
-          });
-        }
-
-      });
-    </script>
+    <script src="../JS/init-aos.js"></script>
   </body>
 </html>

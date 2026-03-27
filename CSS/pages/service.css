@@ -420,6 +420,11 @@
   box-shadow: var(--shadow-lg);
 }
 
+.btn-save-service:focus-visible {
+  outline: 3px solid var(--primary-red);
+  outline-offset: 2px;
+}
+
 .btn-save-service.active {
   background: var(--primary-red);
   color: var(--white) !important;

@@ -924,4 +924,21 @@ class ServicePage {
 // ── Bootstrap ─────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   new ServicePage();
+
+  const notificationBtn = document.getElementById('notificationBtn');
+  if (notificationBtn) {
+    notificationBtn.addEventListener('shown.bs.dropdown', () => {
+      if (window.notificationManager) window.notificationManager.renderNotifications();
+    });
+  }
+
+  // Keyboard accessibility for thumbnails (Enter/Space triggers click)
+  document.querySelectorAll('.thumbnail[role="button"]').forEach(thumb => {
+    thumb.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        thumb.click();
+      }
+    });
+  });
 });

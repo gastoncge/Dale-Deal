@@ -958,7 +958,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
               </div>
               <div class="modal-body pt-0">
-                <p class="text-muted small mb-4">Elegí tu método de pago preferido</p>
+                <!-- Demo Notice -->
+                <div class="alert alert-warning d-flex align-items-start gap-2 py-2 px-3 mb-3" role="status" style="font-size:0.82rem;border-radius:10px;">
+                  <i class="bi bi-cone-striped flex-shrink-0 mt-1"></i>
+                  <span><strong>Versión demo.</strong> No se procesará ningún pago. Podés registrar tu interés y te avisaremos cuando el sistema de pagos esté disponible.</span>
+                </div>
+                <p class="text-muted small mb-4">Método de pago (referencial)</p>
 
                 <div class="payment-methods">
 
@@ -1025,8 +1030,8 @@
               </div>
               <div class="modal-footer border-0">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary px-4" onclick="confirmarPago()">
-                  <i class="bi bi-lock-fill me-2"></i>Pagar ahora
+                <button type="button" class="btn btn-warning px-4" onclick="confirmarPago()">
+                  <i class="bi bi-bell me-2"></i>Registrar interés (Demo)
                 </button>
               </div>
             </div>
@@ -1053,10 +1058,10 @@
                   Compra, vende productos y contrata servicios profesionales de calidad.
                 </p>
                 <div class="footer-social">
-                  <a href="#" class="social-link" title="Facebook"><i class="bi bi-facebook"></i></a>
+                  <a aria-disabled="true" tabindex="-1" class="social-link" title="Facebook — próximamente" style="opacity:.45;cursor:default;pointer-events:none;"><i class="bi bi-facebook"></i></a>
                   <a href="https://www.instagram.com/daledeal.ar/" class="social-link" title="Instagram" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram"></i></a>
-                  <a href="#" class="social-link" title="Twitter"><i class="bi bi-twitter"></i></a>
-                  <a href="#" class="social-link" title="LinkedIn"><i class="bi bi-linkedin"></i></a>
+                  <a aria-disabled="true" tabindex="-1" class="social-link" title="Twitter/X — próximamente" style="opacity:.45;cursor:default;pointer-events:none;"><i class="bi bi-twitter"></i></a>
+                  <a aria-disabled="true" tabindex="-1" class="social-link" title="LinkedIn — próximamente" style="opacity:.45;cursor:default;pointer-events:none;"><i class="bi bi-linkedin"></i></a>
                 </div>
               </div>
             </div>
@@ -1069,17 +1074,17 @@
                   <div class="col-6">
                     <ul class="footer-links">
                       <li><a href="./notificaciones.html">Notificaciones</a></li>
-                      <li><a href="./notificaciones.html#centro-ayuda">Ayuda</a></li>
-                      <li><a href="./notificaciones.html#contacto">Contacto</a></li>
-                      <li><a href="./notificaciones.html#reportar-problema">Reportar problema</a></li>
-                      <li><a href="./notificaciones.html#estado-servicio">Estado del servicio</a></li>
-                      <li><a href="./notificaciones.html#seguridad">Seguridad</a></li>
+                      <li><a href="./centro-ayuda.html">Ayuda</a></li>
+                      <li><a href="./contacto.html">Contacto</a></li>
+                      <li><a href="./reportar-problema.html">Reportar problema</a></li>
+                      <li><a href="./estado-servicio.html">Estado del servicio</a></li>
+                      <li><a href="./seguridad.html">Seguridad</a></li>
                     </ul>
                   </div>
                   <div class="col-6">
                     <ul class="footer-links">
                       <li><a href="./notificaciones.html#publicidad">Publicidad en el sitio</a></li>
-                      <li><a href="./notificaciones.html#centro-ayuda">Soy una empresa</a></li>
+                      <li><a href="./signup.html#empresa">Soy una empresa</a></li>
                       <li><a href="./publicar.html?tab=producto">Publicar productos</a></li>
                       <li><a href="./publicar.html?tab=servicio">Publicar servicios</a></li>
                       <li><a href="./notificaciones.html#mis-compras">Mis compras</a></li>
@@ -1121,11 +1126,11 @@
                 <div class="footer-apps mt-3">
                   <p class="footer-apps-title">Descarga la app</p>
                   <div class="app-links">
-                    <a href="#" class="app-link">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" class="app-badge">
+                    <a aria-disabled="true" tabindex="-1" class="app-link" title="Google Play — app próximamente" style="opacity:.45;cursor:default;pointer-events:none;">
+                      <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play — próximamente" class="app-badge">
                     </a>
-                    <a href="#" class="app-link">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" class="app-badge">
+                    <a aria-disabled="true" tabindex="-1" class="app-link" title="App Store — app próximamente" style="opacity:.45;cursor:default;pointer-events:none;">
+                      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store — próximamente" class="app-badge">
                     </a>
                   </div>
                 </div>
@@ -1171,11 +1176,11 @@
                 <div class="col-md-4">
                   <div class="footer-legal">
                     <div class="legal-links-group">
-                      <a href="#" class="legal-link">Términos y Condiciones</a>
+                      <a href="./terminos.html" class="legal-link">Términos y Condiciones</a>
                       <span class="text-muted mx-2">•</span>
-                      <a href="#" class="legal-link">Política de Privacidad</a>
+                      <a href="./privacidad.html" class="legal-link">Política de Privacidad</a>
                       <span class="text-muted mx-2">•</span>
-                      <a href="#" class="legal-link">Política de Cookies</a>
+                      <a href="./cookies.html" class="legal-link">Política de Cookies</a>
                     </div>
                   </div>
                 </div>
@@ -1233,6 +1238,7 @@
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="../JS/utils.js"></script>
+    <script src="../JS/demo-adapter.js"></script>
     <script src="../JS/api.js"></script>
     <script src="../JS/auth.js"></script>
     <script src="../JS/cart.js"></script>
@@ -1240,75 +1246,6 @@
     <script src="../JS/favorites.js"></script>
     <script src="../JS/publicar.js"></script>
     <script src="../JS/component-loader.js" defer></script>
-    <script>
-      AOS.init({ duration: 400, once: true });
-
-      // ── Quill rich text editors ──────────────────────────────────────────
-      const quillToolbar = [
-        [{ 'font': [] }, { 'size': ['small', false, 'large', 'huge'] }],
-        ['bold', 'italic', 'underline', 'strike'],
-        [{ 'color': [] }, { 'background': [] }],
-        [{ 'align': [] }],
-        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-        ['link', 'image'],
-        ['clean']
-      ];
-
-      const quillProduct = new Quill('#p-description-editor', {
-        theme: 'snow',
-        placeholder: 'Describí el estado, características, accesorios incluidos...',
-        modules: { toolbar: quillToolbar }
-      });
-      quillProduct.on('text-change', () => {
-        document.getElementById('p-description').value = quillProduct.getSemanticHTML();
-      });
-
-      const quillService = new Quill('#s-description-editor', {
-        theme: 'snow',
-        placeholder: 'Experiencia, certificaciones, qué incluye el servicio...',
-        modules: { toolbar: quillToolbar }
-      });
-      quillService.on('text-change', () => {
-        document.getElementById('s-description').value = quillService.getSemanticHTML();
-      });
-
-      function handleMediaUpload(input, previewContainerId, type) {
-        const container = document.getElementById(previewContainerId);
-        const files = Array.from(input.files);
-        files.forEach(file => {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const item = document.createElement('div');
-            item.className = 'media-preview-item';
-            item.innerHTML = type === 'image'
-              ? `<img src="${e.target.result}" alt="preview"><button type="button" class="media-preview-remove" onclick="this.parentElement.remove()"><i class="bi bi-x"></i></button>`
-              : `<video src="${e.target.result}" muted></video><button type="button" class="media-preview-remove" onclick="this.parentElement.remove()"><i class="bi bi-x"></i></button>`;
-            container.appendChild(item);
-          };
-          reader.readAsDataURL(file);
-        });
-      }
-
-      function seleccionarPlan(nombre, precio) {
-        document.getElementById('pagoModalPlan').textContent = nombre;
-        document.getElementById('pagoResumenPlan').textContent = nombre;
-        document.getElementById('pagoResumenPrecio').textContent = '$' + precio.toLocaleString('es-AR');
-        new bootstrap.Modal(document.getElementById('pagoModal')).show();
-      }
-
-      function confirmarPago() {
-        const metodo = document.querySelector('input[name="payment"]:checked')?.value;
-        const plan = document.getElementById('pagoResumenPlan').textContent;
-        bootstrap.Modal.getInstance(document.getElementById('pagoModal')).hide();
-        alert(`✅ Solicitud de pago recibida\nPlan: ${plan}\nMétodo: ${metodo}\n\nTe contactaremos para completar el proceso.`);
-      }
-
-      // Drag & drop visual feedback
-      document.querySelectorAll('.media-upload-area').forEach(area => {
-        area.addEventListener('dragover', e => { e.preventDefault(); area.classList.add('dragover'); });
-        area.addEventListener('dragleave', () => area.classList.remove('dragover'));
-        area.addEventListener('drop', () => area.classList.remove('dragover'));
-      });
-    </script>
+    <script>AOS.init({ duration: 400, once: true });</script>
   </body>
 </html>
