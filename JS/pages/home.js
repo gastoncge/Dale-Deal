@@ -104,6 +104,8 @@ function renderProductCard(product) {
             src="${img}"
             alt="${product.title} - Vista ${index + 1}"
             class="product-image ${index === 0 ? 'active' : ''}"
+            loading="lazy"
+            width="400" height="300"
           />
         `).join('')}
 
@@ -129,6 +131,8 @@ function renderProductCard(product) {
         src="${product.images.main}"
         alt="${product.title}"
         class="product-image"
+        loading="lazy"
+        width="400" height="300"
       />
     `;
   }
@@ -166,7 +170,7 @@ function renderProductCard(product) {
         <h3 class="product-title">${product.title}</h3>
         ${product.seller ? `
         <div class="product-provider">
-          <img src="${product.seller.avatar}" alt="${product.seller.name}" class="product-provider-avatar" />
+          <img src="${product.seller.avatar}" alt="${product.seller.name}" class="product-provider-avatar" loading="lazy" width="40" height="40" />
           <span class="product-provider-name">${product.seller.name}</span>
           ${product.seller.verified ? '<i class="bi bi-patch-check-fill product-provider-verified"></i>' : ''}
         </div>` : ''}

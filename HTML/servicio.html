@@ -31,6 +31,11 @@
     <!-- Favicon -->
     <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
 
+    <!-- Preconnect to external origins -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="preconnect" href="https://unpkg.com" crossorigin />
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
 
@@ -284,16 +289,18 @@
                     alt="Trabajo del servicio"
                     class="main-product-image"
                     id="mainServiceImage"
+                    fetchpriority="high"
+                    width="700" height="500"
                   />
                   <span class="product-badge sale" id="serviceBadgeTop" style="display:none;">Destacado</span>
                 </div>
 
                 <!-- Miniaturas de trabajos realizados -->
                 <div class="thumbnail-container" role="group" aria-label="Fotos de trabajos realizados">
-                  <img src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=120&h=120&fit=crop" alt="Ver foto 1 de trabajos realizados" class="thumbnail active" data-full="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=700&h=500&fit=crop" role="button" tabindex="0" aria-pressed="true" />
-                  <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=120&h=120&fit=crop" alt="Ver foto 2 de trabajos realizados" class="thumbnail" data-full="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&h=500&fit=crop" role="button" tabindex="0" aria-pressed="false" />
-                  <img src="https://images.unsplash.com/photo-1609692814858-f7cd2f0afa4f?w=120&h=120&fit=crop" alt="Ver foto 3 de trabajos realizados" class="thumbnail" data-full="https://images.unsplash.com/photo-1609692814858-f7cd2f0afa4f?w=700&h=500&fit=crop" role="button" tabindex="0" aria-pressed="false" />
-                  <img src="https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=120&h=120&fit=crop" alt="Ver foto 4 de trabajos realizados" class="thumbnail" data-full="https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=700&h=500&fit=crop" role="button" tabindex="0" aria-pressed="false" />
+                  <img src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=120&h=120&fit=crop" alt="Ver foto 1 de trabajos realizados" class="thumbnail active" data-full="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=700&h=500&fit=crop" role="button" tabindex="0" aria-pressed="true" loading="lazy" width="120" height="120" />
+                  <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=120&h=120&fit=crop" alt="Ver foto 2 de trabajos realizados" class="thumbnail" data-full="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&h=500&fit=crop" role="button" tabindex="0" aria-pressed="false" loading="lazy" width="120" height="120" />
+                  <img src="https://images.unsplash.com/photo-1609692814858-f7cd2f0afa4f?w=120&h=120&fit=crop" alt="Ver foto 3 de trabajos realizados" class="thumbnail" data-full="https://images.unsplash.com/photo-1609692814858-f7cd2f0afa4f?w=700&h=500&fit=crop" role="button" tabindex="0" aria-pressed="false" loading="lazy" width="120" height="120" />
+                  <img src="https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=120&h=120&fit=crop" alt="Ver foto 4 de trabajos realizados" class="thumbnail" data-full="https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=700&h=500&fit=crop" role="button" tabindex="0" aria-pressed="false" loading="lazy" width="120" height="120" />
                 </div>
 
                 <!-- Nota de galería -->
@@ -576,7 +583,7 @@
                   <!-- Reseña 1 -->
                   <div class="review-item">
                     <div class="review-header">
-                      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=48&h=48&fit=crop&crop=face" alt="Usuario" class="review-avatar" />
+                      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=48&h=48&fit=crop&crop=face" alt="Usuario" class="review-avatar" loading="lazy" width="48" height="48" />
                       <div class="review-info">
                         <h6>Martín S.</h6>
                         <div class="review-meta">
@@ -601,7 +608,7 @@
                   <!-- Reseña 2 -->
                   <div class="review-item">
                     <div class="review-header">
-                      <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=48&h=48&fit=crop&crop=face" alt="Usuario" class="review-avatar" />
+                      <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=48&h=48&fit=crop&crop=face" alt="Usuario" class="review-avatar" loading="lazy" width="48" height="48" />
                       <div class="review-info">
                         <h6>Laura G.</h6>
                         <div class="review-meta">
@@ -627,7 +634,7 @@
                   <!-- Reseña 3 -->
                   <div class="review-item">
                     <div class="review-header">
-                      <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=48&h=48&fit=crop&crop=face" alt="Usuario" class="review-avatar" />
+                      <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=48&h=48&fit=crop&crop=face" alt="Usuario" class="review-avatar" loading="lazy" width="48" height="48" />
                       <div class="review-info">
                         <h6>Roberto P.</h6>
                         <div class="review-meta">
@@ -861,18 +868,18 @@
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="../JS/utils.js"></script>
-    <script src="../JS/auth.js"></script>
-    <script src="../JS/cart.js"></script>
-    <script src="../JS/notifications.js"></script>
-    <script src="../JS/favorites.js"></script>
-    <script src="../JS/services-data.js"></script>
-    <script src="../JS/service-page.js"></script>
-    <script src="../JS/dropdown-fix.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
+    <script src="../JS/utils.js" defer></script>
+    <script src="../JS/auth.js" defer></script>
+    <script src="../JS/cart.js" defer></script>
+    <script src="../JS/notifications.js" defer></script>
+    <script src="../JS/favorites.js" defer></script>
+    <script src="../JS/services-data.js" defer></script>
+    <script src="../JS/service-page.js" defer></script>
+    <script src="../JS/dropdown-fix.js" defer></script>
     <script src="../JS/component-loader.js" defer></script>
 
-    <script src="../JS/init-aos.js"></script>
+    <script src="../JS/init-aos.js" defer></script>
   </body>
 </html>
