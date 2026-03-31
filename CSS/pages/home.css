@@ -1236,14 +1236,20 @@
    SEPARACIÓN VISUAL productos / servicios
    ===================================================== */
 
-/* Productos: fondo gris claro (ya definido: var(--gray-50)) */
-/* Servicios: fondo blanco para contraste */
-.services-section {
-  background: var(--white);
+.sections-divider {
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--gray-300), transparent);
+  margin: 0 auto;
+  width: 80%;
 }
 
-/* Borde superior sutil para separar las dos secciones */
-.services-section > .container {
-  padding-top: var(--spacing-4);
-  border-top: 2px solid var(--gray-100);
+.services-section {
+  background: var(--gray-50);
+  padding: var(--spacing-16) 0;
+}
+
+.services-section .section-header {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
 }

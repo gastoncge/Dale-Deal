@@ -96,6 +96,23 @@ async function createService(data) {
   return service;
 }
 
+/**
+ * Busca servicios por término de búsqueda.
+ * Filtra en memoria desde el array servicesData (services-data.js).
+ */
+async function searchServices(query) {
+  const term = query.toLowerCase();
+  // Soporta tanto window.servicesData como la variable global servicesData
+  const data = (typeof window !== 'undefined' && window.servicesData)
+    ? window.servicesData
+    : (typeof servicesData !== 'undefined' ? servicesData : []);
+  return data.filter(s =>
+    (s.title || '').toLowerCase().includes(term) ||
+    (s.description || '').toLowerCase().includes(term) ||
+    (s.category || '').toLowerCase().includes(term)
+  );
+}
+
 // Exportar funciones para uso global
 if (typeof window !== 'undefined') {
   window.DaleDeal = window.DaleDeal || {};
@@ -104,5 +121,6 @@ if (typeof window !== 'undefined') {
     searchProducts,
     createProduct,
     createService,
+    searchServices,
   };
 }

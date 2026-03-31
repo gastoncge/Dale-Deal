@@ -161,9 +161,6 @@ function renderProductCard(product) {
           <button class="action-heart" title="Agregar a favoritos" data-product-id="${product.id}">
             <i class="bi bi-heart"></i>
           </button>
-          <button class="action-quick-view" title="Vista rápida" data-product-id="${product.id}">
-            <i class="bi bi-eye"></i>
-          </button>
         </div>
       </div>
       <div class="product-info">

@@ -107,31 +107,49 @@ class NotificationManager {
 
   // Vincular eventos
   bindEvents() {
-    // Filtros
-    document.querySelectorAll('.filter-chip').forEach(chip => {
-      chip.addEventListener('click', (e) => this.handleFilterChange(e));
-    });
+    // Delegación en document — funciona aunque el header cargue async
+    document.addEventListener('click', (e) => {
+      // Filtros de notificaciones
+      const filterChip = e.target.closest('.filter-chip');
+      if (filterChip && filterChip.closest('.notifications-dropdown')) {
+        this.handleFilterChange(e);
+        return;
+      }
 
-    // Botones de acción principales
-    document.getElementById('markAllAsRead')?.addEventListener('click', () => this.markAllAsRead());
-    document.getElementById('markSelectedAsRead')?.addEventListener('click', () => this.markSelectedAsRead());
-    document.getElementById('viewAllNotifications')?.addEventListener('click', () => this.viewAllNotifications());
-
-    // Event delegation para notificaciones dinámicas (dropdown)
-    document.getElementById('notificationsDropdownBody')?.addEventListener('click', (e) => this.handleNotificationClick(e));
-    
-    // Prevenir que el dropdown se cierre al hacer clic en filtros
-    document.querySelector('.notifications-dropdown')?.addEventListener('click', (e) => {
+      // Prevenir cierre del dropdown al clic en filtros/footer
       if (e.target.closest('.notifications-filter') || e.target.closest('.notifications-footer')) {
         e.stopPropagation();
       }
+
+      // Clics en items de notificación (X, contenido, acciones)
+      if (e.target.closest('#notificationsDropdownBody')) {
+        e.stopImmediatePropagation();
+        this.handleNotificationClick(e);
+        return;
+      }
+
+      // Botones de acción del footer
+      if (e.target.closest('#markAllAsRead')) {
+        this.markAllAsRead();
+        return;
+      }
+      if (e.target.closest('#markSelectedAsRead')) {
+        this.markSelectedAsRead();
+        return;
+      }
+      if (e.target.closest('#viewAllNotifications')) {
+        this.viewAllNotifications();
+        return;
+      }
     });
 
-    // Actualizar el dropdown cuando se abre
-    document.getElementById('notificationBtn')?.addEventListener('shown.bs.dropdown', () => {
-      this.loadNotifications();
-      this.renderNotifications();
-      this.updateBadge();
+    // Actualizar el dropdown cuando se abre (el evento burbujea desde el toggle)
+    document.addEventListener('shown.bs.dropdown', (e) => {
+      if (e.target && e.target.id === 'notificationBtn') {
+        this.loadNotifications();
+        this.renderNotifications();
+        this.updateBadge();
+      }
     });
   }
 
@@ -356,11 +374,6 @@ class NotificationManager {
           <h6>${notification.title}</h6>
           <p>${notification.message}</p>
           <small>${notification.time}</small>
-          <div class="notification-actions">
-            ${notification.actions.map(action => 
-              `<button class="notification-action-btn" data-action="${action.action}">${action.label}</button>`
-            ).join('')}
-          </div>
         </div>
         <button class="notification-close" data-action="dismiss">
           <i class="bi bi-x"></i>

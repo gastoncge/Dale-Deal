@@ -271,17 +271,17 @@ class CartManager {
 
     // Eventos para botones del dropdown del carrito
     document.getElementById('viewFullCart')?.addEventListener('click', () => {
-      // Aquí podrías redirigir a una página completa del carrito
-      DaleDeal.log('Ver carrito completo');
+      window.DemoAdapter?.notifyUnimplemented('La página completa del carrito')
+        ?? this.showNotification('La página completa del carrito no está disponible en la versión demo.', 'warning');
     });
 
     document.getElementById('proceedToCheckout')?.addEventListener('click', () => {
       if (this.items.length === 0) {
-        DaleDeal.log('Carrito vacío');
+        this.showNotification('Agregá productos al carrito antes de continuar.', 'info');
         return;
       }
-      // Aquí podrías redirigir al checkout
-      DaleDeal.log('Proceder al checkout');
+      window.DemoAdapter?.notifyUnimplemented('El checkout y procesamiento de pagos')
+        ?? this.showNotification('El checkout no está disponible en la versión demo.', 'warning');
     });
 
     // Manejar clics en el dropdown del carrito

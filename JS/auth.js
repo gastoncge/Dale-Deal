@@ -74,7 +74,10 @@ class AuthManager {
       }
 
       this.updateUI();
-      this.showNotification("¡Bienvenido! Redirigiendo...", "success");
+      this.showNotification(
+        "Sesión demo iniciada — los datos se guardan localmente, no en un servidor real.",
+        "info"
+      );
 
       return { success: true, user };
     } catch (error) {
@@ -105,7 +108,10 @@ class AuthManager {
       localStorage.setItem(this.storageKey, JSON.stringify(user));
 
       this.updateUI();
-      this.showNotification("¡Cuenta creada exitosamente!", "success");
+      this.showNotification(
+        "Cuenta demo creada — los datos se guardan localmente, no en un servidor real.",
+        "info"
+      );
 
       return { success: true, user };
     } catch (error) {
@@ -189,16 +195,8 @@ class AuthManager {
   }
 
   async simulateAPICall() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        // Simular ocasionalmente errores de red
-        if (Math.random() < 0.05) {
-          reject(new Error("Error de conexión. Inténtalo nuevamente."));
-        } else {
-          resolve();
-        }
-      }, 1000 + Math.random() * 1000);
-    });
+    // Demo: delay sin errores aleatorios. Reemplazar por fetch real al backend.
+    return (window.DemoAdapter?.demoDelay ?? (ms => new Promise(r => setTimeout(r, ms))))(900);
   }
 
   // ===== NAVEGACIÓN =====

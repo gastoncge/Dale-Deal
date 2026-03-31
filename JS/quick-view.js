@@ -43,14 +43,14 @@ class QuickViewManager {
     const title = productCard.querySelector('.product-title')?.textContent || '';
     const currentPrice = productCard.querySelector('.product-current-price')?.textContent || '$0';
     const originalPrice = productCard.querySelector('.product-original-price')?.textContent || '';
-    const mainImage = productCard.querySelector('.product-image')?.src || '';
+    // Collect all gallery images already rendered in the card carousel
+    const cardImages = [...productCard.querySelectorAll('.product-image')].map(img => img.src).filter(Boolean);
+    const mainImage = cardImages[0] || '';
+    const images = cardImages.length > 1 ? cardImages : [mainImage, ...this.generateAdditionalImages(mainImage, id)];
     const rating = this.extractRating(productCard);
     const ratingCount = productCard.querySelector('.reviews-count')?.textContent || '(0)';
     const features = this.extractFeatures(productCard);
     const badges = this.extractBadges(productCard);
-
-    // Generar imágenes adicionales simuladas
-    const additionalImages = this.generateAdditionalImages(mainImage, id);
 
     return {
       id,
@@ -58,7 +58,7 @@ class QuickViewManager {
       currentPrice,
       originalPrice,
       mainImage,
-      images: [mainImage, ...additionalImages],
+      images,
       rating,
       ratingCount,
       features,

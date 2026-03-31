@@ -476,8 +476,8 @@ class NotificationsCenterManager {
 
   // Cargar más notificaciones
   loadMore() {
-    this.displayedCount += this.itemsPerLoad;
-    this.renderNotifications();
+    this.displayedCount = this.getFilteredNotifications().length;
+    this.renderNotifications(false);
   }
 
   // Obtener notificaciones filtradas
@@ -526,9 +526,9 @@ class NotificationsCenterManager {
       // Mostrar botón de cargar más si hay más notificaciones
       if (displayNotifications.length < filteredNotifications.length) {
         if (loadMoreContainer) loadMoreContainer.style.display = 'block';
-        const remaining = filteredNotifications.length - displayNotifications.length;
+        const total = filteredNotifications.length;
         document.getElementById('loadMoreBtn').innerHTML = `
-          <i class="bi bi-arrow-down-circle me-2"></i>Cargar más notificaciones (${remaining})
+          <i class="bi bi-arrow-down-circle me-2"></i>Ver todas las notificaciones (${total})
         `;
       } else if (loadMoreContainer) {
         loadMoreContainer.style.display = 'none';
