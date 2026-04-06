@@ -71,7 +71,10 @@ class FavoritesManager {
     document.addEventListener('click', (e) => {
       if (e.target.closest('#favoritesLink')) {
         e.preventDefault();
-        this.showFavoritesModal();
+        const isHtmlSubdir = window.location.pathname.includes('/HTML/');
+        window.location.href = isHtmlSubdir
+          ? './notificaciones.html#favoritos'
+          : './HTML/notificaciones.html#favoritos';
       }
     });
 
@@ -209,6 +212,11 @@ class FavoritesManager {
           imageUrl: productData.images.main,
           rating: productData.rating,
           ratingCount: `(${productData.reviewCount.toLocaleString()})`,
+          seller: productData.seller || null,
+          description: productData.description || '',
+          shipping: productData.shipping || null,
+          badges: productData.badges || [],
+          discount: productData.discount || 0,
           dateAdded: Date.now()
         };
       }
@@ -451,39 +459,86 @@ class FavoritesManager {
 
   // Renderizar tarjeta de producto favorito
   renderFavoriteProduct(favorite) {
+    const fullProduct = (typeof window.getProductById === 'function')
+      ? window.getProductById(parseInt(favorite.id))
+      : null;
+
+    const imageUrl = fullProduct?.images?.main || favorite.imageUrl || '';
+    const title = fullProduct?.title || favorite.title || '';
+    const rating = fullProduct?.rating ?? favorite.rating ?? 0;
+    const ratingCount = fullProduct?.reviewCount
+      ? `(${fullProduct.reviewCount.toLocaleString('es-AR')})`
+      : (favorite.ratingCount || '(0)');
+    const priceText = fullProduct
+      ? (window.DaleDeal?.utils?.formatCurrency(fullProduct.price) || favorite.priceText)
+      : favorite.priceText;
+    const originalPriceText = fullProduct?.originalPrice
+      ? (window.DaleDeal?.utils?.formatCurrency(fullProduct.originalPrice) || favorite.originalPriceText)
+      : favorite.originalPriceText;
+    const rawDesc = fullProduct?.description || favorite.description || '';
+    const description = rawDesc.length > 80 ? rawDesc.substring(0, 80) + '...' : rawDesc;
+    const seller = fullProduct?.seller || favorite.seller || null;
+    const hasDiscount = (fullProduct?.discount || favorite.discount || 0) > 0;
+    const discount = fullProduct?.discount || favorite.discount || 0;
+    const shipping = fullProduct?.shipping || favorite.shipping || null;
+
+    const badges = fullProduct?.badges || favorite.badges || [];
+    const customBadges = badges.filter(b => typeof b === 'object' && b.text);
+    const legacyBadges = badges.filter(b => typeof b === 'string');
+    const legacyOfferBadges = hasDiscount ? [] : legacyBadges.filter(b => b.includes('OFF'));
+    const platformBadges = legacyBadges.filter(b => !b.includes('OFF') && ['DESTACADO', 'MÁS VENDIDO', 'NUEVO', 'RECOMENDADO'].includes(b.toUpperCase()));
+    const topLeftInner = [
+      ...customBadges.map(b => `<span class="badge-custom" style="background:${b.color}">${b.text}</span>`),
+      hasDiscount ? `<span class="badge-offer">-${discount}%</span>` : '',
+      ...legacyOfferBadges.map(b => `<span class="badge-offer">${b}</span>`),
+    ].filter(Boolean).join('');
+    const topLeftHTML = topLeftInner ? `<div class="service-badges">${topLeftInner}</div>` : '';
+    const bottomRightHTML = platformBadges.map(b => `<span class="badge-featured">${b}</span>`).join('');
+    const badgesHTML = topLeftHTML + bottomRightHTML;
+
     return `
       <div class="col-md-6 col-lg-4 mb-4">
-        <div class="product-card favorite-product-card" data-id="${favorite.id}">
+        <div class="product-card ${hasDiscount ? 'has-offer' : ''}" data-id="${favorite.id}" data-clickable="true">
           <div class="product-image-container">
-            <img src="${favorite.imageUrl}" alt="${favorite.title}" class="product-image active">
-
-            <div class="product-actions-favorite">
-              <button class="action-remove-favorite" title="Eliminar de favoritos" onclick="event.stopPropagation(); window.favoritesManager.removeFromFavoritesModal('${favorite.id}')">
-                <i class="bi bi-x"></i>
+            <img src="${imageUrl}" alt="${title}" class="product-image active" loading="lazy" width="400" height="300">
+            ${badgesHTML}
+            <div class="product-actions">
+              <button class="action-heart active" title="Quitar de favoritos" data-product-id="${favorite.id}"
+                onclick="event.stopPropagation(); window.favoritesManager.removeFromFavoritesModal('${favorite.id}')">
+                <i class="bi bi-heart-fill"></i>
               </button>
             </div>
           </div>
-
           <div class="product-info">
-            <h3 class="product-title">${favorite.title}</h3>
-
+            <h3 class="product-title">${title}</h3>
+            ${seller ? `
+            <div class="product-provider">
+              <img src="${seller.avatar}" alt="${seller.name}" class="product-provider-avatar" loading="lazy" width="40" height="40" />
+              <span class="product-provider-name">${seller.name}</span>
+              ${seller.verified ? '<i class="bi bi-patch-check-fill product-provider-verified"></i>' : ''}
+            </div>` : ''}
+            ${description ? `<p class="product-description">${description}</p>` : ''}
             <div class="product-meta-group">
               <div class="product-rating">
-                <div class="stars">${this.renderStars(favorite.rating)}</div>
-                <span class="reviews-count">${favorite.ratingCount}</span>
+                <div class="stars">${this.renderStars(rating)}</div>
+                <span class="reviews-count">${ratingCount}</span>
+                ${shipping?.free ? `<span class="shipping-badge"><i class="bi bi-truck"></i> Envío gratis</span>` : ''}
+              </div>
+              <div class="product-location">
+                <i class="bi bi-geo-alt-fill"></i>
+                <span>CABA</span>
+                ${shipping?.speed === 'today' ? `<span class="shipping-badge"><i class="bi bi-lightning-charge-fill"></i> Llega hoy</span>` : ''}
+                ${shipping?.speed === 'tomorrow' ? `<span class="shipping-badge"><i class="bi bi-clock-fill"></i> Llega mañana</span>` : ''}
               </div>
             </div>
-
             <div class="product-pricing-wrapper">
               <div class="product-pricing">
-                <span class="product-current-price">${favorite.priceText}</span>
-                ${favorite.originalPriceText ? `<span class="product-original-price">${favorite.originalPriceText}</span>` : ''}
+                <span class="product-current-price">${priceText}</span>
+                ${originalPriceText ? `<span class="product-original-price">${originalPriceText}</span>` : ''}
               </div>
-              <div class="favorite-actions-buttons">
-                <button class="btn-add-to-cart" onclick="event.stopPropagation(); window.favoritesManager.addToCartFromFavorites('${favorite.id}')">
-                  <i class="bi bi-cart-plus me-2"></i>Agregar al carrito
-                </button>
-              </div>
+              <button class="btn-add-to-cart" onclick="event.stopPropagation(); window.favoritesManager.addFavoriteToCart('${favorite.id}')">
+                <i class="bi bi-cart-plus me-1"></i>Agregar al carrito
+              </button>
             </div>
           </div>
         </div>
@@ -538,12 +593,12 @@ class FavoritesManager {
         <div class="product-card favorite-service-card" data-id="${favorite.id}" data-type="service"
              style="cursor:pointer;" onclick="window.location.href='${href}'">
           <div class="product-image-container">
-            <img src="${imageUrl}" alt="${title}" class="product-image active" />
+            <img src="${imageUrl}" alt="${title}" class="product-image active" loading="lazy" width="400" height="300" />
             ${badgesHTML}
-            <div class="product-actions-favorite">
-              <button class="action-remove-favorite" title="Eliminar de favoritos"
+            <div class="product-actions">
+              <button class="action-heart active" title="Quitar de favoritos" data-product-id="${favorite.id}"
                 onclick="event.stopPropagation(); window.favoritesManager.removeFromFavoritesModal('${favorite.id}')">
-                <i class="bi bi-x"></i>
+                <i class="bi bi-heart-fill"></i>
               </button>
             </div>
           </div>
@@ -567,17 +622,48 @@ class FavoritesManager {
               <div class="product-pricing">
                 <span class="product-current-price">${favorite.priceText || ''}</span>
               </div>
-              <div class="favorite-actions-buttons">
-                <button class="btn-add-to-cart"
-                  onclick="event.stopPropagation(); window.location.href='${href}'">
-                  <i class="bi bi-eye me-2"></i>Ver servicio
-                </button>
-              </div>
+              <button class="btn-add-to-cart" onclick="event.stopPropagation(); window.favoritesManager.addFavoriteToCart('${favorite.id}')">
+                <i class="bi bi-cart-plus me-1"></i>Agregar al carrito
+              </button>
             </div>
           </div>
         </div>
       </div>
     `;
+  }
+
+  // Agregar favorito al carrito
+  addFavoriteToCart(id) {
+    if (!window.cartManager) return;
+    const favorite = this.favorites.find(fav => fav.id === String(id));
+    if (!favorite) return;
+
+    // Obtener precio numérico desde datos reales si están disponibles
+    let price = 0;
+    if (favorite.type === 'service') {
+      const full = (typeof getServiceById === 'function') ? getServiceById(favorite.id) : null;
+      price = full?.price ?? 0;
+    } else {
+      const full = (typeof window.getProductById === 'function') ? window.getProductById(parseInt(favorite.id)) : null;
+      price = full?.price ?? 0;
+    }
+
+    // Fallback: parsear priceText si no hay precio numérico
+    if (!price && favorite.priceText) {
+      price = parseFloat(favorite.priceText.replace(/[^\d]/g, '')) || 0;
+    }
+
+    // Asegurar priceText formateado
+    const priceText = favorite.priceText ||
+      (price ? new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(price) : '');
+
+    window.cartManager.addItem({
+      id: favorite.id,
+      title: favorite.title || 'Producto',
+      price,
+      priceText,
+      image: favorite.imageUrl || '',
+    });
   }
 
   // Remover desde el modal
@@ -748,7 +834,9 @@ favoritesStyle.textContent = `
   }
 
   .action-heart.active {
-    color: var(--primary-red) !important;
+    background: var(--primary-red) !important;
+    color: var(--white) !important;
+    border-color: var(--primary-red) !important;
   }
 
   .heart-animate {
@@ -761,183 +849,6 @@ favoritesStyle.textContent = `
     50% { transform: scale(1.1); }
     75% { transform: scale(1.2); }
     100% { transform: scale(1); }
-  }
-
-  /* Estilos para cards de favoritos - idénticos al catálogo principal */
-  .favorite-product-card {
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    background: var(--white);
-    border-radius: var(--radius-2xl);
-    overflow: hidden;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--gray-100);
-    position: relative;
-    cursor: pointer;
-    height: auto;
-    min-height: 420px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* Hover sin borde rojo - solo elevación y sombra */
-  .favorite-product-card:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-2xl);
-  }
-
-  .favorite-product-card .product-image-container {
-    position: relative;
-    width: 100%;
-    height: 250px;
-    overflow: hidden;
-  }
-
-  .favorite-product-card .product-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform var(--transition-slow);
-  }
-
-  .favorite-product-card:hover .product-image {
-    transform: scale(1.05);
-  }
-
-  .favorite-product-card .product-info {
-    padding: var(--spacing-4);
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-3);
-  }
-
-  .favorite-product-card .product-title {
-    font-size: var(--font-size-lg);
-    font-weight: 600;
-    color: var(--gray-900);
-    margin-bottom: 0;
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .favorite-product-card .product-rating {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-2);
-    font-size: var(--font-size-sm);
-  }
-
-  .favorite-product-card .product-rating .stars {
-    display: flex;
-    gap: 1px;
-  }
-
-  .favorite-product-card .product-rating .stars i {
-    font-size: var(--font-size-sm);
-    color: var(--primary-yellow);
-  }
-
-  .favorite-product-card .rating-text {
-    font-size: var(--font-size-sm);
-    font-weight: 600;
-    color: var(--gray-700);
-  }
-
-  .favorite-product-card .reviews-count {
-    font-size: var(--font-size-xs);
-    color: var(--gray-500);
-  }
-
-  .favorite-product-card .product-pricing {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-2);
-    flex-wrap: wrap;
-  }
-
-  .favorite-product-card .product-current-price {
-    font-size: var(--font-size-xl);
-    font-weight: 700;
-    color: var(--primary-red);
-  }
-
-  .favorite-product-card .product-original-price {
-    font-size: var(--font-size-base);
-    color: var(--gray-500);
-    text-decoration: line-through;
-  }
-
-  /* Botón de eliminar en esquina superior derecha */
-  .product-actions-favorite {
-    position: absolute;
-    top: var(--spacing-3);
-    right: var(--spacing-3);
-    z-index: 4;
-  }
-
-  .action-remove-favorite {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(220, 38, 38, 0.9);
-    color: var(--white);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all var(--transition-base);
-    backdrop-filter: blur(10px);
-    box-shadow: var(--shadow-md);
-  }
-
-  .action-remove-favorite:hover {
-    background: var(--error);
-    transform: scale(1.1);
-  }
-
-  .action-remove-favorite i {
-    font-size: var(--font-size-lg);
-  }
-
-  /* Botones de acción en la card */
-  .favorite-actions-buttons {
-    display: flex;
-    margin-top: auto;
-  }
-
-  .favorite-actions-buttons .btn-add-to-cart {
-    width: 100%;
-    background: var(--gradient-primary);
-    color: var(--white);
-    border: none;
-    padding: var(--spacing-2) var(--spacing-3);
-    border-radius: var(--radius-lg);
-    font-size: var(--font-size-sm);
-    font-weight: 600;
-    cursor: pointer;
-    transition: all var(--transition-base);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .favorite-actions-buttons .btn-add-to-cart:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-  }
-
-  @media (max-width: 768px) {
-    .favorite-product-card {
-      min-height: 380px;
-    }
-
-    .favorite-product-card .product-image-container {
-      height: 200px;
-    }
   }
 
   /* Estilos para secciones de favoritos */
@@ -960,10 +871,27 @@ favoritesStyle.textContent = `
     color: var(--primary-red);
   }
 
-  /* favorite-service-card hereda todos los estilos de .product-card / .favorite-product-card */
   .favorite-service-card {
     cursor: pointer;
   }
+
+  /* Consistencia visual del modal de favoritos en todas las páginas */
+  #favoritesGrid .product-card {
+    transition: box-shadow var(--transition-base) !important;
+    transform: none !important;
+  }
+  #favoritesGrid .product-card:hover {
+    transform: none !important;
+    box-shadow: var(--shadow-lg) !important;
+    border-color: var(--gray-200) !important;
+  }
+  #favoritesGrid .product-card:hover .product-image {
+    transform: none !important;
+  }
+  #favoritesGrid .product-image-container {
+    height: 200px !important;
+  }
+
 `;
 
 document.head.appendChild(favoritesStyle);

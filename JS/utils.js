@@ -280,7 +280,7 @@ DaleDeal.utils.showAlert = (message, type, config) => {
 /**
  * Crear contenedor de notificaciones tipo Alert
  */
-DaleDeal.utils.createNotificationContainer = (position = 'top-right') => {
+DaleDeal.utils.createNotificationContainer = (position = 'bottom-right') => {
   const container = document.createElement("div");
   container.className = "notification-container position-fixed";
   container.id = "notificationContainer";
@@ -288,13 +288,13 @@ DaleDeal.utils.createNotificationContainer = (position = 'top-right') => {
   const positions = {
     'top-right': 'top: 20px; right: 20px;',
     'top-left': 'top: 20px; left: 20px;',
-    'bottom-right': 'bottom: 20px; right: 20px;',
-    'bottom-left': 'bottom: 20px; left: 20px;'
+    'bottom-right': 'bottom: 28px; right: 128px;',
+    'bottom-left': 'bottom: 28px; left: 20px;'
   };
 
   container.style.cssText = `
-    ${positions[position] || positions['top-right']}
-    z-index: 1055;
+    ${positions[position] || positions['bottom-right']}
+    z-index: 9999;
     max-width: 350px;
   `;
 

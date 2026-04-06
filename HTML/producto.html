@@ -815,52 +815,6 @@
       </div>
     </div>
 
-    <!-- Favorites Modal -->
-    <div class="modal fade" id="favoritesModal" tabindex="-1" aria-labelledby="favoritesModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="favoritesModalLabel">
-              <i class="bi bi-heart-fill me-2 text-danger"></i>
-              Mis Favoritos
-            </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <!-- Favorites content will be loaded dynamically -->
-            <div id="favoritesContent">
-              <div class="favorites-empty text-center py-5" id="favoritesEmpty">
-                <i class="bi bi-heart display-1 text-muted mb-3"></i>
-                <h4 class="text-muted">No tienes favoritos aún</h4>
-                <p class="text-muted">Agrega productos a tus favoritos para verlos aquí</p>
-                <button class="btn btn-primary" data-bs-dismiss="modal" id="exploreProductsBtn">
-                  <i class="bi bi-bag me-2"></i>Explorar productos
-                </button>
-              </div>
-              
-              <div id="favoritesGrid" class="favorites-grid" style="display: none;">
-                <!-- Favorites items will be loaded here -->
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <div class="d-flex justify-content-between w-100">
-              <div class="favorites-count">
-                <span class="text-muted">Total: <span id="favoritesTotal">0</span> productos</span>
-              </div>
-              <div class="favorites-actions">
-                <button type="button" class="btn btn-outline-danger" id="clearAllFavorites">
-                  <i class="bi bi-trash me-2"></i>Limpiar todo
-                </button>
-                <button type="button" class="btn btn-primary" id="addAllToCart">
-                  <i class="bi bi-cart-plus me-2"></i>Agregar todo al carrito
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- Footer -->
     <div id="footer-placeholder"></div>

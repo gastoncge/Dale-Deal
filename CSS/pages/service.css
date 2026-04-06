@@ -483,6 +483,8 @@
   margin: 0 auto;
 }
 
+/* Chat CSS movido a components.css */
+
 /* ===== CHAT CON EL PRESTADOR ===== */
 .chat-container {
   max-width: 800px;

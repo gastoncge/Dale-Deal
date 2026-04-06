@@ -347,29 +347,33 @@
                   <i class="bi bi-bag me-2"></i>
                   <span>Mis compras</span>
                 </a>
+                <a href="#" class="sidebar-nav-item" data-section="favoritos">
+                  <i class="bi bi-heart me-2"></i>
+                  <span>Favoritos</span>
+                </a>
               </nav>
 
               <!-- Centro de Ayuda -->
               <div class="sidebar-divider"></div>
               <p class="sidebar-section-label">Centro de Ayuda</p>
               <nav class="sidebar-nav-list">
-                <a href="./centro-ayuda.html" class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-item" data-section="centro-ayuda">
                   <i class="bi bi-question-circle me-2"></i>
                   <span>Ayuda</span>
                 </a>
-                <a href="./contacto.html" class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-item" data-section="contacto">
                   <i class="bi bi-envelope me-2"></i>
                   <span>Contacto</span>
                 </a>
-                <a href="./reportar-problema.html" class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-item" data-section="reportar-problema">
                   <i class="bi bi-flag me-2"></i>
                   <span>Reportar problema</span>
                 </a>
-                <a href="./estado-servicio.html" class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-item" data-section="estado-servicio">
                   <i class="bi bi-activity me-2"></i>
                   <span>Estado del servicio</span>
                 </a>
-                <a href="./seguridad.html" class="sidebar-nav-item">
+                <a href="#" class="sidebar-nav-item" data-section="seguridad">
                   <i class="bi bi-shield-lock me-2"></i>
                   <span>Seguridad</span>
                 </a>
@@ -599,7 +603,7 @@
                   </div>
                   <div class="order-footer">
                     <div class="order-total"><small>Total pagado</small><br>$1.299.999</div>
-                    <div class="d-flex gap-2"><button class="btn btn-outline-secondary btn-sm"><i class="bi bi-truck me-1"></i>Rastrear</button><button class="btn btn-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalles</button></div>
+                    <div class="d-flex gap-2"><button class="btn btn-outline-secondary btn-sm"><i class="bi bi-truck me-1"></i>Rastrear</button><button class="btn btn-outline-secondary btn-sm btn-msg-seller"><i class="bi bi-chat-dots me-1"></i>Mensaje al vendedor</button><button class="btn btn-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalles</button></div>
                   </div>
                 </div>
                 <div class="order-card">
@@ -613,7 +617,7 @@
                   </div>
                   <div class="order-footer">
                     <div class="order-total"><small>Total pagado</small><br>$289.999</div>
-                    <div class="d-flex gap-2"><button class="btn btn-outline-secondary btn-sm"><i class="bi bi-star me-1"></i>Calificar</button><button class="btn btn-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalles</button></div>
+                    <div class="d-flex gap-2"><button class="btn btn-outline-secondary btn-sm"><i class="bi bi-star me-1"></i>Calificar</button><button class="btn btn-outline-secondary btn-sm btn-msg-seller"><i class="bi bi-chat-dots me-1"></i>Mensaje al vendedor</button><button class="btn btn-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalles</button></div>
                   </div>
                 </div>
                 <div class="order-card">
@@ -627,10 +631,30 @@
                   </div>
                   <div class="order-footer">
                     <div class="order-total"><small>Reembolso procesado</small><br>$799.999</div>
-                    <div class="d-flex gap-2"><button class="btn btn-outline-secondary btn-sm"><i class="bi bi-headset me-1"></i>Ayuda</button><button class="btn btn-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalles</button></div>
+                    <div class="d-flex gap-2"><button class="btn btn-outline-secondary btn-sm"><i class="bi bi-headset me-1"></i>Ayuda</button><button class="btn btn-outline-secondary btn-sm btn-msg-seller"><i class="bi bi-chat-dots me-1"></i>Mensaje al vendedor</button><button class="btn btn-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalles</button></div>
                   </div>
                 </div>
               </div>
+            </div>
+
+            <!-- ===== SECCIÓN: FAVORITOS ===== -->
+            <div id="view-favoritos" class="centro-section" style="display:none;">
+              <div class="fav-page-header">
+                <div class="fav-page-title">
+                  <i class="bi bi-heart-fill"></i>
+                  <span>Mis Favoritos</span>
+                  <span id="favoritosCount" class="fav-count-pill"></span>
+                </div>
+                <div class="fav-page-actions" id="favoritosActions" style="display:none!important">
+                  <button class="btn btn-outline-danger" id="btnClearFavoritos">
+                    <i class="bi bi-trash me-2"></i>Borrar todo
+                  </button>
+                  <button class="btn btn-primary" id="btnAddAllToCart">
+                    <i class="bi bi-cart-plus me-2"></i>Agregar todo al carrito
+                  </button>
+                </div>
+              </div>
+              <div id="favoritosContent"></div>
             </div>
 
             <!-- ===== SECCIÓN: CENTRO DE AYUDA ===== -->
@@ -1023,6 +1047,7 @@
     <script src="../JS/notifications.js"></script>
     <script src="../JS/dropdown-fix.js"></script>
     <script src="../JS/pages/notifications.js"></script>
+    <script src="../JS/chat.js"></script>
     <script src="../JS/component-loader.js" defer></script>
 
     <style>
@@ -1107,6 +1132,25 @@
       .order-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-3); padding-top: var(--spacing-4); border-top: 1px solid var(--gray-100); }
       .order-total { font-size: var(--font-size-lg); font-weight: 800; color: var(--gray-900); }
       .order-total small { display: block; font-size: var(--font-size-xs); font-weight: 500; color: var(--gray-500); }
+
+      /* ---- Favoritos header ---- */
+      .fav-page-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 2px solid var(--gray-100); flex-wrap: wrap; }
+      .fav-page-title { display: flex; align-items: center; gap: 10px; }
+      .fav-page-title i { font-size: 1.3rem; color: var(--primary-red); }
+      .fav-page-title > span:first-of-type { font-size: var(--font-size-xl); font-weight: 800; color: var(--gray-900); }
+      .fav-count-pill { background: var(--gray-100); color: var(--gray-600); font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 20px; min-width: 28px; text-align: center; }
+      .fav-page-actions { display: flex; align-items: center; gap: 10px; }
+
+      /* ---- Favoritos ---- */
+      .fav-section-label { font-size: 1rem; font-weight: 700; color: var(--gray-800); display: flex; align-items: center; gap: 8px; margin-top: 8px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 2px solid var(--gray-100); }
+      .fav-section-count { background: var(--gray-100); color: var(--gray-600); font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+      .fav-cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 8px; }
+      @media (max-width: 992px) { .fav-cards-grid { grid-template-columns: repeat(3, 1fr); } }
+      @media (max-width: 768px) { .fav-cards-grid { grid-template-columns: repeat(2, 1fr); } }
+      @media (max-width: 480px) { .fav-cards-grid { grid-template-columns: 1fr; } }
+      #view-favoritos .product-card { cursor: default; }
+      #view-favoritos .product-actions { opacity: 1 !important; }
+      #view-favoritos .action-heart.active { background: var(--primary-red); color: #fff; }
 
       /* ---- Centro de Ayuda ---- */
       .help-search-banner { background: var(--gradient-primary); border-radius: var(--radius-xl); padding: var(--spacing-8) var(--spacing-6); text-align: center; color: var(--white); margin-bottom: var(--spacing-6); }
@@ -1203,7 +1247,7 @@
       AOS.init({ duration: 800, once: true, offset: 100 });
 
       // ===== NAVEGACIÓN DE SECCIONES =====
-      const allSections = ['notifications','mi-perfil','mis-compras','publicidad','centro-ayuda','contacto','reportar-problema','estado-servicio','seguridad'];
+      const allSections = ['notifications','mi-perfil','mis-compras','favoritos','publicidad','centro-ayuda','contacto','reportar-problema','estado-servicio','seguridad'];
 
       function showSection(name) {
         allSections.forEach(s => {
@@ -1463,11 +1507,186 @@
       function navigateToHash() {
         const section = window.location.hash.replace('#', '');
         if (section && allSections.includes(section)) {
+          if (section === 'favoritos') renderFavoritos();
           showSection(section);
         }
       }
       navigateToHash();
       window.addEventListener('hashchange', navigateToHash);
+
+      // ===== FAVORITOS =====
+      function renderFavoritos() {
+        const container = document.getElementById('favoritosContent');
+        const actions = document.getElementById('favoritosActions');
+        const countBadge = document.getElementById('favoritosCount');
+        if (!container) return;
+
+        let favs = [];
+        try { favs = JSON.parse(localStorage.getItem('daledealt_favorites') || '[]'); } catch(e) {}
+        if (!Array.isArray(favs)) favs = [];
+
+        // Actualizar contador y botones de acción
+        if (countBadge) countBadge.textContent = favs.length > 0 ? favs.length : '';
+        if (actions) actions.style.display = favs.length > 0 ? 'flex' : 'none';
+
+        if (favs.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state-container">
+              <div class="empty-state">
+                <div class="empty-state-icon"><i class="bi bi-heart"></i></div>
+                <p class="empty-state-title">No tenés favoritos todavía</p>
+                <p class="empty-state-text">Guardá productos y servicios que te interesen para encontrarlos rápido.</p>
+                <a href="../index.html" class="btn btn-primary">Explorar productos</a>
+              </div>
+            </div>`;
+          return;
+        }
+
+        function buildCard(f) {
+          const img = f.image || f.imageUrl || '../IMG/LOGO.png';
+          const price = f.priceText || (f.price != null ? '$ ' + Number(f.price).toLocaleString('es-AR') : '');
+          const hasDiscount = (f.discount && f.discount > 0) || !!f.originalPriceText;
+
+          // Stars
+          const fullStars = Math.floor(f.rating || 0);
+          const hasHalf = (f.rating || 0) % 1 >= 0.5;
+          let starsHTML = '';
+          for (let i = 0; i < fullStars; i++) starsHTML += '<i class="bi bi-star-fill"></i>';
+          if (hasHalf) starsHTML += '<i class="bi bi-star-half"></i>';
+          for (let i = 0; i < 5 - fullStars - (hasHalf ? 1 : 0); i++) starsHTML += '<i class="bi bi-star"></i>';
+          const ratingCount = f.ratingCount || f.reviewCount || '';
+
+          // Location
+          const location = f.location || '';
+
+          // Description
+          const desc = f.description ? (f.description.length > 80 ? f.description.slice(0,80)+'...' : f.description) : '';
+
+          // Seller / provider
+          const sellerData = f.seller || f.provider || null;
+          const sellerHTML = sellerData?.name ? `
+            <div class="product-provider">
+              <img src="${sellerData.avatar || '../IMG/LOGO.png'}" alt="${sellerData.name}" class="product-provider-avatar" onerror="this.src='../IMG/LOGO.png'" loading="lazy"/>
+              <span class="product-provider-name">${sellerData.name}</span>
+              ${sellerData.verified ? '<i class="bi bi-patch-check-fill product-provider-verified"></i>' : ''}
+            </div>` : '';
+
+          // Badges overlay (top-left: discount/custom, bottom-right: platform)
+          const badges = f.badges || [];
+          const customBadges = badges.filter(b => typeof b === 'object' && b.text);
+          const legacyBadges = badges.filter(b => typeof b === 'string');
+          const platformBadges = legacyBadges.filter(b => ['DESTACADO','MÁS VENDIDO','NUEVO','RECOMENDADO'].includes((b||'').toUpperCase()));
+          const topLeftInner = [
+            ...customBadges.map(b => `<span class="badge-custom" style="background:${b.color}">${b.text}</span>`),
+            hasDiscount && f.discount ? `<span class="badge-offer">-${f.discount}%</span>` : '',
+          ].filter(Boolean).join('');
+          const badgesOverlayHTML = topLeftInner ? `<div class="service-badges">${topLeftInner}</div>` : '';
+          const bottomRightHTML = platformBadges.map(b => `<span class="badge-featured">${b}</span>`).join('');
+
+          // Price HTML
+          const priceHTML = hasDiscount && f.originalPriceText ? `
+            <span class="product-current-price">${price}</span>
+            <span class="product-original-price">${f.originalPriceText}</span>` : `
+            <span class="product-current-price">${price}</span>`;
+
+          // Shipping badges
+          const shipping = f.shipping || null;
+          const shippingFreeHTML = shipping?.free ? `<span class="shipping-badge"><i class="bi bi-truck"></i> Envío gratis</span>` : '';
+          const shippingSpeedHTML = shipping?.speed === 'today'
+            ? `<span class="shipping-badge"><i class="bi bi-lightning-charge-fill"></i> Llega hoy</span>`
+            : shipping?.speed === 'tomorrow'
+              ? `<span class="shipping-badge"><i class="bi bi-clock-fill"></i> Llega mañana</span>` : '';
+
+          const cartData = JSON.stringify({id: f.id, title: f.title, price: f.price || 0, priceText: price, image: img}).replace(/"/g, '&quot;');
+          const safeTitle = (f.title || '').replace(/'/g, "\\'");
+          return `
+          <div class="product-card${hasDiscount ? ' has-offer' : ''}" style="cursor:default">
+            <div class="product-image-container">
+              <img src="${img}" alt="${f.title}" class="product-image active" onerror="this.src='../IMG/LOGO.png'" loading="lazy"/>
+              ${badgesOverlayHTML}
+              ${bottomRightHTML}
+              <div class="product-actions" style="opacity:1">
+                <button class="action-heart active" title="Quitar de favoritos"
+                  onclick="event.stopPropagation(); window.favoritesManager?.removeFromFavorites('${f.id}'); renderFavoritos();">
+                  <i class="bi bi-heart-fill"></i>
+                </button>
+              </div>
+            </div>
+            <div class="product-info">
+              <h3 class="product-title">${f.title}</h3>
+              ${sellerHTML}
+              ${desc ? `<p class="product-description">${desc}</p>` : ''}
+              <div class="product-meta-group">
+                <div class="product-rating">
+                  <div class="stars">${starsHTML}</div>
+                  ${ratingCount ? `<span class="reviews-count">${ratingCount}</span>` : ''}
+                  ${shippingFreeHTML}
+                </div>
+                <div class="product-location">
+                  ${location ? `<i class="bi bi-geo-alt-fill"></i><span>${location}</span>` : ''}
+                  ${shippingSpeedHTML}
+                </div>
+              </div>
+              <div class="product-pricing-wrapper">
+                <div class="product-pricing">
+                  ${priceHTML}
+                </div>
+                <button class="btn-add-to-cart"
+                  onclick="event.stopPropagation(); window.cartManager?.addItem(${cartData}); window.DaleDeal?.utils?.showNotification('${safeTitle} agregado al carrito','success');">
+                  <i class="bi bi-cart-plus me-1"></i>Agregar al carrito
+                </button>
+              </div>
+            </div>
+          </div>`;
+        }
+
+        const productos = favs.filter(f => f.type !== 'service');
+        const servicios = favs.filter(f => f.type === 'service');
+
+        let html = '';
+        if (productos.length > 0) {
+          html += `<div class="fav-section-label"><i class="bi bi-bag me-2"></i>Productos <span class="fav-section-count">${productos.length}</span></div>
+                   <div class="fav-cards-grid">${productos.map(buildCard).join('')}</div>`;
+        }
+        if (servicios.length > 0) {
+          html += `<div class="fav-section-label"${productos.length > 0 ? ' style="margin-top:28px"' : ''}><i class="bi bi-tools me-2"></i>Servicios <span class="fav-section-count">${servicios.length}</span></div>
+                   <div class="fav-cards-grid">${servicios.map(buildCard).join('')}</div>`;
+        }
+        container.innerHTML = html;
+      }
+
+      document.getElementById('favoritesLink')?.addEventListener('click', e => {
+        e.preventDefault();
+        renderFavoritos();
+        showSection('favoritos');
+      });
+
+      document.querySelector('.sidebar-nav-item[data-section="favoritos"]')?.addEventListener('click', () => renderFavoritos());
+
+      document.getElementById('btnClearFavoritos')?.addEventListener('click', () => {
+        if (!confirm('¿Borrar todos los favoritos?')) return;
+        localStorage.setItem('daledealt_favorites', '[]');
+        window.favoritesManager && (window.favoritesManager.favorites = []);
+        renderFavoritos();
+      });
+
+      document.getElementById('btnAddAllToCart')?.addEventListener('click', () => {
+        let favs = [];
+        try { favs = JSON.parse(localStorage.getItem('daledealt_favorites') || '[]'); } catch(e) {}
+        favs.forEach(f => window.cartManager?.addItem(f));
+        if (favs.length > 0) window.DaleDeal?.utils?.showNotification(`${favs.length} producto${favs.length > 1 ? 's' : ''} agregado${favs.length > 1 ? 's' : ''} al carrito`, 'success');
+      });
+
+      // ===== MIS COMPRAS: MENSAJE AL VENDEDOR =====
+      document.querySelectorAll('.btn-msg-seller').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const chatFloatBtn = document.getElementById('chatFloatBtn');
+          const panel = document.getElementById('chatFloatPanel');
+          if (chatFloatBtn && panel && !panel.classList.contains('chat-float-open')) {
+            chatFloatBtn.click();
+          }
+        });
+      });
     </script>
   </body>
 </html>

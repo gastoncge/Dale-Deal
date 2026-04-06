@@ -18,7 +18,12 @@ class CartManager {
   loadCart() {
     try {
       const cart = localStorage.getItem(this.storageKey);
-      return cart ? JSON.parse(cart) : [];
+      const items = cart ? JSON.parse(cart) : [];
+      // Filtrar items corruptos (sin título o precio inválido) que quedaron de versiones anteriores
+      return items.filter(item =>
+        item && item.id && item.title && item.title !== 'undefined' &&
+        (typeof item.price === 'number' ? !isNaN(item.price) : !!item.priceText)
+      );
     } catch (error) {
       DaleDeal.error("Error cargando carrito:", error);
       return [];

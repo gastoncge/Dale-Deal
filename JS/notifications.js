@@ -107,50 +107,54 @@ class NotificationManager {
 
   // Vincular eventos
   bindEvents() {
-    // Delegación en document — funciona aunque el header cargue async
-    document.addEventListener('click', (e) => {
-      // Filtros de notificaciones
-      const filterChip = e.target.closest('.filter-chip');
-      if (filterChip && filterChip.closest('.notifications-dropdown')) {
-        this.handleFilterChange(e);
-        return;
-      }
-
-      // Prevenir cierre del dropdown al clic en filtros/footer
-      if (e.target.closest('.notifications-filter') || e.target.closest('.notifications-footer')) {
-        e.stopPropagation();
-      }
-
-      // Clics en items de notificación (X, contenido, acciones)
-      if (e.target.closest('#notificationsDropdownBody')) {
-        e.stopImmediatePropagation();
-        this.handleNotificationClick(e);
-        return;
-      }
-
-      // Botones de acción del footer
-      if (e.target.closest('#markAllAsRead')) {
-        this.markAllAsRead();
-        return;
-      }
-      if (e.target.closest('#markSelectedAsRead')) {
-        this.markSelectedAsRead();
-        return;
-      }
-      if (e.target.closest('#viewAllNotifications')) {
-        this.viewAllNotifications();
-        return;
-      }
-    });
-
-    // Actualizar el dropdown cuando se abre (el evento burbujea desde el toggle)
+    // Cuando el dropdown se abre, registrar el handler de clicks en el propio menú.
+    // Al estar en un nodo hijo de document, dispara ANTES que el listener de Bootstrap
+    // en document, y stopPropagation() impide que Bootstrap cierre el dropdown.
     document.addEventListener('shown.bs.dropdown', (e) => {
       if (e.target && e.target.id === 'notificationBtn') {
+        const menu = document.querySelector('.notifications-dropdown');
+        if (menu && !menu._hasClickGuard) {
+          menu.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            this._handleMenuClick(ev);
+          });
+          menu._hasClickGuard = true;
+        }
         this.loadNotifications();
         this.renderNotifications();
         this.updateBadge();
       }
     });
+  }
+
+  // Maneja todos los clicks dentro del menú de notificaciones
+  _handleMenuClick(e) {
+    // Filtros
+    const filterChip = e.target.closest('.filter-chip');
+    if (filterChip) {
+      this.handleFilterChange(e);
+      return;
+    }
+
+    // Items de notificación (X, contenido, acciones)
+    if (e.target.closest('.notification-item')) {
+      this.handleNotificationClick(e);
+      return;
+    }
+
+    // Botones del footer
+    if (e.target.closest('#markAllAsRead')) {
+      this.markAllAsRead();
+      return;
+    }
+    if (e.target.closest('#markSelectedAsRead')) {
+      this.markSelectedAsRead();
+      return;
+    }
+    if (e.target.closest('#viewAllNotifications')) {
+      this.viewAllNotifications();
+      return;
+    }
   }
 
   // Manejar cambio de filtros
@@ -181,7 +185,6 @@ class NotificationManager {
     // Cerrar notificación
     if (target.closest('.notification-close')) {
       e.preventDefault();
-      e.stopPropagation();
       this.dismissNotification(notificationId);
     }
 
@@ -333,10 +336,12 @@ class NotificationManager {
 
     if (filteredNotifications.length === 0) {
       container.innerHTML = this.getEmptyState();
+      this.updateCounter();
+      this.updateActionButtons();
       return;
     }
 
-    container.innerHTML = filteredNotifications.map(notification => 
+    container.innerHTML = filteredNotifications.map(notification =>
       this.createNotificationHTML(notification)
     ).join('');
 
