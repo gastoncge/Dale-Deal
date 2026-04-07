@@ -398,7 +398,9 @@ class FavoritesManager {
 
   // Mostrar modal de favoritos
   showFavoritesModal() {
-    const modal = new bootstrap.Modal(document.getElementById('favoritesModal'));
+    const modalEl = document.getElementById('favoritesModal');
+    if (!modalEl) return;
+    const modal = new bootstrap.Modal(modalEl);
     this.renderFavoritesContent();
     modal.show();
   }
@@ -409,16 +411,18 @@ class FavoritesManager {
     const favoritesGrid = document.getElementById('favoritesGrid');
     const favoritesTotal = document.getElementById('favoritesTotal');
 
+    if (!favoritesGrid) return;
+
     if (this.favorites.length === 0) {
-      favoritesEmpty.style.display = 'block';
+      if (favoritesEmpty) favoritesEmpty.style.display = 'block';
       favoritesGrid.style.display = 'none';
-      favoritesTotal.textContent = '0';
+      if (favoritesTotal) favoritesTotal.textContent = '0';
       return;
     }
 
-    favoritesEmpty.style.display = 'none';
+    if (favoritesEmpty) favoritesEmpty.style.display = 'none';
     favoritesGrid.style.display = 'block';
-    favoritesTotal.textContent = this.favorites.length;
+    if (favoritesTotal) favoritesTotal.textContent = this.favorites.length;
 
     // Separar productos y servicios
     const products = this.favorites.filter(fav => fav.type === 'product');
@@ -695,7 +699,8 @@ class FavoritesManager {
       window.location.href = '../index.html';
     } else {
       // Ya estamos en el inicio, solo cerrar el modal y hacer scroll a productos
-      const modal = bootstrap.Modal.getInstance(document.getElementById('favoritesModal'));
+      const modalEl = document.getElementById('favoritesModal');
+      const modal = modalEl ? bootstrap.Modal.getInstance(modalEl) : null;
       if (modal) modal.hide();
       
       setTimeout(() => {
@@ -799,7 +804,8 @@ class FavoritesManager {
       }
     });
 
-    const modal = bootstrap.Modal.getInstance(document.getElementById('favoritesModal'));
+    const modalEl = document.getElementById('favoritesModal');
+    const modal = modalEl ? bootstrap.Modal.getInstance(modalEl) : null;
     if (modal) modal.hide();
     
     if (addedCount > 0) {

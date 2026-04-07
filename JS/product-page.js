@@ -909,13 +909,13 @@ class ProductPage {
         if (isImage) {
           const reader = new FileReader();
           reader.onload = e => {
-            attachPreview.innerHTML = `<img src="${e.target.result}" class="chat-attach-thumb" /><span class="chat-attach-name">${file.name}</span><button class="chat-attach-remove" id="chatAttachRemove"><i class="bi bi-x"></i></button>`;
-            document.getElementById('chatAttachRemove')?.addEventListener('click', () => { pendingFile = null; attachPreview.style.display = 'none'; updateSendBtn(); });
+            attachPreview.innerHTML = `<img src="${e.target.result}" class="chat-attach-thumb" /><span class="chat-attach-name">${file.name}</span><button class="chat-attach-remove"><i class="bi bi-x"></i></button>`;
+            attachPreview.querySelector('.chat-attach-remove')?.addEventListener('click', () => { pendingFile = null; attachPreview.style.display = 'none'; updateSendBtn(); });
           };
           reader.readAsDataURL(file);
         } else {
-          attachPreview.innerHTML = `<i class="bi bi-file-earmark-text chat-attach-file-icon"></i><span class="chat-attach-name">${file.name}</span><button class="chat-attach-remove" id="chatAttachRemove"><i class="bi bi-x"></i></button>`;
-          document.getElementById('chatAttachRemove')?.addEventListener('click', () => { pendingFile = null; attachPreview.style.display = 'none'; updateSendBtn(); });
+          attachPreview.innerHTML = `<i class="bi bi-file-earmark-text chat-attach-file-icon"></i><span class="chat-attach-name">${file.name}</span><button class="chat-attach-remove"><i class="bi bi-x"></i></button>`;
+          attachPreview.querySelector('.chat-attach-remove')?.addEventListener('click', () => { pendingFile = null; attachPreview.style.display = 'none'; updateSendBtn(); });
         }
       }
       updateSendBtn();
