@@ -1195,24 +1195,28 @@
 .products-main-content {
   flex: 1;
   min-width: 0;
+  padding: var(--spacing-4) var(--spacing-5);
 }
 
 .results-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  margin-bottom: var(--spacing-6);
-  padding: var(--spacing-4);
-  background: var(--white);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--gray-200);
+  margin-bottom: var(--spacing-4);
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
 }
 
 .results-count-container {
-  font-size: var(--font-size-base);
-  color: var(--gray-700);
-  font-weight: 600;
+  font-size: 13px;
+  color: var(--gray-400);
+  font-weight: 500;
+  background: var(--gray-100);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
 }
 
 .btn-toggle-filters {

@@ -941,7 +941,6 @@
   background: var(--white);
   border-radius: var(--radius-2xl);
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.18);
-  border: 1px solid var(--gray-200);
   overflow: hidden;
   transform: scale(0.85) translateY(16px);
   transform-origin: bottom right;
@@ -1207,9 +1206,7 @@
 }
 
 .service-card:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-2xl);
-  border-color: var(--primary-red-light);
+  box-shadow: var(--shadow-lg);
 }
 
 .service-card-image-container {
@@ -1227,7 +1224,7 @@
 }
 
 .service-card:hover .service-card-image {
-  transform: scale(1.1);
+  transform: none;
 }
 
 .service-card-badges {

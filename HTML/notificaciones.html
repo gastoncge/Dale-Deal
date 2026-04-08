@@ -1148,7 +1148,9 @@
       @media (max-width: 992px) { .fav-cards-grid { grid-template-columns: repeat(3, 1fr); } }
       @media (max-width: 768px) { .fav-cards-grid { grid-template-columns: repeat(2, 1fr); } }
       @media (max-width: 480px) { .fav-cards-grid { grid-template-columns: 1fr; } }
-      #view-favoritos .product-card { cursor: default; }
+      #view-favoritos .product-card { cursor: pointer; transition: box-shadow var(--transition-base) !important; }
+      #view-favoritos .product-card:hover { box-shadow: var(--shadow-lg); transform: none !important; }
+      #view-favoritos .product-card:hover .product-image { transform: none !important; }
       #view-favoritos .product-actions { opacity: 1 !important; }
       #view-favoritos .action-heart.active { background: var(--primary-red); color: #fff; }
 
@@ -1599,8 +1601,9 @@
 
           const cartData = JSON.stringify({id: f.id, title: f.title, price: f.price || 0, priceText: price, image: img}).replace(/"/g, '&quot;');
           const safeTitle = (f.title || '').replace(/'/g, "\\'");
+          const detailHref = f.type === 'service' ? `./servicio.html?id=${f.id}` : `./producto.html?id=${f.id}`;
           return `
-          <div class="product-card${hasDiscount ? ' has-offer' : ''}" style="cursor:default">
+          <div class="product-card${hasDiscount ? ' has-offer' : ''}" onclick="window.location.href='${detailHref}'">
             <div class="product-image-container">
               <img src="${img}" alt="${f.title}" class="product-image active" onerror="this.src='../IMG/LOGO.png'" loading="lazy"/>
               ${badgesOverlayHTML}
