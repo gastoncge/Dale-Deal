@@ -3027,20 +3027,7 @@
           card.setAttribute('data-aos-delay', (index % 12) * 50);
 
           // Renderizar estrellas
-          const fullStars = Math.floor(product.rating);
-          const hasHalfStar = product.rating % 1 >= 0.5;
-          let starsHTML = '';
-
-          for (let i = 0; i < fullStars; i++) {
-            starsHTML += '<i class="bi bi-star-fill"></i>';
-          }
-          if (hasHalfStar) {
-            starsHTML += '<i class="bi bi-star-half"></i>';
-          }
-          const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-          for (let i = 0; i < emptyStars; i++) {
-            starsHTML += '<i class="bi bi-star"></i>';
-          }
+          const starsHTML = DaleDeal.utils.renderStars(product.rating);
 
           // Create badges
           // Superior izquierda: ofertas + personalizados

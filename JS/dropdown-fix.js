@@ -159,6 +159,7 @@ let dropdownManager;
 function initializeDropdowns() {
   if (!dropdownManager) {
     dropdownManager = new DropdownManager();
+    window.dropdownManager = dropdownManager;
   }
 }
 
@@ -168,5 +169,4 @@ if (document.readyState === "loading") {
   initializeDropdowns();
 }
 
-window.dropdownManager = dropdownManager;
 window.DropdownManager = DropdownManager;

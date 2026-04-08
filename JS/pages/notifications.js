@@ -21,17 +21,17 @@ class NotificationsCenterManager {
 
   // Cargar notificaciones desde localStorage o datos de ejemplo
   loadNotifications() {
-    const stored = localStorage.getItem('daledealt_notifications');
+    const stored = localStorage.getItem('daledealer_notifications');
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
         this.notifications = Array.isArray(parsed) ? parsed : [];
         if (!Array.isArray(parsed)) {
-          localStorage.removeItem('daledealt_notifications');
+          localStorage.removeItem('daledealer_notifications');
         }
       } catch (e) {
         console.error('Error al parsear notificaciones del localStorage:', e);
-        localStorage.removeItem('daledealt_notifications');
+        localStorage.removeItem('daledealer_notifications');
         this.notifications = [];
       }
     } else {
@@ -218,7 +218,7 @@ class NotificationsCenterManager {
 
   // Guardar notificaciones en localStorage
   saveNotifications() {
-    localStorage.setItem('daledealt_notifications', JSON.stringify(this.notifications));
+    localStorage.setItem('daledealer_notifications', JSON.stringify(this.notifications));
   }
 
   // Vincular eventos
@@ -541,10 +541,8 @@ class NotificationsCenterManager {
       if (emptyState) emptyState.style.display = 'none';
       if (loadMoreContainer) loadMoreContainer.style.display = 'none';
 
-      setTimeout(() => {
-        if (loadingState) loadingState.style.display = 'none';
-        doRender();
-      }, 500);
+      if (loadingState) loadingState.style.display = 'none';
+      doRender();
       return;
     }
 
@@ -638,52 +636,7 @@ class NotificationsCenterManager {
 
   // Mostrar toast de notificación
   showToast(message, type = 'info') {
-    const toastId = 'toast_' + Date.now();
-    const bgColors = {
-      success: 'bg-success',
-      warning: 'bg-warning',
-      error: 'bg-danger',
-      info: 'bg-primary'
-    };
-
-    const icons = {
-      success: 'check-circle',
-      warning: 'exclamation-triangle',
-      error: 'x-circle',
-      info: 'info-circle'
-    };
-
-    const toastHTML = `
-      <div class="toast align-items-center text-white ${bgColors[type]} border-0"
-           role="alert" aria-live="assertive" aria-atomic="true" id="${toastId}">
-        <div class="d-flex">
-          <div class="toast-body">
-            <i class="bi bi-${icons[type]} me-2"></i>
-            ${message}
-          </div>
-          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-        </div>
-      </div>
-    `;
-
-    let toastContainer = document.getElementById('toast-container');
-    if (!toastContainer) {
-      toastContainer = document.createElement('div');
-      toastContainer.id = 'toast-container';
-      toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-      toastContainer.style.zIndex = '9999';
-      document.body.appendChild(toastContainer);
-    }
-
-    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
-
-    const toastElement = document.getElementById(toastId);
-    const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
-    toast.show();
-
-    toastElement.addEventListener('hidden.bs.toast', () => {
-      toastElement.remove();
-    });
+    DaleDeal.utils.showNotification(message, type);
   }
 }
 

@@ -104,8 +104,8 @@
     const div = document.createElement('div');
     div.className = `chat-message ${isSent ? 'sent' : 'received'}`;
     div.innerHTML = isSent
-      ? `<div class="chat-bubble"><p class="chat-text">${text}</p><div class="chat-meta"><span class="chat-time">${t}</span><span class="chat-msg-status chat-status-sent">Enviado</span></div></div>`
-      : `<div class="chat-bubble"><p class="chat-text">${text}</p><span class="chat-time">${t}</span></div>`;
+      ? `<div class="chat-bubble"><p class="chat-text">${DaleDeal.utils.escapeHtml(text)}</p><div class="chat-meta"><span class="chat-time">${t}</span><span class="chat-msg-status chat-status-sent">Enviado</span></div></div>`
+      : `<div class="chat-bubble"><p class="chat-text">${DaleDeal.utils.escapeHtml(text)}</p><span class="chat-time">${t}</span></div>`;
     el.appendChild(div);
     el.scrollTop = el.scrollHeight;
     return div;

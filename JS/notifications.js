@@ -19,17 +19,17 @@ class NotificationManager {
 
   // Cargar notificaciones desde localStorage o datos por defecto
   loadNotifications() {
-    const stored = localStorage.getItem('daledealt_notifications');
+    const stored = localStorage.getItem('daledealer_notifications');
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
         this.notifications = Array.isArray(parsed) ? parsed : [];
         if (!Array.isArray(parsed)) {
-          localStorage.removeItem('daledealt_notifications');
+          localStorage.removeItem('daledealer_notifications');
         }
       } catch (e) {
         console.error('Error al parsear notificaciones del localStorage:', e);
-        localStorage.removeItem('daledealt_notifications');
+        localStorage.removeItem('daledealer_notifications');
         this.notifications = [];
       }
     } else {
@@ -102,7 +102,7 @@ class NotificationManager {
 
   // Guardar notificaciones en localStorage
   saveNotifications() {
-    localStorage.setItem('daledealt_notifications', JSON.stringify(this.notifications));
+    localStorage.setItem('daledealer_notifications', JSON.stringify(this.notifications));
   }
 
   // Vincular eventos
@@ -440,42 +440,7 @@ class NotificationManager {
 
   // Mostrar toast de notificación
   showToast(message, type = 'info') {
-    // Crear toast dinámicamente
-    const toastId = 'toast_' + Date.now();
-    const toastHTML = `
-      <div class="toast align-items-center text-white bg-${type === 'success' ? 'success' : type === 'warning' ? 'warning' : type === 'error' ? 'danger' : 'primary'} border-0" 
-           role="alert" aria-live="assertive" aria-atomic="true" id="${toastId}">
-        <div class="d-flex">
-          <div class="toast-body">
-            <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : type === 'error' ? 'x-circle' : 'info-circle'} me-2"></i>
-            ${message}
-          </div>
-          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-        </div>
-      </div>
-    `;
-
-    // Agregar toast al DOM
-    let toastContainer = document.getElementById('toast-container');
-    if (!toastContainer) {
-      toastContainer = document.createElement('div');
-      toastContainer.id = 'toast-container';
-      toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-      toastContainer.style.zIndex = '9999';
-      document.body.appendChild(toastContainer);
-    }
-
-    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
-
-    // Mostrar toast
-    const toastElement = document.getElementById(toastId);
-    const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
-    toast.show();
-
-    // Eliminar del DOM después de ocultarse
-    toastElement.addEventListener('hidden.bs.toast', () => {
-      toastElement.remove();
-    });
+    DaleDeal.utils.showNotification(message, type);
   }
 
   // Agregar nueva notificación (método público)

@@ -6,65 +6,7 @@
  * Renderiza las estrellas de rating
  */
 function renderStars(rating) {
-  const fullStars = Math.floor(rating);
-  const hasHalfStar = rating % 1 >= 0.5;
-  let starsHTML = '';
-
-  // Estrellas llenas
-  for (let i = 0; i < fullStars; i++) {
-    starsHTML += '<i class="bi bi-star-fill"></i>';
-  }
-
-  // Media estrella
-  if (hasHalfStar) {
-    starsHTML += '<i class="bi bi-star-half"></i>';
-  }
-
-  // Estrellas vacías
-  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-  for (let i = 0; i < emptyStars; i++) {
-    starsHTML += '<i class="bi bi-star"></i>';
-  }
-
-  return starsHTML;
-}
-
-/**
- * Renderiza los badges de envío según los datos del producto
- */
-function renderShippingBadges(shipping) {
-  if (!shipping) return '';
-
-  let badgesHTML = '';
-
-  // Badge de envío gratis
-  if (shipping.free) {
-    badgesHTML += `
-      <div class="shipping-badge shipping-free">
-        <i class="bi bi-truck"></i>
-        <span>Envío gratis</span>
-      </div>
-    `;
-  }
-
-  // Badge de velocidad de entrega
-  if (shipping.speed === 'today') {
-    badgesHTML += `
-      <div class="shipping-badge shipping-fast">
-        <i class="bi bi-lightning-charge-fill"></i>
-        <span>Llega hoy</span>
-      </div>
-    `;
-  } else if (shipping.speed === 'tomorrow') {
-    badgesHTML += `
-      <div class="shipping-badge shipping-fast">
-        <i class="bi bi-clock-fill"></i>
-        <span>Llega mañana</span>
-      </div>
-    `;
-  }
-
-  return badgesHTML ? `<div class="shipping-badges">${badgesHTML}</div>` : '';
+  return DaleDeal.utils.renderStars(rating);
 }
 
 /**
@@ -326,8 +268,7 @@ if (typeof window !== 'undefined') {
     loadProducts,
     renderProductCard,
     initializeProductListeners,
-    renderStars,
-    renderShippingBadges
+    renderStars
   };
 }
 

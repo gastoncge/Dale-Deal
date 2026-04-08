@@ -808,13 +808,7 @@ class ServicePage {
 
   // ── Helpers ────────────────────────────────────────────────────────────────
   _renderStars(rating) {
-    let html = '';
-    for (let i = 1; i <= 5; i++) {
-      if (i <= rating) html += '<i class="bi bi-star-fill"></i>';
-      else if (i - 0.5 <= rating) html += '<i class="bi bi-star-half"></i>';
-      else html += '<i class="bi bi-star"></i>';
-    }
-    return html;
+    return DaleDeal.utils.renderStars(rating);
   }
 
   _formatPrice(price) {
@@ -909,9 +903,7 @@ class ServicePage {
   }
 
   _escapeHtml(text) {
-    const div = document.createElement('div');
-    div.appendChild(document.createTextNode(text));
-    return div.innerHTML;
+    return DaleDeal.utils.escapeHtml(text);
   }
 
   _showNotification(message, type = 'info') {

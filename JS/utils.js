@@ -363,6 +363,39 @@ DaleDeal.utils.getBootstrapAlertClass = (type) => {
   return classes[type] || "alert-info";
 };
 
+// ===== UTILIDADES DE SEGURIDAD =====
+/**
+ * Escapa caracteres HTML para evitar XSS en interpolaciones de innerHTML.
+ * Usar siempre que se inserte texto de usuario en innerHTML.
+ */
+DaleDeal.utils.escapeHtml = (str) => {
+  if (typeof str !== 'string') return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+};
+
+// ===== UTILIDADES DE UI =====
+/**
+ * Renderiza estrellas de rating como HTML de Bootstrap Icons.
+ * Fuente canónica — usar en lugar de implementaciones locales en cada módulo.
+ * @param {number} rating - Valor entre 0 y 5 (acepta decimales tipo 4.5)
+ * @returns {string} HTML string con los íconos de estrellas
+ */
+DaleDeal.utils.renderStars = (rating) => {
+  const fullStars = Math.floor(rating);
+  const hasHalf = rating % 1 >= 0.5;
+  let html = '';
+  for (let i = 0; i < fullStars; i++) html += '<i class="bi bi-star-fill"></i>';
+  if (hasHalf) html += '<i class="bi bi-star-half"></i>';
+  const empty = 5 - fullStars - (hasHalf ? 1 : 0);
+  for (let i = 0; i < empty; i++) html += '<i class="bi bi-star"></i>';
+  return html;
+};
+
 // ===== INICIALIZACIÓN =====
 DaleDeal.utils.init = () => {
   DaleDeal.state.cart = DaleDeal.utils.storage.get("cart", []);

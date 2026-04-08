@@ -292,8 +292,6 @@ class ProductFilters {
     container.innerHTML = noResultsHTML;
   }
 
-  // Ocultar mensaje sin resultados
-  // Actualizar contador de resultados
   updateResultsCounter() {
     let counterEl = document.getElementById('resultsCounter');
     if (!counterEl) {
@@ -321,8 +319,8 @@ class ProductFilters {
   showSortOptions() {
     const sortOptions = [
       { value: 'featured', label: 'Destacados' },
-      { value: 'price-asc', label: 'Menor precio' },
-      { value: 'price-desc', label: 'Mayor precio' },
+      { value: 'price-low', label: 'Menor precio' },
+      { value: 'price-high', label: 'Mayor precio' },
       { value: 'rating', label: 'Mejor valorados' },
       { value: 'newest', label: 'Más nuevos' },
       { value: 'name', label: 'A-Z' }
@@ -648,11 +646,7 @@ class ProductFilters {
 
   // Formatear precio
   formatPrice(price) {
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'ARS',
-      minimumFractionDigits: 0
-    }).format(price);
+    return DaleDeal.utils.formatCurrency(price);
   }
 
   // Crear modal genérico
@@ -705,49 +699,19 @@ class ProductFilters {
       return;
     }
 
-    // Limpiar filtros después de animación
-    setTimeout(() => {
-      this.currentCategory = 'all';
-      this.currentSort = 'featured';
-      this.searchQuery = '';
-      
-      // Actualizar UI
-      document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
-      document.querySelector('[data-category="all"]')?.classList.add('active');
-      
-      const searchInput = document.getElementById('searchInput');
-      if (searchInput) searchInput.value = '';
+    this.currentCategory = 'all';
+    this.currentSort = 'featured';
+    this.searchQuery = '';
 
-      this.filterAndRender();
-      this.closeModal();
+    // Actualizar UI
+    document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelector('[data-category="all"]')?.classList.add('active');
 
-    }, 800);
-  }
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.value = '';
 
-  // Obtener nombre de categoría
-  getCategoryName() {
-    const categories = {
-      'all': 'Todos',
-      'electronics': 'Electrónicos',
-      'fashion': 'Moda',
-      'home': 'Hogar',
-      'sports': 'Deportes',
-      'books': 'Libros'
-    };
-    return categories[this.currentCategory] || 'Todos';
-  }
-
-  // Obtener nombre de ordenamiento
-  getSortName() {
-    const sorts = {
-      'featured': 'Destacados',
-      'price-low': 'Menor precio',
-      'price-high': 'Mayor precio',
-      'rating': 'Mejor valorados',
-      'newest': 'Más nuevos',
-      'name': 'A-Z'
-    };
-    return sorts[this.currentSort] || 'Destacados';
+    this.filterAndRender();
+    this.closeModal();
   }
 
   // Mostrar notificación usando el sistema centralizado

@@ -5,7 +5,7 @@
 
 class FavoritesManager {
   constructor() {
-    this.storageKey = 'daledealt_favorites';
+    this.storageKey = 'daledealer_favorites';
     this.favorites = this.loadFavorites();
     this.init();
   }
@@ -187,12 +187,7 @@ class FavoritesManager {
 
   // Formatear precio
   formatPrice(price) {
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'ARS',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
+    return DaleDeal.utils.formatCurrency(price);
   }
 
   // Extraer datos del producto
@@ -714,17 +709,7 @@ class FavoritesManager {
 
   // Renderizar estrellas
   renderStars(rating) {
-    let stars = '';
-    for (let i = 1; i <= 5; i++) {
-      if (i <= rating) {
-        stars += '<i class="bi bi-star-fill"></i>';
-      } else if (i - 0.5 <= rating) {
-        stars += '<i class="bi bi-star-half"></i>';
-      } else {
-        stars += '<i class="bi bi-star"></i>';
-      }
-    }
-    return stars;
+    return DaleDeal.utils.renderStars(rating);
   }
 
   // Agregar al carrito desde favoritos

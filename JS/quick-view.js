@@ -415,17 +415,7 @@ class QuickViewManager {
 
   // Renderizar estrellas
   renderStars(rating) {
-    let stars = '';
-    for (let i = 1; i <= 5; i++) {
-      if (i <= rating) {
-        stars += '<i class="bi bi-star-fill"></i>';
-      } else if (i - 0.5 <= rating) {
-        stars += '<i class="bi bi-star-half"></i>';
-      } else {
-        stars += '<i class="bi bi-star"></i>';
-      }
-    }
-    return stars;
+    return DaleDeal.utils.renderStars(rating);
   }
 
   // Cerrar vista rápida
@@ -439,38 +429,7 @@ class QuickViewManager {
 
   // Mostrar toast
   showToast(message, type = 'info') {
-    const toastId = 'toast_' + Date.now();
-    const toastHTML = `
-      <div class="toast align-items-center text-white bg-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'primary'} border-0" 
-           role="alert" aria-live="assertive" aria-atomic="true" id="${toastId}">
-        <div class="d-flex">
-          <div class="toast-body">
-            <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : 'info-circle'} me-2"></i>
-            ${message}
-          </div>
-          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-        </div>
-      </div>
-    `;
-
-    let toastContainer = document.getElementById('toast-container');
-    if (!toastContainer) {
-      toastContainer = document.createElement('div');
-      toastContainer.id = 'toast-container';
-      toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-      toastContainer.style.zIndex = '9999';
-      document.body.appendChild(toastContainer);
-    }
-
-    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
-
-    const toastElement = document.getElementById(toastId);
-    const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
-    toast.show();
-
-    toastElement.addEventListener('hidden.bs.toast', () => {
-      toastElement.remove();
-    });
+    DaleDeal.utils.showNotification(message, type);
   }
 }
 

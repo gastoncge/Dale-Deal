@@ -1524,7 +1524,7 @@
         if (!container) return;
 
         let favs = [];
-        try { favs = JSON.parse(localStorage.getItem('daledealt_favorites') || '[]'); } catch(e) {}
+        try { favs = JSON.parse(localStorage.getItem('daledealer_favorites') || '[]'); } catch(e) {}
         if (!Array.isArray(favs)) favs = [];
 
         // Actualizar contador y botones de acción
@@ -1668,14 +1668,14 @@
 
       document.getElementById('btnClearFavoritos')?.addEventListener('click', () => {
         if (!confirm('¿Borrar todos los favoritos?')) return;
-        localStorage.setItem('daledealt_favorites', '[]');
+        localStorage.setItem('daledealer_favorites', '[]');
         window.favoritesManager && (window.favoritesManager.favorites = []);
         renderFavoritos();
       });
 
       document.getElementById('btnAddAllToCart')?.addEventListener('click', () => {
         let favs = [];
-        try { favs = JSON.parse(localStorage.getItem('daledealt_favorites') || '[]'); } catch(e) {}
+        try { favs = JSON.parse(localStorage.getItem('daledealer_favorites') || '[]'); } catch(e) {}
         favs.forEach(f => window.cartManager?.addItem(f));
         if (favs.length > 0) window.DaleDeal?.utils?.showNotification(`${favs.length} producto${favs.length > 1 ? 's' : ''} agregado${favs.length > 1 ? 's' : ''} al carrito`, 'success');
       });

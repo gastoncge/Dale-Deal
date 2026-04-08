@@ -178,7 +178,6 @@ class CartManager {
     // Actualizar total
     if (cartTotal) {
       const totalPrice = this.getTotalPrice();
-      DaleDeal.log('Total calculado:', totalPrice); // Debug
       cartTotal.textContent = this.formatPrice(totalPrice);
     }
 
@@ -242,26 +241,7 @@ class CartManager {
 
   // Formatear precio
   formatPrice(price) {
-    // Usar la función global de utils si está disponible
-    if (window.DaleDeal?.utils?.formatPrice) {
-      const numPrice = typeof price === "string" 
-        ? Number.parseFloat(price.replace(/[^0-9.-]+/g, "")) 
-        : price;
-      return window.DaleDeal.utils.formatPrice(numPrice);
-    }
-
-    // Fallback
-    const numPrice =
-      typeof price === "string"
-        ? Number.parseFloat(price.replace(/[^0-9.-]+/g, ""))
-        : price;
-
-    return new Intl.NumberFormat("es-AR", {
-      style: "currency",
-      currency: "ARS",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(numPrice);
+    return DaleDeal.utils.formatCurrency(price);
   }
 
   // Vincular eventos

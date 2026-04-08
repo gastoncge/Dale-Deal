@@ -697,7 +697,7 @@ class ProductPage {
       const id = String(this.currentProduct.id);
       let recent = this.getRecentlyViewed().filter(x => x !== id);
       recent.unshift(id);
-      localStorage.setItem('daledealt_recently_viewed', JSON.stringify(recent.slice(0, 10)));
+      localStorage.setItem('daledealer_recently_viewed', JSON.stringify(recent.slice(0, 10)));
     } catch (err) {
       DaleDeal.error('Error guardando reciente:', err);
     }
@@ -705,7 +705,7 @@ class ProductPage {
 
   getRecentlyViewed() {
     try {
-      const raw = localStorage.getItem('daledealt_recently_viewed');
+      const raw = localStorage.getItem('daledealer_recently_viewed');
       return raw ? JSON.parse(raw) : [];
     } catch {
       return [];
@@ -761,11 +761,7 @@ class ProductPage {
 
   // ── Helpers ────────────────────────────────────────────────────────────────
   formatPrice(price) {
-    if (window.DaleDeal?.utils?.formatPrice) return window.DaleDeal.utils.formatPrice(price);
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency', currency: 'ARS',
-      minimumFractionDigits: 0, maximumFractionDigits: 0
-    }).format(price);
+    return DaleDeal.utils.formatCurrency(price);
   }
 
   setButtonLoading(button, isLoading) {
@@ -1043,7 +1039,7 @@ class ProductPage {
 
   _chatTimeAgo(minutesAgo) { const d = new Date(Date.now() - minutesAgo * 60 * 1000); return d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }); }
   _chatTimeNow() { return new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }); }
-  _escapeHtml(text) { const d = document.createElement('div'); d.appendChild(document.createTextNode(text)); return d.innerHTML; }
+  _escapeHtml(text) { return DaleDeal.utils.escapeHtml(text); }
 }
 
 // ── Bootstrap ────────────────────────────────────────────────────────────────

@@ -381,17 +381,7 @@ class AuthManager {
   }
 
   calculatePasswordStrength(password) {
-    // Usar la función global de utils si está disponible
-    if (window.DaleDeal?.utils?.calculatePasswordStrength) {
-      return window.DaleDeal.utils.calculatePasswordStrength(password);
-    }
-    
-    // Fallback simple si utils no está disponible
-    const length = password.length;
-    if (length === 0) return { score: 0, text: "Mínimo 8 caracteres", class: "" };
-    if (length < 8) return { score: 20, text: "Débil", class: "weak" };
-    if (length < 12) return { score: 60, text: "Media", class: "medium" };
-    return { score: 90, text: "¡Excelente!", class: "strong" };
+    return DaleDeal.utils.calculatePasswordStrength(password);
   }
 
   updatePasswordStrengthUI(strength, bar, text) {
