@@ -280,7 +280,7 @@ DaleDeal.utils.showAlert = (message, type, config) => {
 /**
  * Crear contenedor de notificaciones tipo Alert
  */
-DaleDeal.utils.createNotificationContainer = (position = 'top-right') => {
+DaleDeal.utils.createNotificationContainer = (position = 'bottom-right') => {
   const container = document.createElement("div");
   container.className = "notification-container position-fixed";
   container.id = "notificationContainer";
@@ -288,13 +288,13 @@ DaleDeal.utils.createNotificationContainer = (position = 'top-right') => {
   const positions = {
     'top-right': 'top: 20px; right: 20px;',
     'top-left': 'top: 20px; left: 20px;',
-    'bottom-right': 'bottom: 20px; right: 20px;',
-    'bottom-left': 'bottom: 20px; left: 20px;'
+    'bottom-right': 'bottom: 28px; right: 128px;',
+    'bottom-left': 'bottom: 28px; left: 20px;'
   };
 
   container.style.cssText = `
-    ${positions[position] || positions['top-right']}
-    z-index: 1055;
+    ${positions[position] || positions['bottom-right']}
+    z-index: 9999;
     max-width: 350px;
   `;
 
@@ -361,6 +361,39 @@ DaleDeal.utils.getBootstrapAlertClass = (type) => {
     info: "alert-info",
   };
   return classes[type] || "alert-info";
+};
+
+// ===== UTILIDADES DE SEGURIDAD =====
+/**
+ * Escapa caracteres HTML para evitar XSS en interpolaciones de innerHTML.
+ * Usar siempre que se inserte texto de usuario en innerHTML.
+ */
+DaleDeal.utils.escapeHtml = (str) => {
+  if (typeof str !== 'string') return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+};
+
+// ===== UTILIDADES DE UI =====
+/**
+ * Renderiza estrellas de rating como HTML de Bootstrap Icons.
+ * Fuente canónica — usar en lugar de implementaciones locales en cada módulo.
+ * @param {number} rating - Valor entre 0 y 5 (acepta decimales tipo 4.5)
+ * @returns {string} HTML string con los íconos de estrellas
+ */
+DaleDeal.utils.renderStars = (rating) => {
+  const fullStars = Math.floor(rating);
+  const hasHalf = rating % 1 >= 0.5;
+  let html = '';
+  for (let i = 0; i < fullStars; i++) html += '<i class="bi bi-star-fill"></i>';
+  if (hasHalf) html += '<i class="bi bi-star-half"></i>';
+  const empty = 5 - fullStars - (hasHalf ? 1 : 0);
+  for (let i = 0; i < empty; i++) html += '<i class="bi bi-star"></i>';
+  return html;
 };
 
 // ===== INICIALIZACIÓN =====

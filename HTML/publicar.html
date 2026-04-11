@@ -7,6 +7,7 @@
 
     <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
     <link rel="stylesheet" href="../CSS/variables.css" />
@@ -118,6 +119,41 @@
       .image-url-list { display: flex; flex-direction: column; gap: 0.5rem; }
       .image-url-row { display: flex; gap: 0.5rem; align-items: center; }
       .image-url-row .form-control { flex: 1; }
+
+      .media-upload-area {
+        border: 2px dashed var(--gray-300);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: var(--gray-50);
+        position: relative;
+      }
+      .media-upload-area:hover, .media-upload-area.dragover {
+        border-color: var(--primary-red);
+        background: var(--primary-red-light);
+      }
+      .media-upload-area input[type="file"] {
+        position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+      }
+      .media-upload-icon { font-size: 2rem; color: var(--gray-400); margin-bottom: 0.5rem; }
+      .media-upload-text { color: var(--gray-500); font-size: 0.9rem; }
+      .media-upload-text strong { color: var(--primary-red); }
+      .media-previews { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem; }
+      .media-preview-item {
+        position: relative; width: 100px; height: 100px; border-radius: 8px; overflow: hidden;
+        border: 1.5px solid var(--gray-200);
+      }
+      .media-preview-item img, .media-preview-item video {
+        width: 100%; height: 100%; object-fit: cover;
+      }
+      .media-preview-remove {
+        position: absolute; top: 3px; right: 3px;
+        background: rgba(0,0,0,0.6); color: white; border: none;
+        border-radius: 50%; width: 22px; height: 22px; font-size: 0.7rem;
+        cursor: pointer; display: flex; align-items: center; justify-content: center;
+      }
       .btn-remove-image {
         background: none; border: none;
         color: var(--error); font-size: 1.1rem;
@@ -176,12 +212,211 @@
         margin-bottom: 1.5rem;
       }
       .success-msg i { font-size: 1.5rem; color: var(--success); }
+
+      /* Sección publicidad */
+      .promo-section { background: var(--gray-50); border-top: 1px solid var(--gray-100); }
+      .promo-badge {
+        display: inline-block; background: var(--primary-red-light); color: var(--primary-red);
+        font-weight: 700; font-size: 0.85rem; padding: 0.35rem 1rem; border-radius: 20px; margin-bottom: 1rem;
+      }
+      .promo-title { font-size: 1.8rem; font-weight: 800; color: var(--gray-800); margin-bottom: 0.5rem; }
+      .promo-subtitle { color: var(--gray-500); font-size: 1rem; }
+
+      .plan-card {
+        background: white; border-radius: 16px; padding: 2rem 1.5rem;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06); border: 2px solid transparent;
+        height: 100%; display: flex; flex-direction: column; position: relative;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .plan-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+      .plan-card-featured { border-color: var(--primary-red); }
+      .plan-badge-rec {
+        position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+        background: var(--primary-red); color: white; font-size: 0.75rem; font-weight: 700;
+        padding: 0.25rem 1rem; border-radius: 20px; white-space: nowrap;
+      }
+      .plan-header { text-align: center; margin-bottom: 1.5rem; }
+      .plan-icon {
+        width: 56px; height: 56px; border-radius: 50%; background: var(--gray-100);
+        display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+        margin: 0 auto 0.75rem;
+      }
+      .plan-icon-blue { background: #e8f4fd; color: #009ee3; }
+      .plan-icon-red { background: var(--primary-red-light); color: var(--primary-red); }
+      .plan-name { font-weight: 700; font-size: 1.1rem; color: var(--gray-800); margin-bottom: 0.5rem; }
+      .plan-price { font-size: 1.8rem; font-weight: 800; color: var(--gray-900); }
+      .plan-price span { font-size: 0.9rem; font-weight: 400; color: var(--gray-400); }
+      .plan-features { list-style: none; padding: 0; margin: 0 0 1.5rem; flex: 1; }
+      .plan-features li { display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 0; font-size: 0.9rem; color: var(--gray-600); }
+      .plan-features li i { font-size: 0.9rem; flex-shrink: 0; }
+      .plan-btn { width: 100%; padding: 0.7rem; border-radius: 10px; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; }
+      .plan-btn-outline { background: none; border: 2px solid var(--gray-200); color: var(--gray-400); cursor: default; }
+      .plan-btn-primary { background: #e8f4fd; color: #009ee3; }
+      .plan-btn-primary:hover { background: #009ee3; color: white; }
+      .plan-btn-red { background: var(--gradient-primary); color: white; position: relative; overflow: hidden; }
+      .plan-btn-red:hover { transform: translateY(-2px); box-shadow: var(--shadow-xl); }
+      .plan-btn-red::before { content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s; pointer-events: none; z-index: 1; }
+      .plan-btn-red:hover::before { left: 100%; }
+
+      /* Modal de pago */
+      .payment-methods { display: flex; flex-direction: column; gap: 0.75rem; }
+      .payment-option {
+        display: flex; align-items: center; gap: 1rem; padding: 0.9rem 1rem;
+        border: 1.5px solid var(--gray-200); border-radius: 10px; cursor: pointer;
+        transition: border-color 0.2s; position: relative;
+      }
+      .payment-option:has(input:checked) { border-color: var(--primary-red); background: var(--primary-red-light); }
+      .payment-option input { position: absolute; opacity: 0; }
+      .payment-content { display: flex; align-items: center; gap: 0.75rem; flex: 1; }
+      .payment-content div { display: flex; flex-direction: column; }
+      .payment-content strong { font-size: 0.9rem; }
+      .payment-content small { color: var(--gray-400); font-size: 0.8rem; }
+      .payment-icon { font-size: 1.5rem; }
+      .payment-check { display: none; color: var(--primary-red); font-size: 1.1rem; }
+      .badge-custom-preview {
+        display: inline-block; color: white; font-size: 0.65rem; font-weight: 700;
+        padding: 4px 8px; border-radius: 4px; text-transform: uppercase;
+        white-space: nowrap; letter-spacing: 0.5px; max-width: 100%;
+        overflow: hidden; text-overflow: ellipsis;
+      }
+      .payment-option:has(input:checked) .payment-check { display: block; }
+      .pago-resumen {
+        background: var(--gray-50); border-radius: 10px; padding: 1rem;
+        border: 1px solid var(--gray-100);
+      }
     </style>
   </head>
 
   <body>
-    <!-- Navbar cargado por component-loader -->
-    <div id="navbar-placeholder"></div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
+      <div class="container-fluid px-4">
+        <!-- Logo -->
+        <a class="navbar-brand" href="../index.html">
+          <img src="../IMG/LOGO-2.png" alt="Dale Deal" class="logo-navbar" />
+          <span class="brand-text">DALE DEAL</span>
+        </a>
+
+        <!-- Search Bar -->
+        <div class="search-container mx-auto">
+          <div class="search-wrapper">
+            <i class="bi bi-search search-icon"></i>
+            <input type="text" class="search-input" placeholder="¿Qué estás buscando hoy?" id="searchInput" />
+          </div>
+        </div>
+
+        <!-- User Actions -->
+        <div class="navbar-actions">
+          <!-- Products Link -->
+          <div class="action-item">
+            <a href="./productos.html" class="action-link" title="Productos">
+              <i class="bi bi-bag me-1"></i>
+              <span class="action-text">Productos</span>
+            </a>
+          </div>
+
+          <!-- Services Link -->
+          <div class="action-item">
+            <a href="./servicios.html" class="action-link" title="Servicios Profesionales">
+              <i class="bi bi-tools me-1"></i>
+              <span class="action-text">Servicios</span>
+            </a>
+          </div>
+
+          <!-- Notifications -->
+          <div class="action-item dropdown">
+            <button class="action-btn" id="notificationBtn" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" title="Notificaciones">
+              <i class="bi bi-bell"></i>
+              <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end notifications-dropdown" aria-labelledby="notificationBtn">
+              <div class="notifications-header">
+                <h6 class="mb-0">
+                  <i class="bi bi-bell me-2"></i>Notificaciones
+                  <span class="notifications-count" id="notificationsCount">0</span>
+                </h6>
+              </div>
+              <div class="notifications-filter">
+                <button class="filter-chip active" data-filter="all">Todas</button>
+                <button class="filter-chip" data-filter="unread">No leídas</button>
+                <button class="filter-chip" data-filter="orders">Pedidos</button>
+                <button class="filter-chip" data-filter="offers">Ofertas</button>
+              </div>
+              <div class="notifications-body" id="notificationsDropdownBody"></div>
+              <div class="notifications-footer">
+                <a href="./notificaciones.html" class="btn btn-outline-secondary btn-sm w-100 mb-2">
+                  <i class="bi bi-list me-2"></i>Ver todas
+                </a>
+                <button type="button" class="btn btn-primary btn-sm w-100" id="markAllAsRead">
+                  <i class="bi bi-check-all me-2"></i>Marcar todas como leídas
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cart -->
+          <div class="action-item dropdown">
+            <button class="action-btn" id="cartBtn" data-bs-toggle="dropdown" data-bs-display="static" data-bs-auto-close="outside" aria-expanded="false" title="Carrito de compras">
+              <i class="bi bi-cart3"></i>
+              <span class="cart-badge" id="cartBadge" style="display: none;">0</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end cart-dropdown" aria-labelledby="cartBtn">
+              <div class="cart-header">
+                <h6 class="mb-0">
+                  <i class="bi bi-cart3 me-2"></i>Mi Carrito
+                  <span class="cart-count" id="cartCount">0</span>
+                </h6>
+              </div>
+              <div class="cart-body" id="cartDropdownBody"></div>
+              <div class="cart-footer">
+                <div class="cart-total mb-3">
+                  <div class="cart-total-row cart-total-final">
+                    <span class="cart-total-label">Total:</span>
+                    <span class="cart-total-value" id="cartTotal">$0</span>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-primary btn-sm w-100" id="proceedToCheckout">
+                  <i class="bi bi-credit-card me-2"></i>Finalizar compra
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile -->
+          <div class="action-item dropdown">
+            <button class="action-btn profile-btn" id="profileDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" title="Mi cuenta">
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" alt="Perfil" class="profile-image" />
+              <span class="profile-name">Usuario</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+              <li class="dropdown-header"><h6 class="mb-0">Mi Cuenta</h6></li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <a class="dropdown-item" href="./notificaciones.html#mi-perfil">
+                  <i class="bi bi-person me-2"></i>Mi Perfil
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#" id="favoritesLink">
+                  <i class="bi bi-heart me-2"></i>Favoritos
+                </a>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <a class="dropdown-item" href="./login.html">
+                  <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item text-danger" href="#" id="logoutBtn" style="display: none">
+                  <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
 
     <!-- Header de la página -->
     <div class="publish-header">
@@ -238,7 +473,8 @@
 
                 <div class="mb-3">
                   <label class="form-label">Descripción</label>
-                  <textarea class="form-control" id="p-description" rows="4" placeholder="Describí el estado, características, accesorios incluidos..."></textarea>
+                  <div id="p-description-editor" style="min-height:160px;background:white;border-radius:8px;"></div>
+                  <input type="hidden" id="p-description" />
                 </div>
 
                 <div class="row g-3">
@@ -247,6 +483,9 @@
                     <select class="form-select" id="p-category">
                       <option value="">Cargando categorías...</option>
                     </select>
+                    <div id="p-category-other-wrap" class="d-none mt-2">
+                      <input type="text" class="form-control" id="p-category-other" placeholder="Describí tu categoría..." maxlength="80" />
+                    </div>
                   </div>
                   <div class="col-sm-6">
                     <label class="form-label">Ubicación</label>
@@ -287,19 +526,68 @@
                 </div>
               </div>
 
-              <!-- Imágenes -->
-              <div class="publish-card" data-aos="fade-up" data-aos-delay="100">
-                <h5><i class="bi bi-images"></i>Imágenes</h5>
-                <div class="form-text mb-3">Pegá las URLs de las imágenes del producto (podés usar Imgur, Cloudinary, etc.)</div>
-                <div class="image-url-list" id="p-image-list">
-                  <div class="image-url-row">
-                    <input type="url" class="form-control" placeholder="https://..." />
-                    <button type="button" class="btn-remove-image" onclick="removeImageRow(this)"><i class="bi bi-x-circle"></i></button>
+              <!-- Fotos y Videos -->
+              <div class="publish-card">
+                <h5><i class="bi bi-images"></i>Fotos y videos</h5>
+
+                <!-- Fotos -->
+                <label class="form-label">Fotos del producto</label>
+                <div class="media-upload-area" id="p-photo-area">
+                  <input type="file" id="p-photos" accept="image/*" multiple onchange="handleMediaUpload(this, 'p-photo-previews', 'image')">
+                  <div class="media-upload-icon"><i class="bi bi-camera"></i></div>
+                  <div class="media-upload-text">
+                    <strong>Hacé clic o arrastrá</strong> fotos aquí<br>
+                    <small>JPG, PNG, WEBP — hasta 10 fotos</small>
                   </div>
                 </div>
-                <button type="button" class="btn-add-image" onclick="addImageRow('p-image-list')">
-                  <i class="bi bi-plus-circle me-1"></i> Agregar otra imagen
-                </button>
+                <div class="media-previews" id="p-photo-previews"></div>
+
+                <!-- Videos -->
+                <label class="form-label mt-3">Video del producto <span class="text-muted fw-normal">(opcional)</span></label>
+                <div class="media-upload-area" id="p-video-area">
+                  <input type="file" id="p-video" accept="video/*" onchange="handleMediaUpload(this, 'p-video-previews', 'video')">
+                  <div class="media-upload-icon"><i class="bi bi-camera-video"></i></div>
+                  <div class="media-upload-text">
+                    <strong>Hacé clic o arrastrá</strong> un video aquí<br>
+                    <small>MP4, MOV, AVI — máx. 1 video</small>
+                  </div>
+                </div>
+                <div class="media-previews" id="p-video-previews"></div>
+              </div>
+
+              <!-- Carteles personalizados -->
+              <div class="publish-card">
+                <h5><i class="bi bi-tag-fill"></i>Carteles personalizados</h5>
+                <p class="text-muted small mb-3">Agregá hasta 2 carteles que aparecen sobre la imagen de tu publicación.</p>
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">Cartel 1</label>
+                  <div class="row g-2 align-items-center">
+                    <div class="col-6">
+                      <input type="text" class="form-control form-control-sm" id="p-badge-1-text" placeholder="Ej: GARANTÍA 1 AÑO" maxlength="20" oninput="updateBadgePreview('p-badge-1')" />
+                    </div>
+                    <div class="col-3">
+                      <input type="color" class="form-control form-control-color" id="p-badge-1-color" value="#ef4444" oninput="updateBadgePreview('p-badge-1')" />
+                    </div>
+                    <div class="col-3 text-center">
+                      <span id="p-badge-1-preview" class="badge-custom-preview" style="background:#ef4444;">VISTA</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="mb-1">
+                  <label class="form-label fw-semibold">Cartel 2</label>
+                  <div class="row g-2 align-items-center">
+                    <div class="col-6">
+                      <input type="text" class="form-control form-control-sm" id="p-badge-2-text" placeholder="Ej: ENVÍO GRATIS" maxlength="20" oninput="updateBadgePreview('p-badge-2')" />
+                    </div>
+                    <div class="col-3">
+                      <input type="color" class="form-control form-control-color" id="p-badge-2-color" value="#10b981" oninput="updateBadgePreview('p-badge-2')" />
+                    </div>
+                    <div class="col-3 text-center">
+                      <span id="p-badge-2-preview" class="badge-custom-preview" style="background:#10b981;">VISTA</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-text">Máx. 20 caracteres. Dejá en blanco para no mostrar ese cartel.</div>
               </div>
 
             </div>
@@ -355,7 +643,8 @@
 
                 <div class="mb-3">
                   <label class="form-label">Descripción</label>
-                  <textarea class="form-control" id="s-description" rows="4" placeholder="Experiencia, certificaciones, qué incluye el servicio..."></textarea>
+                  <div id="s-description-editor" style="min-height:160px;background:white;border-radius:8px;"></div>
+                  <input type="hidden" id="s-description" />
                 </div>
 
                 <div class="row g-3">
@@ -364,6 +653,9 @@
                     <select class="form-select" id="s-category">
                       <option value="">Cargando categorías...</option>
                     </select>
+                    <div id="s-category-other-wrap" class="d-none mt-2">
+                      <input type="text" class="form-control" id="s-category-other" placeholder="Describí tu categoría..." maxlength="80" />
+                    </div>
                   </div>
                   <div class="col-sm-6">
                     <label class="form-label">Ubicación base</label>
@@ -416,19 +708,68 @@
                 </div>
               </div>
 
-              <!-- Imágenes -->
-              <div class="publish-card" data-aos="fade-up" data-aos-delay="100">
-                <h5><i class="bi bi-images"></i>Imágenes del servicio</h5>
-                <div class="form-text mb-3">Fotos de trabajos anteriores, certificados, etc.</div>
-                <div class="image-url-list" id="s-image-list">
-                  <div class="image-url-row">
-                    <input type="url" class="form-control" placeholder="https://..." />
-                    <button type="button" class="btn-remove-image" onclick="removeImageRow(this)"><i class="bi bi-x-circle"></i></button>
+              <!-- Fotos y Videos -->
+              <div class="publish-card">
+                <h5><i class="bi bi-images"></i>Fotos y videos</h5>
+
+                <!-- Fotos -->
+                <label class="form-label">Fotos del servicio</label>
+                <div class="media-upload-area" id="s-photo-area">
+                  <input type="file" id="s-photos" accept="image/*" multiple onchange="handleMediaUpload(this, 's-photo-previews', 'image')">
+                  <div class="media-upload-icon"><i class="bi bi-camera"></i></div>
+                  <div class="media-upload-text">
+                    <strong>Hacé clic o arrastrá</strong> fotos aquí<br>
+                    <small>Trabajos anteriores, certificados — hasta 10 fotos</small>
                   </div>
                 </div>
-                <button type="button" class="btn-add-image" onclick="addImageRow('s-image-list')">
-                  <i class="bi bi-plus-circle me-1"></i> Agregar otra imagen
-                </button>
+                <div class="media-previews" id="s-photo-previews"></div>
+
+                <!-- Videos -->
+                <label class="form-label mt-3">Video del servicio <span class="text-muted fw-normal">(opcional)</span></label>
+                <div class="media-upload-area" id="s-video-area">
+                  <input type="file" id="s-video" accept="video/*" onchange="handleMediaUpload(this, 's-video-previews', 'video')">
+                  <div class="media-upload-icon"><i class="bi bi-camera-video"></i></div>
+                  <div class="media-upload-text">
+                    <strong>Hacé clic o arrastrá</strong> un video aquí<br>
+                    <small>MP4, MOV, AVI — máx. 1 video</small>
+                  </div>
+                </div>
+                <div class="media-previews" id="s-video-previews"></div>
+              </div>
+
+              <!-- Carteles personalizados -->
+              <div class="publish-card">
+                <h5><i class="bi bi-tag-fill"></i>Carteles personalizados</h5>
+                <p class="text-muted small mb-3">Agregá hasta 2 carteles que aparecen sobre la imagen de tu publicación.</p>
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">Cartel 1</label>
+                  <div class="row g-2 align-items-center">
+                    <div class="col-6">
+                      <input type="text" class="form-control form-control-sm" id="s-badge-1-text" placeholder="Ej: EMERGENCIAS 24H" maxlength="20" oninput="updateBadgePreview('s-badge-1')" />
+                    </div>
+                    <div class="col-3">
+                      <input type="color" class="form-control form-control-color" id="s-badge-1-color" value="#ef4444" oninput="updateBadgePreview('s-badge-1')" />
+                    </div>
+                    <div class="col-3 text-center">
+                      <span id="s-badge-1-preview" class="badge-custom-preview" style="background:#ef4444;">VISTA</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="mb-1">
+                  <label class="form-label fw-semibold">Cartel 2</label>
+                  <div class="row g-2 align-items-center">
+                    <div class="col-6">
+                      <input type="text" class="form-control form-control-sm" id="s-badge-2-text" placeholder="Ej: MATRICULADO" maxlength="20" oninput="updateBadgePreview('s-badge-2')" />
+                    </div>
+                    <div class="col-3">
+                      <input type="color" class="form-control form-control-color" id="s-badge-2-color" value="#10b981" oninput="updateBadgePreview('s-badge-2')" />
+                    </div>
+                    <div class="col-3 text-center">
+                      <span id="s-badge-2-preview" class="badge-custom-preview" style="background:#10b981;">VISTA</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-text">Máx. 20 caracteres. Dejá en blanco para no mostrar ese cartel.</div>
               </div>
 
             </div>
@@ -452,7 +793,7 @@
 
                 <hr class="my-3">
                 <div class="text-muted small">
-                  <i class="bi bi-shield-check text-success me-1"></i> Tu publicación es gratuita<br>
+                  <i class="bi bi-credit-card text-warning me-1"></i> Publicar requiere un plan mensual<br>
                   <i class="bi bi-people text-info me-1 mt-1"></i> Miles de usuarios buscan servicios
                 </div>
               </div>
@@ -464,12 +805,406 @@
 
     </div>
 
+    <!-- Sección Planes -->
+    <section class="promo-section">
+      <div class="container py-5">
+
+        <!-- Planes Productos -->
+        <div id="planes-producto">
+          <div class="text-center mb-5">
+            <span class="promo-badge"><i class="bi bi-bag me-2"></i>Planes para productos</span>
+            <h2 class="promo-title">Publicá tu producto y llegá a más compradores</h2>
+            <p class="promo-subtitle">Todos los planes incluyen la publicación. Sumá visibilidad con los planes superiores.</p>
+          </div>
+          <div class="row g-4 justify-content-center mb-5">
+
+            <!-- Producto: Plan Estándar -->
+            <div class="col-md-4 col-lg-3">
+              <div class="plan-card">
+                <div class="plan-header">
+                  <div class="plan-icon"><i class="bi bi-box-seam"></i></div>
+                  <h3 class="plan-name">Estándar</h3>
+                  <div class="plan-price">Gratis<span></span></div>
+                </div>
+                <ul class="plan-features">
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Publicación activa de tu producto</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Visible en el catálogo</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Hasta 10 fotos y videos</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Consultas de compradores</li>
+                  <li><i class="bi bi-x-circle-fill text-muted"></i> Sin posición prioritaria</li>
+                </ul>
+                <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Estándar Producto', 0)">Seleccionar</button>
+              </div>
+            </div>
+
+            <!-- Producto: Plan Destacado -->
+            <div class="col-md-4 col-lg-3">
+              <div class="plan-card">
+                <div class="plan-header">
+                  <div class="plan-icon plan-icon-blue"><i class="bi bi-rocket"></i></div>
+                  <h3 class="plan-name">Destacado</h3>
+                  <div class="plan-price">$4.999<span>/mes</span></div>
+                </div>
+                <ul class="plan-features">
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Todo lo del plan Estándar</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Etiqueta "Destacado"</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Mejor posición en búsquedas</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas básicas</li>
+                  <li><i class="bi bi-x-circle-fill text-muted"></i> Sin publicidad ni banner</li>
+                </ul>
+                <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Destacado Producto', 4999)">Contratar</button>
+              </div>
+            </div>
+
+            <!-- Producto: Plan Pro -->
+            <div class="col-md-4 col-lg-3">
+              <div class="plan-card plan-card-featured">
+                <div class="plan-badge-rec">Recomendado</div>
+                <div class="plan-header">
+                  <div class="plan-icon plan-icon-red"><i class="bi bi-star-fill"></i></div>
+                  <h3 class="plan-name">Pro</h3>
+                  <div class="plan-price">$7.999<span>/mes</span></div>
+                </div>
+                <ul class="plan-features">
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Todo lo del plan Destacado</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Publicidad en páginas de búsqueda</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Banner en página de inicio</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Prioridad máxima en búsquedas</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas avanzadas</li>
+                </ul>
+                <button class="plan-btn plan-btn-red" onclick="seleccionarPlan('Pro Producto', 7999)">Contratar</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Planes Servicios -->
+        <div id="planes-servicio" style="display:none;">
+          <div class="text-center mb-5">
+            <span class="promo-badge"><i class="bi bi-megaphone-fill me-2"></i>Planes para servicios</span>
+            <h2 class="promo-title">Publicá tu servicio y llegá a más clientes</h2>
+            <p class="promo-subtitle">Todos los planes incluyen la publicación. Sumá visibilidad con los planes superiores.</p>
+          </div>
+          <div class="row g-4 justify-content-center mb-5">
+
+            <!-- Servicio: Plan Estándar -->
+            <div class="col-md-4 col-lg-3">
+              <div class="plan-card">
+                <div class="plan-header">
+                  <div class="plan-icon"><i class="bi bi-tools"></i></div>
+                  <h3 class="plan-name">Estándar</h3>
+                  <div class="plan-price">$3.000<span>/mes</span></div>
+                </div>
+                <ul class="plan-features">
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Publicación activa de tu servicio</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Visible en el catálogo</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Hasta 10 fotos y videos</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Contacto directo con clientes</li>
+                  <li><i class="bi bi-x-circle-fill text-muted"></i> Sin posición prioritaria</li>
+                </ul>
+                <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Estándar Servicio', 3000)">Contratar</button>
+              </div>
+            </div>
+
+            <!-- Servicio: Plan Destacado -->
+            <div class="col-md-4 col-lg-3">
+              <div class="plan-card">
+                <div class="plan-header">
+                  <div class="plan-icon plan-icon-blue"><i class="bi bi-rocket"></i></div>
+                  <h3 class="plan-name">Destacado</h3>
+                  <div class="plan-price">$5.999<span>/mes</span></div>
+                </div>
+                <ul class="plan-features">
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Todo lo del plan Estándar</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Etiqueta "Destacado"</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Mejor posición en búsquedas</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas básicas</li>
+                  <li><i class="bi bi-x-circle-fill text-muted"></i> Sin publicidad ni banner</li>
+                </ul>
+                <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Destacado Servicio', 5999)">Contratar</button>
+              </div>
+            </div>
+
+            <!-- Servicio: Plan Pro -->
+            <div class="col-md-4 col-lg-3">
+              <div class="plan-card plan-card-featured">
+                <div class="plan-badge-rec">Recomendado</div>
+                <div class="plan-header">
+                  <div class="plan-icon plan-icon-red"><i class="bi bi-star-fill"></i></div>
+                  <h3 class="plan-name">Pro</h3>
+                  <div class="plan-price">$9.999<span>/mes</span></div>
+                </div>
+                <ul class="plan-features">
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Todo lo del plan Destacado</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Publicidad en páginas de búsqueda</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Banner en página de inicio</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Prioridad máxima en búsquedas</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas avanzadas</li>
+                </ul>
+                <button class="plan-btn plan-btn-red" onclick="seleccionarPlan('Pro Servicio', 9999)">Contratar</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Modal de pago -->
+        <div class="modal fade" id="pagoModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
+            <div class="modal-content">
+              <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold"><i class="bi bi-credit-card me-2" style="color:var(--primary-red)"></i>Contratar plan <span id="pagoModalPlan"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body pt-0">
+                <!-- Demo Notice -->
+                <div class="alert alert-warning d-flex align-items-start gap-2 py-2 px-3 mb-3" role="status" style="font-size:0.82rem;border-radius:10px;">
+                  <i class="bi bi-cone-striped flex-shrink-0 mt-1"></i>
+                  <span><strong>Versión demo.</strong> No se procesará ningún pago. Podés registrar tu interés y te avisaremos cuando el sistema de pagos esté disponible.</span>
+                </div>
+                <p class="text-muted small mb-4">Método de pago (referencial)</p>
+
+                <div class="payment-methods">
+
+                  <label class="payment-option">
+                    <input type="radio" name="payment" value="mercadopago" checked>
+                    <div class="payment-content">
+                      <i class="bi bi-wallet2 payment-icon" style="color:#009ee3"></i>
+                      <div>
+                        <strong>MercadoPago</strong>
+                        <small>Tarjeta, débito o saldo</small>
+                      </div>
+                    </div>
+                    <span class="payment-check"><i class="bi bi-check-lg"></i></span>
+                  </label>
+
+                  <label class="payment-option">
+                    <input type="radio" name="payment" value="transferencia">
+                    <div class="payment-content">
+                      <i class="bi bi-bank payment-icon" style="color:#2ecc71"></i>
+                      <div>
+                        <strong>Transferencia bancaria</strong>
+                        <small>CBU / CVU / Alias</small>
+                      </div>
+                    </div>
+                    <span class="payment-check"><i class="bi bi-check-lg"></i></span>
+                  </label>
+
+                  <label class="payment-option">
+                    <input type="radio" name="payment" value="tarjeta">
+                    <div class="payment-content">
+                      <i class="bi bi-credit-card payment-icon" style="color:#e74c3c"></i>
+                      <div>
+                        <strong>Tarjeta de crédito</strong>
+                        <small>Visa, Mastercard, Amex</small>
+                      </div>
+                    </div>
+                    <span class="payment-check"><i class="bi bi-check-lg"></i></span>
+                  </label>
+
+                  <label class="payment-option">
+                    <input type="radio" name="payment" value="crypto">
+                    <div class="payment-content">
+                      <i class="bi bi-currency-bitcoin payment-icon" style="color:#f39c12"></i>
+                      <div>
+                        <strong>Criptomonedas</strong>
+                        <small>BTC, ETH, USDT</small>
+                      </div>
+                    </div>
+                    <span class="payment-check"><i class="bi bi-check-lg"></i></span>
+                  </label>
+
+                </div>
+
+                <div class="pago-resumen mt-4">
+                  <div class="d-flex justify-content-between">
+                    <span>Plan <strong id="pagoResumenPlan"></strong></span>
+                    <span class="fw-bold" id="pagoResumenPrecio"></span>
+                  </div>
+                  <div class="d-flex justify-content-between text-muted small mt-1">
+                    <span>Duración</span>
+                    <span>30 días</span>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-warning px-4" onclick="confirmarPago()">
+                  <i class="bi bi-bell me-2"></i>Registrar interés (Demo)
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="row">
+            <!-- Company Info -->
+            <div class="col-lg-4 col-md-6 mb-4">
+              <div class="footer-section">
+                <div class="footer-logo">
+                  <img src="../IMG/LOGO-2.png" alt="Dale Deal" class="footer-logo-img" />
+                  <span class="footer-brand-text">DALE DEAL</span>
+                </div>
+                <p class="footer-description">
+                  Tu marketplace de productos y servicios en Argentina.
+                  Compra, vende productos y contrata servicios profesionales de calidad.
+                </p>
+                <div class="footer-social">
+                  <a aria-disabled="true" tabindex="-1" class="social-link" title="Facebook — próximamente" style="opacity:.45;cursor:default;pointer-events:none;"><i class="bi bi-facebook"></i></a>
+                  <a href="https://www.instagram.com/daledeal.ar/" class="social-link" title="Instagram" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram"></i></a>
+                  <a aria-disabled="true" tabindex="-1" class="social-link" title="Twitter/X — próximamente" style="opacity:.45;cursor:default;pointer-events:none;"><i class="bi bi-twitter"></i></a>
+                  <a aria-disabled="true" tabindex="-1" class="social-link" title="LinkedIn — próximamente" style="opacity:.45;cursor:default;pointer-events:none;"><i class="bi bi-linkedin"></i></a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mi Centro + Plataforma -->
+            <div class="col-lg-4 col-md-12 mb-4">
+              <div class="footer-section">
+                <h5 class="footer-title">Mi Centro</h5>
+                <div class="row">
+                  <div class="col-6">
+                    <ul class="footer-links">
+                      <li><a href="./notificaciones.html">Notificaciones</a></li>
+                      <li><a href="./centro-ayuda.html">Ayuda</a></li>
+                      <li><a href="./contacto.html">Contacto</a></li>
+                      <li><a href="./reportar-problema.html">Reportar problema</a></li>
+                      <li><a href="./estado-servicio.html">Estado del servicio</a></li>
+                      <li><a href="./seguridad.html">Seguridad</a></li>
+                    </ul>
+                  </div>
+                  <div class="col-6">
+                    <ul class="footer-links">
+                      <li><a href="./notificaciones.html#publicidad">Publicidad en el sitio</a></li>
+                      <li><a href="./signup.html#empresa">Soy una empresa</a></li>
+                      <li><a href="./publicar.html?tab=producto">Publicar productos</a></li>
+                      <li><a href="./publicar.html?tab=servicio">Publicar servicios</a></li>
+                      <li><a href="./notificaciones.html#mis-compras">Mis compras</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Categories -->
+            <div class="col-lg-2 col-md-6 mb-4">
+              <div class="footer-section">
+                <h5 class="footer-title">Categorías</h5>
+                <ul class="footer-links">
+                  <li><a href="./productos.html">Productos</a></li>
+                  <li><a href="./servicios.html">Servicios</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Contact -->
+            <div class="col-lg-2 col-md-6 mb-4">
+              <div class="footer-section">
+                <h5 class="footer-title">Contacto</h5>
+                <div class="footer-contact">
+                  <div class="contact-item">
+                    <i class="bi bi-telephone"></i>
+                    <span>+54 9 11 3798-5881</span>
+                  </div>
+                  <div class="contact-item">
+                    <i class="bi bi-envelope"></i>
+                    <span>contacto@daledeal.com</span>
+                  </div>
+                  <div class="contact-item">
+                    <i class="bi bi-geo-alt"></i>
+                    <span>Buenos Aires, Argentina</span>
+                  </div>
+                </div>
+                <div class="footer-apps mt-3">
+                  <p class="footer-apps-title">Descarga la app</p>
+                  <div class="app-links">
+                    <a aria-disabled="true" tabindex="-1" class="app-link" title="Google Play — app próximamente" style="opacity:.45;cursor:default;pointer-events:none;">
+                      <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play — próximamente" class="app-badge">
+                    </a>
+                    <a aria-disabled="true" tabindex="-1" class="app-link" title="App Store — app próximamente" style="opacity:.45;cursor:default;pointer-events:none;">
+                      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store — próximamente" class="app-badge">
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Newsletter -->
+          <div class="footer-newsletter">
+            <div class="row align-items-center">
+              <div class="col-md-6">
+                <h5 class="newsletter-title">
+                  <i class="bi bi-bell me-2"></i>Mantente actualizado
+                </h5>
+                <p class="newsletter-subtitle">Recibe las mejores ofertas y novedades de Dale Deal</p>
+              </div>
+              <div class="col-md-6">
+                <form class="newsletter-form" id="footerNewsletterForm">
+                  <div class="input-group">
+                    <input type="email" class="form-control newsletter-input" placeholder="Ingresa tu email" id="footerNewsletterEmail" required>
+                    <button class="btn btn-primary newsletter-btn" type="submit">
+                      <i class="bi bi-arrow-right"></i>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer Bottom -->
+          <div class="footer-bottom">
+            <div class="footer-bottom-content">
+              <div class="row align-items-center">
+                <div class="col-md-8">
+                  <div class="footer-copyright">
+                    <div class="copyright-main">
+                      <span class="copyright-year">© 2025</span>
+                      <span class="copyright-brand">Dale Deal</span>
+                      <span class="copyright-text">Todos los derechos reservados.</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="footer-legal">
+                    <div class="legal-links-group">
+                      <a href="./terminos.html" class="legal-link">Términos y Condiciones</a>
+                      <span class="text-muted mx-2">•</span>
+                      <a href="./privacidad.html" class="legal-link">Política de Privacidad</a>
+                      <span class="text-muted mx-2">•</span>
+                      <a href="./cookies.html" class="legal-link">Política de Cookies</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="../JS/theme.js"></script>
     <script src="../JS/utils.js"></script>
+    <script src="../JS/demo-adapter.js"></script>
     <script src="../JS/api.js"></script>
     <script src="../JS/auth.js"></script>
+    <script src="../JS/cart.js"></script>
+    <script src="../JS/notifications.js"></script>
+    <script src="../JS/favorites.js"></script>
+    <script src="../JS/chat.js"></script>
     <script src="../JS/publicar.js"></script>
     <script src="../JS/component-loader.js" defer></script>
     <script>AOS.init({ duration: 400, once: true });</script>

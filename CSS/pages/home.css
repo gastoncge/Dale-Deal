@@ -120,7 +120,7 @@
 .hero-badge {
   display: inline-block;
   padding: var(--spacing-2) var(--spacing-4);
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   color: var(--gray-700);
   font-size: var(--font-size-sm);
   font-weight: 600;
@@ -128,7 +128,6 @@
   letter-spacing: 0.1em;
   border-radius: var(--radius-3xl);
   margin-bottom: var(--spacing-4);
-  backdrop-filter: blur(10px);
   box-shadow: var(--shadow-sm);
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
@@ -777,10 +776,13 @@
   font-size: var(--font-size-xs);
 }
 
+/* Badge de plataforma (DESTACADO, MÁS VENDIDO) — esquina inferior derecha, no personalizable */
 .products-section .badge-featured {
   position: absolute;
-  top: var(--spacing-3);
-  left: var(--spacing-3);
+  bottom: var(--spacing-3);
+  right: var(--spacing-3);
+  top: auto;
+  left: auto;
   background: var(--gradient-primary);
   color: var(--white);
   padding: var(--spacing-2) var(--spacing-3);
@@ -793,10 +795,8 @@
   box-shadow: var(--shadow-md);
 }
 
+/* Badge de oferta/descuento — esquina superior izquierda (dentro de .service-badges) */
 .products-section .badge-offer {
-  position: absolute;
-  top: var(--spacing-3);
-  right: var(--spacing-3);
   background: var(--primary-red);
   color: var(--white);
   padding: var(--spacing-2) var(--spacing-3);
@@ -807,23 +807,6 @@
   box-shadow: var(--shadow-md);
 }
 
-.products-section .product-card.has-offer .badge-offer {
-  top: var(--spacing-3);
-  right: var(--spacing-3);
-  left: auto;
-}
-
-.products-section .product-card.has-offer .product-actions {
-  top: var(--spacing-3);
-  right: calc(var(--spacing-3) + 50px + 10px);
-  left: auto;
-}
-
-.products-section .product-card:not(.has-offer) .product-actions {
-  top: var(--spacing-3);
-  right: var(--spacing-3);
-  left: auto;
-}
 
 .products-section .product-pricing {
   display: flex;
@@ -847,8 +830,8 @@
 
 .products-section .product-actions {
   position: absolute;
-  top: var(--spacing-3);
-  right: var(--spacing-3);
+  top: 8px;
+  right: 8px;
   z-index: 4;
   display: flex;
   flex-direction: column;
@@ -861,16 +844,14 @@
   height: 44px;
   border-radius: 50%;
   border: none;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   color: var(--gray-600);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all var(--transition-base);
-  backdrop-filter: blur(10px);
   box-shadow: var(--shadow-md);
-  margin-top: -4px;
 }
 
 .products-section .action-heart:hover {
@@ -1118,4 +1099,157 @@
   .services-section .service-image-container {
     height: 170px;
   }
+}
+
+/* =====================================================
+   HERO ESTÁTICO (reemplaza el carrusel de 4 slides)
+   ===================================================== */
+
+.hero-section {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Reutiliza .hero-slide y .hero-slide-main ya definidos arriba.
+   Solo necesitamos ajustar la altura mínima para el hero estático. */
+.hero-section .hero-slide {
+  min-height: 520px;
+  padding: var(--spacing-16) 0;
+}
+
+@media (min-width: 1024px) {
+  .hero-section .hero-slide {
+    min-height: 580px;
+    padding: var(--spacing-20) 0;
+  }
+}
+
+@media (max-width: 992px) {
+  .hero-section .hero-slide {
+    min-height: auto;
+    padding: var(--spacing-14) 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section .hero-slide {
+    padding: var(--spacing-12) 0;
+    text-align: center;
+  }
+
+  .hero-section .hero-actions {
+    justify-content: center;
+  }
+
+  .hero-section .hero-badge {
+    display: inline-block;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-section .hero-slide {
+    padding: var(--spacing-10) 0;
+  }
+}
+
+/* =====================================================
+   TRUST BAND — franja de confianza debajo del hero
+   ===================================================== */
+
+.trust-band {
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-100);
+  padding: var(--spacing-4) 0;
+}
+
+.trust-items {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-10);
+  flex-wrap: wrap;
+}
+
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--gray-600);
+  white-space: nowrap;
+}
+
+.trust-item i {
+  font-size: 1.1rem;
+  color: var(--primary-red);
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .trust-items {
+    gap: var(--spacing-5);
+  }
+
+  .trust-item {
+    font-size: var(--font-size-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  .trust-items {
+    justify-content: flex-start;
+    gap: var(--spacing-4);
+    padding: 0 var(--spacing-2);
+  }
+}
+
+/* =====================================================
+   SECTION HEADERS — subtítulo y enlace al catálogo
+   ===================================================== */
+
+.section-subtitle {
+  color: var(--gray-500);
+  font-size: var(--font-size-base);
+  margin-top: var(--spacing-2);
+  margin-bottom: var(--spacing-3);
+}
+
+.section-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--primary-red);
+  text-decoration: none;
+  transition: gap var(--transition-fast);
+}
+
+.section-link:hover {
+  color: var(--primary-red-dark);
+  gap: var(--spacing-2);
+  text-decoration: none;
+}
+
+/* =====================================================
+   SEPARACIÓN VISUAL productos / servicios
+   ===================================================== */
+
+.sections-divider {
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--gray-300), transparent);
+  margin: 0 auto;
+  width: 80%;
+}
+
+.services-section {
+  background: var(--gray-50);
+  padding: var(--spacing-16) 0;
+}
+
+.services-section .section-header {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
 }

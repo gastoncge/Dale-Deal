@@ -42,6 +42,14 @@
   </head>
 
   <body>
+    <!-- Barra de Anuncios Rotativos -->
+    <div class="announcement-bar" id="announcementBar">
+      <div class="container-fluid">
+        <span class="announcement-text" id="announcementText">🔥 Envío gratis en compras mayores a $50.000 | Hasta 12 cuotas sin interés</span>
+        <button class="announcement-close" id="announcementClose" title="Cerrar"><i class="bi bi-x"></i></button>
+      </div>
+    </div>
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
       <div class="container-fluid px-4">
@@ -80,6 +88,13 @@
               <i class="bi bi-tools me-1"></i>
               <span class="action-text">Servicios</span>
             </a>
+          </div>
+
+          <!-- Dark Mode Toggle -->
+          <div class="action-item d-none d-md-flex">
+            <button class="theme-toggle" id="themeToggle" title="Cambiar tema">
+              <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+            </button>
           </div>
 
           <!-- Notifications -->
@@ -601,6 +616,7 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     <!-- Custom Scripts -->
+    <script src="../JS/theme.js"></script>
     <script src="../JS/utils.js"></script>
     <script src="../JS/auth.js"></script>
     <script src="../JS/cart.js"></script>

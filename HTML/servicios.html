@@ -2040,6 +2040,14 @@
   </head>
 
   <body>
+    <!-- Barra de Anuncios Rotativos -->
+    <div class="announcement-bar" id="announcementBar">
+      <div class="container-fluid">
+        <span class="announcement-text" id="announcementText">🔥 Envío gratis en compras mayores a $50.000 | Hasta 12 cuotas sin interés</span>
+        <button class="announcement-close" id="announcementClose" title="Cerrar"><i class="bi bi-x"></i></button>
+      </div>
+    </div>
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
       <div class="container-fluid px-4">
@@ -2073,6 +2081,13 @@
               <i class="bi bi-tools me-1"></i>
               <span class="action-text">Servicios</span>
             </a>
+          </div>
+
+          <!-- Dark Mode Toggle -->
+          <div class="action-item d-none d-md-flex">
+            <button class="theme-toggle" id="themeToggle" title="Cambiar tema">
+              <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+            </button>
           </div>
 
           <!-- Notifications -->
@@ -2595,6 +2610,7 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     <!-- Custom Scripts -->
+    <script src="../JS/theme.js"></script>
     <script src="../JS/utils.js"></script>
     <script src="../JS/auth.js"></script>
     <script src="../JS/cart.js"></script>
@@ -2654,21 +2670,102 @@
           this.init();
         }
 
-        init() {
+        async init() {
           try {
-            if (typeof servicesData === 'undefined') {
-              throw new Error('servicesData no está definido');
+            this.showLoadingState();
+
+            // Intentar cargar desde la API real
+            if (window.DaleDeal?.api?.fetchServices) {
+              const apiServices = await window.DaleDeal.api.fetchServices();
+              if (apiServices && apiServices.length > 0) {
+                this.services = this.transformAPIServices(apiServices);
+                DaleDeal.log(`✅ ${this.services.length} servicios cargados desde la API`);
+              } else {
+                throw new Error('API sin datos, usando fallback');
+              }
+            } else {
+              throw new Error('API no disponible, usando fallback');
             }
 
-            this.services = this.transformServicesData(servicesData);
             this.filteredServices = [...this.services];
+            this.hideLoadingState();
             this.bindFilterEvents();
             this.renderFilteredServices();
 
           } catch (error) {
-            DaleDeal.error('Error loading services:', error);
-            this.showError('Error al cargar los servicios. Por favor, intenta nuevamente.');
+            DaleDeal.warn('Fallback a datos locales:', error.message);
+            // Fallback a datos hardcodeados si la API no responde
+            try {
+              if (typeof servicesData !== 'undefined') {
+                this.services = this.transformServicesData(servicesData);
+                this.filteredServices = [...this.services];
+                this.hideLoadingState();
+                this.bindFilterEvents();
+                this.renderFilteredServices();
+              } else {
+                this.hideLoadingState();
+                this.showError('No se pudieron cargar los servicios. Por favor, intentá nuevamente.');
+              }
+            } catch (fallbackError) {
+              this.hideLoadingState();
+              this.showError('Error al cargar los servicios. Por favor, intentá nuevamente.');
+            }
           }
+        }
+
+        showLoadingState() {
+          const grid = document.getElementById('servicesGrid');
+          if (grid) {
+            grid.innerHTML = `
+              <div class="col-12 text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p class="mt-3 text-muted">Cargando servicios...</p>
+              </div>
+            `;
+          }
+        }
+
+        hideLoadingState() {
+          // El grid se limpia en renderFilteredServices
+        }
+
+        transformAPIServices(apiServices) {
+          return apiServices.map(service => ({
+            id: service.id,
+            title: service.title,
+            description: service.description || '',
+            price: service.priceFrom || service.price || 0,
+            priceFrom: service.priceFrom,
+            priceTo: service.priceTo,
+            category: this.mapCategoryFromSlug(service.category),
+            image: service.image || 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=400&h=300&fit=crop',
+            rating: service.rating || 4.5,
+            reviewCount: service.reviewCount || 0,
+            location: service.location || 'Argentina',
+            badges: service.badges || [],
+            featured: true,
+            priceType: service.priceType || 'fixed',
+            provider_id: service.provider_id,
+            provider_name: service.provider_name,
+          }));
+        }
+
+        mapCategoryFromSlug(slug) {
+          const map = {
+            'plomeria': 'repair',
+            'electricidad': 'installation',
+            'gasista': 'maintenance',
+            'peluqueria': 'consultation',
+            'limpieza': 'maintenance',
+            'pintura': 'installation',
+            'carpinteria': 'installation',
+            'mecanica': 'repair',
+            'informatica': 'consultation',
+            'otros-servicios': 'consultation',
+          };
+          return map[slug] || 'consultation';
         }
 
         // ===========================================
