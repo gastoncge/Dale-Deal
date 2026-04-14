@@ -662,11 +662,11 @@ class ProductPage {
             </div>
           </div>
           <div class="product-info">
-            <h3 class="product-title">${product.title}</h3>
+            <h3 class="product-title">${DaleDeal.utils.escapeHtml(product.title)}</h3>
             ${product.seller ? `
             <div class="product-provider">
-              <img src="${product.seller.avatar}" alt="${product.seller.name}" class="product-provider-avatar" />
-              <span class="product-provider-name">${product.seller.name}</span>
+              <img src="${product.seller.avatar}" alt="${DaleDeal.utils.escapeHtml(product.seller.name)}" class="product-provider-avatar" />
+              <span class="product-provider-name">${DaleDeal.utils.escapeHtml(product.seller.name)}</span>
               ${product.seller.verified ? '<i class="bi bi-patch-check-fill product-provider-verified"></i>' : ''}
             </div>` : ''}
             <p class="product-description">${desc}</p>
@@ -905,12 +905,12 @@ class ProductPage {
         if (isImage) {
           const reader = new FileReader();
           reader.onload = e => {
-            attachPreview.innerHTML = `<img src="${e.target.result}" class="chat-attach-thumb" /><span class="chat-attach-name">${file.name}</span><button class="chat-attach-remove"><i class="bi bi-x"></i></button>`;
+            attachPreview.innerHTML = `<img src="${e.target.result}" class="chat-attach-thumb" /><span class="chat-attach-name">${DaleDeal.utils.escapeHtml(file.name)}</span><button class="chat-attach-remove"><i class="bi bi-x"></i></button>`;
             attachPreview.querySelector('.chat-attach-remove')?.addEventListener('click', () => { pendingFile = null; attachPreview.style.display = 'none'; updateSendBtn(); });
           };
           reader.readAsDataURL(file);
         } else {
-          attachPreview.innerHTML = `<i class="bi bi-file-earmark-text chat-attach-file-icon"></i><span class="chat-attach-name">${file.name}</span><button class="chat-attach-remove"><i class="bi bi-x"></i></button>`;
+          attachPreview.innerHTML = `<i class="bi bi-file-earmark-text chat-attach-file-icon"></i><span class="chat-attach-name">${DaleDeal.utils.escapeHtml(file.name)}</span><button class="chat-attach-remove"><i class="bi bi-x"></i></button>`;
           attachPreview.querySelector('.chat-attach-remove')?.addEventListener('click', () => { pendingFile = null; attachPreview.style.display = 'none'; updateSendBtn(); });
         }
       }
@@ -1025,12 +1025,12 @@ class ProductPage {
     if (file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = e => {
-        msgEl.innerHTML = `<div class="chat-bubble chat-bubble-image"><img src="${e.target.result}" class="chat-img-preview" alt="${file.name}" /></div><div class="chat-time">${timeStr} ${statusHTML}</div>`;
+        msgEl.innerHTML = `<div class="chat-bubble chat-bubble-image"><img src="${e.target.result}" class="chat-img-preview" alt="${DaleDeal.utils.escapeHtml(file.name)}" /></div><div class="chat-time">${timeStr} ${statusHTML}</div>`;
         msgs.scrollTop = msgs.scrollHeight;
       };
       reader.readAsDataURL(file);
     } else {
-      msgEl.innerHTML = `<div class="chat-bubble chat-bubble-file"><i class="bi bi-file-earmark-text"></i><span>${file.name}</span></div><div class="chat-time">${timeStr} ${statusHTML}</div>`;
+      msgEl.innerHTML = `<div class="chat-bubble chat-bubble-file"><i class="bi bi-file-earmark-text"></i><span>${DaleDeal.utils.escapeHtml(file.name)}</span></div><div class="chat-time">${timeStr} ${statusHTML}</div>`;
     }
     msgs.appendChild(msgEl);
     msgs.scrollTop = msgs.scrollHeight;

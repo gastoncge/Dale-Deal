@@ -3,13 +3,6 @@
 // =====================================================
 
 /**
- * Renderiza las estrellas de rating
- */
-function renderStars(rating) {
-  return DaleDeal.utils.renderStars(rating);
-}
-
-/**
  * Renderiza una tarjeta de producto
  */
 function renderProductCard(product) {
@@ -117,7 +110,7 @@ function renderProductCard(product) {
 
         <div class="product-meta-group">
           <div class="product-rating">
-            <div class="stars">${renderStars(product.rating)}</div>
+            <div class="stars">${DaleDeal.utils.renderStars(product.rating)}</div>
             <span class="reviews-count">(${product.reviewCount.toLocaleString('es-AR')})</span>
             ${product.shipping?.free ? `<span class="shipping-badge"><i class="bi bi-truck"></i> Envío gratis</span>` : ''}
           </div>
@@ -267,8 +260,7 @@ if (typeof window !== 'undefined') {
   window.HomePageLoader = {
     loadProducts,
     renderProductCard,
-    initializeProductListeners,
-    renderStars
+    initializeProductListeners
   };
 }
 
@@ -396,6 +388,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, 10000);
 
-  // Service filters
-  new ServiceFilters();
+  // Service filters — solo en home page
+  if (_isHomePage()) {
+    new ServiceFilters();
+  }
 });

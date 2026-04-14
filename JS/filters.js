@@ -263,18 +263,10 @@ class ProductFilters {
         container.appendChild(row);
       }
       
-      // Reinicializar eventos del carrito y favoritos
-      this.reinitializeEvents();
     }
 
     // Actualizar contador
     this.updateResultsCounter();
-  }
-
-  // Reinicializar eventos después de recrear el DOM
-  reinitializeEvents() {
-    // No es necesario hacer nada especial ya que los eventos del carrito y favoritos
-    // usan event delegation en el document, por lo que funcionarán automáticamente
   }
 
   // Mostrar mensaje sin resultados
@@ -293,25 +285,16 @@ class ProductFilters {
   }
 
   updateResultsCounter() {
-    let counterEl = document.getElementById('resultsCounter');
-    if (!counterEl) {
-      counterEl = document.createElement('div');
-      counterEl.id = 'resultsCounter';
-      counterEl.className = 'results-counter';
-      const filtersContainer = document.querySelector('.filters-container');
-      if (filtersContainer) {
-        filtersContainer.appendChild(counterEl);
-      }
-    }
+    const counterEl = document.getElementById('resultsCount');
+    if (!counterEl) return;
 
     const count = this.products.length;
     const total = this.originalProducts.length;
-    
+
     if (this.searchQuery || this.currentCategory !== 'all') {
-      counterEl.innerHTML = `${count} de ${total} productos`;
-      counterEl.style.display = 'block';
+      counterEl.textContent = `${count} de ${total} productos`;
     } else {
-      counterEl.style.display = 'none';
+      counterEl.textContent = `${total} productos`;
     }
   }
 

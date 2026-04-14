@@ -74,9 +74,9 @@ async function createProduct(data) {
   await new Promise(r => setTimeout(r, 600));
   const product = { ...data, id: Date.now(), createdAt: new Date().toISOString() };
   try {
-    const existing = JSON.parse(localStorage.getItem('daledeal_my_products') || '[]');
+    const existing = JSON.parse(localStorage.getItem('daledealer_my_products') || '[]');
     existing.push(product);
-    localStorage.setItem('daledeal_my_products', JSON.stringify(existing));
+    localStorage.setItem('daledealer_my_products', JSON.stringify(existing));
   } catch (_) { /* quota o parse error — ignorar */ }
   return product;
 }
@@ -89,9 +89,9 @@ async function createService(data) {
   await new Promise(r => setTimeout(r, 600));
   const service = { ...data, id: Date.now(), createdAt: new Date().toISOString() };
   try {
-    const existing = JSON.parse(localStorage.getItem('daledeal_my_services') || '[]');
+    const existing = JSON.parse(localStorage.getItem('daledealer_my_services') || '[]');
     existing.push(service);
-    localStorage.setItem('daledeal_my_services', JSON.stringify(existing));
+    localStorage.setItem('daledealer_my_services', JSON.stringify(existing));
   } catch (_) { /* quota o parse error — ignorar */ }
   return service;
 }

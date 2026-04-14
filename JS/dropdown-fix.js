@@ -141,16 +141,6 @@ class DropdownManager {
     });
   }
 
-  // ===== FEEDBACK =====
-  showFeedback(message, type = "info") {
-    if (window.DaleDeal?.utils?.showNotification) {
-      window.DaleDeal.utils.showNotification(message, type);
-    } else if (window.authManager?.showNotification) {
-      window.authManager.showNotification(message, type);
-    } else {
-      DaleDeal.log(message);
-    }
-  }
 }
 
 // ===== INICIALIZACIÓN AUTOMÁTICA =====

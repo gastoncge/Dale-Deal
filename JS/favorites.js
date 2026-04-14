@@ -649,7 +649,7 @@ class FavoritesManager {
 
     // Fallback: parsear priceText si no hay precio numérico
     if (!price && favorite.priceText) {
-      price = parseFloat(favorite.priceText.replace(/[^\d]/g, '')) || 0;
+      price = DaleDeal.utils.parseARSPrice(favorite.priceText);
     }
 
     // Asegurar priceText formateado
@@ -729,7 +729,7 @@ class FavoritesManager {
     try {
       // Extraer el precio numérico del texto formateado
       // Formato argentino usa '.' como separador de miles y ',' como decimal
-      const price = favorite.priceText ? parseFloat(favorite.priceText.replace(/[^0-9,.]/g, '').replace(/\./g, '').replace(',', '.')) || 0 : 0;
+      const price = DaleDeal.utils.parseARSPrice(favorite.priceText);
       
       const product = {
         id: String(favorite.id),

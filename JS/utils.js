@@ -49,8 +49,20 @@ DaleDeal.utils.formatPrice = (price) => {
   }).format(price);
 };
 
-// Alias usado en home.js y servicios.html
+// Alias para compatibilidad
 DaleDeal.utils.formatCurrency = DaleDeal.utils.formatPrice;
+
+// Parsea un string de precio ARS a número (ej: "$ 1.234,56" → 1234.56)
+DaleDeal.utils.parseARSPrice = (priceText) => {
+  if (typeof priceText === 'number') return priceText;
+  if (!priceText) return 0;
+  // ARS: separador de miles = '.', decimal = ','
+  const cleaned = String(priceText)
+    .replace(/[^0-9,.]/g, '')   // quitar todo excepto dígitos, puntos y comas
+    .replace(/\./g, '')          // quitar puntos (separadores de miles)
+    .replace(',', '.');          // convertir coma decimal a punto
+  return parseFloat(cleaned) || 0;
+};
 
 // ===== UTILIDADES DE VALIDACIÓN =====
 DaleDeal.utils.calculatePasswordStrength = (password) => {

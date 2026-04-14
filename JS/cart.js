@@ -138,7 +138,7 @@ class CartManager {
       
       // Si es string, intentar parsearlo
       if (typeof price === 'string') {
-        price = parseFloat(price.replace(/[^0-9.-]+/g, "")) || 0;
+        price = DaleDeal.utils.parseARSPrice(price);
       }
       
       // Si no es un número válido, usar 0
@@ -356,7 +356,7 @@ class CartManager {
       }
 
       // Convertir precio a número
-      const price = parseFloat(priceText.replace(/[^0-9]/g, '')) || 0;
+      const price = DaleDeal.utils.parseARSPrice(priceText);
 
       return { id, title, price: price, priceText: priceText, image, quantity: 1 };
     } catch (error) {
