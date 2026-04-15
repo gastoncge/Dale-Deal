@@ -891,7 +891,6 @@
   border-radius: 50%;
   background: var(--gradient-primary);
   border: none;
-  outline: none;
   cursor: pointer;
   box-shadow: 0 8px 32px rgba(214, 48, 49, 0.4);
   position: relative;
@@ -902,8 +901,6 @@
   overflow: visible;
   padding: 0;
 }
-
-.chat-float-btn:focus { outline: none; }
 
 .chat-float-btn:hover {
   transform: scale(1.08);

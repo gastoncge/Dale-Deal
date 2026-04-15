@@ -120,11 +120,11 @@
     if (isImage) {
       const reader = new FileReader();
       reader.onload = e => {
-        div.innerHTML = `<div class="chat-bubble"><img src="${e.target.result}" class="chat-img-preview" alt="${DaleDeal.utils.escapeHtml(file.name)}" /><div class="chat-meta"><span class="chat-time">${timeNow()}</span><span class="chat-msg-status chat-status-sent">Enviado</span></div></div>`;
+        div.innerHTML = `<div class="chat-bubble"><img src="${e.target.result}" class="chat-img-preview" alt="${file.name}" /><div class="chat-meta"><span class="chat-time">${timeNow()}</span><span class="chat-msg-status chat-status-sent">Enviado</span></div></div>`;
       };
       reader.readAsDataURL(file);
     } else {
-      div.innerHTML = `<div class="chat-bubble chat-bubble-file"><i class="bi bi-file-earmark-text"></i><span>${DaleDeal.utils.escapeHtml(file.name)}</span><div class="chat-meta"><span class="chat-time">${timeNow()}</span><span class="chat-msg-status chat-status-sent">Enviado</span></div></div>`;
+      div.innerHTML = `<div class="chat-bubble chat-bubble-file"><i class="bi bi-file-earmark-text"></i><span>${file.name}</span><div class="chat-meta"><span class="chat-time">${timeNow()}</span><span class="chat-msg-status chat-status-sent">Enviado</span></div></div>`;
     }
     el.appendChild(div);
     el.scrollTop = el.scrollHeight;
@@ -317,12 +317,12 @@
         if (isImage) {
           const reader = new FileReader();
           reader.onload = e => {
-            attachPreview.innerHTML = `<img src="${e.target.result}" class="chat-attach-thumb" alt="${DaleDeal.utils.escapeHtml(file.name)}" /><span class="chat-attach-name">${DaleDeal.utils.escapeHtml(file.name)}</span><button class="chat-attach-remove"><i class="bi bi-x"></i></button>`;
+            attachPreview.innerHTML = `<img src="${e.target.result}" class="chat-attach-thumb" alt="${file.name}" /><span class="chat-attach-name">${file.name}</span><button class="chat-attach-remove"><i class="bi bi-x"></i></button>`;
             attachPreview.querySelector('.chat-attach-remove')?.addEventListener('click', () => { pendingFile = null; attachPreview.style.display = 'none'; updateSendBtn(); });
           };
           reader.readAsDataURL(file);
         } else {
-          attachPreview.innerHTML = `<i class="bi bi-file-earmark-text chat-attach-file-icon"></i><span class="chat-attach-name">${DaleDeal.utils.escapeHtml(file.name)}</span><button class="chat-attach-remove"><i class="bi bi-x"></i></button>`;
+          attachPreview.innerHTML = `<i class="bi bi-file-earmark-text chat-attach-file-icon"></i><span class="chat-attach-name">${file.name}</span><button class="chat-attach-remove"><i class="bi bi-x"></i></button>`;
           attachPreview.querySelector('.chat-attach-remove')?.addEventListener('click', () => { pendingFile = null; attachPreview.style.display = 'none'; updateSendBtn(); });
         }
       }

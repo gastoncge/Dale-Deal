@@ -141,6 +141,57 @@
   --fluid-4xl:  clamp(1.75rem,   6vw,   2.25rem);  /* 28→36px */
 }
 
+/* =====================================================
+   DARK MODE — Variables que se pisan al activar data-theme="dark"
+   ===================================================== */
+[data-theme="dark"] {
+  /* Fondos */
+  --white:    #0f172a;
+  --gray-50:  #1e293b;
+  --gray-100: #1e293b;
+  --gray-200: #334155;
+  --gray-300: #475569;
+
+  /* Textos */
+  --gray-400: #94a3b8;
+  --gray-500: #94a3b8;
+  --gray-600: #cbd5e1;
+  --gray-700: #cbd5e1;
+  --gray-800: #e2e8f0;
+  --gray-900: #f1f5f9;
+
+  /* Sombras más suaves en dark */
+  --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -1px rgba(0,0,0,0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.5), 0 4px 6px -2px rgba(0,0,0,0.4);
+  --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.5), 0 10px 10px -5px rgba(0,0,0,0.4);
+  --shadow-2xl: 0 25px 50px -12px rgba(0,0,0,0.6);
+
+  /* Colores de estado — versiones más brillantes para fondos oscuros */
+  --success-light: rgba(16,185,129,0.15);
+  --warning-light: rgba(245,158,11,0.15);
+  --error-light:   rgba(239,68,68,0.15);
+  --info-light:    rgba(59,130,246,0.15);
+
+  /* Colores de marca — se mantienen pero ajustamos el light */
+  --primary-red-light:    rgba(214,48,49,0.2);
+  --primary-yellow-light: rgba(255,128,0,0.2);
+}
+
+/* Transición suave al cambiar tema */
+body,
+.navbar,
+.card,
+.modal-content,
+.dropdown-menu,
+.footer,
+.btn,
+input,
+select,
+textarea {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
 /* ===== RESET Y BASE ===== */
 * {
   margin: 0;

@@ -396,8 +396,8 @@ class ServicePage {
           const reader = new FileReader();
           reader.onload = e => {
             attachPreview.innerHTML = `
-              <img src="${e.target.result}" class="chat-attach-thumb" alt="${DaleDeal.utils.escapeHtml(file.name)}" />
-              <span class="chat-attach-name">${DaleDeal.utils.escapeHtml(file.name)}</span>
+              <img src="${e.target.result}" class="chat-attach-thumb" alt="${file.name}" />
+              <span class="chat-attach-name">${file.name}</span>
               <button class="chat-attach-remove"><i class="bi bi-x"></i></button>`;
             attachPreview.querySelector('.chat-attach-remove')?.addEventListener('click', () => {
               pendingFile = null;
@@ -409,7 +409,7 @@ class ServicePage {
         } else {
           attachPreview.innerHTML = `
             <i class="bi bi-file-earmark-text chat-attach-file-icon"></i>
-            <span class="chat-attach-name">${DaleDeal.utils.escapeHtml(file.name)}</span>
+            <span class="chat-attach-name">${file.name}</span>
             <button class="chat-attach-remove"><i class="bi bi-x"></i></button>`;
           attachPreview.querySelector('.chat-attach-remove')?.addEventListener('click', () => {
             pendingFile = null;
@@ -520,7 +520,7 @@ class ServicePage {
       reader.onload = e => {
         msgEl.innerHTML = `
           <div class="chat-bubble chat-bubble-image">
-            <img src="${e.target.result}" class="chat-img-preview" alt="${DaleDeal.utils.escapeHtml(file.name)}" />
+            <img src="${e.target.result}" class="chat-img-preview" alt="${file.name}" />
           </div>
           <div class="chat-time">${timeStr} ${statusHTML}</div>`;
         messagesEl.scrollTop = messagesEl.scrollHeight;
@@ -530,7 +530,7 @@ class ServicePage {
       msgEl.innerHTML = `
         <div class="chat-bubble chat-bubble-file">
           <i class="bi bi-file-earmark-text"></i>
-          <span>${DaleDeal.utils.escapeHtml(file.name)}</span>
+          <span>${file.name}</span>
         </div>
         <div class="chat-time">${timeStr} ${statusHTML}</div>`;
     }

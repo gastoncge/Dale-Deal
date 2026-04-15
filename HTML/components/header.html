@@ -1,5 +1,15 @@
+<!-- Barra de Anuncios Rotativos -->
+<div class="announcement-bar" id="announcementBar">
+  <div class="container-fluid">
+    <span class="announcement-text" id="announcementText">🔥 Envío gratis en compras mayores a $50.000 | Hasta 12 cuotas sin interés</span>
+    <button class="announcement-close" id="announcementClose" title="Cerrar">
+      <i class="bi bi-x"></i>
+    </button>
+  </div>
+</div>
+
 <!-- Navbar Component -->
-<nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar" aria-label="Navegación principal">
+<nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
   <div class="container-fluid px-4">
     <!-- Logo -->
     <a class="navbar-brand" href="./index.html" id="homeLink" data-aos="fade-right">
@@ -25,14 +35,13 @@
 
     <!-- Search Bar -->
     <div class="search-container mx-auto" data-aos="fade-up" data-aos-delay="100">
-      <div class="search-wrapper" role="search">
-        <i class="bi bi-search search-icon" aria-hidden="true"></i>
+      <div class="search-wrapper">
+        <i class="bi bi-search search-icon"></i>
         <input
           type="text"
           class="search-input"
           placeholder="¿Qué estás buscando hoy?"
           id="searchInput"
-          aria-label="Buscar productos y servicios"
         />
       </div>
     </div>
@@ -63,6 +72,13 @@
         </a>
       </div>
 
+      <!-- Dark Mode Toggle -->
+      <div class="action-item d-none d-md-flex">
+        <button class="theme-toggle" id="themeToggle" title="Cambiar tema">
+          <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+        </button>
+      </div>
+
       <!-- Notifications -->
       <div class="action-item dropdown">
         <button
@@ -72,33 +88,33 @@
           data-bs-display="static"
           data-bs-auto-close="outside"
           aria-expanded="false"
-          aria-label="Notificaciones"
+          title="Notificaciones"
         >
-          <i class="bi bi-bell" aria-hidden="true"></i>
-          <span class="notification-badge" id="notificationBadge" aria-live="polite" aria-label="3 notificaciones sin leer">3</span>
+          <i class="bi bi-bell"></i>
+          <span class="notification-badge" id="notificationBadge">3</span>
         </button>
         <div class="dropdown-menu dropdown-menu-end notifications-dropdown" aria-labelledby="notificationBtn">
           <!-- Header con contador -->
           <div class="notifications-header">
             <h6 class="mb-0">
-              <i class="bi bi-bell me-2" aria-hidden="true"></i>
+              <i class="bi bi-bell me-2"></i>
               Notificaciones
               <span class="notifications-count" id="notificationsCount">3</span>
             </h6>
           </div>
 
           <!-- Filtros -->
-          <div class="notifications-filter" role="group" aria-label="Filtrar notificaciones">
-            <button class="filter-chip active" data-filter="all" aria-pressed="true">Todas</button>
-            <button class="filter-chip" data-filter="unread" aria-pressed="false">No leídas</button>
-            <button class="filter-chip" data-filter="orders" aria-pressed="false">Pedidos</button>
-            <button class="filter-chip" data-filter="offers" aria-pressed="false">Ofertas</button>
+          <div class="notifications-filter">
+            <button class="filter-chip active" data-filter="all">Todas</button>
+            <button class="filter-chip" data-filter="unread">No leídas</button>
+            <button class="filter-chip" data-filter="orders">Pedidos</button>
+            <button class="filter-chip" data-filter="offers">Ofertas</button>
           </div>
 
           <!-- Cuerpo de notificaciones -->
           <div class="notifications-body" id="notificationsDropdownBody">
             <div class="notification-item unread" data-id="1" data-type="orders">
-              <div class="notification-icon bg-success" aria-hidden="true">
+              <div class="notification-icon bg-success">
                 <i class="bi bi-check-circle text-white"></i>
               </div>
               <div class="notification-content">
@@ -106,13 +122,13 @@
                 <p>Tu pedido #12345 ha sido confirmado</p>
                 <small>Hace 2 horas</small>
               </div>
-              <button class="notification-close" data-action="dismiss" aria-label="Cerrar notificación: Pedido confirmado">
-                <i class="bi bi-x" aria-hidden="true"></i>
+              <button class="notification-close" data-action="dismiss">
+                <i class="bi bi-x"></i>
               </button>
             </div>
 
             <div class="notification-item unread" data-id="2" data-type="orders">
-              <div class="notification-icon bg-info" aria-hidden="true">
+              <div class="notification-icon bg-info">
                 <i class="bi bi-truck text-white"></i>
               </div>
               <div class="notification-content">
@@ -120,13 +136,13 @@
                 <p>Tu pedido #12340 está siendo preparado</p>
                 <small>Hace 1 día</small>
               </div>
-              <button class="notification-close" data-action="dismiss" aria-label="Cerrar notificación: Envío en camino">
-                <i class="bi bi-x" aria-hidden="true"></i>
+              <button class="notification-close" data-action="dismiss">
+                <i class="bi bi-x"></i>
               </button>
             </div>
 
             <div class="notification-item unread" data-id="3" data-type="offers">
-              <div class="notification-icon bg-warning" aria-hidden="true">
+              <div class="notification-icon bg-warning">
                 <i class="bi bi-star text-white"></i>
               </div>
               <div class="notification-content">
@@ -134,8 +150,8 @@
                 <p>20% de descuento en electrónicos</p>
                 <small>Hace 2 días</small>
               </div>
-              <button class="notification-close" data-action="dismiss" aria-label="Cerrar notificación: Nueva oferta disponible">
-                <i class="bi bi-x" aria-hidden="true"></i>
+              <button class="notification-close" data-action="dismiss">
+                <i class="bi bi-x"></i>
               </button>
             </div>
           </div>
@@ -154,15 +170,15 @@
 
       <!-- Cart -->
       <div class="action-item dropdown">
-        <button class="action-btn" id="cartBtn" data-bs-toggle="dropdown" data-bs-display="static" data-bs-auto-close="outside" aria-expanded="false" aria-label="Carrito de compras">
-          <i class="bi bi-cart3" aria-hidden="true"></i>
-          <span class="cart-badge" id="cartBadge" aria-live="polite" aria-label="0 artículos en el carrito">0</span>
+        <button class="action-btn" id="cartBtn" data-bs-toggle="dropdown" data-bs-display="static" data-bs-auto-close="outside" aria-expanded="false" title="Carrito de compras">
+          <i class="bi bi-cart3"></i>
+          <span class="cart-badge" id="cartBadge">0</span>
         </button>
         <div class="dropdown-menu dropdown-menu-end cart-dropdown" aria-labelledby="cartBtn">
           <!-- Header del carrito -->
           <div class="cart-header">
             <h6 class="mb-0">
-              <i class="bi bi-cart3 me-2" aria-hidden="true"></i>
+              <i class="bi bi-cart3 me-2"></i>
               Mi Carrito
               <span class="cart-count" id="cartCount">0</span>
             </h6>
@@ -199,7 +215,7 @@
           data-bs-toggle="dropdown"
           data-bs-display="static"
           aria-expanded="false"
-          aria-label="Mi cuenta"
+          title="Mi cuenta"
         >
           <img
             src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
@@ -208,30 +224,30 @@
           />
           <span class="profile-name">Usuario</span>
         </button>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown" role="menu">
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
           <li class="dropdown-header">
             <h6 class="mb-0">Mi Cuenta</h6>
           </li>
           <li><hr class="dropdown-divider" /></li>
           <li>
-            <a class="dropdown-item" href="./notificaciones.html#mi-perfil" role="menuitem">
-              <i class="bi bi-person me-2" aria-hidden="true"></i>Mi Perfil
+            <a class="dropdown-item" href="./notificaciones.html#mi-perfil">
+              <i class="bi bi-person me-2"></i>Mi Perfil
             </a>
           </li>
           <li>
-            <a class="dropdown-item" href="#" id="favoritesLink" role="menuitem">
-              <i class="bi bi-heart me-2" aria-hidden="true"></i>Favoritos
+            <a class="dropdown-item" href="#" id="favoritesLink">
+              <i class="bi bi-heart me-2"></i>Favoritos
             </a>
           </li>
           <li><hr class="dropdown-divider" /></li>
           <li>
-            <a class="dropdown-item" href="./login.html" id="loginLink" role="menuitem">
-              <i class="bi bi-box-arrow-in-right me-2" aria-hidden="true"></i>Iniciar Sesión
+            <a class="dropdown-item" href="./login.html" id="loginLink">
+              <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
             </a>
           </li>
           <li>
-            <a class="dropdown-item text-danger" href="#" id="logoutBtn" role="menuitem" style="display: none">
-              <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Cerrar Sesión
+            <a class="dropdown-item text-danger" href="#" id="logoutBtn" style="display: none">
+              <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
             </a>
           </li>
         </ul>
@@ -243,15 +259,15 @@
   <div class="collapse" id="navMobileLinks">
     <div class="nav-mobile-menu">
       <a href="./productos.html" class="nav-mobile-link">
-        <i class="bi bi-bag" aria-hidden="true"></i>
+        <i class="bi bi-bag"></i>
         Productos
       </a>
       <a href="./servicios.html" class="nav-mobile-link">
-        <i class="bi bi-tools" aria-hidden="true"></i>
+        <i class="bi bi-tools"></i>
         Servicios
       </a>
       <a href="./publicar.html" class="nav-mobile-link" style="color: var(--primary-color, #0d6efd); font-weight: 600;">
-        <i class="bi bi-plus-circle-fill" aria-hidden="true"></i>
+        <i class="bi bi-plus-circle-fill"></i>
         Publicar
       </a>
     </div>

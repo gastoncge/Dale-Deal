@@ -29,8 +29,10 @@ class AuthManager {
   // ===== GESTIÓN DE USUARIO =====
   loadCurrentUser() {
     try {
+      // Requiere que exista tanto el objeto usuario como el token JWT
+      const token = localStorage.getItem('daledeal_token');
       const userData = localStorage.getItem(this.storageKey);
-      this.currentUser = userData ? JSON.parse(userData) : null;
+      this.currentUser = (token && userData) ? JSON.parse(userData) : null;
     } catch (error) {
       DaleDeal.error("Error cargando usuario:", error);
       this.currentUser = null;
@@ -42,27 +44,34 @@ class AuthManager {
   }
 
   isAuthenticated() {
-    return this.currentUser !== null;
+    return this.currentUser !== null && !!localStorage.getItem('daledeal_token');
   }
 
-  // ===== AUTENTICACIÓN =====
+  // ===== AUTENTICACIÓN (conectada al backend real) =====
   async login(credentials) {
     try {
       this.validateLoginCredentials(credentials);
 
-      // Simular llamada a API
-      await this.simulateAPICall();
+      // Llamada real a la API
+      const data = await window.DaleDeal.api.loginUser(
+        credentials.email,
+        credentials.password
+      );
 
-      // Crear objeto de usuario
+      // Guardar token JWT
+      localStorage.setItem('daledeal_token', data.token);
+
+      // Normalizar objeto de usuario
       const user = {
-        id: Date.now(),
-        email: credentials.email,
-        name: this.extractNameFromEmail(credentials.email),
-        avatar: this.generateAvatarUrl(),
+        id: data.user.id,
+        email: data.user.email,
+        name: data.user.name,
+        avatar: data.user.avatar_url || this.generateAvatarUrl(),
+        phone: data.user.phone,
+        location: data.user.location,
         loginTime: new Date().toISOString(),
       };
 
-      // Guardar usuario
       this.currentUser = user;
       localStorage.setItem(this.storageKey, JSON.stringify(user));
 
@@ -74,16 +83,14 @@ class AuthManager {
       }
 
       this.updateUI();
-      this.showNotification(
-        "Sesión demo iniciada — los datos se guardan localmente, no en un servidor real.",
-        "info"
-      );
+      this.showNotification("¡Bienvenido! Redirigiendo...", "success");
 
       return { success: true, user };
     } catch (error) {
       DaleDeal.error("Error en login:", error);
-      this.showNotification(error.message, "error");
-      return { success: false, error: error.message };
+      const msg = error.message || "Error al iniciar sesión. Verificá tus credenciales.";
+      this.showNotification(msg, "error");
+      return { success: false, error: msg };
     }
   }
 
@@ -91,39 +98,44 @@ class AuthManager {
     try {
       this.validateRegistrationData(userData);
 
-      // Simular llamada a API
-      await this.simulateAPICall();
+      // Llamada real a la API
+      const data = await window.DaleDeal.api.registerUser(
+        userData.fullName,
+        userData.email,
+        userData.password
+      );
 
-      // Crear objeto de usuario
+      // Guardar token JWT
+      localStorage.setItem('daledeal_token', data.token);
+
+      // Normalizar objeto de usuario
       const user = {
-        id: Date.now(),
-        email: userData.email,
-        name: userData.fullName,
-        avatar: this.generateAvatarUrl(),
+        id: data.user.id,
+        email: data.user.email,
+        name: data.user.name,
+        avatar: data.user.avatar_url || this.generateAvatarUrl(),
         registrationTime: new Date().toISOString(),
       };
 
-      // Guardar usuario
       this.currentUser = user;
       localStorage.setItem(this.storageKey, JSON.stringify(user));
 
       this.updateUI();
-      this.showNotification(
-        "Cuenta demo creada — los datos se guardan localmente, no en un servidor real.",
-        "info"
-      );
+      this.showNotification("¡Cuenta creada exitosamente!", "success");
 
       return { success: true, user };
     } catch (error) {
       DaleDeal.error("Error en registro:", error);
-      this.showNotification(error.message, "error");
-      return { success: false, error: error.message };
+      const msg = error.message || "Error al crear la cuenta. Intentá nuevamente.";
+      this.showNotification(msg, "error");
+      return { success: false, error: msg };
     }
   }
 
   logout() {
     this.currentUser = null;
     localStorage.removeItem(this.storageKey);
+    localStorage.removeItem('daledeal_token');
     this.updateUI();
     this.showNotification("Sesión cerrada correctamente", "info");
 
@@ -195,8 +207,16 @@ class AuthManager {
   }
 
   async simulateAPICall() {
-    // Demo: delay sin errores aleatorios. Reemplazar por fetch real al backend.
-    return (window.DemoAdapter?.demoDelay ?? (ms => new Promise(r => setTimeout(r, ms))))(900);
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        // Simular ocasionalmente errores de red
+        if (Math.random() < 0.05) {
+          reject(new Error("Error de conexión. Inténtalo nuevamente."));
+        } else {
+          resolve();
+        }
+      }, 1000 + Math.random() * 1000);
+    });
   }
 
   // ===== NAVEGACIÓN =====
@@ -381,7 +401,17 @@ class AuthManager {
   }
 
   calculatePasswordStrength(password) {
-    return DaleDeal.utils.calculatePasswordStrength(password);
+    // Usar la función global de utils si está disponible
+    if (window.DaleDeal?.utils?.calculatePasswordStrength) {
+      return window.DaleDeal.utils.calculatePasswordStrength(password);
+    }
+    
+    // Fallback simple si utils no está disponible
+    const length = password.length;
+    if (length === 0) return { score: 0, text: "Mínimo 8 caracteres", class: "" };
+    if (length < 8) return { score: 20, text: "Débil", class: "weak" };
+    if (length < 12) return { score: 60, text: "Media", class: "medium" };
+    return { score: 90, text: "¡Excelente!", class: "strong" };
   }
 
   updatePasswordStrengthUI(strength, bar, text) {
@@ -682,7 +712,6 @@ let authManager;
 function initializeAuth() {
   if (!authManager) {
     authManager = new AuthManager();
-    window.authManager = authManager;
   }
 
   // Setup específico según la página
@@ -705,4 +734,5 @@ if (document.readyState === "loading") {
 }
 
 // Exportar para uso global
+window.authManager = authManager;
 window.AuthManager = AuthManager;

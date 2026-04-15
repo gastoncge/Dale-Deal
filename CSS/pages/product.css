@@ -2205,12 +2205,11 @@
 
 .chat-float-btn {
   width: 64px; height: 64px; border-radius: 50%;
-  background: var(--gradient-primary); border: none; outline: none; cursor: pointer;
+  background: var(--gradient-primary); border: none; cursor: pointer;
   box-shadow: 0 8px 32px rgba(214,48,49,0.4);
   position: relative; display: flex; align-items: center; justify-content: center;
   transition: all var(--transition-base); overflow: visible; padding: 0;
 }
-.chat-float-btn:focus { outline: none; }
 
 .chat-float-btn:hover { transform: scale(1.08); box-shadow: 0 12px 40px rgba(214,48,49,0.5); }
 
@@ -2221,7 +2220,7 @@
   background: var(--primary-red); color: var(--white);
   font-size: 11px; font-weight: 700; border-radius: var(--radius-full);
   min-width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25); border: 2.5px solid var(--white);
   pointer-events: none; padding: 0 4px; z-index: 10001;
 }
 
@@ -2370,4 +2369,20 @@
 @media (max-width: 479px) {
   .chat-float-widget { bottom: 16px; right: 16px; }
   .chat-float-panel { width: calc(100vw - 32px); right: 16px; bottom: 96px; }
+}
+
+/* ===== Carousel productos similares y recientes ===== */
+#similarProductsCarousel .carousel-inner,
+#similarProductsCarousel .carousel-item {
+  display: flex;
+  align-items: stretch;
+}
+#similarProductsCarousel .carousel-item .row { width: 100%; }
+#similarProductsCarousel .carousel-item .col-lg-3 .product-card { height: 100%; }
+#similarProductsCarousel .carousel-control-prev,
+#similarProductsCarousel .carousel-control-next,
+#recentlyViewedCarousel .carousel-control-prev,
+#recentlyViewedCarousel .carousel-control-next {
+  top: 160px;
+  transform: translateY(-50%);
 }

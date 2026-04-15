@@ -19,18 +19,13 @@ class NotificationManager {
 
   // Cargar notificaciones desde localStorage o datos por defecto
   loadNotifications() {
-    const stored = localStorage.getItem('daledealer_notifications');
+    const stored = localStorage.getItem('daledealt_notifications');
     if (stored) {
       try {
-        const parsed = JSON.parse(stored);
-        this.notifications = Array.isArray(parsed) ? parsed : [];
-        if (!Array.isArray(parsed)) {
-          localStorage.removeItem('daledealer_notifications');
-        }
+        this.notifications = JSON.parse(stored);
       } catch (e) {
-        console.error('Error al parsear notificaciones del localStorage:', e);
-        localStorage.removeItem('daledealer_notifications');
-        this.notifications = [];
+        DaleDeal.error('Error al parsear notificaciones del localStorage:', e);
+        this.notifications = null;
       }
     } else {
       // Datos de ejemplo
@@ -102,59 +97,37 @@ class NotificationManager {
 
   // Guardar notificaciones en localStorage
   saveNotifications() {
-    localStorage.setItem('daledealer_notifications', JSON.stringify(this.notifications));
+    localStorage.setItem('daledealt_notifications', JSON.stringify(this.notifications));
   }
 
   // Vincular eventos
   bindEvents() {
-    // Cuando el dropdown se abre, registrar el handler de clicks en el propio menú.
-    // Al estar en un nodo hijo de document, dispara ANTES que el listener de Bootstrap
-    // en document, y stopPropagation() impide que Bootstrap cierre el dropdown.
-    document.addEventListener('shown.bs.dropdown', (e) => {
-      if (e.target && e.target.id === 'notificationBtn') {
-        const menu = document.querySelector('.notifications-dropdown');
-        if (menu && !menu._hasClickGuard) {
-          menu.addEventListener('click', (ev) => {
-            ev.stopPropagation();
-            this._handleMenuClick(ev);
-          });
-          menu._hasClickGuard = true;
-        }
-        this.loadNotifications();
-        this.renderNotifications();
-        this.updateBadge();
+    // Filtros
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+      chip.addEventListener('click', (e) => this.handleFilterChange(e));
+    });
+
+    // Botones de acción principales
+    document.getElementById('markAllAsRead')?.addEventListener('click', () => this.markAllAsRead());
+    document.getElementById('markSelectedAsRead')?.addEventListener('click', () => this.markSelectedAsRead());
+    document.getElementById('viewAllNotifications')?.addEventListener('click', () => this.viewAllNotifications());
+
+    // Event delegation para notificaciones dinámicas (dropdown)
+    document.getElementById('notificationsDropdownBody')?.addEventListener('click', (e) => this.handleNotificationClick(e));
+    
+    // Prevenir que el dropdown se cierre al hacer clic en filtros
+    document.querySelector('.notifications-dropdown')?.addEventListener('click', (e) => {
+      if (e.target.closest('.notifications-filter') || e.target.closest('.notifications-footer')) {
+        e.stopPropagation();
       }
     });
-  }
 
-  // Maneja todos los clicks dentro del menú de notificaciones
-  _handleMenuClick(e) {
-    // Filtros
-    const filterChip = e.target.closest('.filter-chip');
-    if (filterChip) {
-      this.handleFilterChange(e);
-      return;
-    }
-
-    // Items de notificación (X, contenido, acciones)
-    if (e.target.closest('.notification-item')) {
-      this.handleNotificationClick(e);
-      return;
-    }
-
-    // Botones del footer
-    if (e.target.closest('#markAllAsRead')) {
-      this.markAllAsRead();
-      return;
-    }
-    if (e.target.closest('#markSelectedAsRead')) {
-      this.markSelectedAsRead();
-      return;
-    }
-    if (e.target.closest('#viewAllNotifications')) {
-      this.viewAllNotifications();
-      return;
-    }
+    // Actualizar el dropdown cuando se abre
+    document.getElementById('notificationBtn')?.addEventListener('shown.bs.dropdown', () => {
+      this.loadNotifications();
+      this.renderNotifications();
+      this.updateBadge();
+    });
   }
 
   // Manejar cambio de filtros
@@ -185,6 +158,7 @@ class NotificationManager {
     // Cerrar notificación
     if (target.closest('.notification-close')) {
       e.preventDefault();
+      e.stopPropagation();
       this.dismissNotification(notificationId);
     }
 
@@ -277,11 +251,18 @@ class NotificationManager {
   dismissNotification(notificationId) {
     const index = this.notifications.findIndex(n => n.id === notificationId);
     if (index !== -1) {
-      this.notifications.splice(index, 1);
-      this.selectedNotifications.delete(notificationId);
-      this.saveNotifications();
-      this.renderNotifications();
-      this.updateBadge();
+      const notification = this.notifications[index];
+      const confirmed = confirm(`¿Eliminar la notificación "${notification.title}"?`);
+      
+      if (confirmed) {
+        this.notifications.splice(index, 1);
+        this.selectedNotifications.delete(notificationId);
+        this.saveNotifications();
+        this.renderNotifications();
+        this.updateBadge();
+        
+        this.showToast('Notificación eliminada', 'info');
+      }
     }
   }
 
@@ -336,12 +317,10 @@ class NotificationManager {
 
     if (filteredNotifications.length === 0) {
       container.innerHTML = this.getEmptyState();
-      this.updateCounter();
-      this.updateActionButtons();
       return;
     }
 
-    container.innerHTML = filteredNotifications.map(notification =>
+    container.innerHTML = filteredNotifications.map(notification => 
       this.createNotificationHTML(notification)
     ).join('');
 
@@ -379,6 +358,11 @@ class NotificationManager {
           <h6>${notification.title}</h6>
           <p>${notification.message}</p>
           <small>${notification.time}</small>
+          <div class="notification-actions">
+            ${notification.actions.map(action => 
+              `<button class="notification-action-btn" data-action="${action.action}">${action.label}</button>`
+            ).join('')}
+          </div>
         </div>
         <button class="notification-close" data-action="dismiss">
           <i class="bi bi-x"></i>
@@ -440,7 +424,42 @@ class NotificationManager {
 
   // Mostrar toast de notificación
   showToast(message, type = 'info') {
-    DaleDeal.utils.showNotification(message, type);
+    // Crear toast dinámicamente
+    const toastId = 'toast_' + Date.now();
+    const toastHTML = `
+      <div class="toast align-items-center text-white bg-${type === 'success' ? 'success' : type === 'warning' ? 'warning' : type === 'error' ? 'danger' : 'primary'} border-0" 
+           role="alert" aria-live="assertive" aria-atomic="true" id="${toastId}">
+        <div class="d-flex">
+          <div class="toast-body">
+            <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : type === 'error' ? 'x-circle' : 'info-circle'} me-2"></i>
+            ${message}
+          </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+      </div>
+    `;
+
+    // Agregar toast al DOM
+    let toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) {
+      toastContainer = document.createElement('div');
+      toastContainer.id = 'toast-container';
+      toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+      toastContainer.style.zIndex = '9999';
+      document.body.appendChild(toastContainer);
+    }
+
+    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+
+    // Mostrar toast
+    const toastElement = document.getElementById(toastId);
+    const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
+    toast.show();
+
+    // Eliminar del DOM después de ocultarse
+    toastElement.addEventListener('hidden.bs.toast', () => {
+      toastElement.remove();
+    });
   }
 
   // Agregar nueva notificación (método público)

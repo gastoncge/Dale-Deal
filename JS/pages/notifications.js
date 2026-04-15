@@ -21,19 +21,9 @@ class NotificationsCenterManager {
 
   // Cargar notificaciones desde localStorage o datos de ejemplo
   loadNotifications() {
-    const stored = localStorage.getItem('daledealer_notifications');
+    const stored = localStorage.getItem('daledealt_notifications');
     if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        this.notifications = Array.isArray(parsed) ? parsed : [];
-        if (!Array.isArray(parsed)) {
-          localStorage.removeItem('daledealer_notifications');
-        }
-      } catch (e) {
-        console.error('Error al parsear notificaciones del localStorage:', e);
-        localStorage.removeItem('daledealer_notifications');
-        this.notifications = [];
-      }
+      this.notifications = JSON.parse(stored);
     } else {
       // Datos de ejemplo más completos
       this.notifications = [
@@ -218,7 +208,7 @@ class NotificationsCenterManager {
 
   // Guardar notificaciones en localStorage
   saveNotifications() {
-    localStorage.setItem('daledealer_notifications', JSON.stringify(this.notifications));
+    localStorage.setItem('daledealt_notifications', JSON.stringify(this.notifications));
   }
 
   // Vincular eventos
@@ -476,8 +466,8 @@ class NotificationsCenterManager {
 
   // Cargar más notificaciones
   loadMore() {
-    this.displayedCount = this.getFilteredNotifications().length;
-    this.renderNotifications(false);
+    this.displayedCount += this.itemsPerLoad;
+    this.renderNotifications();
   }
 
   // Obtener notificaciones filtradas
@@ -526,9 +516,9 @@ class NotificationsCenterManager {
       // Mostrar botón de cargar más si hay más notificaciones
       if (displayNotifications.length < filteredNotifications.length) {
         if (loadMoreContainer) loadMoreContainer.style.display = 'block';
-        const total = filteredNotifications.length;
+        const remaining = filteredNotifications.length - displayNotifications.length;
         document.getElementById('loadMoreBtn').innerHTML = `
-          <i class="bi bi-arrow-down-circle me-2"></i>Ver todas las notificaciones (${total})
+          <i class="bi bi-arrow-down-circle me-2"></i>Cargar más notificaciones (${remaining})
         `;
       } else if (loadMoreContainer) {
         loadMoreContainer.style.display = 'none';
@@ -541,8 +531,10 @@ class NotificationsCenterManager {
       if (emptyState) emptyState.style.display = 'none';
       if (loadMoreContainer) loadMoreContainer.style.display = 'none';
 
-      if (loadingState) loadingState.style.display = 'none';
-      doRender();
+      setTimeout(() => {
+        if (loadingState) loadingState.style.display = 'none';
+        doRender();
+      }, 500);
       return;
     }
 
@@ -552,7 +544,7 @@ class NotificationsCenterManager {
 
   // Crear HTML de notificación
   createNotificationHTML(notification) {
-    const actionsHTML = (notification.actions || []).map(action => `
+    const actionsHTML = notification.actions.map(action => `
       <button class="notification-action-btn ${action.isPrimary ? 'primary' : ''}"
               data-action="${action.action}">
         ${action.label}
@@ -579,7 +571,7 @@ class NotificationsCenterManager {
                 ${notification.time}
               </div>
             </div>
-            ${(notification.actions?.length > 0) ? `
+            ${notification.actions.length > 0 ? `
               <div class="notification-actions">
                 ${actionsHTML}
               </div>
@@ -636,7 +628,52 @@ class NotificationsCenterManager {
 
   // Mostrar toast de notificación
   showToast(message, type = 'info') {
-    DaleDeal.utils.showNotification(message, type);
+    const toastId = 'toast_' + Date.now();
+    const bgColors = {
+      success: 'bg-success',
+      warning: 'bg-warning',
+      error: 'bg-danger',
+      info: 'bg-primary'
+    };
+
+    const icons = {
+      success: 'check-circle',
+      warning: 'exclamation-triangle',
+      error: 'x-circle',
+      info: 'info-circle'
+    };
+
+    const toastHTML = `
+      <div class="toast align-items-center text-white ${bgColors[type]} border-0"
+           role="alert" aria-live="assertive" aria-atomic="true" id="${toastId}">
+        <div class="d-flex">
+          <div class="toast-body">
+            <i class="bi bi-${icons[type]} me-2"></i>
+            ${message}
+          </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+      </div>
+    `;
+
+    let toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) {
+      toastContainer = document.createElement('div');
+      toastContainer.id = 'toast-container';
+      toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+      toastContainer.style.zIndex = '9999';
+      document.body.appendChild(toastContainer);
+    }
+
+    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+
+    const toastElement = document.getElementById(toastId);
+    const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
+    toast.show();
+
+    toastElement.addEventListener('hidden.bs.toast', () => {
+      toastElement.remove();
+    });
   }
 }
 

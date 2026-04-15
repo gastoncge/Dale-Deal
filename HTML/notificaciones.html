@@ -83,14 +83,6 @@
             </a>
           </div>
 
-          <!-- Publicar Button -->
-          <div class="action-item d-none d-md-flex">
-            <a href="./publicar.html" class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-3" title="Publicar producto o servicio" style="border-radius: 20px; font-weight: 600;">
-              <i class="bi bi-plus-circle-fill"></i>
-              <span>Publicar</span>
-            </a>
-          </div>
-
           <!-- Notifications -->
           <div class="action-item dropdown">
             <button class="action-btn" id="notificationBtn" data-bs-toggle="dropdown" data-bs-display="static" data-bs-auto-close="outside" aria-expanded="false" title="Notificaciones">
@@ -328,15 +320,6 @@
 
               <!-- Cuenta -->
               <div class="sidebar-divider"></div>
-              <p class="sidebar-section-label">Publicidad</p>
-              <nav class="sidebar-nav-list">
-                <a href="#" class="sidebar-nav-item" data-section="publicidad">
-                  <i class="bi bi-megaphone me-2"></i>
-                  <span>Publicitar</span>
-                </a>
-              </nav>
-
-              <div class="sidebar-divider"></div>
               <p class="sidebar-section-label">Cuenta</p>
               <nav class="sidebar-nav-list">
                 <a href="#" class="sidebar-nav-item" data-section="mi-perfil">
@@ -346,14 +329,6 @@
                 <a href="#" class="sidebar-nav-item" data-section="mis-compras">
                   <i class="bi bi-bag me-2"></i>
                   <span>Mis compras</span>
-                </a>
-                <a href="#" class="sidebar-nav-item" data-section="servicios-contratados">
-                  <i class="bi bi-tools me-2"></i>
-                  <span>Servicios contratados</span>
-                </a>
-                <a href="#" class="sidebar-nav-item" data-section="favoritos">
-                  <i class="bi bi-heart me-2"></i>
-                  <span>Favoritos</span>
                 </a>
               </nav>
 
@@ -433,7 +408,7 @@
               <div class="perfil-hero">
                 <div class="perfil-avatar-wrap">
                   <img src="https://ui-avatars.com/api/?name=Usuario&background=e53e3e&color=fff&size=128" alt="Avatar" class="perfil-avatar" id="perfilAvatarImg">
-                  <button class="perfil-avatar-edit" title="Cambiar foto" id="avatarEditBtn">
+                  <button class="perfil-avatar-edit" title="Cambiar foto" onclick="document.getElementById('avatarInput').click()">
                     <i class="bi bi-camera-fill"></i>
                   </button>
                   <input type="file" id="avatarInput" accept="image/*" style="display:none">
@@ -607,7 +582,7 @@
                   </div>
                   <div class="order-footer">
                     <div class="order-total"><small>Total pagado</small><br>$1.299.999</div>
-                    <div class="d-flex gap-2"><button class="btn btn-outline-secondary btn-sm"><i class="bi bi-truck me-1"></i>Rastrear</button><button class="btn btn-outline-secondary btn-sm btn-msg-seller"><i class="bi bi-chat-dots me-1"></i>Mensaje al vendedor</button><button class="btn btn-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalles</button></div>
+                    <div class="d-flex gap-2"><button class="btn btn-outline-secondary btn-sm"><i class="bi bi-truck me-1"></i>Rastrear</button><button class="btn btn-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalles</button></div>
                   </div>
                 </div>
                 <div class="order-card">
@@ -621,7 +596,7 @@
                   </div>
                   <div class="order-footer">
                     <div class="order-total"><small>Total pagado</small><br>$289.999</div>
-                    <div class="d-flex gap-2"><button class="btn btn-outline-secondary btn-sm"><i class="bi bi-star me-1"></i>Calificar</button><button class="btn btn-outline-secondary btn-sm btn-msg-seller"><i class="bi bi-chat-dots me-1"></i>Mensaje al vendedor</button><button class="btn btn-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalles</button></div>
+                    <div class="d-flex gap-2"><button class="btn btn-outline-secondary btn-sm"><i class="bi bi-star me-1"></i>Calificar</button><button class="btn btn-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalles</button></div>
                   </div>
                 </div>
                 <div class="order-card">
@@ -635,107 +610,10 @@
                   </div>
                   <div class="order-footer">
                     <div class="order-total"><small>Reembolso procesado</small><br>$799.999</div>
-                    <div class="d-flex gap-2"><button class="btn btn-outline-secondary btn-sm"><i class="bi bi-headset me-1"></i>Ayuda</button><button class="btn btn-outline-secondary btn-sm btn-msg-seller"><i class="bi bi-chat-dots me-1"></i>Mensaje al vendedor</button><button class="btn btn-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalles</button></div>
+                    <div class="d-flex gap-2"><button class="btn btn-outline-secondary btn-sm"><i class="bi bi-headset me-1"></i>Ayuda</button><button class="btn btn-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalles</button></div>
                   </div>
                 </div>
               </div>
-            </div>
-
-            <!-- ===== SECCIÓN: SERVICIOS CONTRATADOS ===== -->
-            <div id="view-servicios-contratados" class="centro-section" style="display:none">
-              <div class="centro-section-header">
-                <h2 class="centro-section-title"><i class="bi bi-tools me-2"></i>Servicios Contratados</h2>
-                <div class="filter-tabs">
-                  <button class="filter-tab active" data-service-filter="all">Todos</button>
-                  <button class="filter-tab" data-service-filter="pending">Pendiente</button>
-                  <button class="filter-tab" data-service-filter="active">En curso</button>
-                  <button class="filter-tab" data-service-filter="completed">Completado</button>
-                  <button class="filter-tab" data-service-filter="cancelled">Cancelado</button>
-                </div>
-              </div>
-              <div class="orders-list">
-                <div class="order-card">
-                  <div class="order-header">
-                    <div><div class="order-id">Servicio #S-0041</div><div class="order-date"><i class="bi bi-calendar3 me-1"></i>5 de abril de 2026</div></div>
-                    <span class="order-status status-processing"><i class="bi bi-gear-fill me-1"></i>En curso</span>
-                  </div>
-                  <div class="order-row">
-                    <img class="order-item-img" src="https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?w=80&h=80&fit=crop" alt="Diseño web" />
-                    <div class="order-item-info">
-                      <div class="order-item-name">Diseño y desarrollo web profesional</div>
-                      <div class="order-item-qty"><i class="bi bi-person me-1"></i>Proveedor: Carlos Martínez · <i class="bi bi-clock me-1"></i>Entrega estimada: 20 abr 2026</div>
-                    </div>
-                  </div>
-                  <div class="order-footer">
-                    <div class="order-total"><small>Total contratado</small><br>$85.000</div>
-                    <div class="d-flex gap-2">
-                      <button class="btn btn-outline-secondary btn-sm btn-msg-seller"><i class="bi bi-chat-dots me-1"></i>Contactar proveedor</button>
-                      <button class="btn btn-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalles</button>
-                    </div>
-                  </div>
-                </div>
-                <div class="order-card">
-                  <div class="order-header">
-                    <div><div class="order-id">Servicio #S-0038</div><div class="order-date"><i class="bi bi-calendar3 me-1"></i>18 de marzo de 2026</div></div>
-                    <span class="order-status status-delivered"><i class="bi bi-check-circle-fill me-1"></i>Completado</span>
-                  </div>
-                  <div class="order-row">
-                    <img class="order-item-img" src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=80&h=80&fit=crop" alt="Fotografía" />
-                    <div class="order-item-info">
-                      <div class="order-item-name">Sesión fotográfica para e-commerce</div>
-                      <div class="order-item-qty"><i class="bi bi-person me-1"></i>Proveedor: Ana Rodríguez · <i class="bi bi-calendar-check me-1"></i>Finalizado: 25 mar 2026</div>
-                    </div>
-                  </div>
-                  <div class="order-footer">
-                    <div class="order-total"><small>Total pagado</small><br>$45.000</div>
-                    <div class="d-flex gap-2">
-                      <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-star me-1"></i>Calificar</button>
-                      <button class="btn btn-outline-secondary btn-sm btn-msg-seller"><i class="bi bi-chat-dots me-1"></i>Contactar proveedor</button>
-                      <button class="btn btn-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalles</button>
-                    </div>
-                  </div>
-                </div>
-                <div class="order-card">
-                  <div class="order-header">
-                    <div><div class="order-id">Servicio #S-0030</div><div class="order-date"><i class="bi bi-calendar3 me-1"></i>2 de febrero de 2026</div></div>
-                    <span class="order-status status-cancelled"><i class="bi bi-x-circle-fill me-1"></i>Cancelado</span>
-                  </div>
-                  <div class="order-row">
-                    <img class="order-item-img" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=80&h=80&fit=crop" alt="Marketing digital" />
-                    <div class="order-item-info">
-                      <div class="order-item-name">Campaña de marketing digital — redes sociales</div>
-                      <div class="order-item-qty"><i class="bi bi-person me-1"></i>Proveedor: Diego López · <i class="bi bi-x-circle me-1"></i>Cancelado el 10 feb 2026</div>
-                    </div>
-                  </div>
-                  <div class="order-footer">
-                    <div class="order-total"><small>Reembolso procesado</small><br>$30.000</div>
-                    <div class="d-flex gap-2">
-                      <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-headset me-1"></i>Ayuda</button>
-                      <button class="btn btn-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalles</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- ===== SECCIÓN: FAVORITOS ===== -->
-            <div id="view-favoritos" class="centro-section" style="display:none;">
-              <div class="fav-page-header">
-                <div class="fav-page-title">
-                  <i class="bi bi-heart-fill"></i>
-                  <span>Mis Favoritos</span>
-                  <span id="favoritosCount" class="fav-count-pill"></span>
-                </div>
-                <div class="fav-page-actions" id="favoritosActions" style="display:none!important">
-                  <button class="btn btn-outline-danger" id="btnClearFavoritos">
-                    <i class="bi bi-trash me-2"></i>Borrar todo
-                  </button>
-                  <button class="btn btn-primary" id="btnAddAllToCart">
-                    <i class="bi bi-cart-plus me-2"></i>Agregar todo al carrito
-                  </button>
-                </div>
-              </div>
-              <div id="favoritosContent"></div>
             </div>
 
             <!-- ===== SECCIÓN: CENTRO DE AYUDA ===== -->
@@ -796,29 +674,15 @@
                     <div class="row g-3">
                       <div class="col-md-6"><label class="form-label">Nombre *</label><input type="text" class="form-control" required></div>
                       <div class="col-md-6"><label class="form-label">Email *</label><input type="email" class="form-control" required></div>
-                      <div class="col-12">
-                        <label class="form-label">Asunto *</label>
-                        <select class="form-select" id="notifContactAsunto" required>
-                          <option value="">Seleccioná</option>
-                          <option>Consulta sobre un pedido</option>
-                          <option>Problema con un pago</option>
-                          <option>Devolución o reembolso</option>
-                          <option>Problema técnico</option>
-                          <option>Publicidad en el sitio</option>
-                          <option value="otro">Otro</option>
-                        </select>
-                        <div id="notifContactAsuntoOtroWrap" class="d-none mt-2">
-                          <input type="text" class="form-control" id="notifContactAsuntoOtro" placeholder="Especificá el asunto..." maxlength="120" />
-                        </div>
-                      </div>
+                      <div class="col-12"><label class="form-label">Asunto *</label><select class="form-select" required><option value="">Seleccioná</option><option>Consulta sobre un pedido</option><option>Problema con un pago</option><option>Devolución o reembolso</option><option>Problema técnico</option><option>Publicidad en el sitio</option><option>Otro</option></select></div>
                       <div class="col-12"><label class="form-label">Mensaje *</label><textarea class="form-control" rows="4" required placeholder="Describí tu consulta..."></textarea></div>
                       <div class="col-12"><button type="submit" class="btn btn-primary w-100"><i class="bi bi-send me-2"></i>Enviar mensaje</button></div>
                     </div>
                   </form>
                 </div>
                 <div class="contact-info-box">
-                  <div class="contact-info-item-row"><i class="bi bi-envelope"></i><div><small>Email</small><b>contacto@daledeal.com</b></div></div>
-                  <div class="contact-info-item-row"><i class="bi bi-telephone"></i><div><small>Teléfono</small><b>+54 9 11 3798-5881</b></div></div>
+                  <div class="contact-info-item-row"><i class="bi bi-envelope"></i><div><small>Email</small><b>soporte@daledeal.com</b></div></div>
+                  <div class="contact-info-item-row"><i class="bi bi-telephone"></i><div><small>Teléfono</small><b>0800-555-DALE</b></div></div>
                   <div class="contact-info-item-row"><i class="bi bi-clock"></i><div><small>Horario</small><b>Lun–Vie 9:00–18:00 hs</b></div></div>
                   <div class="contact-info-item-row"><i class="bi bi-geo-alt"></i><div><small>Dirección</small><b>Av. Corrientes 1234, CABA</b></div></div>
                 </div>
@@ -862,7 +726,7 @@
                   <h4 class="fw-bold">¡Reporte enviado!</h4>
                   <p class="text-muted mb-3">Nuestro equipo técnico lo revisará a la brevedad.</p>
                   <div class="ticket-badge">Ticket #RPT-<span id="ticketNum"></span></div>
-                  <button class="btn btn-outline-secondary mt-4" id="nuevoReporteBtn">Nuevo reporte</button>
+                  <button class="btn btn-outline-secondary mt-4" onclick="document.getElementById('reportFormState').style.display='block';document.getElementById('reportSuccessState').style.display='none';document.getElementById('reportForm').reset()">Nuevo reporte</button>
                 </div>
               </div>
             </div>
@@ -918,193 +782,12 @@
                   <div class="sec-card-head"><div class="sec-card-icon"><i class="bi bi-laptop"></i></div><div><b>Sesiones activas</b><small>Dispositivos con sesión iniciada</small></div></div>
                   <div class="sec-card-body">
                     <div class="session-row"><i class="bi bi-laptop sess-icon"></i><div><b>Windows · Chrome 122 <span class="current-badge">Este dispositivo</span></b><small class="text-muted d-block">Buenos Aires · Ahora</small></div></div>
-                    <div class="session-row"><i class="bi bi-phone sess-icon"></i><div><b>iPhone 15 · Safari</b><small class="text-muted d-block">Buenos Aires · Hace 2 horas</small></div><button class="btn btn-outline-danger btn-sm ms-auto" data-action="close-session">Cerrar</button></div>
-                    <div class="session-row"><i class="bi bi-phone sess-icon"></i><div><b>Android · Chrome Mobile</b><small class="text-muted d-block">Córdoba · Hace 3 días</small></div><button class="btn btn-outline-danger btn-sm ms-auto" data-action="close-session">Cerrar</button></div>
-                    <button class="btn btn-outline-danger btn-sm mt-3" id="notifCloseAllSessions"><i class="bi bi-box-arrow-right me-2"></i>Cerrar todas las otras sesiones</button>
+                    <div class="session-row"><i class="bi bi-phone sess-icon"></i><div><b>iPhone 15 · Safari</b><small class="text-muted d-block">Buenos Aires · Hace 2 horas</small></div><button class="btn btn-outline-danger btn-sm ms-auto" onclick="this.closest('.session-row').remove()">Cerrar</button></div>
+                    <div class="session-row"><i class="bi bi-phone sess-icon"></i><div><b>Android · Chrome Mobile</b><small class="text-muted d-block">Córdoba · Hace 3 días</small></div><button class="btn btn-outline-danger btn-sm ms-auto" onclick="this.closest('.session-row').remove()">Cerrar</button></div>
+                    <button class="btn btn-outline-danger btn-sm mt-3"><i class="bi bi-box-arrow-right me-2"></i>Cerrar todas las otras sesiones</button>
                   </div>
                 </div>
               </div>
-            </div>
-
-            <!-- ===== SECCIÓN: PUBLICIDAD ===== -->
-            <div id="view-publicidad" class="centro-section" style="display:none">
-              <div class="centro-section-header">
-                <h2 class="centro-section-title"><i class="bi bi-megaphone-fill me-2"></i>Publicidad</h2>
-                <p class="text-muted mb-0">Elegí cómo querés llegar a más personas con tus productos y servicios</p>
-              </div>
-
-              <style>
-                .pub-category { margin-bottom: 2.5rem; text-align: center; }
-                .pub-category-title { font-size: 1.2rem; font-weight: 700; color: var(--gray-800); margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
-                .pub-category-title i { color: var(--primary-red); }
-                .pub-cards { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; }
-                .pub-card { background: white; border: 1.5px solid var(--gray-100); border-radius: 16px; padding: 1.75rem; display: flex; flex-direction: column; gap: 1rem; transition: all 0.2s; width: 300px; flex-shrink: 0; }
-                .pub-card:hover { border-color: var(--primary-red); box-shadow: 0 6px 24px rgba(214,48,49,0.1); transform: translateY(-3px); }
-                .pub-card.featured { border-color: var(--primary-red); background: linear-gradient(135deg, #fff5f5 0%, #fff 100%); }
-                .pub-card-badge { display: inline-block; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 20px; background: var(--gradient-primary); color: white; align-self: flex-start; }
-                .pub-card-icon { width: 52px; height: 52px; border-radius: 14px; background: var(--gray-100); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--primary-red); }
-                .pub-card-name { font-weight: 700; font-size: 1.1rem; color: var(--gray-800); }
-                .pub-card-desc { font-size: 0.88rem; color: var(--gray-500); line-height: 1.6; flex: 1; }
-                .pub-card-price { font-size: 1.7rem; font-weight: 800; color: var(--gray-800); }
-                .pub-card-price span { font-size: 0.85rem; font-weight: 400; color: var(--gray-400); }
-                .pub-card-features { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.4rem; }
-                .pub-card-features li { font-size: 0.88rem; color: var(--gray-600); display: flex; align-items: center; gap: 0.5rem; }
-                .pub-card-features li i { color: #22c55e; font-size: 0.9rem; flex-shrink: 0; }
-                .pub-card-btn { width: 100%; padding: 0.75rem; border-radius: 10px; font-weight: 700; font-size: 0.95rem; border: none; cursor: pointer; background: var(--gradient-primary); color: white; transition: all 0.2s; position: relative; overflow: hidden; }
-                .pub-card-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-xl); }
-                .pub-card-btn::before { content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s; pointer-events: none; }
-                .pub-card-btn:hover::before { left: 100%; }
-                .pub-divider { border: none; border-top: 1.5px solid var(--gray-100); margin: 2rem 0; }
-              </style>
-
-              <!-- 1. Boost de publicaciones -->
-              <div class="pub-category">
-                <div class="pub-category-title">
-                  <i class="bi bi-graph-up-arrow"></i> Boost de publicaciones
-                </div>
-                <p class="text-muted small mb-3">Invertí en tus publicaciones actuales para que lleguen a más personas.</p>
-                <div class="pub-cards">
-
-                  <div class="pub-card">
-                    <div class="pub-card-icon"><i class="bi bi-rocket-takeoff"></i></div>
-                    <div class="pub-card-name">Boost Básico</div>
-                    <div class="pub-card-price">$1.500 <span>/semana</span></div>
-                    <div class="pub-card-desc">Aumentá el alcance de una publicación y aparecé en más resultados de búsqueda.</div>
-                    <ul class="pub-card-features">
-                      <li><i class="bi bi-check-circle-fill"></i> 3× más visibilidad estimada</li>
-                      <li><i class="bi bi-check-circle-fill"></i> Válido para 1 publicación</li>
-                      <li><i class="bi bi-check-circle-fill"></i> Duración: 7 días</li>
-                    </ul>
-                    <button class="pub-card-btn">Activar Boost</button>
-                  </div>
-
-                  <div class="pub-card featured">
-                    <div class="pub-card-badge">Más elegido</div>
-                    <div class="pub-card-icon"><i class="bi bi-lightning-charge-fill"></i></div>
-                    <div class="pub-card-name">Boost Avanzado</div>
-                    <div class="pub-card-price">$3.500 <span>/semana</span></div>
-                    <div class="pub-card-desc">Máximo alcance para tu publicación con aparición prioritaria en búsquedas y categorías.</div>
-                    <ul class="pub-card-features">
-                      <li><i class="bi bi-check-circle-fill"></i> 8× más visibilidad estimada</li>
-                      <li><i class="bi bi-check-circle-fill"></i> Posición top en resultados</li>
-                      <li><i class="bi bi-check-circle-fill"></i> Estadísticas en tiempo real</li>
-                      <li><i class="bi bi-check-circle-fill"></i> Duración: 7 días</li>
-                    </ul>
-                    <button class="pub-card-btn">Activar Boost</button>
-                  </div>
-
-                  <div class="pub-card">
-                    <div class="pub-card-icon"><i class="bi bi-calendar-week"></i></div>
-                    <div class="pub-card-name">Boost Mensual</div>
-                    <div class="pub-card-price">$9.999 <span>/mes</span></div>
-                    <div class="pub-card-desc">Boost continuo durante 30 días para tu publicación más importante.</div>
-                    <ul class="pub-card-features">
-                      <li><i class="bi bi-check-circle-fill"></i> 8× más visibilidad estimada</li>
-                      <li><i class="bi bi-check-circle-fill"></i> Posición top continua</li>
-                      <li><i class="bi bi-check-circle-fill"></i> Estadísticas avanzadas</li>
-                      <li><i class="bi bi-check-circle-fill"></i> Duración: 30 días</li>
-                    </ul>
-                    <button class="pub-card-btn">Activar Boost</button>
-                  </div>
-
-                </div>
-              </div>
-
-              <hr class="pub-divider">
-
-              <!-- 2. Espacios publicitarios -->
-              <div class="pub-category">
-                <div class="pub-category-title">
-                  <i class="bi bi-display"></i> Espacios publicitarios en el sitio
-                </div>
-                <p class="text-muted small mb-3">Aparecé en lugares estratégicos del sitio y captá la atención de miles de usuarios.</p>
-                <div class="pub-cards">
-
-                  <div class="pub-card">
-                    <div class="pub-card-icon"><i class="bi bi-image"></i></div>
-                    <div class="pub-card-name">Banner en Home</div>
-                    <div class="pub-card-price">$8.000 <span>/semana</span></div>
-                    <div class="pub-card-desc">Tu producto o servicio en el slider principal de la página de inicio. Máxima exposición.</div>
-                    <ul class="pub-card-features">
-                      <li><i class="bi bi-check-circle-fill"></i> Slider principal (inicio)</li>
-                      <li><i class="bi bi-check-circle-fill"></i> Vista en escritorio y mobile</li>
-                      <li><i class="bi bi-check-circle-fill"></i> Link directo a tu publicación</li>
-                    </ul>
-                    <button class="pub-card-btn">Contratar espacio</button>
-                  </div>
-
-                  <div class="pub-card">
-                    <div class="pub-card-icon"><i class="bi bi-search"></i></div>
-                    <div class="pub-card-name">Banner en Búsquedas</div>
-                    <div class="pub-card-price">$5.500 <span>/semana</span></div>
-                    <div class="pub-card-desc">Aparecé como resultado patrocinado en las páginas de búsqueda y categorías.</div>
-                    <ul class="pub-card-features">
-                      <li><i class="bi bi-check-circle-fill"></i> Etiqueta "Patrocinado"</li>
-                      <li><i class="bi bi-check-circle-fill"></i> Top de resultados</li>
-                      <li><i class="bi bi-check-circle-fill"></i> Segmentación por categoría</li>
-                    </ul>
-                    <button class="pub-card-btn">Contratar espacio</button>
-                  </div>
-
-                  <div class="pub-card featured">
-                    <div class="pub-card-badge">Mayor impacto</div>
-                    <div class="pub-card-icon"><i class="bi bi-layout-wtf"></i></div>
-                    <div class="pub-card-name">Pack Completo</div>
-                    <div class="pub-card-price">$18.000 <span>/semana</span></div>
-                    <div class="pub-card-desc">Banner en home + búsquedas + boost avanzado. La combinación de mayor alcance.</div>
-                    <ul class="pub-card-features">
-                      <li><i class="bi bi-check-circle-fill"></i> Slider en página de inicio</li>
-                      <li><i class="bi bi-check-circle-fill"></i> Patrocinado en búsquedas</li>
-                      <li><i class="bi bi-check-circle-fill"></i> Boost avanzado incluido</li>
-                      <li><i class="bi bi-check-circle-fill"></i> Panel de estadísticas</li>
-                    </ul>
-                    <button class="pub-card-btn">Contratar Pack</button>
-                  </div>
-
-                </div>
-              </div>
-
-              <hr class="pub-divider">
-
-              <!-- 3. Sponsor / Colaboraciones -->
-              <div class="pub-category">
-                <div class="pub-category-title">
-                  <i class="bi bi-handshake"></i> Sponsor & Colaboraciones
-                </div>
-                <p class="text-muted small mb-3">Asociate con Dale Deal para una presencia de marca permanente y colaboraciones especiales.</p>
-                <div class="pub-cards">
-
-                  <div class="pub-card">
-                    <div class="pub-card-icon"><i class="bi bi-award"></i></div>
-                    <div class="pub-card-name">Sponsor Mensual</div>
-                    <div class="pub-card-price">$35.000 <span>/mes</span></div>
-                    <div class="pub-card-desc">Tu marca como sponsor oficial de Dale Deal con presencia en todas las páginas del sitio.</div>
-                    <ul class="pub-card-features">
-                      <li><i class="bi bi-check-circle-fill"></i> Logo en el footer del sitio</li>
-                      <li><i class="bi bi-check-circle-fill"></i> Mención en redes sociales</li>
-                      <li><i class="bi bi-check-circle-fill"></i> Banner rotativo en home</li>
-                      <li><i class="bi bi-check-circle-fill"></i> Badge "Sponsor oficial"</li>
-                    </ul>
-                    <button class="pub-card-btn">Quiero ser Sponsor</button>
-                  </div>
-
-                  <div class="pub-card">
-                    <div class="pub-card-icon"><i class="bi bi-people-fill"></i></div>
-                    <div class="pub-card-name">Colaboración</div>
-                    <div class="pub-card-price">A convenir</div>
-                    <div class="pub-card-desc">¿Tenés una propuesta especial? Hablemos de co-marketing, contenido patrocinado o alianzas estratégicas.</div>
-                    <ul class="pub-card-features">
-                      <li><i class="bi bi-check-circle-fill"></i> Co-marketing</li>
-                      <li><i class="bi bi-check-circle-fill"></i> Contenido patrocinado</li>
-                      <li><i class="bi bi-check-circle-fill"></i> Alianzas estratégicas</li>
-                      <li><i class="bi bi-check-circle-fill"></i> Condiciones personalizadas</li>
-                    </ul>
-                    <button class="pub-card-btn" id="pubColabContactarBtn">Contactar</button>
-                  </div>
-
-                </div>
-              </div>
-
             </div>
 
           </div>
@@ -1122,13 +805,13 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     <!-- Custom JS -->
+    <script src="../JS/theme.js"></script>
     <script src="../JS/utils.js"></script>
     <script src="../JS/auth.js"></script>
     <script src="../JS/cart.js"></script>
     <script src="../JS/notifications.js"></script>
     <script src="../JS/dropdown-fix.js"></script>
     <script src="../JS/pages/notifications.js"></script>
-    <script src="../JS/chat.js"></script>
     <script src="../JS/component-loader.js" defer></script>
 
     <style>
@@ -1214,27 +897,6 @@
       .order-total { font-size: var(--font-size-lg); font-weight: 800; color: var(--gray-900); }
       .order-total small { display: block; font-size: var(--font-size-xs); font-weight: 500; color: var(--gray-500); }
 
-      /* ---- Favoritos header ---- */
-      .fav-page-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 2px solid var(--gray-100); flex-wrap: wrap; }
-      .fav-page-title { display: flex; align-items: center; gap: 10px; }
-      .fav-page-title i { font-size: 1.3rem; color: var(--primary-red); }
-      .fav-page-title > span:first-of-type { font-size: var(--font-size-xl); font-weight: 800; color: var(--gray-900); }
-      .fav-count-pill { background: var(--gray-100); color: var(--gray-600); font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 20px; min-width: 28px; text-align: center; }
-      .fav-page-actions { display: flex; align-items: center; gap: 10px; }
-
-      /* ---- Favoritos ---- */
-      .fav-section-label { font-size: 1rem; font-weight: 700; color: var(--gray-800); display: flex; align-items: center; gap: 8px; margin-top: 8px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 2px solid var(--gray-100); }
-      .fav-section-count { background: var(--gray-100); color: var(--gray-600); font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
-      .fav-cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 8px; }
-      @media (max-width: 992px) { .fav-cards-grid { grid-template-columns: repeat(3, 1fr); } }
-      @media (max-width: 768px) { .fav-cards-grid { grid-template-columns: repeat(2, 1fr); } }
-      @media (max-width: 480px) { .fav-cards-grid { grid-template-columns: 1fr; } }
-      #view-favoritos .product-card { cursor: pointer; transition: box-shadow var(--transition-base) !important; }
-      #view-favoritos .product-card:hover { box-shadow: var(--shadow-lg); transform: none !important; }
-      #view-favoritos .product-card:hover .product-image { transform: none !important; }
-      #view-favoritos .product-actions { opacity: 1 !important; }
-      #view-favoritos .action-heart.active { background: var(--primary-red); color: #fff; }
-
       /* ---- Centro de Ayuda ---- */
       .help-search-banner { background: var(--gradient-primary); border-radius: var(--radius-xl); padding: var(--spacing-8) var(--spacing-6); text-align: center; color: var(--white); margin-bottom: var(--spacing-6); }
       .help-search-banner h4 { font-weight: 800; }
@@ -1270,7 +932,7 @@
       .form-control:focus, .form-select:focus { border-color: var(--primary-red); box-shadow: 0 0 0 3px rgba(214,48,49,.12); }
 
       /* ---- Reportar Problema ---- */
-      .report-box { max-width: 680px; margin: 0 auto; }
+      .report-box { max-width: 680px; }
       .problem-types { display: flex; flex-wrap: wrap; gap: var(--spacing-2); margin-top: var(--spacing-2); }
       .prob-btn { padding: var(--spacing-2) var(--spacing-4); border: 2px solid var(--gray-200); background: var(--gray-50); border-radius: var(--radius-lg); font-weight: 600; font-size: var(--font-size-sm); cursor: pointer; transition: all var(--transition-base); }
       .prob-btn:hover, .prob-btn.active { border-color: var(--primary-red); background: var(--primary-red-light); color: var(--primary-red); }
@@ -1307,7 +969,7 @@
       .resolved-badge { display: inline-flex; align-items: center; font-size: 12px; font-weight: 700; color: #15803d; background: rgba(34,197,94,.1); padding: 2px 10px; border-radius: var(--radius-full); }
 
       /* ---- Seguridad ---- */
-      .security-sections { display: flex; flex-direction: column; gap: var(--spacing-5); max-width: 700px; margin: 0 auto; }
+      .security-sections { display: flex; flex-direction: column; gap: var(--spacing-5); max-width: 700px; }
       .sec-card { background: var(--white); border: 2px solid var(--gray-200); border-radius: var(--radius-xl); overflow: hidden; }
       .sec-card-head { display: flex; align-items: center; gap: var(--spacing-4); padding: var(--spacing-4) var(--spacing-5); background: var(--gray-50); border-bottom: 1px solid var(--gray-100); }
       .sec-card-icon { width: 40px; height: 40px; background: var(--gradient-primary); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: var(--white); font-size: 18px; flex-shrink: 0; }
@@ -1330,7 +992,7 @@
       AOS.init({ duration: 800, once: true, offset: 100 });
 
       // ===== NAVEGACIÓN DE SECCIONES =====
-      const allSections = ['notifications','mi-perfil','mis-compras','servicios-contratados','favoritos','publicidad','centro-ayuda','contacto','reportar-problema','estado-servicio','seguridad'];
+      const allSections = ['notifications','mi-perfil','mis-compras','centro-ayuda','contacto','reportar-problema','estado-servicio','seguridad'];
 
       function showSection(name) {
         allSections.forEach(s => {
@@ -1392,20 +1054,6 @@
       });
 
       // ===== CONTACTO =====
-      document.getElementById('notifContactAsunto')?.addEventListener('change', function () {
-        const wrap = document.getElementById('notifContactAsuntoOtroWrap');
-        const input = document.getElementById('notifContactAsuntoOtro');
-        if (this.value === 'otro') {
-          wrap.classList.remove('d-none');
-          input.required = true;
-          input.focus();
-        } else {
-          wrap.classList.add('d-none');
-          input.required = false;
-          input.value = '';
-        }
-      });
-
       document.getElementById('contactForm')?.addEventListener('submit', function(e) {
         e.preventDefault();
         document.getElementById('contactSuccess').style.display = 'flex';
@@ -1550,230 +1198,15 @@
 
       renderAddresses();
 
-      // ===== AVATAR EDIT =====
-      document.getElementById('avatarEditBtn')?.addEventListener('click', () => {
-        document.getElementById('avatarInput').click();
-      });
-
-      // ===== NUEVO REPORTE =====
-      document.getElementById('nuevoReporteBtn')?.addEventListener('click', () => {
-        document.getElementById('reportFormState').style.display = 'block';
-        document.getElementById('reportSuccessState').style.display = 'none';
-        document.getElementById('reportForm').reset();
-      });
-
-      // ===== PUBLICIDAD: COLABORACIÓN → CONTACTO =====
-      document.getElementById('pubColabContactarBtn')?.addEventListener('click', () => {
-        showSection('contacto');
-      });
-
-      // ===== SESIONES — no disponible en esta versión =====
-      document.querySelectorAll('[data-action="close-session"]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          window.DaleDeal?.utils?.showNotification('La gestión de sesiones remotas no está disponible en esta versión.', 'info');
-        });
-      });
-
-      document.getElementById('notifCloseAllSessions')?.addEventListener('click', () => {
-        window.DaleDeal?.utils?.showNotification('La gestión de sesiones remotas no está disponible en esta versión.', 'info');
-      });
-
-      // ===== 2FA / ALERTAS — no disponible en esta versión =====
-      document.querySelectorAll('#view-seguridad .form-check-input').forEach(inp => {
-        inp.addEventListener('change', function() {
-          this.checked = !this.checked; // revert visual state
-          window.DaleDeal?.utils?.showNotification('Esta configuración no está disponible en la versión actual.', 'info');
-        });
-      });
-
       // Navegar a sección según hash (al cargar y al cambiar)
       function navigateToHash() {
         const section = window.location.hash.replace('#', '');
         if (section && allSections.includes(section)) {
-          if (section === 'favoritos') renderFavoritos();
           showSection(section);
         }
       }
       navigateToHash();
       window.addEventListener('hashchange', navigateToHash);
-
-      // ===== FAVORITOS =====
-      function renderFavoritos() {
-        const container = document.getElementById('favoritosContent');
-        const actions = document.getElementById('favoritosActions');
-        const countBadge = document.getElementById('favoritosCount');
-        if (!container) return;
-
-        let favs = [];
-        try { favs = JSON.parse(localStorage.getItem('daledealer_favorites') || '[]'); } catch(e) {}
-        if (!Array.isArray(favs)) favs = [];
-
-        // Actualizar contador y botones de acción
-        if (countBadge) countBadge.textContent = favs.length > 0 ? favs.length : '';
-        if (actions) actions.style.display = favs.length > 0 ? 'flex' : 'none';
-
-        if (favs.length === 0) {
-          container.innerHTML = `
-            <div class="empty-state-container">
-              <div class="empty-state">
-                <div class="empty-state-icon"><i class="bi bi-heart"></i></div>
-                <p class="empty-state-title">No tenés favoritos todavía</p>
-                <p class="empty-state-text">Guardá productos y servicios que te interesen para encontrarlos rápido.</p>
-                <div class="d-flex gap-2 justify-content-center flex-wrap">
-                  <a href="../HTML/productos.html" class="btn btn-primary"><i class="bi bi-bag me-2"></i>Explorar productos</a>
-                  <a href="../HTML/servicios.html" class="btn btn-outline-primary"><i class="bi bi-tools me-2"></i>Explorar servicios</a>
-                </div>
-              </div>
-            </div>`;
-          return;
-        }
-
-        function buildCard(f) {
-          const img = f.image || f.imageUrl || '../IMG/LOGO.png';
-          const price = f.priceText || (f.price != null ? '$ ' + Number(f.price).toLocaleString('es-AR') : '');
-          const hasDiscount = (f.discount && f.discount > 0) || !!f.originalPriceText;
-
-          // Stars
-          const fullStars = Math.floor(f.rating || 0);
-          const hasHalf = (f.rating || 0) % 1 >= 0.5;
-          let starsHTML = '';
-          for (let i = 0; i < fullStars; i++) starsHTML += '<i class="bi bi-star-fill"></i>';
-          if (hasHalf) starsHTML += '<i class="bi bi-star-half"></i>';
-          for (let i = 0; i < 5 - fullStars - (hasHalf ? 1 : 0); i++) starsHTML += '<i class="bi bi-star"></i>';
-          const ratingCount = f.ratingCount || f.reviewCount || '';
-
-          // Location
-          const location = f.location || '';
-
-          // Description
-          const desc = f.description ? (f.description.length > 80 ? f.description.slice(0,80)+'...' : f.description) : '';
-
-          // Seller / provider
-          const sellerData = f.seller || f.provider || null;
-          const sellerHTML = sellerData?.name ? `
-            <div class="product-provider">
-              <img src="${sellerData.avatar || '../IMG/LOGO.png'}" alt="${sellerData.name}" class="product-provider-avatar" onerror="this.src='../IMG/LOGO.png'" loading="lazy"/>
-              <span class="product-provider-name">${sellerData.name}</span>
-              ${sellerData.verified ? '<i class="bi bi-patch-check-fill product-provider-verified"></i>' : ''}
-            </div>` : '';
-
-          // Badges overlay (top-left: discount/custom, bottom-right: platform)
-          const badges = f.badges || [];
-          const customBadges = badges.filter(b => typeof b === 'object' && b.text);
-          const legacyBadges = badges.filter(b => typeof b === 'string');
-          const platformBadges = legacyBadges.filter(b => ['DESTACADO','MÁS VENDIDO','NUEVO','RECOMENDADO'].includes((b||'').toUpperCase()));
-          const topLeftInner = [
-            ...customBadges.map(b => `<span class="badge-custom" style="background:${b.color}">${b.text}</span>`),
-            hasDiscount && f.discount ? `<span class="badge-offer">-${f.discount}%</span>` : '',
-          ].filter(Boolean).join('');
-          const badgesOverlayHTML = topLeftInner ? `<div class="service-badges">${topLeftInner}</div>` : '';
-          const bottomRightHTML = platformBadges.map(b => `<span class="badge-featured">${b}</span>`).join('');
-
-          // Price HTML
-          const priceHTML = hasDiscount && f.originalPriceText ? `
-            <span class="product-current-price">${price}</span>
-            <span class="product-original-price">${f.originalPriceText}</span>` : `
-            <span class="product-current-price">${price}</span>`;
-
-          // Shipping badges
-          const shipping = f.shipping || null;
-          const shippingFreeHTML = shipping?.free ? `<span class="shipping-badge"><i class="bi bi-truck"></i> Envío gratis</span>` : '';
-          const shippingSpeedHTML = shipping?.speed === 'today'
-            ? `<span class="shipping-badge"><i class="bi bi-lightning-charge-fill"></i> Llega hoy</span>`
-            : shipping?.speed === 'tomorrow'
-              ? `<span class="shipping-badge"><i class="bi bi-clock-fill"></i> Llega mañana</span>` : '';
-
-          const cartData = JSON.stringify({id: f.id, title: f.title, price: f.price || 0, priceText: price, image: img}).replace(/"/g, '&quot;');
-          const safeTitle = (f.title || '').replace(/'/g, "\\'");
-          const detailHref = f.type === 'service' ? `./servicio.html?id=${f.id}` : `./producto.html?id=${f.id}`;
-          return `
-          <div class="product-card${hasDiscount ? ' has-offer' : ''}" onclick="window.location.href='${detailHref}'">
-            <div class="product-image-container">
-              <img src="${img}" alt="${f.title}" class="product-image active" onerror="this.src='../IMG/LOGO.png'" loading="lazy"/>
-              ${badgesOverlayHTML}
-              ${bottomRightHTML}
-              <div class="product-actions" style="opacity:1">
-                <button class="action-heart active" title="Quitar de favoritos"
-                  onclick="event.stopPropagation(); window.favoritesManager?.removeFromFavorites('${f.id}'); renderFavoritos();">
-                  <i class="bi bi-heart-fill"></i>
-                </button>
-              </div>
-            </div>
-            <div class="product-info">
-              <h3 class="product-title">${f.title}</h3>
-              ${sellerHTML}
-              ${desc ? `<p class="product-description">${desc}</p>` : ''}
-              <div class="product-meta-group">
-                <div class="product-rating">
-                  <div class="stars">${starsHTML}</div>
-                  ${ratingCount ? `<span class="reviews-count">${ratingCount}</span>` : ''}
-                  ${shippingFreeHTML}
-                </div>
-                <div class="product-location">
-                  ${location ? `<i class="bi bi-geo-alt-fill"></i><span>${location}</span>` : ''}
-                  ${shippingSpeedHTML}
-                </div>
-              </div>
-              <div class="product-pricing-wrapper">
-                <div class="product-pricing">
-                  ${priceHTML}
-                </div>
-                <button class="btn-add-to-cart"
-                  onclick="event.stopPropagation(); window.cartManager?.addItem(${cartData}); window.DaleDeal?.utils?.showNotification('${safeTitle} agregado al carrito','success');">
-                  <i class="bi bi-cart-plus me-1"></i>Agregar al carrito
-                </button>
-              </div>
-            </div>
-          </div>`;
-        }
-
-        const productos = favs.filter(f => f.type !== 'service');
-        const servicios = favs.filter(f => f.type === 'service');
-
-        let html = '';
-        if (productos.length > 0) {
-          html += `<div class="fav-section-label"><i class="bi bi-bag me-2"></i>Productos <span class="fav-section-count">${productos.length}</span></div>
-                   <div class="fav-cards-grid">${productos.map(buildCard).join('')}</div>`;
-        }
-        if (servicios.length > 0) {
-          html += `<div class="fav-section-label"${productos.length > 0 ? ' style="margin-top:28px"' : ''}><i class="bi bi-tools me-2"></i>Servicios <span class="fav-section-count">${servicios.length}</span></div>
-                   <div class="fav-cards-grid">${servicios.map(buildCard).join('')}</div>`;
-        }
-        container.innerHTML = html;
-      }
-
-      document.getElementById('favoritesLink')?.addEventListener('click', e => {
-        e.preventDefault();
-        renderFavoritos();
-        showSection('favoritos');
-      });
-
-      document.querySelector('.sidebar-nav-item[data-section="favoritos"]')?.addEventListener('click', () => renderFavoritos());
-
-      document.getElementById('btnClearFavoritos')?.addEventListener('click', () => {
-        if (!confirm('¿Borrar todos los favoritos?')) return;
-        localStorage.setItem('daledealer_favorites', '[]');
-        window.favoritesManager && (window.favoritesManager.favorites = []);
-        renderFavoritos();
-      });
-
-      document.getElementById('btnAddAllToCart')?.addEventListener('click', () => {
-        let favs = [];
-        try { favs = JSON.parse(localStorage.getItem('daledealer_favorites') || '[]'); } catch(e) {}
-        favs.forEach(f => window.cartManager?.addItem(f));
-        if (favs.length > 0) window.DaleDeal?.utils?.showNotification(`${favs.length} producto${favs.length > 1 ? 's' : ''} agregado${favs.length > 1 ? 's' : ''} al carrito`, 'success');
-      });
-
-      // ===== MIS COMPRAS: MENSAJE AL VENDEDOR =====
-      document.querySelectorAll('.btn-msg-seller').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const chatFloatBtn = document.getElementById('chatFloatBtn');
-          const panel = document.getElementById('chatFloatPanel');
-          if (chatFloatBtn && panel && !panel.classList.contains('chat-float-open')) {
-            chatFloatBtn.click();
-          }
-        });
-      });
     </script>
   </body>
 </html>

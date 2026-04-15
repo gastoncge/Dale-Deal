@@ -3,6 +3,71 @@
 // =====================================================
 
 /**
+ * Renderiza las estrellas de rating
+ */
+function renderStars(rating) {
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 >= 0.5;
+  let starsHTML = '';
+
+  // Estrellas llenas
+  for (let i = 0; i < fullStars; i++) {
+    starsHTML += '<i class="bi bi-star-fill"></i>';
+  }
+
+  // Media estrella
+  if (hasHalfStar) {
+    starsHTML += '<i class="bi bi-star-half"></i>';
+  }
+
+  // Estrellas vacías
+  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+  for (let i = 0; i < emptyStars; i++) {
+    starsHTML += '<i class="bi bi-star"></i>';
+  }
+
+  return starsHTML;
+}
+
+/**
+ * Renderiza los badges de envío según los datos del producto
+ */
+function renderShippingBadges(shipping) {
+  if (!shipping) return '';
+
+  let badgesHTML = '';
+
+  // Badge de envío gratis
+  if (shipping.free) {
+    badgesHTML += `
+      <div class="shipping-badge shipping-free">
+        <i class="bi bi-truck"></i>
+        <span>Envío gratis</span>
+      </div>
+    `;
+  }
+
+  // Badge de velocidad de entrega
+  if (shipping.speed === 'today') {
+    badgesHTML += `
+      <div class="shipping-badge shipping-fast">
+        <i class="bi bi-lightning-charge-fill"></i>
+        <span>Llega hoy</span>
+      </div>
+    `;
+  } else if (shipping.speed === 'tomorrow') {
+    badgesHTML += `
+      <div class="shipping-badge shipping-fast">
+        <i class="bi bi-clock-fill"></i>
+        <span>Llega mañana</span>
+      </div>
+    `;
+  }
+
+  return badgesHTML ? `<div class="shipping-badges">${badgesHTML}</div>` : '';
+}
+
+/**
  * Renderiza una tarjeta de producto
  */
 function renderProductCard(product) {
@@ -11,23 +76,13 @@ function renderProductCard(product) {
 
   // Determinar badges
   const badges = product.badges || [];
-  const customBadges = badges.filter(b => typeof b === 'object' && b.text);
-  const legacyBadges = badges.filter(b => typeof b === 'string');
-
-  // Superior izquierda: descuento del campo discount (sin duplicar con strings OFF) + badges personalizados
-  const legacyOfferBadges = hasDiscount ? [] : legacyBadges.filter(b => b.includes('OFF'));
-  const platformBadges = legacyBadges.filter(b => !b.includes('OFF') && ['DESTACADO', 'MÁS VENDIDO', 'NUEVO', 'RECOMENDADO'].includes(b.toUpperCase()));
-  const topLeftInner = [
-    ...customBadges.map(b => `<span class="badge-custom" style="background:${b.color}">${b.text}</span>`),
-    hasDiscount ? `<span class="badge-offer">-${product.discount}%</span>` : '',
-    ...legacyOfferBadges.map(b => `<span class="badge-offer">${b}</span>`),
-  ].filter(Boolean).join('');
-  const topLeftHTML = topLeftInner ? `<div class="service-badges">${topLeftInner}</div>` : '';
-
-  // Inferior derecha: solo badges de plataforma reconocidos
-  const bottomRightHTML = platformBadges.map(b => `<span class="badge-featured">${b}</span>`).join('');
-
-  const badgesHTML = topLeftHTML + bottomRightHTML;
+  const badgesHTML = badges.map(badge => {
+    if (badge.includes('OFF')) {
+      return `<span class="badge-offer">${badge}</span>`;
+    } else {
+      return `<span class="badge-featured">${badge}</span>`;
+    }
+  }).join('');
 
   // Renderizar imágenes
   let imagesHTML = '';
@@ -39,8 +94,6 @@ function renderProductCard(product) {
             src="${img}"
             alt="${product.title} - Vista ${index + 1}"
             class="product-image ${index === 0 ? 'active' : ''}"
-            loading="lazy"
-            width="400" height="300"
           />
         `).join('')}
 
@@ -66,8 +119,6 @@ function renderProductCard(product) {
         src="${product.images.main}"
         alt="${product.title}"
         class="product-image"
-        loading="lazy"
-        width="400" height="300"
       />
     `;
   }
@@ -100,17 +151,11 @@ function renderProductCard(product) {
       </div>
       <div class="product-info">
         <h3 class="product-title">${product.title}</h3>
-        ${product.seller ? `
-        <div class="product-provider">
-          <img src="${product.seller.avatar}" alt="${product.seller.name}" class="product-provider-avatar" loading="lazy" width="40" height="40" />
-          <span class="product-provider-name">${product.seller.name}</span>
-          ${product.seller.verified ? '<i class="bi bi-patch-check-fill product-provider-verified"></i>' : ''}
-        </div>` : ''}
         <p class="product-description">${shortDescription}</p>
 
         <div class="product-meta-group">
           <div class="product-rating">
-            <div class="stars">${DaleDeal.utils.renderStars(product.rating)}</div>
+            <div class="stars">${renderStars(product.rating)}</div>
             <span class="reviews-count">(${product.reviewCount.toLocaleString('es-AR')})</span>
             ${product.shipping?.free ? `<span class="shipping-badge"><i class="bi bi-truck"></i> Envío gratis</span>` : ''}
           </div>
@@ -204,7 +249,6 @@ function initializeProductListeners() {
     card.addEventListener('click', (e) => {
       // Ignorar si se hizo click en botones o controles
       if (e.target.closest('.action-heart') ||
-          e.target.closest('.action-quick-view') ||
           e.target.closest('.carousel-control') ||
           e.target.closest('.carousel-indicators')) {
         return;
@@ -237,21 +281,21 @@ function initializeProductListeners() {
 /**
  * Inicializar cuando el DOM esté listo
  */
-// Solo cargar en home/index; las páginas de catálogo tienen su propio loader
-function _isHomePage() {
-  const p = window.location.pathname;
-  return p.endsWith('/') || p.includes('index.html') || !p.includes('.html');
-}
-
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    if (_isHomePage() && window.DaleDeal?.api) {
+    // Esperar a que la API esté disponible
+    if (window.DaleDeal?.api) {
       loadProducts();
+    } else {
+      DaleDeal.error('API de productos no disponible');
     }
   });
 } else {
-  if (_isHomePage() && window.DaleDeal?.api) {
+  // DOM ya está listo
+  if (window.DaleDeal?.api) {
     loadProducts();
+  } else {
+    DaleDeal.error('API de productos no disponible');
   }
 }
 
@@ -260,136 +304,8 @@ if (typeof window !== 'undefined') {
   window.HomePageLoader = {
     loadProducts,
     renderProductCard,
-    initializeProductListeners
+    initializeProductListeners,
+    renderStars,
+    renderShippingBadges
   };
 }
-
-// =====================================================
-// SERVICE FILTERS (home page services grid)
-// =====================================================
-class ServiceFilters {
-  constructor() {
-    this.currentCategory = 'all';
-    this.currentSort = 'featured';
-    this.services = [];
-    this.init();
-  }
-
-  init() {
-    this.loadServices();
-    this.bindEvents();
-  }
-
-  loadServices() {
-    const serviceCards = document.querySelectorAll('.service-card');
-    this.services = Array.from(serviceCards).map(card => ({
-      element: card,
-      category: card.dataset.serviceCategory,
-      price: parseInt(card.dataset.servicePrice) || 0,
-      title: card.querySelector('.service-title')?.textContent || ''
-    }));
-  }
-
-  bindEvents() {
-    document.querySelectorAll('.service-filter-tab').forEach(tab => {
-      tab.addEventListener('click', (e) => this.handleCategoryFilter(e));
-    });
-
-    document.getElementById('serviceSortBtn')?.addEventListener('click', () => {
-      this.currentSort = this.currentSort === 'price-asc' ? 'price-desc' : 'price-asc';
-      this.filterAndRender();
-    });
-
-    document.querySelector('.services-grid')?.addEventListener('click', (e) => {
-      if (e.target.closest('.action-heart')) return;
-      const card = e.target.closest('.service-card');
-      if (!card) return;
-      const id = card.dataset.id;
-      if (id) window.location.href = `./HTML/servicio.html?id=${id}`;
-    });
-  }
-
-  handleCategoryFilter(e) {
-    e.preventDefault();
-    document.querySelectorAll('.service-filter-tab').forEach(tab => tab.classList.remove('active'));
-    e.target.classList.add('active');
-    this.currentCategory = e.target.dataset.serviceCategory;
-    this.filterAndRender();
-  }
-
-  filterAndRender() {
-    let filtered = [...this.services];
-    if (this.currentCategory && this.currentCategory !== 'all') {
-      filtered = filtered.filter(s => s.category === this.currentCategory);
-    }
-    if (this.currentSort === 'price-asc') {
-      filtered.sort((a, b) => a.price - b.price);
-    } else if (this.currentSort === 'price-desc') {
-      filtered.sort((a, b) => b.price - a.price);
-    }
-    this.renderServices(filtered);
-  }
-
-  renderServices(filtered) {
-    this.services.forEach(s => { s.element.style.display = 'none'; });
-    filtered.forEach((s, i) => {
-      s.element.style.display = 'block';
-      s.element.style.animationDelay = `${i * 0.1}s`;
-    });
-  }
-}
-
-// =====================================================
-// HOME PAGE INIT
-// =====================================================
-document.addEventListener('DOMContentLoaded', () => {
-  // Notification dropdown
-  const notificationBtn = document.getElementById('notificationBtn');
-  if (notificationBtn) {
-    notificationBtn.addEventListener('shown.bs.dropdown', () => {
-      if (window.notificationManager) window.notificationManager.renderNotifications();
-    });
-  }
-
-  // Newsletter form
-  document.getElementById('footerNewsletterForm')?.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const emailInput = this.querySelector('input[type="email"]');
-    if (emailInput?.value) {
-      const btn = this.querySelector('.newsletter-btn');
-      const originalHTML = btn.innerHTML;
-      btn.innerHTML = '<i class="bi bi-check-circle"></i>';
-      btn.disabled = true;
-      btn.style.background = 'var(--success-600)';
-      setTimeout(() => {
-        btn.innerHTML = originalHTML;
-        btn.disabled = false;
-        btn.style.background = '';
-        this.reset();
-      }, 2000);
-    }
-  });
-
-  // Flash-sale notification after 10s
-  setTimeout(() => {
-    if (window.notificationManager) {
-      window.notificationManager.addNotification({
-        type: 'offers',
-        title: 'Flash Sale!',
-        message: '¡Solo por hoy! 30% de descuento en smartphones',
-        time: 'Ahora mismo',
-        icon: 'bi-lightning-fill',
-        iconColor: 'bg-warning',
-        actions: [
-          { label: 'Ver ofertas', action: 'view', data: { sale: 'flash2024' } },
-          { label: 'Recordar más tarde', action: 'remind', data: { remindIn: '1h' } }
-        ]
-      });
-    }
-  }, 10000);
-
-  // Service filters — solo en home page
-  if (_isHomePage()) {
-    new ServiceFilters();
-  }
-});

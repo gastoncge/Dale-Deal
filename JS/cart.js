@@ -18,12 +18,7 @@ class CartManager {
   loadCart() {
     try {
       const cart = localStorage.getItem(this.storageKey);
-      const items = cart ? JSON.parse(cart) : [];
-      // Filtrar items corruptos (sin título o precio inválido) que quedaron de versiones anteriores
-      return items.filter(item =>
-        item && item.id && item.title && item.title !== 'undefined' &&
-        (typeof item.price === 'number' ? !isNaN(item.price) : !!item.priceText)
-      );
+      return cart ? JSON.parse(cart) : [];
     } catch (error) {
       DaleDeal.error("Error cargando carrito:", error);
       return [];
@@ -43,14 +38,13 @@ class CartManager {
   // Agregar producto al carrito
   addItem(product) {
     try {
-      const normalizedId = String(product.id);
-      const existingItem = this.items.find((item) => String(item.id) === normalizedId);
+      const existingItem = this.items.find((item) => item.id === product.id);
 
       if (existingItem) {
         existingItem.quantity += product.quantity || 1;
       } else {
         this.items.push({
-          id: normalizedId,
+          id: product.id,
           title: product.title,
           price: product.price,
           priceText: product.priceText,
@@ -73,8 +67,7 @@ class CartManager {
   // Remover producto del carrito
   removeItem(productId) {
     try {
-      const normalizedId = String(productId);
-      const itemIndex = this.items.findIndex((item) => String(item.id) === normalizedId);
+      const itemIndex = this.items.findIndex((item) => item.id === productId);
       if (itemIndex > -1) {
         const removedItem = this.items.splice(itemIndex, 1)[0];
         this.saveCart();
@@ -95,8 +88,7 @@ class CartManager {
   // Actualizar cantidad de producto
   updateQuantity(productId, newQuantity) {
     try {
-      const normalizedId = String(productId);
-      const item = this.items.find((item) => String(item.id) === normalizedId);
+      const item = this.items.find((item) => item.id === productId);
       if (item && newQuantity > 0) {
         const oldQuantity = item.quantity;
         item.quantity = newQuantity;
@@ -138,7 +130,7 @@ class CartManager {
       
       // Si es string, intentar parsearlo
       if (typeof price === 'string') {
-        price = DaleDeal.utils.parseARSPrice(price);
+        price = parseFloat(price.replace(/[^0-9.-]+/g, "")) || 0;
       }
       
       // Si no es un número válido, usar 0
@@ -178,6 +170,7 @@ class CartManager {
     // Actualizar total
     if (cartTotal) {
       const totalPrice = this.getTotalPrice();
+      DaleDeal.log('Total calculado:', totalPrice); // Debug
       cartTotal.textContent = this.formatPrice(totalPrice);
     }
 
@@ -241,7 +234,26 @@ class CartManager {
 
   // Formatear precio
   formatPrice(price) {
-    return DaleDeal.utils.formatCurrency(price);
+    // Usar la función global de utils si está disponible
+    if (window.DaleDeal?.utils?.formatPrice) {
+      const numPrice = typeof price === "string" 
+        ? Number.parseFloat(price.replace(/[^0-9.-]+/g, "")) 
+        : price;
+      return window.DaleDeal.utils.formatPrice(numPrice);
+    }
+
+    // Fallback
+    const numPrice =
+      typeof price === "string"
+        ? Number.parseFloat(price.replace(/[^0-9.-]+/g, ""))
+        : price;
+
+    return new Intl.NumberFormat("es-AR", {
+      style: "currency",
+      currency: "ARS",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(numPrice);
   }
 
   // Vincular eventos
@@ -256,17 +268,17 @@ class CartManager {
 
     // Eventos para botones del dropdown del carrito
     document.getElementById('viewFullCart')?.addEventListener('click', () => {
-      window.DemoAdapter?.notifyUnimplemented('La página completa del carrito')
-        ?? this.showNotification('La página completa del carrito no está disponible en la versión demo.', 'warning');
+      // Aquí podrías redirigir a una página completa del carrito
+      DaleDeal.log('Ver carrito completo');
     });
 
     document.getElementById('proceedToCheckout')?.addEventListener('click', () => {
       if (this.items.length === 0) {
-        this.showNotification('Agregá productos al carrito antes de continuar.', 'info');
+        DaleDeal.log('Carrito vacío');
         return;
       }
-      window.DemoAdapter?.notifyUnimplemented('El checkout y procesamiento de pagos')
-        ?? this.showNotification('El checkout no está disponible en la versión demo.', 'warning');
+      // Aquí podrías redirigir al checkout
+      DaleDeal.log('Proceder al checkout');
     });
 
     // Manejar clics en el dropdown del carrito
@@ -283,17 +295,16 @@ class CartManager {
           const action = target.dataset.action;
           
           switch (action) {
-            case 'increase': {
-              const currentItem = this.items.find(item => String(item.id) === productId);
+            case 'increase':
+              const currentItem = this.items.find(item => item.id === productId);
               if (currentItem) {
                 DaleDeal.log(`Incrementando cantidad para ${currentItem.title}: ${currentItem.quantity} → ${currentItem.quantity + 1}`);
                 this.updateQuantity(productId, currentItem.quantity + 1);
               }
               break;
-            }
-
-            case 'decrease': {
-              const currentItemDec = this.items.find(item => String(item.id) === productId);
+              
+            case 'decrease':
+              const currentItemDec = this.items.find(item => item.id === productId);
               if (currentItemDec && currentItemDec.quantity > 1) {
                 DaleDeal.log(`Decrementando cantidad para ${currentItemDec.title}: ${currentItemDec.quantity} → ${currentItemDec.quantity - 1}`);
                 this.updateQuantity(productId, currentItemDec.quantity - 1);
@@ -302,8 +313,7 @@ class CartManager {
                 this.removeItem(productId);
               }
               break;
-            }
-
+              
             case 'remove':
               this.removeItem(productId);
               break;
@@ -356,7 +366,7 @@ class CartManager {
       }
 
       // Convertir precio a número
-      const price = DaleDeal.utils.parseARSPrice(priceText);
+      const price = parseFloat(priceText.replace(/[^0-9]/g, '')) || 0;
 
       return { id, title, price: price, priceText: priceText, image, quantity: 1 };
     } catch (error) {

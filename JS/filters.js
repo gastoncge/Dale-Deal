@@ -15,8 +15,9 @@ class ProductFilters {
   }
 
   init() {
-    // No leemos tarjetas del DOM ni renderizamos: ProductCatalog inyectará los datos
+    this.loadProducts();
     this.bindEvents();
+    this.renderProducts();
   }
 
   // Cargar productos desde el DOM
@@ -122,7 +123,13 @@ class ProductFilters {
       resizeTimer = setTimeout(() => this.renderProducts(), 200);
     });
 
-    // La búsqueda la maneja el script inline de la página para evitar listeners duplicados
+    // Búsqueda
+    document.getElementById('searchInput')?.addEventListener('input', (e) => this.handleSearch(e));
+    document.getElementById('searchInput')?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        this.handleSearch(e);
+      }
+    });
   }
 
   // Manejar filtro de categoría
@@ -156,29 +163,12 @@ class ProductFilters {
       filtered = filtered.filter(product => product.category === this.currentCategory);
     }
 
-    // Filtro por búsqueda — acepta searchTerm (setado por inline script) o searchQuery
-    const term = (this.searchTerm || this.searchQuery || '').toLowerCase();
-    if (term) {
-      filtered = filtered.filter(product =>
-        product.title.toLowerCase().includes(term) ||
-        (product.badges || []).some(badge => String(badge).toLowerCase().includes(term))
+    // Filtro por búsqueda
+    if (this.searchQuery) {
+      filtered = filtered.filter(product => 
+        product.title.toLowerCase().includes(this.searchQuery) ||
+        product.badges.some(badge => badge.toLowerCase().includes(this.searchQuery))
       );
-    }
-
-    // Filtro por rango de precio
-    if (this.minPrice != null) {
-      filtered = filtered.filter(p => p.price >= this.minPrice);
-    }
-    if (this.maxPrice != null) {
-      filtered = filtered.filter(p => p.price <= this.maxPrice);
-    }
-
-    // Filtro por rating mínimo
-    if (this.currentRating && this.currentRating !== 'all') {
-      const minRating = parseFloat(this.currentRating);
-      if (!isNaN(minRating)) {
-        filtered = filtered.filter(p => (p.rating || 0) >= minRating);
-      }
     }
 
     // Filtro solo ofertas
@@ -195,9 +185,9 @@ class ProductFilters {
   // Ordenar productos
   sortProducts(products) {
     switch (this.currentSort) {
-      case 'price-low':
+      case 'price-asc':
         return products.sort((a, b) => a.price - b.price);
-      case 'price-high':
+      case 'price-desc':
         return products.sort((a, b) => b.price - a.price);
       case 'rating':
         return products.sort((a, b) => b.rating - a.rating);
@@ -269,10 +259,18 @@ class ProductFilters {
         container.appendChild(row);
       }
       
+      // Reinicializar eventos del carrito y favoritos
+      this.reinitializeEvents();
     }
 
     // Actualizar contador
     this.updateResultsCounter();
+  }
+
+  // Reinicializar eventos después de recrear el DOM
+  reinitializeEvents() {
+    // No es necesario hacer nada especial ya que los eventos del carrito y favoritos
+    // usan event delegation en el document, por lo que funcionarán automáticamente
   }
 
   // Mostrar mensaje sin resultados
@@ -290,17 +288,28 @@ class ProductFilters {
     container.innerHTML = noResultsHTML;
   }
 
+  // Ocultar mensaje sin resultados
+  // Actualizar contador de resultados
   updateResultsCounter() {
-    const counterEl = document.getElementById('resultsCount');
-    if (!counterEl) return;
+    let counterEl = document.getElementById('resultsCounter');
+    if (!counterEl) {
+      counterEl = document.createElement('div');
+      counterEl.id = 'resultsCounter';
+      counterEl.className = 'results-counter';
+      const filtersContainer = document.querySelector('.filters-container');
+      if (filtersContainer) {
+        filtersContainer.appendChild(counterEl);
+      }
+    }
 
     const count = this.products.length;
     const total = this.originalProducts.length;
-
+    
     if (this.searchQuery || this.currentCategory !== 'all') {
-      counterEl.textContent = `${count} de ${total} productos`;
+      counterEl.innerHTML = `${count} de ${total} productos`;
+      counterEl.style.display = 'block';
     } else {
-      counterEl.textContent = `${total} productos`;
+      counterEl.style.display = 'none';
     }
   }
 
@@ -308,8 +317,8 @@ class ProductFilters {
   showSortOptions() {
     const sortOptions = [
       { value: 'featured', label: 'Destacados' },
-      { value: 'price-low', label: 'Menor precio' },
-      { value: 'price-high', label: 'Mayor precio' },
+      { value: 'price-asc', label: 'Menor precio' },
+      { value: 'price-desc', label: 'Mayor precio' },
       { value: 'rating', label: 'Mejor valorados' },
       { value: 'newest', label: 'Más nuevos' },
       { value: 'name', label: 'A-Z' }
@@ -635,7 +644,11 @@ class ProductFilters {
 
   // Formatear precio
   formatPrice(price) {
-    return DaleDeal.utils.formatCurrency(price);
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
+      minimumFractionDigits: 0
+    }).format(price);
   }
 
   // Crear modal genérico
@@ -688,19 +701,49 @@ class ProductFilters {
       return;
     }
 
-    this.currentCategory = 'all';
-    this.currentSort = 'featured';
-    this.searchQuery = '';
+    // Limpiar filtros después de animación
+    setTimeout(() => {
+      this.currentCategory = 'all';
+      this.currentSort = 'featured';
+      this.searchQuery = '';
+      
+      // Actualizar UI
+      document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelector('[data-category="all"]')?.classList.add('active');
+      
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput) searchInput.value = '';
 
-    // Actualizar UI
-    document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
-    document.querySelector('[data-category="all"]')?.classList.add('active');
+      this.filterAndRender();
+      this.closeModal();
 
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) searchInput.value = '';
+    }, 800);
+  }
 
-    this.filterAndRender();
-    this.closeModal();
+  // Obtener nombre de categoría
+  getCategoryName() {
+    const categories = {
+      'all': 'Todos',
+      'electronics': 'Electrónicos',
+      'fashion': 'Moda',
+      'home': 'Hogar',
+      'sports': 'Deportes',
+      'books': 'Libros'
+    };
+    return categories[this.currentCategory] || 'Todos';
+  }
+
+  // Obtener nombre de ordenamiento
+  getSortName() {
+    const sorts = {
+      'featured': 'Destacados',
+      'price-asc': 'Menor precio',
+      'price-desc': 'Mayor precio',
+      'rating': 'Mejor valorados',
+      'newest': 'Más nuevos',
+      'name': 'A-Z'
+    };
+    return sorts[this.currentSort] || 'Destacados';
   }
 
   // Mostrar notificación usando el sistema centralizado

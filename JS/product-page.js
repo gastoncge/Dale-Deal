@@ -9,39 +9,45 @@ class ProductPage {
     this.selectedStorage = '';
     this.quantity = 1;
     this.currentImageIndex = 0;
-    this.chatMessages = [];
 
     this.init();
   }
 
   init() {
-    this.loadProductData();
-    if (!this.currentProduct) return; // Abort if product not found
-    this.setupEventListeners();
-    this.setupImageGallery();
-    this.updatePrice();
-    this.updateFavoriteButton();
-    this.setupSellerCard();
-    this.setupChat();
-    this.loadSellerProducts();
-    this.loadSimilarProducts();
-    this.loadRecentlyViewed();
-    this.saveToRecentlyViewed();
+    // Iniciamos la carga asíncrona del producto y configuramos el resto cuando esté listo
+    this.loadProductDataAsync().then(found => {
+      if (!found) return;
+      this.setupEventListeners();
+      this.setupImageGallery();
+      this.updatePrice();
+      this.updateFavoriteButton();
+      this.loadSimilarProducts();
+      this.loadRecentlyViewed();
+      this.saveToRecentlyViewed();
+    });
   }
 
   // ── ID resolution: URL param → localStorage → fallback 1 ──────────────────
-  loadProductData() {
+  async loadProductDataAsync() {
     const params = new URLSearchParams(window.location.search);
     const paramId = params.get('id');
     const storedId = localStorage.getItem('selectedProductId');
     const productId = parseInt(paramId || storedId) || 1;
 
-    // Keep localStorage in sync with the URL param (for legacy pages)
     if (paramId) {
       localStorage.setItem('selectedProductId', paramId);
     }
 
-    const productData = window.getProductById ? window.getProductById(productId) : null;
+    // 1. Intentar obtener desde la API real
+    let productData = null;
+    if (window.DaleDeal?.api?.fetchProductById) {
+      productData = await window.DaleDeal.api.fetchProductById(productId);
+    }
+
+    // 2. Fallback: buscar en el cache local (product-data.js)
+    if (!productData && window.getProductById) {
+      productData = window.getProductById(productId);
+    }
 
     if (!productData) {
       DaleDeal.error('Product not found:', productId);
@@ -52,7 +58,7 @@ class ProductPage {
         );
       }
       setTimeout(() => { window.location.href = '../index.html'; }, 2000);
-      return;
+      return false;
     }
 
     this.currentProduct = {
@@ -71,7 +77,6 @@ class ProductPage {
       features: productData.features || [],
       specifications: productData.specifications || {},
       badges: productData.badges || [],
-      seller: productData.seller || null,
       colors: {},
       storage: {},
       images: productData.images
@@ -89,9 +94,17 @@ class ProductPage {
     const colorKeys = Object.keys(this.currentProduct.colors);
     const storageKeys = Object.keys(this.currentProduct.storage);
     this.selectedColor = colorKeys[0] || '';
-    this.selectedStorage = this._defaultStorage(storageKeys);
+    // Prefer second storage option when multiple exist (mirrors product title e.g. "256GB")
+    this.selectedStorage = storageKeys.length > 1 ? storageKeys[1] : (storageKeys[0] || '');
 
     this.updatePageContent();
+    return true;
+  }
+
+  // ── Alias para compatibilidad hacia atrás ──────────────────────────────────
+  loadProductData() {
+    // Método sincrónico mantenido para compatibilidad
+    // La lógica real está en loadProductDataAsync()
   }
 
   // ── Event listeners ────────────────────────────────────────────────────────
@@ -252,10 +265,12 @@ class ProductPage {
 
     const storageKeys = Object.keys(this.currentProduct.storage);
     container.innerHTML = '';
-    storageKeys.forEach((key) => {
+    storageKeys.forEach((key, i) => {
       const s = this.currentProduct.storage[key];
       const div = document.createElement('div');
-      div.className = `storage-option ${key === this.selectedStorage ? 'active' : ''}`;
+      // Edge case: single option → always active at index 0
+      const isActive = storageKeys.length === 1 ? i === 0 : i === 1;
+      div.className = `storage-option ${isActive ? 'active' : ''}`;
       div.dataset.storage = key;
       const priceText = s.price === 0
         ? 'Base'
@@ -266,18 +281,35 @@ class ProductPage {
     // selectedStorage already set in loadProductData
   }
 
-  // ── Description tab — muestra el contenido tal como fue escrito ───────────
+  // ── Description tab — fully dynamic ───────────────────────────────────────
   updateDescriptionTab() {
     const descContent = document.querySelector('.description-content');
     if (!descContent) return;
 
     const p = this.currentProduct;
-    // Si la descripción contiene HTML (editor rico), se renderiza directo.
-    // Si es texto plano, se respetan los saltos de línea.
-    const isHTML = /<[a-z][\s\S]*>/i.test(p.description || '');
-    descContent.innerHTML = isHTML
-      ? p.description
-      : `<p style="white-space:pre-line;line-height:1.8;color:var(--gray-700)">${p.description || ''}</p>`;
+    const icons = ['bi-camera', 'bi-cpu', 'bi-battery-charging', 'bi-wifi', 'bi-shield-check', 'bi-star'];
+
+    const featureCards = (p.features || []).slice(0, 3).map((feat, i) => {
+      const words = feat.split(' ');
+      const cardTitle = words.slice(0, 3).join(' ');
+      return `
+        <div class="feature-card">
+          <i class="bi ${icons[i] || 'bi-check-circle'}"></i>
+          <h5>${cardTitle}</h5>
+          <p>${feat}</p>
+        </div>`;
+    }).join('');
+
+    const featuresListHTML = (p.features || [])
+      .map(f => `<li>${f}</li>`)
+      .join('');
+
+    descContent.innerHTML = `
+      <h3>${p.title}</h3>
+      <p>${p.description}</p>
+      ${featuresListHTML ? `<h4>Características destacadas</h4><ul>${featuresListHTML}</ul>` : ''}
+      ${featureCards ? `<div class="feature-grid">${featureCards}</div>` : ''}
+    `;
   }
 
   // ── Specifications tab — dynamic ───────────────────────────────────────────
@@ -413,11 +445,10 @@ class ProductPage {
   updatePrice() {
     if (!this.currentProduct) return;
 
-    // Safety guard: reset to base if current selection is no longer valid
+    // Safety guards: reset selection to first valid option if stale
     const storageKeys = Object.keys(this.currentProduct.storage);
     if (!this.currentProduct.storage[this.selectedStorage]) {
-      const base = storageKeys.find(k => this.currentProduct.storage[k].price === 0);
-      this.selectedStorage = base || storageKeys[0] || '';
+      this.selectedStorage = storageKeys.length > 1 ? storageKeys[1] : (storageKeys[0] || '');
     }
     const colorKeys = Object.keys(this.currentProduct.colors);
     if (!this.currentProduct.colors[this.selectedColor]) {
@@ -499,161 +530,119 @@ class ProductPage {
     }, 150);
   }
 
-  // ── Custom paged carousel (sin Bootstrap JS) ──────────────────────────────
-  _buildCarousel(carouselId, gridId, products, isRecent = false) {
-    const carousel = document.getElementById(carouselId);
-    const grid = document.getElementById(gridId);
-    if (!carousel || !grid || products.length === 0) return;
-
-    const visible = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 3;
-    const cardPct = 100 / visible;
-    let current = 0;
-    const maxIndex = Math.max(0, products.length - visible);
-
-    const track = document.createElement('div');
-    track.className = 'carousel-track';
-    track.innerHTML = products.map(p => `<div class="carousel-slide-item" style="width:${cardPct}%">${this.renderProductCard(p, isRecent)}</div>`).join('');
-
-    grid.style.overflow = 'hidden';
-    grid.innerHTML = '';
-    grid.appendChild(track);
-
-    setTimeout(() => {
-      if (window.ProductCarousel) window.productCarousel = new window.ProductCarousel();
-      window.favoritesManager?.updateFavoriteButtons();
-    }, 300);
-
-    track.querySelectorAll('.product-card[data-clickable="true"]').forEach(card => {
-      card.addEventListener('click', e => {
-        if (e.target.closest('.action-heart') || e.target.closest('.carousel-control') || e.target.closest('.carousel-indicators')) return;
-        const id = card.dataset.id;
-        if (id) { localStorage.setItem('selectedProductId', id); window.location.href = `producto.html?id=${id}`; }
-      });
-    });
-
-    const updateTrack = () => { track.style.transform = `translateX(-${current * cardPct}%)`; };
-
-    const container = carousel.parentElement;
-    const prev = container?.querySelector('.section-nav-prev');
-    const next = container?.querySelector('.section-nav-next');
-
-    if (prev) prev.onclick = () => { current = Math.max(0, current - 1); updateTrack(); };
-    if (next) next.onclick = () => { current = Math.min(maxIndex, current + 1); updateTrack(); };
-  }
-
-  // ── Seller products ────────────────────────────────────────────────────────
-  async loadSellerProducts() {
-    const section = document.getElementById('sellerProductsSection');
-    if (!section || !this.currentProduct) return;
-
-    try {
-      await new Promise(resolve => setTimeout(resolve, 400));
-      const allProducts = window.getAllProducts ? window.getAllProducts() : [];
-      const sellerProducts = allProducts
-        .filter(p => p.category === this.currentProduct.category && p.id !== this.currentProduct.id)
-        .slice(0, 8);
-
-      if (sellerProducts.length === 0) return;
-      section.style.display = '';
-      this._buildCarousel('sellerProductsCarousel', 'sellerProductsGrid', sellerProducts);
-    } catch (err) {
-      DaleDeal.error('Error cargando productos del vendedor:', err);
-    }
-  }
-
   // ── Similar products ───────────────────────────────────────────────────────
   async loadSimilarProducts() {
-    if (!this.currentProduct) return;
+    const similarGrid = document.getElementById('similarProductsGrid');
+    if (!similarGrid || !this.currentProduct) return;
 
     try {
       await new Promise(resolve => setTimeout(resolve, 800));
       const allProducts = window.getAllProducts ? window.getAllProducts() : [];
       let similar = allProducts
         .filter(p => p.category === this.currentProduct.category && p.id !== this.currentProduct.id)
-        .slice(0, 8);
+        .slice(0, 4);
 
       if (similar.length === 0) {
         similar = allProducts
           .filter(p => p.id !== this.currentProduct.id)
           .sort(() => 0.5 - Math.random())
-          .slice(0, 8);
+          .slice(0, 4);
+        this.renderSimilarProducts(similar, true);
+      } else {
+        this.renderSimilarProducts(similar, false);
       }
-      this._buildCarousel('similarProductsCarousel', 'similarProductsGrid', similar);
     } catch (err) {
       DaleDeal.error('Error cargando similares:', err);
+      similarGrid.innerHTML = `
+        <div class="carousel-item active">
+          <div class="text-center py-5">
+            <i class="bi bi-exclamation-triangle display-4 text-warning mb-3"></i>
+            <p class="text-muted">Error cargando productos similares</p>
+          </div>
+        </div>`;
     }
+  }
+
+  renderSimilarProducts(products, isRandom = false) {
+    const similarGrid = document.getElementById('similarProductsGrid');
+    if (!similarGrid) return;
+
+    const pps = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 4;
+    const slides = [];
+    for (let i = 0; i < products.length; i += pps) {
+      const batch = products.slice(i, i + pps);
+      slides.push(`
+        <div class="carousel-item ${i === 0 ? 'active' : ''}">
+          <div class="row justify-content-center">
+            ${batch.map(p => this.renderProductCard(p)).join('')}
+          </div>
+          ${isRandom && i === 0 ? `
+            <div class="text-center mt-3">
+              <small class="text-muted">
+                <i class="bi bi-info-circle me-1"></i>
+                Productos recomendados
+              </small>
+            </div>` : ''}
+        </div>`);
+    }
+    similarGrid.innerHTML = slides.join('');
+    this._toggleCarouselControls('similarProductsCarousel', slides.length);
+    setTimeout(() => window.favoritesManager?.updateFavoriteButtons(), 100);
   }
 
   // ── Recently viewed ────────────────────────────────────────────────────────
   loadRecentlyViewed() {
+    const grid = document.getElementById('recentlyViewedGrid');
+    if (!grid) return;
     try {
       const recentIds = this.getRecentlyViewed()
         .filter(id => id !== String(this.currentProduct.id))
-        .slice(0, 8);
+        .slice(0, 4);
+
       if (!recentIds.length) return;
-      const products = recentIds
+
+      const productsData = recentIds
         .map(id => window.getProductById ? window.getProductById(parseInt(id)) : null)
         .filter(Boolean);
-      if (products.length) this._buildCarousel('recentlyViewedCarousel', 'recentlyViewedGrid', products, true);
+
+      if (productsData.length) this.renderRecentlyViewed(productsData);
     } catch (err) {
       DaleDeal.error('Error cargando recientes:', err);
     }
   }
 
-  // ── Shared card renderer (similar, seller & recent) ──────────────────────
-  renderProductCard(product, isRecent = false) {
-    const hasDiscount = product.discount && product.discount > 0;
-    const hasMultipleImages = product.images?.gallery?.length > 1;
+  renderRecentlyViewed(products) {
+    const grid = document.getElementById('recentlyViewedGrid');
+    if (!grid) return;
 
-    // Badges — top-left: custom + offer (sin duplicar descuento); bottom-right: solo badges de plataforma (sin texto personalizado)
-    const badges = product.badges || [];
-    const customBadges = badges.filter(b => typeof b === 'object' && b.text);
-    const legacyBadges = badges.filter(b => typeof b === 'string');
-    // Si ya hay discount en el campo, ignorar strings tipo "X% OFF" para no duplicar
-    const legacyOfferBadges = hasDiscount ? [] : legacyBadges.filter(b => b.includes('OFF'));
-    const platformBadges = legacyBadges.filter(b => !b.includes('OFF') && ['DESTACADO', 'MÁS VENDIDO', 'NUEVO', 'RECOMENDADO'].includes(b.toUpperCase()));
-    const topLeftInner = [
-      ...customBadges.map(b => `<span class="badge-custom" style="background:${b.color}">${b.text}</span>`),
-      hasDiscount ? `<span class="badge-offer">-${product.discount}%</span>` : '',
-      ...legacyOfferBadges.map(b => `<span class="badge-offer">${b}</span>`),
-    ].filter(Boolean).join('');
-    const topLeftHTML = topLeftInner ? `<div class="service-badges">${topLeftInner}</div>` : '';
-    const bottomRightHTML = platformBadges.map(b => `<span class="badge-featured">${b}</span>`).join('');
-
-    // Images
-    let imagesHTML = '';
-    if (hasMultipleImages) {
-      imagesHTML = `
-        <div class="product-image-carousel" data-current-image="0">
-          ${product.images.gallery.map((img, i) => `
-            <img src="${img}" alt="${product.title} - Vista ${i + 1}" class="product-image ${i === 0 ? 'active' : ''}" />
-          `).join('')}
-          <button class="carousel-control carousel-prev" data-direction="prev"><i class="bi bi-chevron-left"></i></button>
-          <button class="carousel-control carousel-next" data-direction="next"><i class="bi bi-chevron-right"></i></button>
-          <div class="carousel-indicators">
-            ${product.images.gallery.map((_, i) => `<span class="indicator ${i === 0 ? 'active' : ''}" data-index="${i}"></span>`).join('')}
+    const pps = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 4;
+    const slides = [];
+    for (let i = 0; i < products.length; i += pps) {
+      const batch = products.slice(i, i + pps);
+      slides.push(`
+        <div class="carousel-item ${i === 0 ? 'active' : ''}">
+          <div class="row justify-content-center">
+            ${batch.map(p => this.renderProductCard(p, true)).join('')}
           </div>
-        </div>`;
-    } else {
-      imagesHTML = `<img src="${product.images.main}" alt="${product.title}" class="product-image" />`;
+        </div>`);
     }
+    grid.innerHTML = slides.join('');
+    this._toggleCarouselControls('recentlyViewedCarousel', slides.length);
+    setTimeout(() => window.favoritesManager?.updateFavoriteButtons(), 100);
+  }
 
+  // ── Shared card renderer (similar & recent) ────────────────────────────────
+  renderProductCard(product, isRecent = false) {
     const desc = product.description
       ? (product.description.length > 80 ? product.description.substring(0, 80) + '…' : product.description)
-      : '';
-
-    const priceHTML = hasDiscount
-      ? `<span class="product-current-price">${this.formatPrice(product.price)}</span>
-         <span class="product-original-price">${this.formatPrice(product.originalPrice)}</span>`
-      : `<span class="product-current-price">${this.formatPrice(product.price)}</span>`;
-
+      : 'Producto de alta calidad.';
     return `
-        <div class="product-card ${hasDiscount ? 'has-offer' : ''} w-100"
+      <div class="col-12 col-md-6 col-lg-3 mb-4 d-flex">
+        <div class="product-card ${isRecent ? 'recent-product-card' : 'similar-product-card'} w-100"
              data-id="${product.id}" data-clickable="true">
           <div class="product-image-container">
-            ${imagesHTML}
-            ${topLeftHTML}
-            ${bottomRightHTML}
+            <img src="${product.images.main}" alt="${product.title}" class="product-image" />
+            ${product.discount ? `<div class="product-badges"><span class="badge-offer">-${product.discount}%</span></div>` : ''}
             ${isRecent ? `<div class="recently-viewed-badge"><i class="bi bi-clock-history"></i></div>` : ''}
             <div class="product-actions">
               <button class="action-heart" title="Agregar a favoritos" data-product-id="${product.id}">
@@ -662,32 +651,33 @@ class ProductPage {
             </div>
           </div>
           <div class="product-info">
-            <h3 class="product-title">${DaleDeal.utils.escapeHtml(product.title)}</h3>
-            ${product.seller ? `
-            <div class="product-provider">
-              <img src="${product.seller.avatar}" alt="${DaleDeal.utils.escapeHtml(product.seller.name)}" class="product-provider-avatar" />
-              <span class="product-provider-name">${DaleDeal.utils.escapeHtml(product.seller.name)}</span>
-              ${product.seller.verified ? '<i class="bi bi-patch-check-fill product-provider-verified"></i>' : ''}
-            </div>` : ''}
+            <h3 class="product-title">${product.title}</h3>
             <p class="product-description">${desc}</p>
             <div class="product-meta-group">
               <div class="product-rating">
                 <div class="stars">${this.renderProductStars(product.rating)}</div>
                 <span class="reviews-count">(${product.reviewCount.toLocaleString('es-AR')})</span>
-                ${product.shipping?.free ? `<span class="shipping-badge"><i class="bi bi-truck"></i> Envío gratis</span>` : ''}
-              </div>
-              <div class="product-location">
-                <i class="bi bi-geo-alt-fill"></i>
-                <span>CABA</span>
-                ${product.shipping?.speed === 'today' ? `<span class="shipping-badge"><i class="bi bi-lightning-charge-fill"></i> Llega hoy</span>` : ''}
-                ${product.shipping?.speed === 'tomorrow' ? `<span class="shipping-badge"><i class="bi bi-clock-fill"></i> Llega mañana</span>` : ''}
               </div>
             </div>
             <div class="product-pricing-wrapper">
-              <div class="product-pricing">${priceHTML}</div>
+              <div class="product-pricing">
+                <span class="product-current-price">${this.formatPrice(product.price)}</span>
+                ${product.originalPrice ? `<span class="product-original-price">${this.formatPrice(product.originalPrice)}</span>` : ''}
+              </div>
             </div>
           </div>
-        </div>`;
+        </div>
+      </div>`;
+  }
+
+  _toggleCarouselControls(carouselId, slideCount) {
+    const carousel = document.getElementById(carouselId);
+    if (!carousel) return;
+    const show = slideCount > 1;
+    const prev = carousel.querySelector('.carousel-control-prev');
+    const next = carousel.querySelector('.carousel-control-next');
+    if (prev) prev.style.display = show ? 'flex' : 'none';
+    if (next) next.style.display = show ? 'flex' : 'none';
   }
 
   // ── Recently viewed persistence ────────────────────────────────────────────
@@ -697,7 +687,7 @@ class ProductPage {
       const id = String(this.currentProduct.id);
       let recent = this.getRecentlyViewed().filter(x => x !== id);
       recent.unshift(id);
-      localStorage.setItem('daledealer_recently_viewed', JSON.stringify(recent.slice(0, 10)));
+      localStorage.setItem('daledealt_recently_viewed', JSON.stringify(recent.slice(0, 10)));
     } catch (err) {
       DaleDeal.error('Error guardando reciente:', err);
     }
@@ -705,47 +695,18 @@ class ProductPage {
 
   getRecentlyViewed() {
     try {
-      const raw = localStorage.getItem('daledealer_recently_viewed');
+      const raw = localStorage.getItem('daledealt_recently_viewed');
       return raw ? JSON.parse(raw) : [];
     } catch {
       return [];
     }
   }
 
-  // ── Default storage deduction ──────────────────────────────────────────────
-  // 1. Match against the size mentioned in the product title (e.g. "256GB", "1TB")
-  // 2. Fall back to the base option (price === 0)
-  // 3. Last resort: first key
-  _defaultStorage(storageKeys) {
-    if (!storageKeys.length) return '';
-    if (storageKeys.length === 1) return storageKeys[0];
-
-    const titleMatch = this.currentProduct.title.match(/\b(\d+\s*(?:GB|TB))\b/i);
-    if (titleMatch) {
-      const sizeInTitle = titleMatch[1].replace(/\s+/g, '').toUpperCase();
-      const fromTitle = storageKeys.find(
-        k => k.replace(/\s+/g, '').toUpperCase() === sizeInTitle
-      );
-      if (fromTitle) return fromTitle;
-    }
-
-    const base = storageKeys.find(k => this.currentProduct.storage[k].price === 0);
-    return base || storageKeys[0];
-  }
-
   // ── Category navigation ────────────────────────────────────────────────────
   goToCategory() {
-    // Map raw category names to the slugs used by productos.html
-    const slugMap = {
-      'Electrónicos': 'electronics',
-      'Moda': 'fashion',
-      'Hogar': 'home',
-      'Deportes': 'sports',
-      'Libros': 'books'
-    };
-    const slug = slugMap[this.currentProduct.category]
-      || this.currentProduct.category.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    window.location.href = `./productos.html?category=${encodeURIComponent(slug)}`;
+    // Navigate to productos.html filtered by category
+    window.location.href =
+      `./productos.html?category=${encodeURIComponent(this.currentProduct.category)}`;
   }
 
   // ── Stars renderer ─────────────────────────────────────────────────────────
@@ -761,7 +722,11 @@ class ProductPage {
 
   // ── Helpers ────────────────────────────────────────────────────────────────
   formatPrice(price) {
-    return DaleDeal.utils.formatCurrency(price);
+    if (window.DaleDeal?.utils?.formatPrice) return window.DaleDeal.utils.formatPrice(price);
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency', currency: 'ARS',
+      minimumFractionDigits: 0, maximumFractionDigits: 0
+    }).format(price);
   }
 
   setButtonLoading(button, isLoading) {
@@ -777,293 +742,9 @@ class ProductPage {
     }
     DaleDeal.log(`[${type.toUpperCase()}] ${message}`);
   }
-
-  // ── Seller card ──────────────────────────────────────────────────────────
-  setupSellerCard() {
-    const p = this.currentProduct;
-    if (!p?.seller) return;
-
-    const avatar = document.getElementById('sellerCardAvatar');
-    const name = document.getElementById('sellerCardName');
-    const verified = document.getElementById('sellerCardVerified');
-    const rating = document.getElementById('sellerCardRating');
-    const reviews = document.getElementById('sellerCardReviews');
-    const chatAvatar = document.getElementById('providerChatAvatar');
-    const chatName = document.getElementById('chatProviderName');
-
-    if (avatar) { avatar.src = p.seller.avatar; avatar.alt = p.seller.name; }
-    if (name) name.textContent = p.seller.name;
-    if (verified) verified.style.display = p.seller.verified ? '' : 'none';
-    if (rating) rating.textContent = p.rating ?? '4.8';
-    if (reviews) reviews.textContent = (p.reviewCount ?? 0).toLocaleString('es-AR');
-    if (chatAvatar) { chatAvatar.src = p.seller.avatar; chatAvatar.alt = p.seller.name; }
-    if (chatName) chatName.textContent = p.seller.name;
-    const sold = document.getElementById('sellerCardSold');
-    if (sold && p.salesCount) sold.textContent = `${p.salesCount.toLocaleString('es-AR')} ventas`;
-    const proBadge = document.getElementById('sellerCardProBadge');
-    if (proBadge) proBadge.style.display = p.seller.pro ? '' : 'none';
-    const subtitle = document.getElementById('sellerProductsSubtitle');
-    if (subtitle) subtitle.innerHTML = `Otros productos que ofrece <strong class="provider-name-text">${p.seller.name}</strong>`;
-
-    const badge = document.getElementById('chatFloatBadge');
-    if (badge) badge.style.display = 'flex';
-  }
-
-  // ── Chat flotante ─────────────────────────────────────────────────────────
-  setupChat() {
-    const p = this.currentProduct;
-    if (!p) return;
-
-    const sellerName = p.seller?.name || 'Vendedor';
-
-    // Mensajes iniciales
-    const initial = [
-      { from: 'provider', text: `¡Hola! Soy ${sellerName}. Estoy disponible para responder tus preguntas sobre ${p.title}.`, time: this._chatTimeAgo(30) },
-      { from: 'provider', text: 'Podés preguntarme sobre el estado, envío o cualquier detalle del producto.', time: this._chatTimeAgo(29) },
-    ];
-    initial.forEach(m => this._addChatMessage(m.from, m.text, m.time));
-
-    const chatInput    = document.getElementById('chatInput');
-    const sendBtn      = document.getElementById('chatSendBtn');
-    const attachBtn    = document.getElementById('chatAttachBtn');
-    const fileInput    = document.getElementById('chatFileInput');
-    const emojiBtn     = document.getElementById('chatEmojiBtn');
-    const emojiPicker  = document.getElementById('chatEmojiPicker');
-    const attachPreview= document.getElementById('chatAttachPreview');
-    let pendingFile = null;
-
-    const updateSendBtn = () => { if (sendBtn) sendBtn.disabled = !chatInput?.value.trim() && !pendingFile; };
-
-    const showTyping = () => {
-      const el = document.createElement('div');
-      el.className = 'chat-message received chat-typing-indicator';
-      el.innerHTML = `<div class="chat-bubble chat-typing-bubble"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>`;
-      const msgs = document.getElementById('chatMessages');
-      msgs?.appendChild(el);
-      if (msgs) msgs.scrollTop = msgs.scrollHeight;
-      return el;
-    };
-
-    const hideTyping = (el) => el?.remove();
-
-    const animateStatus = (msgEl) => {
-      const s = msgEl?.querySelector('.chat-msg-status');
-      if (!s) return;
-      setTimeout(() => { s.textContent = 'Entregado'; s.className = 'chat-msg-status chat-status-delivered'; }, 800);
-      setTimeout(() => { s.textContent = 'Leído'; s.className = 'chat-msg-status chat-status-read'; }, 2500);
-    };
-
-    const sendMessage = () => {
-      const text = chatInput?.value.trim();
-      if (!text && !pendingFile) return;
-      let msgEl = null;
-      if (pendingFile) {
-        msgEl = this._addChatFile('user', pendingFile);
-        pendingFile = null;
-        if (attachPreview) attachPreview.style.display = 'none';
-      }
-      if (text) {
-        msgEl = this._addChatMessage('user', text);
-        chatInput.value = '';
-        chatInput.style.height = 'auto';
-      }
-      updateSendBtn();
-      if (emojiPicker) emojiPicker.style.display = 'none';
-      animateStatus(msgEl);
-      const typingEl = showTyping();
-      setTimeout(() => {
-        hideTyping(typingEl);
-        const responses = [
-          '¡Gracias por tu consulta! Te respondo enseguida.',
-          'Claro, el producto está disponible y puedo enviarlo hoy.',
-          'Hola, sí! Está en perfectas condiciones. ¿Tenés alguna pregunta más?',
-          'Por supuesto, el envío es gratis a todo el país.',
-          'Sí, acepto pagos con tarjeta y transferencia. ¿Necesitás más info?',
-        ];
-        this._addChatMessage('provider', responses[Math.floor(Math.random() * responses.length)]);
-      }, 1200 + Math.random() * 800);
-    };
-
-    sendBtn?.addEventListener('click', sendMessage);
-    chatInput?.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
-    chatInput?.addEventListener('input', () => {
-      updateSendBtn();
-      chatInput.style.height = 'auto';
-      chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
-    });
-
-    attachBtn?.addEventListener('click', () => { if (emojiPicker) emojiPicker.style.display = 'none'; fileInput?.click(); });
-
-    fileInput?.addEventListener('change', () => {
-      const file = fileInput.files[0];
-      if (!file) return;
-      pendingFile = file;
-      fileInput.value = '';
-      if (attachPreview) {
-        attachPreview.style.display = 'flex';
-        const isImage = file.type.startsWith('image/');
-        if (isImage) {
-          const reader = new FileReader();
-          reader.onload = e => {
-            attachPreview.innerHTML = `<img src="${e.target.result}" class="chat-attach-thumb" /><span class="chat-attach-name">${DaleDeal.utils.escapeHtml(file.name)}</span><button class="chat-attach-remove"><i class="bi bi-x"></i></button>`;
-            attachPreview.querySelector('.chat-attach-remove')?.addEventListener('click', () => { pendingFile = null; attachPreview.style.display = 'none'; updateSendBtn(); });
-          };
-          reader.readAsDataURL(file);
-        } else {
-          attachPreview.innerHTML = `<i class="bi bi-file-earmark-text chat-attach-file-icon"></i><span class="chat-attach-name">${DaleDeal.utils.escapeHtml(file.name)}</span><button class="chat-attach-remove"><i class="bi bi-x"></i></button>`;
-          attachPreview.querySelector('.chat-attach-remove')?.addEventListener('click', () => { pendingFile = null; attachPreview.style.display = 'none'; updateSendBtn(); });
-        }
-      }
-      updateSendBtn();
-    });
-
-    const EMOJIS = ['😀','😂','😊','😍','🥰','😎','🤩','😅','😭','😤','👍','👎','👏','🙌','🤝','💪','🙏','❤️','🔥','⭐','✅','❌','📷','📎','💬','📞','🏠','🔧','⚡','🎉','🚀','💡','📋','🗓️','💰','🏆','🛍️','📦','🔑','🎁'];
-    if (emojiPicker) {
-      emojiPicker.innerHTML = EMOJIS.map(e => `<button class="emoji-item" type="button">${e}</button>`).join('');
-      emojiPicker.querySelectorAll('.emoji-item').forEach(btn => {
-        btn.addEventListener('click', () => {
-          if (!chatInput) return;
-          const pos = chatInput.selectionStart ?? chatInput.value.length;
-          chatInput.value = chatInput.value.slice(0, pos) + btn.textContent + chatInput.value.slice(pos);
-          chatInput.focus();
-          chatInput.selectionStart = chatInput.selectionEnd = pos + btn.textContent.length;
-          updateSendBtn();
-        });
-      });
-    }
-    emojiBtn?.addEventListener('click', e => { e.stopPropagation(); if (emojiPicker) emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'grid' : 'none'; });
-    document.addEventListener('click', e => { if (emojiPicker && !emojiPicker.contains(e.target) && e.target !== emojiBtn) emojiPicker.style.display = 'none'; });
-
-    const panel        = document.getElementById('chatFloatPanel');
-    const floatBtn     = document.getElementById('chatFloatBtn');
-    const closeBtn     = document.getElementById('chatFloatClose');
-    const badge        = document.getElementById('chatFloatBadge');
-    const backBtn      = document.getElementById('chatBackBtn');
-    const listView     = document.getElementById('chatListView');
-    const convView     = document.getElementById('chatConversationView');
-    const listClose    = document.getElementById('chatListClose');
-
-    const openChat = () => {
-      panel?.classList.add('chat-float-open');
-      if (badge) badge.style.display = 'none';
-      if (listView) listView.style.display = 'none';
-      if (convView) convView.style.display = 'flex';
-      setTimeout(() => chatInput?.focus(), 250);
-    };
-    const closeChat = () => { panel?.classList.remove('chat-float-open'); if (emojiPicker) emojiPicker.style.display = 'none'; };
-    const showChatList = () => {
-      if (emojiPicker) emojiPicker.style.display = 'none';
-      if (listView) listView.style.display = 'flex';
-      if (convView) convView.style.display = 'none';
-      this._renderChatList();
-    };
-    const showConversation = () => { if (listView) listView.style.display = 'none'; if (convView) convView.style.display = 'flex'; setTimeout(() => chatInput?.focus(), 150); };
-
-    floatBtn?.addEventListener('click', () => panel?.classList.contains('chat-float-open') ? closeChat() : openChat());
-    closeBtn?.addEventListener('click', closeChat);
-    listClose?.addEventListener('click', closeChat);
-    backBtn?.addEventListener('click', showChatList);
-    document.getElementById('contactSellerBtn')?.addEventListener('click', openChat);
-    this._showConversation = showConversation;
-  }
-
-  _renderChatList() {
-    const listBody = document.getElementById('chatListBody');
-    if (!listBody) return;
-    const p = this.currentProduct;
-    const contacts = [
-      { name: p?.seller?.name || 'Vendedor', avatar: p?.seller?.avatar || '', preview: 'Podés preguntarme sobre el estado, envío o cualquier detalle…', time: 'Ahora', unread: 0, online: true },
-    ];
-    listBody.innerHTML = contacts.map(c => `
-      <div class="chat-list-item">
-        <div class="chat-list-avatar-wrap">
-          <img src="${c.avatar}" alt="${c.name}" class="chat-list-avatar" />
-          ${c.online ? '<span class="chat-list-online"></span>' : ''}
-        </div>
-        <div class="chat-list-info">
-          <div class="chat-list-name">${c.name}</div>
-          <div class="chat-list-preview">${c.preview}</div>
-        </div>
-        <div class="chat-list-meta">
-          <span class="chat-list-time">${c.time}</span>
-          ${c.unread > 0 ? `<span class="chat-list-unread">${c.unread}</span>` : ''}
-        </div>
-      </div>
-    `).join('');
-    listBody.querySelectorAll('.chat-list-item').forEach(item => {
-      item.addEventListener('click', () => { if (this._showConversation) this._showConversation(); });
-    });
-  }
-
-  _addChatMessage(from, text, time = null) {
-    const msgs = document.getElementById('chatMessages');
-    if (!msgs) return null;
-    const isProvider = from === 'provider';
-    const timeStr = time || this._chatTimeNow();
-    const senderName = isProvider ? (this.currentProduct?.seller?.name || 'Vendedor') : 'Vos';
-    const msgEl = document.createElement('div');
-    msgEl.className = `chat-message ${isProvider ? 'received' : 'sent'}`;
-    msgEl.innerHTML = `
-      ${isProvider ? `<div class="chat-sender-name">${senderName}</div>` : ''}
-      <div class="chat-bubble">${this._escapeHtml(text)}</div>
-      <div class="chat-time">${timeStr}${!isProvider ? ' <span class="chat-msg-status chat-status-sent">Enviado</span>' : ''}</div>
-    `;
-    msgs.appendChild(msgEl);
-    msgs.scrollTop = msgs.scrollHeight;
-    this.chatMessages.push({ from, text, time: timeStr });
-    return msgEl;
-  }
-
-  _addChatFile(from, file) {
-    const msgs = document.getElementById('chatMessages');
-    if (!msgs) return null;
-    const isProvider = from === 'provider';
-    const timeStr = this._chatTimeNow();
-    const statusHTML = !isProvider ? '<span class="chat-msg-status chat-status-sent">Enviado</span>' : '';
-    const msgEl = document.createElement('div');
-    msgEl.className = `chat-message ${isProvider ? 'received' : 'sent'}`;
-    if (file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = e => {
-        msgEl.innerHTML = `<div class="chat-bubble chat-bubble-image"><img src="${e.target.result}" class="chat-img-preview" alt="${DaleDeal.utils.escapeHtml(file.name)}" /></div><div class="chat-time">${timeStr} ${statusHTML}</div>`;
-        msgs.scrollTop = msgs.scrollHeight;
-      };
-      reader.readAsDataURL(file);
-    } else {
-      msgEl.innerHTML = `<div class="chat-bubble chat-bubble-file"><i class="bi bi-file-earmark-text"></i><span>${DaleDeal.utils.escapeHtml(file.name)}</span></div><div class="chat-time">${timeStr} ${statusHTML}</div>`;
-    }
-    msgs.appendChild(msgEl);
-    msgs.scrollTop = msgs.scrollHeight;
-    return msgEl;
-  }
-
-  _chatTimeAgo(minutesAgo) { const d = new Date(Date.now() - minutesAgo * 60 * 1000); return d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }); }
-  _chatTimeNow() { return new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }); }
-  _escapeHtml(text) { return DaleDeal.utils.escapeHtml(text); }
 }
 
 // ── Bootstrap ────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   new ProductPage();
-
-  const notificationBtn = document.getElementById('notificationBtn');
-  if (notificationBtn) {
-    notificationBtn.addEventListener('shown.bs.dropdown', () => {
-      if (window.notificationManager) window.notificationManager.renderNotifications();
-    });
-  }
-
-  setTimeout(() => {
-    if (window.favoritesManager) window.favoritesManager.updateWishlistButton();
-  }, 300);
-
-  // Keyboard accessibility for thumbnails (Enter/Space triggers click)
-  document.querySelectorAll('.thumbnail[role="button"]').forEach(thumb => {
-    thumb.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        thumb.click();
-      }
-    });
-  });
 });

@@ -18,6 +18,8 @@ class ProductCarousel {
       this.setupCarousel(carousel, index);
     });
 
+    DaleDeal.log(`✅ ProductCarousel inicializado con ${this.carousels.length} carruseles`);
+    DaleDeal.log('Carruseles encontrados:', carouselElements.length);
   }
 
   setupCarousel(carouselElement, index) {
@@ -26,10 +28,19 @@ class ProductCarousel {
     const prevBtn = carouselElement.querySelector('.carousel-prev');
     const nextBtn = carouselElement.querySelector('.carousel-next');
 
+    DaleDeal.log(`🔧 Configurando carousel ${index}:`, {
+      images: images.length,
+      indicators: indicators.length,
+      prevBtn: !!prevBtn,
+      nextBtn: !!nextBtn
+    });
+
     if (images.length <= 1) {
+      // Si hay solo una imagen, ocultar controles
       prevBtn?.style.setProperty('display', 'none');
       nextBtn?.style.setProperty('display', 'none');
       carouselElement.querySelector('.carousel-indicators')?.style.setProperty('display', 'none');
+      DaleDeal.log(`ℹ️ Carousel ${index} tiene solo 1 imagen, controles ocultos`);
       return;
     }
 
@@ -47,12 +58,14 @@ class ProductCarousel {
     prevBtn?.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
+      DaleDeal.log('🔄 Botón anterior clickeado - carrusel', index);
       this.prevImage(index);
     });
 
     nextBtn?.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
+      DaleDeal.log('🔄 Botón siguiente clickeado - carrusel', index);
       this.nextImage(index);
     });
 

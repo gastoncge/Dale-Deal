@@ -21,7 +21,6 @@ const PRODUCTS_DATA = {
     reviewCount: 2847,
     soldCount: 500,
     stock: 15,
-    seller: { name: "Martín G.", avatar: "https://i.pravatar.cc/40?img=11", verified: true },
     images: {
       main: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=600&fit=crop",
       gallery: [
@@ -93,7 +92,6 @@ const PRODUCTS_DATA = {
     reviewCount: 1534,
     soldCount: 320,
     stock: 23,
-    seller: { name: "Laura S.", avatar: "https://i.pravatar.cc/40?img=23", verified: true },
     images: {
       main: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=600&h=600&fit=crop",
       gallery: [
@@ -161,7 +159,6 @@ const PRODUCTS_DATA = {
     reviewCount: 987,
     soldCount: 150,
     stock: 8,
-    seller: { name: "Diego F.", avatar: "https://i.pravatar.cc/40?img=35", verified: true },
     images: {
       main: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=600&h=600&fit=crop",
       gallery: [
@@ -229,7 +226,6 @@ const PRODUCTS_DATA = {
     reviewCount: 3421,
     soldCount: 890,
     stock: 5,
-    seller: { name: "Sofía R.", avatar: "https://i.pravatar.cc/40?img=44", verified: false },
     images: {
       main: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=600&h=600&fit=crop",
       gallery: [
@@ -291,7 +287,6 @@ const PRODUCTS_DATA = {
     reviewCount: 4256,
     soldCount: 750,
     stock: 20,
-    seller: { name: "Carlos M.", avatar: "https://i.pravatar.cc/40?img=56", verified: true },
     images: {
       main: "https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=600&h=600&fit=crop",
       gallery: [
@@ -354,7 +349,6 @@ const PRODUCTS_DATA = {
     reviewCount: 1789,
     soldCount: 230,
     stock: 12,
-    seller: { name: "Ana B.", avatar: "https://i.pravatar.cc/40?img=62", verified: true },
     images: {
       main: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=600&h=600&fit=crop",
       gallery: [
@@ -399,7 +393,7 @@ const PRODUCTS_DATA = {
   }
 };
 
-// Function to get product by ID
+// Function to get product by ID (busca en cache local, incluyendo datos de la API)
 function getProductById(id) {
   return PRODUCTS_DATA[id] || null;
 }
@@ -409,7 +403,34 @@ function getAllProducts() {
   return Object.values(PRODUCTS_DATA);
 }
 
+// =====================================================
+// SINCRONIZACIÓN CON LA API REAL
+// Los datos del backend se mezclan con los hardcodeados.
+// Los productos de la API tienen prioridad.
+// =====================================================
+async function syncProductsFromAPI() {
+  try {
+    if (!window.DaleDeal?.api?.fetchProducts) return;
+    const products = await window.DaleDeal.api.fetchProducts();
+    products.forEach(p => {
+      PRODUCTS_DATA[p.id] = p;
+    });
+    window.PRODUCTS_DATA = PRODUCTS_DATA;
+    DaleDeal.log(`✅ product-data.js sincronizado: ${products.length} productos de la API`);
+  } catch (err) {
+    DaleDeal.warn('No se pudo sincronizar con la API, usando datos locales como fallback.', err.message);
+  }
+}
+
+// Intentar sincronizar cuando el DOM esté listo
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', syncProductsFromAPI);
+} else {
+  syncProductsFromAPI();
+}
+
 // Make available globally
 window.PRODUCTS_DATA = PRODUCTS_DATA;
 window.getProductById = getProductById;
 window.getAllProducts = getAllProducts;
+window.syncProductsFromAPI = syncProductsFromAPI;
