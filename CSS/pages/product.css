@@ -2205,11 +2205,12 @@
 
 .chat-float-btn {
   width: 64px; height: 64px; border-radius: 50%;
-  background: var(--gradient-primary); border: none; cursor: pointer;
+  background: var(--gradient-primary); border: none; outline: none; cursor: pointer;
   box-shadow: 0 8px 32px rgba(214,48,49,0.4);
   position: relative; display: flex; align-items: center; justify-content: center;
   transition: all var(--transition-base); overflow: visible; padding: 0;
 }
+.chat-float-btn:focus { outline: none; }
 
 .chat-float-btn:hover { transform: scale(1.08); box-shadow: 0 12px 40px rgba(214,48,49,0.5); }
 
@@ -2220,7 +2221,7 @@
   background: var(--primary-red); color: var(--white);
   font-size: 11px; font-weight: 700; border-radius: var(--radius-full);
   min-width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25); border: 2.5px solid var(--white);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
   pointer-events: none; padding: 0 4px; z-index: 10001;
 }
 
@@ -2336,7 +2337,8 @@
 .chat-msg-status { font-size: 10px; transition: color 0.3s; }
 .chat-status-sent { color: var(--gray-400); }
 .chat-status-delivered { color: var(--gray-500); }
-.chat-status-read { color: #3b82f6; }
+.chat-status-read { color: #3b82f6; font-style: italic; font-weight: 500; }
+.chat-status-read::before { content: "✓✓ "; }
 
 .chat-typing-bubble { display: flex; align-items: center; gap: 5px; padding: var(--spacing-3) var(--spacing-4) !important; min-width: 56px; }
 .typing-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gray-400); animation: typingBounce 1.2s infinite ease-in-out; flex-shrink: 0; }

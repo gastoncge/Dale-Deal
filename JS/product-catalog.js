@@ -402,6 +402,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 500);
   }
 
+  // Offer filter from URL params
+  const filterParam = new URLSearchParams(window.location.search).get('filter');
+  if (filterParam === 'ofertas' && window.productFilters) {
+    setTimeout(() => {
+      window.productFilters.onlyOffers = true;
+      window.productFilters.filterAndRender();
+    }, 500);
+  }
+
   // ===== SIDEBAR TOGGLE (MOBILE) =====
   const filtersSidebar = document.getElementById('filtersSidebar');
   const sidebarOverlay = document.getElementById('sidebarOverlay');

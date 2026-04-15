@@ -347,12 +347,12 @@
                           Compra, vende y contrata servicios con la mejor experiencia online en Argentina.
                         </p>
                         <div class="hero-actions">
-                          <button class="btn btn-primary btn-lg" id="heroShopBtn">
+                          <a href="HTML/productos.html" class="btn btn-primary btn-lg" id="heroShopBtn">
                             <i class="bi bi-bag me-2"></i>Explorar productos
-                          </button>
-                          <button class="btn btn-outline-light btn-lg" id="heroServicesBtn">
+                          </a>
+                          <a href="HTML/servicios.html" class="btn btn-outline-light btn-lg" id="heroServicesBtn">
                             <i class="bi bi-tools me-2"></i>Ver servicios
-                          </button>
+                          </a>
                         </div>
                       </div>
                     </div>
@@ -392,9 +392,9 @@
                           </div>
                         </div>
                         <div class="hero-actions">
-                          <button class="btn btn-primary btn-lg" id="heroOffersBtn">
+                          <a href="HTML/productos.html?filter=ofertas" class="btn btn-primary btn-lg" id="heroOffersBtn">
                             <i class="bi bi-lightning me-2"></i>Ver ofertas
-                          </button>
+                          </a>
                         </div>
                       </div>
                     </div>
@@ -435,9 +435,13 @@
                           <span class="discount">-15%</span>
                         </div>
                         <div class="hero-actions">
-                          <button class="btn btn-primary btn-lg" id="heroProductBtn">
+                          <button class="btn btn-primary btn-lg" id="heroProductBtn"
+                            onclick="cartManager.addItem({ id: 1, title: 'iPhone 15 Pro Max 256GB', price: 1299999, priceText: '$1.299.999', image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=600&fit=crop', quantity: 1 })">
                             <i class="bi bi-cart-plus me-2"></i>Agregar al carrito
                           </button>
+                          <a href="HTML/producto.html?id=1" class="btn btn-outline-light btn-lg ms-2">
+                            <i class="bi bi-eye me-2"></i>Ver producto
+                          </a>
                         </div>
                       </div>
                     </div>
@@ -481,9 +485,9 @@
                           </div>
                         </div>
                         <div class="hero-actions">
-                          <button class="btn btn-primary btn-lg" id="heroServiceBtn">
-                            <i class="bi bi-calendar-check me-2"></i>Reservar cita
-                          </button>
+                          <a href="HTML/servicio.html?id=installation-tech" class="btn btn-primary btn-lg" id="heroServiceBtn">
+                            <i class="bi bi-info-circle me-2"></i>Ver más información
+                          </a>
                         </div>
                       </div>
                     </div>
