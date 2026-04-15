@@ -347,6 +347,10 @@
                   <i class="bi bi-bag me-2"></i>
                   <span>Mis compras</span>
                 </a>
+                <a href="#" class="sidebar-nav-item" data-section="servicios-contratados">
+                  <i class="bi bi-tools me-2"></i>
+                  <span>Servicios contratados</span>
+                </a>
                 <a href="#" class="sidebar-nav-item" data-section="favoritos">
                   <i class="bi bi-heart me-2"></i>
                   <span>Favoritos</span>
@@ -632,6 +636,83 @@
                   <div class="order-footer">
                     <div class="order-total"><small>Reembolso procesado</small><br>$799.999</div>
                     <div class="d-flex gap-2"><button class="btn btn-outline-secondary btn-sm"><i class="bi bi-headset me-1"></i>Ayuda</button><button class="btn btn-outline-secondary btn-sm btn-msg-seller"><i class="bi bi-chat-dots me-1"></i>Mensaje al vendedor</button><button class="btn btn-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalles</button></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===== SECCIÓN: SERVICIOS CONTRATADOS ===== -->
+            <div id="view-servicios-contratados" class="centro-section" style="display:none">
+              <div class="centro-section-header">
+                <h2 class="centro-section-title"><i class="bi bi-tools me-2"></i>Servicios Contratados</h2>
+                <div class="filter-tabs">
+                  <button class="filter-tab active" data-service-filter="all">Todos</button>
+                  <button class="filter-tab" data-service-filter="pending">Pendiente</button>
+                  <button class="filter-tab" data-service-filter="active">En curso</button>
+                  <button class="filter-tab" data-service-filter="completed">Completado</button>
+                  <button class="filter-tab" data-service-filter="cancelled">Cancelado</button>
+                </div>
+              </div>
+              <div class="orders-list">
+                <div class="order-card">
+                  <div class="order-header">
+                    <div><div class="order-id">Servicio #S-0041</div><div class="order-date"><i class="bi bi-calendar3 me-1"></i>5 de abril de 2026</div></div>
+                    <span class="order-status status-processing"><i class="bi bi-gear-fill me-1"></i>En curso</span>
+                  </div>
+                  <div class="order-row">
+                    <img class="order-item-img" src="https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?w=80&h=80&fit=crop" alt="Diseño web" />
+                    <div class="order-item-info">
+                      <div class="order-item-name">Diseño y desarrollo web profesional</div>
+                      <div class="order-item-qty"><i class="bi bi-person me-1"></i>Proveedor: Carlos Martínez · <i class="bi bi-clock me-1"></i>Entrega estimada: 20 abr 2026</div>
+                    </div>
+                  </div>
+                  <div class="order-footer">
+                    <div class="order-total"><small>Total contratado</small><br>$85.000</div>
+                    <div class="d-flex gap-2">
+                      <button class="btn btn-outline-secondary btn-sm btn-msg-seller"><i class="bi bi-chat-dots me-1"></i>Contactar proveedor</button>
+                      <button class="btn btn-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalles</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="order-card">
+                  <div class="order-header">
+                    <div><div class="order-id">Servicio #S-0038</div><div class="order-date"><i class="bi bi-calendar3 me-1"></i>18 de marzo de 2026</div></div>
+                    <span class="order-status status-delivered"><i class="bi bi-check-circle-fill me-1"></i>Completado</span>
+                  </div>
+                  <div class="order-row">
+                    <img class="order-item-img" src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=80&h=80&fit=crop" alt="Fotografía" />
+                    <div class="order-item-info">
+                      <div class="order-item-name">Sesión fotográfica para e-commerce</div>
+                      <div class="order-item-qty"><i class="bi bi-person me-1"></i>Proveedor: Ana Rodríguez · <i class="bi bi-calendar-check me-1"></i>Finalizado: 25 mar 2026</div>
+                    </div>
+                  </div>
+                  <div class="order-footer">
+                    <div class="order-total"><small>Total pagado</small><br>$45.000</div>
+                    <div class="d-flex gap-2">
+                      <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-star me-1"></i>Calificar</button>
+                      <button class="btn btn-outline-secondary btn-sm btn-msg-seller"><i class="bi bi-chat-dots me-1"></i>Contactar proveedor</button>
+                      <button class="btn btn-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalles</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="order-card">
+                  <div class="order-header">
+                    <div><div class="order-id">Servicio #S-0030</div><div class="order-date"><i class="bi bi-calendar3 me-1"></i>2 de febrero de 2026</div></div>
+                    <span class="order-status status-cancelled"><i class="bi bi-x-circle-fill me-1"></i>Cancelado</span>
+                  </div>
+                  <div class="order-row">
+                    <img class="order-item-img" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=80&h=80&fit=crop" alt="Marketing digital" />
+                    <div class="order-item-info">
+                      <div class="order-item-name">Campaña de marketing digital — redes sociales</div>
+                      <div class="order-item-qty"><i class="bi bi-person me-1"></i>Proveedor: Diego López · <i class="bi bi-x-circle me-1"></i>Cancelado el 10 feb 2026</div>
+                    </div>
+                  </div>
+                  <div class="order-footer">
+                    <div class="order-total"><small>Reembolso procesado</small><br>$30.000</div>
+                    <div class="d-flex gap-2">
+                      <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-headset me-1"></i>Ayuda</button>
+                      <button class="btn btn-primary btn-sm"><i class="bi bi-eye me-1"></i>Detalles</button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1249,7 +1330,7 @@
       AOS.init({ duration: 800, once: true, offset: 100 });
 
       // ===== NAVEGACIÓN DE SECCIONES =====
-      const allSections = ['notifications','mi-perfil','mis-compras','favoritos','publicidad','centro-ayuda','contacto','reportar-problema','estado-servicio','seguridad'];
+      const allSections = ['notifications','mi-perfil','mis-compras','servicios-contratados','favoritos','publicidad','centro-ayuda','contacto','reportar-problema','estado-servicio','seguridad'];
 
       function showSection(name) {
         allSections.forEach(s => {
@@ -1538,7 +1619,10 @@
                 <div class="empty-state-icon"><i class="bi bi-heart"></i></div>
                 <p class="empty-state-title">No tenés favoritos todavía</p>
                 <p class="empty-state-text">Guardá productos y servicios que te interesen para encontrarlos rápido.</p>
-                <a href="../index.html" class="btn btn-primary">Explorar productos</a>
+                <div class="d-flex gap-2 justify-content-center flex-wrap">
+                  <a href="../HTML/productos.html" class="btn btn-primary"><i class="bi bi-bag me-2"></i>Explorar productos</a>
+                  <a href="../HTML/servicios.html" class="btn btn-outline-primary"><i class="bi bi-tools me-2"></i>Explorar servicios</a>
+                </div>
               </div>
             </div>`;
           return;

@@ -49,7 +49,20 @@
       "Bash(ls /d/Descargas/Dale-Deal-main/HTML/*.html)",
       "Bash(xargs -I {} basename {})",
       "Bash(cmd /c \"node -e \"\"const fs=require\\(''fs''\\);const c=fs.readFileSync\\(''d:/Descargas/Dale-Deal-main/CSS/pages/service.css'',''utf-8''\\);const l=c.split\\(''\\\\n''\\);const n=l.slice\\(0,485\\).concat\\([''/* Chat CSS movido a components.css */'',''''],l.slice\\(1140\\)\\);fs.writeFileSync\\(''d:/Descargas/Dale-Deal-main/CSS/pages/service.css'',n.join\\(''\\\\n''\\),''utf-8''\\);console.log\\(''Done'',n.length\\);\"\"\")",
-      "Bash(cmd /c node --version)"
+      "Bash(cmd /c node --version)",
+      "Bash(wc -l /d/Descargas/Dale-Deal-main/index.html /d/Descargas/Dale-Deal-main/HTML/*.html /d/Descargas/Dale-Deal-main/JS/*.js /d/Descargas/Dale-Deal-main/JS/pages/*.js /d/Descargas/Dale-Deal-main/CSS/*.css /d/Descargas/Dale-Deal-main/CSS/pages/*.css)",
+      "Bash(bash /tmp/check_ids.sh)",
+      "Bash(wc -l /d/Descargas/Dale-Deal-main/JS/*.js)",
+      "Bash(where python:*)",
+      "Bash(where python3:*)",
+      "Bash(where node:*)",
+      "Bash(where pwsh:*)",
+      "Bash(where powershell:*)",
+      "Bash(powershell -File -)",
+      "Bash(git.exe remote *)",
+      "Bash(where git *)",
+      "Bash(cmd.exe /c \"git remote -v\")",
+      "Bash(powershell.exe -Command \"Set-Location 'D:\\\\Descargas\\\\Dale-Deal-main'; git remote -v\")"
     ],
     "deny": [],
     "ask": []
