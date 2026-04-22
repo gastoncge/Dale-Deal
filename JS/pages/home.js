@@ -71,6 +71,16 @@ function renderShippingBadges(shipping) {
  * Renderiza una tarjeta de producto
  */
 function renderProductCard(product) {
+  // Normalizar imágenes tanto para datos de API como para datos estáticos
+  if (!product.images || typeof product.images !== 'object') {
+    const src = Array.isArray(product.images) ? product.images[0] : (product.images || 'https://images.unsplash.com/photo-1560393464-5c69a73c5770?w=600&h=600&fit=crop');
+    product.images = { main: src, gallery: [src] };
+  } else if (!product.images.main && Array.isArray(product.images)) {
+    product.images = { main: product.images[0], gallery: product.images };
+  } else if (!product.images.main) {
+    product.images.main = 'https://images.unsplash.com/photo-1560393464-5c69a73c5770?w=600&h=600&fit=crop';
+  }
+
   const hasDiscount = product.discount && product.discount > 0;
   const hasMultipleImages = product.images?.gallery?.length > 1;
 
@@ -157,8 +167,8 @@ function renderProductCard(product) {
 
         <div class="product-meta-group">
           <div class="product-rating">
-            <div class="stars">${renderStars(product.rating)}</div>
-            <span class="reviews-count">(${product.reviewCount.toLocaleString('es-AR')})</span>
+            <div class="stars">${renderStars(product.rating || 0)}</div>
+            <span class="reviews-count">(${(product.reviewCount || 0).toLocaleString('es-AR')})</span>
             ${product.shipping?.free ? `<span class="shipping-badge"><i class="bi bi-truck"></i> Envío gratis</span>` : ''}
           </div>
           <div class="product-location">
@@ -226,19 +236,45 @@ async function loadProducts() {
     DaleDeal.log(`✓ ${products.length} productos cargados en el home`);
 
   } catch (error) {
-    DaleDeal.error('Error al cargar productos:', error);
+    DaleDeal.warn('API no disponible, usando datos locales:', error.message);
+
+    const loadingContainer = document.getElementById('loadingContainer');
+    if (loadingContainer) loadingContainer.style.display = 'none';
 
     const productsGrid = document.getElementById('productsGrid');
-    if (productsGrid) {
+    if (!productsGrid) return;
+
+    // Fallback: datos estáticos de product-data.js
+    const fallbackProducts = typeof window.getAllProducts === 'function'
+      ? window.getAllProducts()
+      : [];
+
+    if (!fallbackProducts.length) {
       productsGrid.innerHTML = `
         <div class="col-12">
-          <div class="alert alert-danger" role="alert">
+          <div class="alert alert-warning" role="alert">
             <i class="bi bi-exclamation-triangle me-2"></i>
-            Error al cargar los productos. Por favor, intenta nuevamente más tarde.
+            No se pudo conectar con el servidor. Intentá de nuevo más tarde.
           </div>
         </div>
       `;
+      return;
     }
+
+    productsGrid.innerHTML = '';
+    const productsPerRow = 3;
+    for (let i = 0; i < Math.min(fallbackProducts.length, 6); i += productsPerRow) {
+      const row = document.createElement('div');
+      row.className = 'products-row';
+      row.innerHTML = fallbackProducts
+        .slice(i, i + productsPerRow)
+        .map(p => renderProductCard(p))
+        .join('');
+      productsGrid.appendChild(row);
+    }
+
+    initializeProductListeners();
+    DaleDeal.log(`✓ ${Math.min(fallbackProducts.length, 6)} productos locales cargados como fallback`);
   }
 }
 
