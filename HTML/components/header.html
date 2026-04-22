@@ -2,7 +2,7 @@
 <div class="announcement-bar" id="announcementBar">
   <div class="container-fluid">
     <span class="announcement-text" id="announcementText">🔥 Envío gratis en compras mayores a $50.000 | Hasta 12 cuotas sin interés</span>
-    <button class="announcement-close" id="announcementClose" title="Cerrar">
+    <button class="announcement-close" id="announcementClose" title="Cerrar" aria-label="Cerrar anuncio">
       <i class="bi bi-x"></i>
     </button>
   </div>
@@ -74,7 +74,7 @@
 
       <!-- Dark Mode Toggle -->
       <div class="action-item d-none d-md-flex">
-        <button class="theme-toggle" id="themeToggle" title="Cambiar tema">
+        <button class="theme-toggle" id="themeToggle" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">
           <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
         </button>
       </div>
@@ -88,6 +88,7 @@
           data-bs-display="static"
           data-bs-auto-close="outside"
           aria-expanded="false"
+          aria-label="Notificaciones"
           title="Notificaciones"
         >
           <i class="bi bi-bell"></i>
@@ -122,7 +123,7 @@
                 <p>Tu pedido #12345 ha sido confirmado</p>
                 <small>Hace 2 horas</small>
               </div>
-              <button class="notification-close" data-action="dismiss">
+              <button class="notification-close" data-action="dismiss" aria-label="Descartar notificación">
                 <i class="bi bi-x"></i>
               </button>
             </div>
@@ -136,7 +137,7 @@
                 <p>Tu pedido #12340 está siendo preparado</p>
                 <small>Hace 1 día</small>
               </div>
-              <button class="notification-close" data-action="dismiss">
+              <button class="notification-close" data-action="dismiss" aria-label="Descartar notificación">
                 <i class="bi bi-x"></i>
               </button>
             </div>
@@ -150,7 +151,7 @@
                 <p>20% de descuento en electrónicos</p>
                 <small>Hace 2 días</small>
               </div>
-              <button class="notification-close" data-action="dismiss">
+              <button class="notification-close" data-action="dismiss" aria-label="Descartar notificación">
                 <i class="bi bi-x"></i>
               </button>
             </div>
@@ -170,7 +171,7 @@
 
       <!-- Cart -->
       <div class="action-item dropdown">
-        <button class="action-btn" id="cartBtn" data-bs-toggle="dropdown" data-bs-display="static" data-bs-auto-close="outside" aria-expanded="false" title="Carrito de compras">
+        <button class="action-btn" id="cartBtn" data-bs-toggle="dropdown" data-bs-display="static" data-bs-auto-close="outside" aria-expanded="false" aria-label="Carrito de compras" title="Carrito de compras">
           <i class="bi bi-cart3"></i>
           <span class="cart-badge" id="cartBadge">0</span>
         </button>
@@ -215,6 +216,7 @@
           data-bs-toggle="dropdown"
           data-bs-display="static"
           aria-expanded="false"
+          aria-label="Mi cuenta"
           title="Mi cuenta"
         >
           <img

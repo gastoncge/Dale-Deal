@@ -94,6 +94,7 @@ function renderProductCard(product) {
             src="${img}"
             alt="${product.title} - Vista ${index + 1}"
             class="product-image ${index === 0 ? 'active' : ''}"
+            loading="lazy"
           />
         `).join('')}
 
@@ -119,6 +120,7 @@ function renderProductCard(product) {
         src="${product.images.main}"
         alt="${product.title}"
         class="product-image"
+        loading="lazy"
       />
     `;
   }
@@ -309,3 +311,109 @@ if (typeof window !== 'undefined') {
     renderShippingBadges
   };
 }
+
+// ===== INICIALIZACIÓN HOME PAGE =====
+// Handlers específicos de index.html (servicios, newsletter, hero, notifications)
+(function initHomeHandlers() {
+  function run() {
+    // Notificaciones dropdown
+    document.getElementById('notificationBtn')?.addEventListener('shown.bs.dropdown', () => {
+      window.notificationManager?.renderNotifications();
+    });
+
+    // Botón hero: agregar iPhone al carrito
+    document.getElementById('heroProductBtn')?.addEventListener('click', () => {
+      window.cartManager?.addItem({
+        id: 1,
+        title: 'iPhone 15 Pro Max 256GB',
+        price: 1299999,
+        priceText: '$1.299.999',
+        image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=400&fit=crop',
+        quantity: 1
+      });
+    });
+
+    // Botón ver todos los productos
+    document.getElementById('viewAllProductsBtn')?.addEventListener('click', () => {
+      window.location.href = './HTML/productos.html';
+    });
+
+    // Newsletter forms
+    const handleNewsletterSubmit = function(e) {
+      e.preventDefault();
+      const email = this.querySelector('input[type="email"]')?.value;
+      if (!email) return;
+      const btn = this.querySelector('.newsletter-btn');
+      const originalHTML = btn.innerHTML;
+      btn.innerHTML = '<i class="bi bi-check-circle"></i>';
+      btn.disabled = true;
+      btn.style.background = 'var(--success-600)';
+      setTimeout(() => {
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+        btn.style.background = '';
+        this.reset();
+      }, 2000);
+    };
+    document.getElementById('newsletterForm')?.addEventListener('submit', handleNewsletterSubmit);
+    document.getElementById('footerNewsletterForm')?.addEventListener('submit', handleNewsletterSubmit);
+
+    // Filtros de servicios en la home
+    class ServiceFilters {
+      constructor() {
+        this.currentCategory = 'all';
+        this.currentSort = 'featured';
+        this.services = [];
+        this.loadServices();
+        this.bindEvents();
+      }
+
+      loadServices() {
+        this.services = Array.from(document.querySelectorAll('.service-card')).map(card => ({
+          element: card,
+          category: card.dataset.serviceCategory,
+          price: parseInt(card.dataset.servicePrice) || 0,
+          title: card.querySelector('.service-title')?.textContent || ''
+        }));
+      }
+
+      bindEvents() {
+        document.querySelectorAll('.service-filter-tab').forEach(tab => {
+          tab.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.service-filter-tab').forEach(t => t.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            this.currentCategory = e.currentTarget.dataset.serviceCategory;
+            this.filterAndRender();
+          });
+        });
+        document.getElementById('serviceSortBtn')?.addEventListener('click', () => {
+          this.currentSort = this.currentSort === 'price-asc' ? 'price-desc' : 'price-asc';
+          this.filterAndRender();
+        });
+      }
+
+      filterAndRender() {
+        let filtered = [...this.services];
+        if (this.currentCategory && this.currentCategory !== 'all') {
+          filtered = filtered.filter(s => s.category === this.currentCategory);
+        }
+        if (this.currentSort === 'price-asc') filtered.sort((a, b) => a.price - b.price);
+        else if (this.currentSort === 'price-desc') filtered.sort((a, b) => b.price - a.price);
+        this.services.forEach(s => { s.element.style.display = 'none'; });
+        filtered.forEach((s, i) => {
+          s.element.style.display = 'block';
+          s.element.style.animationDelay = `${i * 0.1}s`;
+        });
+      }
+    }
+
+    new ServiceFilters();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run);
+  } else {
+    run();
+  }
+})();

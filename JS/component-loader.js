@@ -81,24 +81,40 @@ function fixHeaderPaths() {
     logoImage.src = isRoot ? './IMG/LOGO-2.png' : '../IMG/LOGO-2.png';
   }
 
-  // Corregir enlaces de navegación
-  const productsLink = document.querySelector('a[href="./productos.html"]');
-  if (productsLink) {
-    productsLink.href = isRoot ? './HTML/productos.html' : './productos.html';
-  }
-
-  const servicesLink = document.querySelector('a[href="./servicios.html"]');
-  if (servicesLink) {
-    servicesLink.href = isRoot ? './HTML/servicios.html' : './servicios.html';
-  }
-
-  // Corregir login link
-  const loginLink = document.getElementById('loginLink');
-  if (loginLink) {
-    loginLink.href = isRoot ? './HTML/login.html' : './login.html';
+  if (isRoot) {
+    // Desde index.html, todos los links del header que apuntan a ./xxx.html
+    // (excepto index.html) deben pasar a ./HTML/xxx.html
+    document.querySelectorAll('#navbar-placeholder a[href]').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && href.startsWith('./') && href.includes('.html') && !href.includes('index.html')) {
+        link.setAttribute('href', './HTML/' + href.slice(2));
+      }
+    });
   }
 
   DaleDeal.log('✓ Header paths fixed');
+}
+
+/**
+ * Corrige las rutas del footer según la ubicación
+ */
+function fixFooterPaths() {
+  const currentPath = window.location.pathname;
+  const isRoot = currentPath === '/' || currentPath.endsWith('index.html') || currentPath.split('/').pop() === '';
+
+  if (isRoot) {
+    document.querySelectorAll('#footer-placeholder a[href]').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && href.startsWith('./') && href.includes('.html') && !href.includes('index.html')) {
+        link.setAttribute('href', './HTML/' + href.slice(2));
+      }
+    });
+    // Fix footer logo image
+    const footerLogoImg = document.querySelector('#footer-placeholder .footer-logo-img');
+    if (footerLogoImg) {
+      footerLogoImg.src = './IMG/LOGO-2.png';
+    }
+  }
 }
 
 /**
@@ -195,6 +211,7 @@ async function loadAllComponents() {
     // Esperar un poco para que el DOM se actualice
     setTimeout(() => {
       initializeNewsletterForm();
+      fixFooterPaths();
       if (typeof window.onFooterLoaded === 'function') window.onFooterLoaded();
     }, 100);
   }

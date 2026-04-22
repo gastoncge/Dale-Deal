@@ -115,16 +115,31 @@
     const el = document.getElementById('chatMessages');
     if (!el) return null;
     const isImage = file.type.startsWith('image/');
+    const safeName = document.createTextNode(file.name);
     const div = document.createElement('div');
     div.className = `chat-message ${from === 'user' ? 'sent' : 'received'}`;
     if (isImage) {
       const reader = new FileReader();
       reader.onload = e => {
-        div.innerHTML = `<div class="chat-bubble"><img src="${e.target.result}" class="chat-img-preview" alt="${file.name}" /><div class="chat-meta"><span class="chat-time">${timeNow()}</span><span class="chat-msg-status chat-status-sent">Enviado</span></div></div>`;
+        const bubble = document.createElement('div');
+        bubble.className = 'chat-bubble';
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.className = 'chat-img-preview';
+        img.alt = file.name.replace(/[<>"'&]/g, '');
+        bubble.innerHTML = `<div class="chat-meta"><span class="chat-time">${timeNow()}</span><span class="chat-msg-status chat-status-sent">Enviado</span></div>`;
+        bubble.insertBefore(img, bubble.firstChild);
+        div.appendChild(bubble);
       };
       reader.readAsDataURL(file);
     } else {
-      div.innerHTML = `<div class="chat-bubble chat-bubble-file"><i class="bi bi-file-earmark-text"></i><span>${file.name}</span><div class="chat-meta"><span class="chat-time">${timeNow()}</span><span class="chat-msg-status chat-status-sent">Enviado</span></div></div>`;
+      const bubble = document.createElement('div');
+      bubble.className = 'chat-bubble chat-bubble-file';
+      bubble.innerHTML = `<i class="bi bi-file-earmark-text"></i><div class="chat-meta"><span class="chat-time">${timeNow()}</span><span class="chat-msg-status chat-status-sent">Enviado</span></div>`;
+      const nameSpan = document.createElement('span');
+      nameSpan.appendChild(safeName);
+      bubble.insertBefore(nameSpan, bubble.querySelector('.chat-meta'));
+      div.appendChild(bubble);
     }
     el.appendChild(div);
     el.scrollTop = el.scrollHeight;
@@ -314,16 +329,36 @@
       if (attachPreview) {
         attachPreview.style.display = 'flex';
         const isImage = file.type.startsWith('image/');
+        const removeHandler = () => { pendingFile = null; attachPreview.style.display = 'none'; updateSendBtn(); };
+        const buildPreview = (imgSrc) => {
+          attachPreview.innerHTML = '';
+          if (imgSrc) {
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            img.className = 'chat-attach-thumb';
+            img.alt = '';
+            attachPreview.appendChild(img);
+          } else {
+            const icon = document.createElement('i');
+            icon.className = 'bi bi-file-earmark-text chat-attach-file-icon';
+            attachPreview.appendChild(icon);
+          }
+          const nameSpan = document.createElement('span');
+          nameSpan.className = 'chat-attach-name';
+          nameSpan.textContent = file.name;
+          const removeBtn = document.createElement('button');
+          removeBtn.className = 'chat-attach-remove';
+          removeBtn.innerHTML = '<i class="bi bi-x"></i>';
+          removeBtn.addEventListener('click', removeHandler);
+          attachPreview.appendChild(nameSpan);
+          attachPreview.appendChild(removeBtn);
+        };
         if (isImage) {
           const reader = new FileReader();
-          reader.onload = e => {
-            attachPreview.innerHTML = `<img src="${e.target.result}" class="chat-attach-thumb" alt="${file.name}" /><span class="chat-attach-name">${file.name}</span><button class="chat-attach-remove"><i class="bi bi-x"></i></button>`;
-            attachPreview.querySelector('.chat-attach-remove')?.addEventListener('click', () => { pendingFile = null; attachPreview.style.display = 'none'; updateSendBtn(); });
-          };
+          reader.onload = e => buildPreview(e.target.result);
           reader.readAsDataURL(file);
         } else {
-          attachPreview.innerHTML = `<i class="bi bi-file-earmark-text chat-attach-file-icon"></i><span class="chat-attach-name">${file.name}</span><button class="chat-attach-remove"><i class="bi bi-x"></i></button>`;
-          attachPreview.querySelector('.chat-attach-remove')?.addEventListener('click', () => { pendingFile = null; attachPreview.style.display = 'none'; updateSendBtn(); });
+          buildPreview(null);
         }
       }
       updateSendBtn();

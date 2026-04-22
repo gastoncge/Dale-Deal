@@ -3,8 +3,12 @@
 // Conecta el frontend con el backend Express + PostgreSQL
 // =====================================================
 
-// ⚠️  Cambiá esta URL cuando hagas deploy en el VPS
-const API_URL = 'http://localhost:3000';
+// URL del backend: usa localhost en desarrollo, API_BASE_URL en producción
+function getApiUrl() {
+  if (window.DaleDeal?.CONFIG?.DEBUG) return 'http://localhost:3000';
+  return window.DaleDeal?.CONFIG?.API_BASE_URL || 'http://localhost:3000';
+}
+const API_URL = null; // legacy — no usar directamente
 
 // =====================================================
 // HELPERS INTERNOS
@@ -19,7 +23,7 @@ async function apiFetch(path, options = {}) {
   const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
-  const res = await fetch(`${API_URL}${path}`, { ...options, headers });
+  const res = await fetch(`${getApiUrl()}${path}`, { ...options, headers });
 
   if (!res.ok) {
     const errBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
@@ -221,7 +225,6 @@ async function getMyServices() {
 
 if (typeof window !== 'undefined') {
   window.DaleDeal = window.DaleDeal || {};
-  window.DaleDeal.API_URL = API_URL;
   window.DaleDeal.api = {
     // Productos
     fetchProducts,

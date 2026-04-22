@@ -396,6 +396,20 @@ DaleDeal.utils.renderStars = (rating) => {
   return html;
 };
 
+// ===== FALLBACK DE IMAGEN ROTA =====
+// SVG placeholder mostrado cuando una imagen de producto/servicio no carga
+DaleDeal.utils.PLACEHOLDER_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%23f0f0f0'/%3E%3Crect x='150' y='90' width='100' height='80' rx='8' fill='%23d0d0d0'/%3E%3Ccircle cx='175' cy='115' r='12' fill='%23b0b0b0'/%3E%3Cpolygon points='150,170 190,130 220,155 250,120 300,170' fill='%23b0b0b0'/%3E%3Ctext x='200' y='210' text-anchor='middle' font-family='sans-serif' font-size='14' fill='%23999'%3EImagen no disponible%3C/text%3E%3C/svg%3E";
+
+/**
+ * Aplica el placeholder a una imagen rota. Usar en onerror o llamar directamente.
+ */
+DaleDeal.utils.handleImageError = (img) => {
+  if (img.src !== DaleDeal.utils.PLACEHOLDER_IMG) {
+    img.src = DaleDeal.utils.PLACEHOLDER_IMG;
+    img.style.objectFit = 'contain';
+  }
+};
+
 // ===== INICIALIZACIÓN =====
 DaleDeal.utils.init = () => {
   DaleDeal.state.cart = DaleDeal.utils.storage.get("cart", []);
@@ -409,6 +423,15 @@ DaleDeal.utils.init = () => {
   window.addEventListener("offline", () => {
     DaleDeal.utils.showNotification("Se perdió la conexión a internet.", "warning");
   });
+
+  // Captura errores de carga de imágenes de producto/servicio en toda la app
+  const PRODUCT_IMG_CLASSES = ["product-image", "service-image", "cart-item-image", "main-image"];
+  document.addEventListener("error", (e) => {
+    const img = e.target;
+    if (img.tagName === "IMG" && PRODUCT_IMG_CLASSES.some(c => img.classList.contains(c))) {
+      DaleDeal.utils.handleImageError(img);
+    }
+  }, true);
 
   DaleDeal.utils.createToastContainer();
 
