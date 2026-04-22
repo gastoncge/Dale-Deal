@@ -4406,10 +4406,18 @@
 
 /* Footer */
 [data-theme="dark"] .footer {
-  background: #0f172a !important;
-  color: var(--gray-700);
+  background: linear-gradient(135deg, #1e293b 0%, #162032 100%) !important;
+  color: var(--gray-300);
+  border-top: 3px solid var(--primary-red);
 }
-[data-theme="dark"] .footer-bottom { border-top-color: rgba(255,255,255,0.08); }
+[data-theme="dark"] .footer-bottom {
+  border-top-color: rgba(255,255,255,0.1);
+  background: rgba(0,0,0,0.2);
+}
+[data-theme="dark"] .footer-links a { color: var(--gray-400); }
+[data-theme="dark"] .footer-links a:hover { color: var(--white); }
+[data-theme="dark"] .footer-description { color: var(--gray-400); }
+[data-theme="dark"] .footer-title { color: var(--white); }
 
 /* Modals */
 [data-theme="dark"] .modal-content {
