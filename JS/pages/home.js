@@ -84,15 +84,14 @@ function renderProductCard(product) {
   const hasDiscount = product.discount && product.discount > 0;
   const hasMultipleImages = product.images?.gallery?.length > 1;
 
-  // Determinar badges
-  const badges = product.badges || [];
-  const badgesHTML = badges.map(badge => {
-    if (badge.includes('OFF')) {
-      return `<span class="badge-offer">${badge}</span>`;
-    } else {
-      return `<span class="badge-featured">${badge}</span>`;
-    }
-  }).join('');
+  // Solo mostrar badges de oferta/descuento/más vendido — en rojo
+  const BADGE_KEYWORDS = ['off', 'oferta', 'descuento', 'más vendido', 'mas vendido'];
+  const badges = (product.badges || []).filter(b =>
+    BADGE_KEYWORDS.some(kw => b.toLowerCase().includes(kw))
+  );
+  const badgesHTML = badges.map(badge =>
+    `<span class="badge-offer">${badge}</span>`
+  ).join('');
 
   // Renderizar imágenes
   let imagesHTML = '';

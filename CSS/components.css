@@ -2020,9 +2020,8 @@
   transition: all var(--transition-base);
 }
 
-/* Cuando hay badge de oferta, mover el corazón hacia la izquierda */
 .product-card.has-offer .product-actions {
-  right: calc(var(--spacing-3) + 90px) !important ;
+  right: var(--spacing-3);
 }
 
 .product-card:hover .product-actions {
@@ -4411,6 +4410,15 @@
   color: var(--gray-800);
 }
 [data-theme="dark"] .product-card:hover { border-color: rgba(255,255,255,0.15); }
+[data-theme="dark"] .carousel-control {
+  background: rgba(255,255,255,0.2);
+  color: var(--white);
+}
+[data-theme="dark"] .carousel-control:hover {
+  background: rgba(255,255,255,0.35);
+}
+[data-theme="dark"] .badge-offer,
+[data-theme="dark"] .badge-featured { color: var(--white) !important; }
 
 /* Footer */
 [data-theme="dark"] .footer {
