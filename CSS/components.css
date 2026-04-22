@@ -2375,14 +2375,8 @@
   line-height: 1.1;
 }
 
-/* Acento: segunda palabra del título con gradiente de marca
-   (ej: "Productos <span>Destacados</span>") */
 .section-title .accent {
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
+  color: var(--gray-900);
   font-weight: 700;
 }
 
