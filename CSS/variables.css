@@ -59,6 +59,9 @@
   /* ===== TIPOGRAFÍA ===== */
   --font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
+  /* Fuente de display para títulos de sección y headings destacados */
+  --font-display: "Space Grotesk", "Inter", -apple-system, BlinkMacSystemFont,
+    sans-serif;
   --font-size-2xs: 0.625rem;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;

@@ -272,13 +272,61 @@ class CartManager {
       DaleDeal.log('Ver carrito completo');
     });
 
-    document.getElementById('proceedToCheckout')?.addEventListener('click', () => {
+    document.getElementById('proceedToCheckout')?.addEventListener('click', async () => {
       if (this.items.length === 0) {
         DaleDeal.log('Carrito vacío');
         return;
       }
-      // Aquí podrías redirigir al checkout
-      DaleDeal.log('Proceder al checkout');
+      // Chequear sesión
+      if (!localStorage.getItem('daledeal_token')) {
+        DaleDeal.utils?.showNotification?.('Tenés que iniciar sesión para comprar.', 'warning');
+        const goTo = window.location.pathname.includes('/HTML/') ? './login.html' : './HTML/login.html';
+        setTimeout(() => { window.location.href = goTo; }, 1200);
+        return;
+      }
+
+      const apiFetch = window.DaleDeal?.api?.apiFetch;
+      if (!apiFetch) {
+        DaleDeal.utils?.showNotification?.('API no disponible.', 'error');
+        return;
+      }
+
+      // Crear una orden por cada item (una conversación por vendedor gracias al hook backend)
+      const createdConversations = [];
+      const errors = [];
+      for (const item of this.items) {
+        try {
+          const res = await apiFetch('/orders', {
+            method: 'POST',
+            body: JSON.stringify({
+              product_id: parseInt(item.id, 10),
+              quantity:   item.quantity || 1,
+            }),
+          });
+          if (res?.conversation?.id) createdConversations.push(res.conversation.id);
+        } catch (err) {
+          errors.push(`${item.title || 'Producto'}: ${err.message}`);
+        }
+      }
+
+      if (errors.length > 0) {
+        DaleDeal.utils?.showNotification?.(
+          `Se completaron ${this.items.length - errors.length} de ${this.items.length} compras. Errores: ${errors.join(' | ')}`,
+          'warning'
+        );
+      } else {
+        DaleDeal.utils?.showNotification?.('¡Compras realizadas! Abriendo chat con los vendedores…', 'success');
+      }
+
+      // Vaciar carrito
+      this.items = [];
+      this.saveCart?.();
+      this.updateCartUI?.();
+
+      // Abrir la primera conversación
+      if (createdConversations.length > 0 && window.DaleDeal?.chat) {
+        setTimeout(() => window.DaleDeal.chat.openConversation(createdConversations[0]), 800);
+      }
     });
 
     // Manejar clics en el dropdown del carrito

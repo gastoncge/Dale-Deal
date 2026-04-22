@@ -16,7 +16,9 @@ class ServicePage {
     this.loadServiceData();
     if (!this.currentService) return;
     this.setupImageGallery();
-    this.setupChat();
+    // setupChat() está obsoleto: la mensajería real la maneja JS/chat.js
+    // usando el backend (/messages). Se mantiene el método como no-op por
+    // compatibilidad, pero no hacemos nada con el panel mock.
     this.setupEventListeners();
     // Sincronizar botón guardar con el estado persisto en favoritos
     this.isSaved = window.favoritesManager?.isFavorite(String(this.currentService.id)) || false;
@@ -575,9 +577,36 @@ class ServicePage {
 
   // ── Event listeners ────────────────────────────────────────────────────────
   setupEventListeners() {
-    // Contratar ahora
-    document.querySelector('.btn-hire-now')?.addEventListener('click', () => {
-      this._showNotification('¡Solicitud enviada! El prestador te contactará pronto.', 'success');
+    // Contratar ahora — crea una conversación real con el prestador
+    document.querySelector('.btn-hire-now')?.addEventListener('click', async () => {
+      const serviceId = this.currentService?.id;
+      const title     = this.currentService?.title || 'tu servicio';
+      if (!serviceId) return;
+      if (!window.DaleDeal?.chat) {
+        this._showNotification('El sistema de mensajería no está disponible.', 'error');
+        return;
+      }
+      try {
+        await window.DaleDeal.chat.startWith(
+          'service',
+          serviceId,
+          `¡Hola! Estoy interesado en contratar "${title}". ¿Podés contarme más?`
+        );
+      } catch (err) {
+        this._showNotification(err.message || 'No pudimos iniciar la conversación.', 'error');
+      }
+    });
+
+    // Contactar al prestador — abre el chat sin mensaje predefinido
+    document.querySelector('.btn-chat-provider')?.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const serviceId = this.currentService?.id;
+      if (!serviceId || !window.DaleDeal?.chat) return;
+      try {
+        await window.DaleDeal.chat.startWith('service', serviceId);
+      } catch (err) {
+        this._showNotification(err.message || 'No pudimos iniciar la conversación.', 'error');
+      }
     });
 
     // Guardar servicio
@@ -842,65 +871,10 @@ class ServicePage {
     return map[category] || 'Servicios';
   }
 
-  // ── Lista de chats ─────────────────────────────────────────────────────────
-  _renderChatList() {
-    const listBody = document.getElementById('chatListBody');
-    if (!listBody) return;
-
-    const s = this.currentService;
-    const contacts = [
-      {
-        name: s?.provider?.name || 'Prestador',
-        avatar: s?.provider?.avatar || '',
-        preview: 'Podés contarme tu proyecto y te doy un presupuesto…',
-        time: 'Ahora',
-        unread: 0,
-        online: true,
-        isCurrent: true,
-      },
-      {
-        name: 'Carlos M.',
-        avatar: 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=80&h=80&fit=crop&crop=face',
-        preview: 'Perfecto, quedamos para el lunes entonces.',
-        time: 'Ayer',
-        unread: 0,
-        online: false,
-        isCurrent: false,
-      },
-      {
-        name: 'Lucía P.',
-        avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face',
-        preview: 'Gracias por contratar el servicio.',
-        time: 'Lun',
-        unread: 2,
-        online: true,
-        isCurrent: false,
-      },
-    ];
-
-    listBody.innerHTML = contacts.map((c, i) => `
-      <div class="chat-list-item" data-index="${i}">
-        <div class="chat-list-avatar-wrap">
-          <img src="${c.avatar}" alt="${c.name}" class="chat-list-avatar" />
-          ${c.online ? '<span class="chat-list-online"></span>' : ''}
-        </div>
-        <div class="chat-list-info">
-          <div class="chat-list-name">${c.name}</div>
-          <div class="chat-list-preview">${c.preview}</div>
-        </div>
-        <div class="chat-list-meta">
-          <span class="chat-list-time">${c.time}</span>
-          ${c.unread > 0 ? `<span class="chat-list-unread">${c.unread}</span>` : ''}
-        </div>
-      </div>
-    `).join('');
-
-    listBody.querySelectorAll('.chat-list-item').forEach(item => {
-      item.addEventListener('click', () => {
-        if (this._showConversation) this._showConversation();
-      });
-    });
-  }
+  // ── Lista de chats (deprecated) ────────────────────────────────────────────
+  // Antes mostraba contactos mock. Ahora la lista real la renderiza
+  // JS/chat.js consumiendo /messages/conversations.
+  _renderChatList() { /* no-op */ }
 
   _escapeHtml(text) {
     return DaleDeal.utils.escapeHtml(text);

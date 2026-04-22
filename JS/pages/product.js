@@ -79,7 +79,11 @@ class ProductPage {
       badges: productData.badges || [],
       colors: {},
       storage: {},
-      images: productData.images
+      images: productData.images,
+      seller_id:     productData.seller_id,
+      seller_name:   productData.seller_name,
+      seller_avatar: productData.seller_avatar,
+      seller_location: productData.location,
     };
 
     // Convert arrays → keyed objects
@@ -237,6 +241,67 @@ class ProductPage {
     if (reviewCountEl) reviewCountEl.textContent = `${p.reviewCount.toLocaleString('es-AR')} reseñas`;
     const reviewStarsEl = document.querySelector('.overall-rating .rating-stars');
     if (reviewStarsEl) reviewStarsEl.innerHTML = this.renderProductStars(p.rating);
+
+    // Seller card
+    this.updateSellerCard();
+  }
+
+  // ── Seller card ────────────────────────────────────────────────────────────
+  updateSellerCard() {
+    const p = this.currentProduct;
+    if (!p.seller_id) return;
+
+    const avatar   = document.getElementById('sellerCardAvatar');
+    const name     = document.getElementById('sellerCardName');
+    const sold     = document.getElementById('sellerCardSold');
+    const location = document.querySelector('.provider-location span:last-child');
+    const chatAvatar = document.getElementById('providerChatAvatar');
+    const chatName   = document.getElementById('chatProviderName');
+
+    if (avatar) {
+      const sellerName = encodeURIComponent(p.seller_name || 'Vendedor');
+      avatar.src = p.seller_avatar || `https://ui-avatars.com/api/?name=${sellerName}&background=D63031&color=fff&size=128`;
+      avatar.alt = p.seller_name || 'Vendedor';
+    }
+    if (name)     name.textContent = p.seller_name || 'Vendedor';
+    if (sold)     sold.textContent = `${p.stock > 0 ? 'En stock' : 'Sin stock'}`;
+    if (location) location.textContent = p.location || 'Argentina';
+
+    // Sincronizar con el chat flotante
+    if (chatAvatar) chatAvatar.src = avatar?.src || '';
+    if (chatName)   chatName.textContent = p.seller_name || 'Soporte Dale Deal';
+
+    // Mostrar sección de otros productos del vendedor
+    this.loadSellerProducts(p.seller_id);
+  }
+
+  // ── Otros productos del mismo vendedor ────────────────────────────────────
+  async loadSellerProducts(sellerId) {
+    try {
+      if (!window.DaleDeal?.api?.fetchProducts) return;
+      const all = await window.DaleDeal.api.fetchProducts({ seller_id: sellerId });
+      const others = all.filter(prod => prod.id !== this.currentProduct.id).slice(0, 6);
+
+      const section = document.getElementById('sellerProductsSection');
+      const grid    = document.getElementById('sellerProductsGrid');
+      const subtitle = document.getElementById('sellerProductsSubtitle');
+
+      if (!section || !grid || others.length === 0) return;
+
+      if (subtitle) subtitle.textContent = `Otros productos de ${this.currentProduct.seller_name || 'este vendedor'}`;
+
+      grid.innerHTML = others.map(prod => `
+        <div class="product-card-mini" onclick="location.href='producto.html?id=${prod.id}'">
+          <img src="${prod.images?.main || ''}" alt="${prod.title}" style="width:100%;height:140px;object-fit:cover;border-radius:8px;">
+          <p style="margin:8px 0 4px;font-size:13px;font-weight:600;">${prod.title}</p>
+          <p style="color:var(--primary-red);font-weight:700;">$${prod.price.toLocaleString('es-AR')}</p>
+        </div>
+      `).join('');
+
+      section.style.display = '';
+    } catch (e) {
+      DaleDeal.warn('No se pudieron cargar productos del vendedor:', e.message);
+    }
   }
 
   // ── Color options ──────────────────────────────────────────────────────────
@@ -510,14 +575,38 @@ class ProductPage {
     const button = document.querySelector('.btn-buy-now');
     this.setButtonLoading(button, true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1200));
-      this.showNotification('Redirigiendo al checkout…', 'info');
-      setTimeout(() => {
-        DaleDeal.log('¡Checkout! En producción aquí se procesaría el pago.');
-      }, 1000);
+      // Chequear sesión
+      if (!localStorage.getItem('daledeal_token')) {
+        this.showNotification('Tenés que iniciar sesión para comprar.', 'warning');
+        setTimeout(() => { window.location.href = './login.html'; }, 1500);
+        return;
+      }
+
+      const productId = this.currentProduct?.id;
+      if (!productId) throw new Error('Producto inválido');
+
+      // Crear la orden — el backend genera la conversación automáticamente
+      const apiFetch = window.DaleDeal?.api?.apiFetch;
+      if (!apiFetch) throw new Error('API no disponible');
+
+      const res = await apiFetch('/orders', {
+        method: 'POST',
+        body: JSON.stringify({
+          product_id: productId,
+          quantity:   this.quantity || 1,
+        }),
+      });
+
+      this.showNotification('¡Compra realizada! Abriendo chat con el vendedor…', 'success');
+
+      // Abrir la conversación creada automáticamente
+      const convId = res?.conversation?.id;
+      if (convId && window.DaleDeal?.chat) {
+        setTimeout(() => window.DaleDeal.chat.openConversation(convId), 800);
+      }
     } catch (err) {
       DaleDeal.error('Error en compra:', err);
-      this.showNotification('Error al procesar la compra', 'error');
+      this.showNotification(err.message || 'Error al procesar la compra', 'error');
     } finally {
       this.setButtonLoading(button, false);
     }

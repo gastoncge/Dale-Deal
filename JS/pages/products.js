@@ -103,12 +103,14 @@ class ProductsPageLoader {
   applyFilters() {
     let filtered = [...this.allProducts];
 
-    // Filtrar por categoría
+    // Filtrar por categoría (compara contra el slug de la API)
     if (this.currentCategory && this.currentCategory !== 'all') {
-      filtered = filtered.filter(product =>
-        product.category.toLowerCase() === this.currentCategory.toLowerCase() ||
-        product.subcategory.toLowerCase() === this.currentCategory.toLowerCase()
-      );
+      filtered = filtered.filter(product => {
+        const slug = (product.subcategory || product.category || '').toLowerCase();
+        const name = (product.category || '').toLowerCase();
+        const cat  = this.currentCategory.toLowerCase();
+        return slug === cat || name === cat || slug.includes(cat) || cat.includes(slug);
+      });
     }
 
     // Ordenar
