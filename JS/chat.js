@@ -53,17 +53,9 @@
     }
   }
 
-  // Si quedó el DOM del widget flotante de una carga anterior, lo limpiamos
-  // para evitar el bug de render cortado que aparecía en el feed.
-  function cleanupLegacyWidget() {
-    const legacy = document.getElementById('chatFloatWidget');
-    if (legacy && legacy.parentNode) legacy.parentNode.removeChild(legacy);
-  }
-
   function init() {
     if (window._chatInitialized) return;
     window._chatInitialized = true;
-    cleanupLegacyWidget();
     refreshUnreadBadge();
     setInterval(refreshUnreadBadge, 30000);
   }

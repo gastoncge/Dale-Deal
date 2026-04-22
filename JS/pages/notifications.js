@@ -677,6 +677,372 @@ class NotificationsCenterManager {
   }
 }
 
+// Navegación de secciones y mensajería manejadas por el script
+// inline de notificaciones.html (showSection / initMensajesSection)
+
+/*
+class SectionNavigator {
+  constructor() {
+    this.currentSection = null;
+    this.init();
+  }
+
+  init() {
+    document.querySelectorAll('[data-section]').forEach(el => {
+      el.addEventListener('click', e => {
+        e.preventDefault();
+        this.goTo(el.dataset.section);
+      });
+    });
+
+    // Leer hash de URL al cargar (#mensajes, #mi-perfil, etc.)
+    const hash = window.location.hash.replace('#', '');
+    if (hash) {
+      this.goTo(hash);
+    } else {
+      // Sección por defecto: notificaciones
+      const defaultSection = document.querySelector('[data-section]')?.dataset.section;
+      if (defaultSection) this.goTo(defaultSection);
+    }
+  }
+
+  goTo(section) {
+    // Ocultar todas las secciones
+    document.querySelectorAll('.centro-section').forEach(el => {
+      el.style.display = 'none';
+    });
+
+    // Mostrar la sección pedida
+    const target = document.getElementById(`view-${section}`);
+    if (target) target.style.display = '';
+
+    // Marcar nav item activo
+    document.querySelectorAll('[data-section]').forEach(el => {
+      el.classList.toggle('active', el.dataset.section === section);
+    });
+
+    this.currentSection = section;
+    window.location.hash = section;
+
+    // Si es mensajes, inicializar/refrescar
+    if (section === 'mensajes' && window.messagesManager) {
+      window.messagesManager.onSectionOpen();
+    }
+  }
+}
+
+// =====================================================
+// MENSAJES MANAGER
+// Conecta la UI de mensajes con api-messages.js
+// =====================================================
+class MessagesManager {
+  constructor() {
+    this.conversations = [];
+    this.activeConvId = null;
+    this.searchQuery = '';
+    this.sending = false;
+    this.listBody = document.getElementById('mensajesListBody');
+    this.chatActive = document.getElementById('mensajesChatActive');
+    this.emptyState = document.getElementById('mensajesEmptyState');
+    this.chatMessages = document.getElementById('mensajesChatMessages');
+    this.chatInput = document.getElementById('mensajesChatInput');
+    this.chatSend = document.getElementById('mensajesChatSend');
+    this.chatAvatar = document.getElementById('mensajesChatAvatar');
+    this.chatName = document.getElementById('mensajesChatName');
+    this.chatItem = document.getElementById('mensajesChatItem');
+    this.searchInput = document.getElementById('mensajesSearchInput');
+    this.bindEvents();
+  }
+
+  api() {
+    return window.DaleDeal?.api?.messages || null;
+  }
+
+  isLoggedIn() {
+    return !!localStorage.getItem('daledeal_token');
+  }
+
+  bindEvents() {
+    this.chatSend?.addEventListener('click', () => this.sendMessage());
+    this.chatInput?.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        this.sendMessage();
+      }
+    });
+    this.chatInput?.addEventListener('input', () => {
+      this.updateSendBtn();
+      // Auto-resize
+      this.chatInput.style.height = 'auto';
+      this.chatInput.style.height = Math.min(this.chatInput.scrollHeight, 120) + 'px';
+    });
+
+    let searchTimer;
+    this.searchInput?.addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        this.searchQuery = this.searchInput.value.trim().toLowerCase();
+        this.renderConversations();
+      }, 250);
+    });
+
+    // Delegación de eventos para items de la lista
+    this.listBody?.addEventListener('click', e => {
+      const item = e.target.closest('.mensajes-list-item');
+      if (item) this.openConversation(Number(item.dataset.convId));
+    });
+  }
+
+  updateSendBtn() {
+    if (this.chatSend) {
+      this.chatSend.disabled = !this.chatInput?.value.trim() || this.sending;
+    }
+  }
+
+  // Llamado cuando el usuario navega a la sección mensajes
+  async onSectionOpen() {
+    await this.loadConversations();
+
+    // Auto-abrir conversación desde URL ?conv=ID
+    const convId = new URLSearchParams(window.location.search).get('conv');
+    if (convId) {
+      const id = Number(convId);
+      if (this.conversations.find(c => c.id === id)) {
+        this.openConversation(id);
+      }
+    }
+  }
+
+  async loadConversations() {
+    if (!this.listBody) return;
+    const api = this.api();
+
+    if (!api || !this.isLoggedIn()) {
+      this.listBody.innerHTML = `
+        <div class="mensajes-empty">
+          <i class="bi bi-lock"></i>
+          <p>Iniciá sesión para ver tus mensajes.</p>
+        </div>`;
+      return;
+    }
+
+    this.listBody.innerHTML = `
+      <div class="mensajes-empty">
+        <i class="bi bi-hourglass-split"></i>
+        <p>Cargando…</p>
+      </div>`;
+
+    try {
+      this.conversations = await api.listConversations();
+      this.renderConversations();
+      this.updateMensajesBadge();
+    } catch (err) {
+      this.listBody.innerHTML = `
+        <div class="mensajes-empty">
+          <i class="bi bi-wifi-off"></i>
+          <p>No se pudieron cargar las conversaciones.</p>
+        </div>`;
+    }
+  }
+
+  renderConversations() {
+    if (!this.listBody) return;
+    const filtered = this.conversations.filter(c => {
+      if (!this.searchQuery) return true;
+      const name = (c.other_user?.name || '').toLowerCase();
+      const preview = (c.last_message?.body || '').toLowerCase();
+      return name.includes(this.searchQuery) || preview.includes(this.searchQuery);
+    });
+
+    if (!filtered.length) {
+      this.listBody.innerHTML = `
+        <div class="mensajes-empty">
+          <i class="bi bi-chat-square"></i>
+          <p>${this.searchQuery ? 'Sin resultados.' : 'No tenés conversaciones aún.'}</p>
+        </div>`;
+      return;
+    }
+
+    this.listBody.innerHTML = filtered.map(c => this.conversationItemHTML(c)).join('');
+  }
+
+  conversationItemHTML(conv) {
+    const user = conv.other_user || {};
+    const initials = (user.name || '?').charAt(0).toUpperCase();
+    const avatar = user.avatar_url
+      ? `<img src="${user.avatar_url}" alt="${initials}" class="mensajes-list-item-avatar" style="object-fit:cover;">`
+      : `<div class="mensajes-list-item-avatar">${initials}</div>`;
+    const preview = conv.last_message?.body || 'Sin mensajes';
+    const unread = conv.unread_count || 0;
+    const time = conv.last_message?.created_at
+      ? this.relativeTime(conv.last_message.created_at) : '';
+    const isActive = conv.id === this.activeConvId ? 'active' : '';
+
+    return `
+      <div class="mensajes-list-item ${isActive}" data-conv-id="${conv.id}">
+        ${avatar}
+        <div class="mensajes-list-item-info">
+          <p class="mensajes-list-item-name">${this.escapeHtml(user.name || 'Usuario')}</p>
+          <p class="mensajes-list-item-preview">${this.escapeHtml(preview.substring(0, 60))}</p>
+        </div>
+        <div class="mensajes-list-item-meta">
+          <span class="mensajes-list-item-time">${time}</span>
+          ${unread > 0 ? `<span class="mensajes-list-item-unread">${unread}</span>` : ''}
+        </div>
+      </div>`;
+  }
+
+  async openConversation(convId) {
+    this.activeConvId = convId;
+    this.renderConversations();
+
+    const conv = this.conversations.find(c => c.id === convId);
+    if (!conv) return;
+
+    // Mostrar panel de chat
+    if (this.emptyState) this.emptyState.style.display = 'none';
+    if (this.chatActive) this.chatActive.style.display = 'flex';
+
+    // Header de la conversación
+    const user = conv.other_user || {};
+    if (this.chatName) this.chatName.textContent = user.name || 'Usuario';
+    if (this.chatItem) this.chatItem.textContent = conv.item?.title || '';
+    if (this.chatAvatar) {
+      if (user.avatar_url) {
+        this.chatAvatar.src = user.avatar_url;
+        this.chatAvatar.style.display = '';
+      } else {
+        this.chatAvatar.style.display = 'none';
+      }
+    }
+
+    // Cargar mensajes
+    if (this.chatMessages) {
+      this.chatMessages.innerHTML = `<div class="mensajes-empty"><i class="bi bi-hourglass-split"></i><p>Cargando…</p></div>`;
+    }
+
+    try {
+      const api = this.api();
+      const messages = api ? await api.getMessages(convId) : [];
+      this.renderMessages(messages);
+      // Marcar como leídos
+      if (api) {
+        api.markConversationRead(convId).catch(() => {});
+        // Quitar badge del item
+        const convObj = this.conversations.find(c => c.id === convId);
+        if (convObj) convObj.unread_count = 0;
+        this.renderConversations();
+        this.updateMensajesBadge();
+      }
+    } catch {
+      if (this.chatMessages) {
+        this.chatMessages.innerHTML = `<div class="mensajes-empty"><i class="bi bi-wifi-off"></i><p>No se pudieron cargar los mensajes.</p></div>`;
+      }
+    }
+
+    // Enfocar input
+    this.chatInput?.focus();
+  }
+
+  renderMessages(messages) {
+    if (!this.chatMessages) return;
+    if (!messages.length) {
+      this.chatMessages.innerHTML = `<div class="mensajes-empty"><i class="bi bi-chat-square"></i><p>No hay mensajes aún. ¡Escribí el primero!</p></div>`;
+      return;
+    }
+
+    const myId = this.myUserId();
+    this.chatMessages.innerHTML = messages.map(m => {
+      const isSent = m.sender_id === myId;
+      const time = m.created_at ? this.relativeTime(m.created_at) : '';
+      return `
+        <div class="mensajes-msg ${isSent ? 'mensajes-msg-sent' : 'mensajes-msg-received'}">
+          <div class="mensajes-bubble">${this.escapeHtml(m.body)}</div>
+          <span class="mensajes-msg-time">${time}</span>
+        </div>`;
+    }).join('');
+
+    this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+  }
+
+  async sendMessage() {
+    const body = this.chatInput?.value.trim();
+    if (!body || !this.activeConvId || this.sending) return;
+    const api = this.api();
+    if (!api) return;
+
+    this.sending = true;
+    this.updateSendBtn();
+
+    try {
+      const msg = await api.sendMessage(this.activeConvId, body);
+      if (this.chatInput) {
+        this.chatInput.value = '';
+        this.chatInput.style.height = 'auto';
+      }
+      // Agregar mensaje a la UI sin recargar todo
+      const myId = this.myUserId();
+      const isSent = !msg?.sender_id || msg.sender_id === myId;
+      const time = msg?.created_at ? this.relativeTime(msg.created_at) : 'Ahora';
+      const msgEl = document.createElement('div');
+      msgEl.className = `mensajes-msg ${isSent ? 'mensajes-msg-sent' : 'mensajes-msg-received'}`;
+      msgEl.innerHTML = `<div class="mensajes-bubble">${this.escapeHtml(body)}</div><span class="mensajes-msg-time">${time}</span>`;
+      // Quitar empty state si existe
+      this.chatMessages?.querySelector('.mensajes-empty')?.remove();
+      this.chatMessages?.appendChild(msgEl);
+      this.chatMessages && (this.chatMessages.scrollTop = this.chatMessages.scrollHeight);
+
+      // Actualizar preview en la lista
+      const conv = this.conversations.find(c => c.id === this.activeConvId);
+      if (conv) {
+        conv.last_message = { body, created_at: new Date().toISOString() };
+        this.renderConversations();
+      }
+    } catch (err) {
+      alert('No se pudo enviar el mensaje. Intentá de nuevo.');
+    } finally {
+      this.sending = false;
+      this.updateSendBtn();
+    }
+  }
+
+  updateMensajesBadge() {
+    const badge = document.getElementById('profileMensajesBadge');
+    if (!badge) return;
+    const total = this.conversations.reduce((sum, c) => sum + (c.unread_count || 0), 0);
+    badge.textContent = total > 99 ? '99+' : String(total);
+    badge.style.display = total > 0 ? '' : 'none';
+  }
+
+  myUserId() {
+    try {
+      const u = JSON.parse(localStorage.getItem('daledealer_user') || '{}');
+      return u.id || null;
+    } catch { return null; }
+  }
+
+  relativeTime(isoString) {
+    const diff = Date.now() - new Date(isoString).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'Ahora';
+    if (mins < 60) return `Hace ${mins}m`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `Hace ${hrs}h`;
+    const days = Math.floor(hrs / 24);
+    return `Hace ${days}d`;
+  }
+
+  escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+}
+
+*/
+
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
   window.notificationsCenterManager = new NotificationsCenterManager();
