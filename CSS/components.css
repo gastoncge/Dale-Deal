@@ -754,8 +754,11 @@
 }
 
 .btn-primary {
+  --bs-btn-color: #fff;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-color: #fff;
   background: var(--gradient-primary);
-  color: var(--white);
+  color: #fff;
   box-shadow: var(--shadow-md);
   transition: all var(--transition-base);
   position: relative;
@@ -765,7 +768,12 @@
 .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-xl);
-  color: var(--white);
+  color: #fff;
+}
+
+.btn-primary i,
+.btn-primary .bi {
+  color: inherit;
 }
 
 .btn-primary::before {
