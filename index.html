@@ -34,6 +34,14 @@
     <!-- AOS (Animate On Scroll) -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
 
+    <!-- Google Fonts: Space Grotesk (display) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="./CSS/variables.css" />
     <link rel="stylesheet" href="./CSS/components.css" />
@@ -458,7 +466,7 @@
         <div class="container">
           <!-- Título de la sección -->
           <div class="section-header text-center mb-5" data-aos="fade-up">
-            <h2 class="section-title">Productos Destacados</h2>
+            <h2 class="section-title">Productos <span class="accent">Destacados</span></h2>
           </div>
           
           <div class="products-grid" id="productsGrid">
@@ -492,7 +500,7 @@
       <section class="services-section">
         <div class="container">
           <div class="section-header text-center mb-5">
-            <h2 class="section-title">Servicios Destacados</h2>
+            <h2 class="section-title">Servicios <span class="accent">Destacados</span></h2>
           </div>
 
 
@@ -1387,6 +1395,7 @@
 
     <!-- API y Product Loader -->
     <script src="./JS/api.js"></script>
+    <script src="./JS/api-messages.js"></script>
     <script src="./JS/search.js"></script>
     <script src="./JS/pages/home.js"></script>
 
@@ -1609,5 +1618,6 @@
     <script src="./JS/component-loader.js" defer></script>
     -->
     <script src="./JS/chat.js" defer></script>
+    <script src="./JS/support-widget.js" defer></script>
   </body>
 </html>

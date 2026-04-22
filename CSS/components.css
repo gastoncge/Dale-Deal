@@ -2366,11 +2366,24 @@
 }
 
 .section-title {
+  font-family: var(--font-display);
   font-size: var(--font-size-4xl);
-  font-weight: 800;
+  font-weight: 700;
   color: var(--gray-900);
   margin-bottom: var(--spacing-4);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+/* Acento: segunda palabra del título con gradiente de marca
+   (ej: "Productos <span>Destacados</span>") */
+.section-title .accent {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  font-weight: 700;
 }
 
 .services-section .section-subtitle {
@@ -4362,10 +4375,17 @@
 [data-theme="dark"] .search-input {
   background: #0f172a;
   color: var(--gray-800);
-  border-color: var(--gray-200);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 [data-theme="dark"] .search-input::placeholder { color: var(--gray-500); }
-[data-theme="dark"] .search-wrapper { background: #0f172a; border-color: var(--gray-200); }
+[data-theme="dark"] .search-input:focus {
+  background: #0f172a;
+  border-color: var(--primary-red);
+  box-shadow: none;
+}
+[data-theme="dark"] .search-icon { color: var(--gray-500); }
+/* Wrapper SIN fondo propio — así no asoma un rectángulo detrás del input píldora */
+[data-theme="dark"] .search-wrapper { background: transparent; }
 [data-theme="dark"] .action-btn { color: var(--gray-800); }
 [data-theme="dark"] .action-btn:hover { background: rgba(255,255,255,0.08); }
 [data-theme="dark"] .action-link { color: var(--gray-800); }
@@ -4580,12 +4600,14 @@
    POLISH GENERAL — Micro-interacciones & refinamientos
    ===================================================== */
 
-/* Search bar: focus glow con color de marca */
-.search-wrapper:focus-within {
+/* Search bar: focus glow con color de marca — aplicado al INPUT (píldora),
+   no al wrapper rectangular, para que el halo respete el border-radius. */
+.search-input:focus {
   border-color: var(--primary-red) !important;
   box-shadow: 0 0 0 3px var(--primary-red-light) !important;
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
+.search-wrapper:focus-within { box-shadow: none !important; }
 
 /* Botones primarios: animación de presión */
 .btn-primary:active,
@@ -4722,7 +4744,9 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
 .chat-list-avatar-wrap .chat-list-online { position: absolute; bottom: 2px; right: 2px; width: 11px; height: 11px; border-radius: 50%; background: #4ade80; border: 2px solid var(--white); }
 .chat-list-info { flex: 1; min-width: 0; }
 .chat-list-name { font-size: var(--font-size-sm); font-weight: 700; color: var(--gray-900); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chat-list-item-title { font-size: 11px; color: var(--primary-red); font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .chat-list-preview { font-size: var(--font-size-xs); color: var(--gray-500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chat-list-empty small { font-size: 11px; color: var(--gray-500); max-width: 220px; line-height: 1.4; }
 .chat-list-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
 .chat-list-time { font-size: 10px; color: var(--gray-400); }
 .chat-list-unread { width: 18px; height: 18px; border-radius: 50%; background: var(--primary-red); color: var(--white); font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
@@ -4735,4 +4759,194 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
 @media (max-width: 479px) {
   .chat-float-widget { bottom: 16px; right: 16px; }
   .chat-float-panel { width: calc(100vw - 32px); right: 16px; bottom: 96px; }
+}
+
+/* =====================================================
+   DARK MODE — SAFETY NET (detalles que se escapan)
+   ===================================================== */
+
+/* Toasts de Bootstrap (notificaciones de acción) */
+[data-theme="dark"] .toast,
+[data-theme="dark"] .toast-body,
+[data-theme="dark"] .toast-header {
+  background-color: #1e293b !important;
+  color: var(--gray-800) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Tooltips de Bootstrap */
+[data-theme="dark"] .tooltip-inner {
+  background-color: #1e293b;
+  color: var(--gray-800);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Offcanvas (menú lateral) */
+[data-theme="dark"] .offcanvas {
+  background: #1e293b;
+  color: var(--gray-800);
+}
+[data-theme="dark"] .offcanvas-header,
+[data-theme="dark"] .offcanvas-footer {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Pagination */
+[data-theme="dark"] .page-link {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--gray-700);
+}
+[data-theme="dark"] .page-link:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--gray-900);
+}
+[data-theme="dark"] .page-item.active .page-link {
+  background: var(--primary-red);
+  border-color: var(--primary-red);
+  color: #fff;
+}
+[data-theme="dark"] .page-item.disabled .page-link {
+  background: #0f172a;
+  color: var(--gray-500);
+}
+
+/* Tablas */
+[data-theme="dark"] .table {
+  color: var(--gray-800);
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--gray-800);
+  --bs-table-border-color: rgba(255, 255, 255, 0.08);
+  --bs-table-striped-bg: rgba(255, 255, 255, 0.03);
+  --bs-table-hover-bg: rgba(255, 255, 255, 0.05);
+}
+[data-theme="dark"] .table thead { background: #0f172a; }
+
+/* List groups */
+[data-theme="dark"] .list-group-item {
+  background: #1e293b;
+  color: var(--gray-800);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Code / Pre */
+[data-theme="dark"] pre,
+[data-theme="dark"] code {
+  background: #0f172a;
+  color: var(--gray-800);
+}
+
+/* Breadcrumbs */
+[data-theme="dark"] .breadcrumb-item + .breadcrumb-item::before {
+  color: var(--gray-500);
+}
+
+/* Progress bars */
+[data-theme="dark"] .progress {
+  background: #0f172a;
+}
+
+/* Bootstrap alerts (default) — tonos translúcidos */
+[data-theme="dark"] .alert-primary,
+[data-theme="dark"] .alert-info {
+  background: rgba(59, 130, 246, 0.12);
+  color: #93c5fd;
+  border-color: rgba(59, 130, 246, 0.3);
+}
+[data-theme="dark"] .alert-success {
+  background: rgba(16, 185, 129, 0.12);
+  color: #6ee7b7;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+[data-theme="dark"] .alert-warning {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fcd34d;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+[data-theme="dark"] .alert-danger {
+  background: rgba(239, 68, 68, 0.12);
+  color: #fca5a5;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* Form inputs — placeholders e iconos */
+[data-theme="dark"] .form-check-input {
+  background-color: #0f172a;
+  border-color: var(--gray-300);
+}
+[data-theme="dark"] .form-check-input:checked {
+  background-color: var(--primary-red);
+  border-color: var(--primary-red);
+}
+[data-theme="dark"] .form-label { color: var(--gray-700); }
+[data-theme="dark"] .input-group-text i { color: var(--gray-600); }
+
+/* Cards genéricas (las que usan var(--white) ya funcionan,
+   pero Bootstrap .card puro necesita refuerzo) */
+[data-theme="dark"] .card {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: var(--gray-800);
+}
+[data-theme="dark"] .card-header,
+[data-theme="dark"] .card-footer {
+  background: #0f172a;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: var(--gray-800);
+}
+
+/* Chat flotante */
+[data-theme="dark"] .chat-float-panel {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+}
+[data-theme="dark"] .chat-list-item { border-bottom-color: rgba(255, 255, 255, 0.06); }
+[data-theme="dark"] .chat-list-item:hover { background: rgba(255, 255, 255, 0.04); }
+[data-theme="dark"] .chat-list-avatar-wrap .chat-list-online { border-color: #1e293b; }
+
+/* Separadores y hr */
+[data-theme="dark"] hr {
+  border-color: rgba(255, 255, 255, 0.08);
+  opacity: 1;
+}
+
+/* Close buttons de Bootstrap (la X de modales/offcanvas/toasts) */
+[data-theme="dark"] .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+  opacity: 0.7;
+}
+[data-theme="dark"] .btn-close:hover { opacity: 1; }
+
+/* Quick view / modal content en páginas de productos */
+[data-theme="dark"] .quick-view-content,
+[data-theme="dark"] .product-quick-view {
+  background: #1e293b;
+  color: var(--gray-800);
+}
+
+/* Badges sobre fondos claros que se ven raros */
+[data-theme="dark"] .badge.bg-light {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: var(--gray-800) !important;
+}
+
+/* Inputs con autofill (Chrome) — evita el amarillo sobre fondo oscuro */
+[data-theme="dark"] input:-webkit-autofill,
+[data-theme="dark"] input:-webkit-autofill:hover,
+[data-theme="dark"] input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--gray-800) !important;
+  -webkit-box-shadow: 0 0 0 1000px #0f172a inset !important;
+  caret-color: var(--gray-800);
+  transition: background-color 9999s ease-out 0s;
+}
+
+/* Scrollbar en dark (WebKit) */
+[data-theme="dark"] ::-webkit-scrollbar { background: #0f172a; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.22);
 }

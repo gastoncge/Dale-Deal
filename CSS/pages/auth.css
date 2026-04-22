@@ -805,6 +805,25 @@
   border-color: #ffeaa7;
 }
 
+/* Dark mode — alertas con fondos translúcidos sobre fondo oscuro */
+[data-theme="dark"] .auth-alert-danger {
+  color: #fecaca;
+  background-color: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+[data-theme="dark"] .auth-alert-success {
+  color: #bbf7d0;
+  background-color: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+[data-theme="dark"] .auth-alert-warning {
+  color: #fde68a;
+  background-color: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.35);
+}
+
 /* ===== ESTADOS DE CARGA ===== */
 .auth-btn-primary:disabled {
   opacity: 0.6;

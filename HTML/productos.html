@@ -315,31 +315,31 @@
                       <span class="option-check"><i class="bi bi-check-lg"></i></span>
                     </label>
                     <label class="filter-option-modern">
-                      <input type="radio" name="category" value="electronics" data-category="electronics">
+                      <input type="radio" name="category" value="electronica" data-category="electronica">
                       <span class="option-content">
                         <i class="bi bi-phone category-icon"></i>
-                        <span class="option-text">Electrónicos</span>
+                        <span class="option-text">Electrónica</span>
                       </span>
                       <span class="option-check"><i class="bi bi-check-lg"></i></span>
                     </label>
                     <label class="filter-option-modern">
-                      <input type="radio" name="category" value="fashion" data-category="fashion">
+                      <input type="radio" name="category" value="ropa-accesorios" data-category="ropa-accesorios">
                       <span class="option-content">
                         <i class="bi bi-bag category-icon"></i>
-                        <span class="option-text">Moda</span>
+                        <span class="option-text">Ropa y accesorios</span>
                       </span>
                       <span class="option-check"><i class="bi bi-check-lg"></i></span>
                     </label>
                     <label class="filter-option-modern">
-                      <input type="radio" name="category" value="home" data-category="home">
+                      <input type="radio" name="category" value="hogar-jardin" data-category="hogar-jardin">
                       <span class="option-content">
                         <i class="bi bi-house category-icon"></i>
-                        <span class="option-text">Hogar</span>
+                        <span class="option-text">Hogar y jardín</span>
                       </span>
                       <span class="option-check"><i class="bi bi-check-lg"></i></span>
                     </label>
                     <label class="filter-option-modern">
-                      <input type="radio" name="category" value="sports" data-category="sports">
+                      <input type="radio" name="category" value="deportes" data-category="deportes">
                       <span class="option-content">
                         <i class="bi bi-trophy category-icon"></i>
                         <span class="option-text">Deportes</span>
@@ -347,10 +347,26 @@
                       <span class="option-check"><i class="bi bi-check-lg"></i></span>
                     </label>
                     <label class="filter-option-modern">
-                      <input type="radio" name="category" value="books" data-category="books">
+                      <input type="radio" name="category" value="juguetes" data-category="juguetes">
                       <span class="option-content">
-                        <i class="bi bi-book category-icon"></i>
-                        <span class="option-text">Libros</span>
+                        <i class="bi bi-star category-icon"></i>
+                        <span class="option-text">Juguetes</span>
+                      </span>
+                      <span class="option-check"><i class="bi bi-check-lg"></i></span>
+                    </label>
+                    <label class="filter-option-modern">
+                      <input type="radio" name="category" value="vehiculos" data-category="vehiculos">
+                      <span class="option-content">
+                        <i class="bi bi-car-front category-icon"></i>
+                        <span class="option-text">Vehículos</span>
+                      </span>
+                      <span class="option-check"><i class="bi bi-check-lg"></i></span>
+                    </label>
+                    <label class="filter-option-modern">
+                      <input type="radio" name="category" value="otros" data-category="otros">
+                      <span class="option-content">
+                        <i class="bi bi-three-dots category-icon"></i>
+                        <span class="option-text">Otros</span>
                       </span>
                       <span class="option-check"><i class="bi bi-check-lg"></i></span>
                     </label>
@@ -645,6 +661,7 @@
 
     <!-- Product loaders -->
     <script src="../JS/api.js"></script>
+    <script src="../JS/api-messages.js"></script>
     <script src="../JS/search.js"></script>
     <script src="../JS/pages/home.js"></script>
     <script src="../JS/pages/products.js"></script>
@@ -1013,7 +1030,7 @@
         justify-content: space-between;
         align-items: center;
         padding: var(--spacing-4) var(--spacing-5);
-        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
         border-bottom: 1px solid var(--gray-100);
         position: sticky;
         top: 0;
@@ -3322,5 +3339,6 @@
       });
     </script>
     <script src="../JS/chat.js" defer></script>
+    <script src="../JS/support-widget.js" defer></script>
   </body>
 </html>

@@ -326,6 +326,11 @@
                   <i class="bi bi-person me-2"></i>
                   <span>Mi Perfil</span>
                 </a>
+                <a href="#" class="sidebar-nav-item" data-section="mensajes">
+                  <i class="bi bi-chat-dots me-2"></i>
+                  <span>Mensajes</span>
+                  <span class="filter-count" id="profileMensajesBadge" style="display:none;">0</span>
+                </a>
                 <a href="#" class="sidebar-nav-item" data-section="mis-compras">
                   <i class="bi bi-bag me-2"></i>
                   <span>Mis compras</span>
@@ -616,6 +621,58 @@
               </div>
             </div>
 
+            <!-- ===== SECCIÓN: MENSAJES ===== -->
+            <div id="view-mensajes" class="centro-section" style="display:none">
+              <div class="centro-section-header">
+                <h2 class="centro-section-title"><i class="bi bi-chat-dots me-2"></i>Mensajes</h2>
+                <p class="text-muted mb-0" style="font-size:var(--font-size-sm);">Conversaciones con compradores y vendedores.</p>
+              </div>
+
+              <div class="mensajes-layout">
+                <!-- Lista de conversaciones -->
+                <aside class="mensajes-list-panel">
+                  <div class="mensajes-list-search">
+                    <i class="bi bi-search"></i>
+                    <input type="text" id="mensajesSearchInput" placeholder="Buscar conversación…" />
+                  </div>
+                  <div class="mensajes-list-body" id="mensajesListBody">
+                    <div class="mensajes-empty">
+                      <i class="bi bi-hourglass-split"></i>
+                      <p>Cargando…</p>
+                    </div>
+                  </div>
+                </aside>
+
+                <!-- Panel de conversación activa -->
+                <section class="mensajes-chat-panel" id="mensajesChatPanel">
+                  <div class="mensajes-empty mensajes-empty-large" id="mensajesEmptyState">
+                    <i class="bi bi-chat-heart"></i>
+                    <p class="fw-bold">Seleccioná una conversación</p>
+                    <small>Elegí un chat de la lista para ver los mensajes.</small>
+                  </div>
+
+                  <div class="mensajes-chat-active" id="mensajesChatActive" style="display:none;">
+                    <header class="mensajes-chat-header">
+                      <img src="" alt="" class="mensajes-chat-avatar" id="mensajesChatAvatar" />
+                      <div class="mensajes-chat-header-info">
+                        <p class="mensajes-chat-header-name" id="mensajesChatName">—</p>
+                        <small class="mensajes-chat-header-item" id="mensajesChatItem">—</small>
+                      </div>
+                    </header>
+
+                    <div class="mensajes-chat-messages" id="mensajesChatMessages"></div>
+
+                    <div class="mensajes-chat-input-area">
+                      <textarea id="mensajesChatInput" class="mensajes-chat-input" placeholder="Escribí tu mensaje…" rows="1" maxlength="2000"></textarea>
+                      <button class="mensajes-chat-send" id="mensajesChatSend" disabled title="Enviar">
+                        <i class="bi bi-send-fill"></i>
+                      </button>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            </div>
+
             <!-- ===== SECCIÓN: CENTRO DE AYUDA ===== -->
             <div id="view-centro-ayuda" class="centro-section" style="display:none">
               <div class="centro-section-header">
@@ -807,6 +864,8 @@
     <!-- Custom JS -->
     <script src="../JS/theme.js"></script>
     <script src="../JS/utils.js"></script>
+    <script src="../JS/api.js"></script>
+    <script src="../JS/api-messages.js"></script>
     <script src="../JS/auth.js"></script>
     <script src="../JS/cart.js"></script>
     <script src="../JS/notifications.js"></script>
@@ -875,6 +934,74 @@
         .perfil-stats { justify-content: center; }
       }
 
+      /* ---- Mensajes ---- */
+      .mensajes-layout { display: grid; grid-template-columns: 340px 1fr; gap: var(--spacing-4); height: calc(100vh - 280px); min-height: 520px; background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-xl); overflow: hidden; }
+      [data-theme="dark"] .mensajes-layout { background: #1e293b; border-color: rgba(255,255,255,0.08); }
+      .mensajes-list-panel { display: flex; flex-direction: column; border-right: 1px solid var(--gray-200); background: var(--gray-50); }
+      [data-theme="dark"] .mensajes-list-panel { background: rgba(0,0,0,0.15); border-right-color: rgba(255,255,255,0.08); }
+      .mensajes-list-header { padding: var(--spacing-4); border-bottom: 1px solid var(--gray-200); }
+      [data-theme="dark"] .mensajes-list-header { border-bottom-color: rgba(255,255,255,0.08); }
+      .mensajes-list-header h5 { margin: 0 0 var(--spacing-3) 0; font-weight: 700; font-size: var(--font-size-base); color: var(--gray-900); }
+      [data-theme="dark"] .mensajes-list-header h5 { color: var(--white); }
+      .mensajes-list-search { position: relative; }
+      .mensajes-list-search input { width: 100%; padding: var(--spacing-2) var(--spacing-3) var(--spacing-2) 36px; border: 1px solid var(--gray-200); border-radius: var(--radius-full); background: var(--white); font-size: var(--font-size-sm); color: var(--gray-800); transition: all var(--transition-base); }
+      .mensajes-list-search input:focus { outline: none; border-color: var(--primary-red); box-shadow: 0 0 0 3px rgba(229,62,62,0.1); }
+      [data-theme="dark"] .mensajes-list-search input { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.08); color: var(--white); }
+      .mensajes-list-search i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-400); font-size: 14px; }
+      .mensajes-list-body { flex: 1; overflow-y: auto; padding: var(--spacing-2); }
+      .mensajes-list-item { display: flex; align-items: center; gap: var(--spacing-3); padding: var(--spacing-3); border-radius: var(--radius-lg); cursor: pointer; transition: all var(--transition-base); margin-bottom: 4px; }
+      .mensajes-list-item:hover { background: var(--white); }
+      [data-theme="dark"] .mensajes-list-item:hover { background: rgba(255,255,255,0.04); }
+      .mensajes-list-item.active { background: var(--white); box-shadow: var(--shadow-sm); border-left: 3px solid var(--primary-red); }
+      [data-theme="dark"] .mensajes-list-item.active { background: rgba(229,62,62,0.08); }
+      .mensajes-list-item-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--gradient-primary); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: var(--font-size-base); flex-shrink: 0; }
+      .mensajes-list-item-info { flex: 1; min-width: 0; }
+      .mensajes-list-item-name { font-weight: 700; font-size: var(--font-size-sm); color: var(--gray-900); margin: 0 0 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      [data-theme="dark"] .mensajes-list-item-name { color: var(--white); }
+      .mensajes-list-item-preview { font-size: var(--font-size-xs); color: var(--gray-500); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .mensajes-list-item-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+      .mensajes-list-item-time { font-size: 11px; color: var(--gray-400); }
+      .mensajes-list-item-unread { background: var(--primary-red); color: var(--white); font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; border-radius: 9px; display: flex; align-items: center; justify-content: center; padding: 0 5px; }
+      .mensajes-chat-panel { display: flex; flex-direction: column; background: var(--white); }
+      [data-theme="dark"] .mensajes-chat-panel { background: #1e293b; }
+      .mensajes-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--spacing-3); color: var(--gray-500); text-align: center; padding: var(--spacing-6); }
+      .mensajes-empty i { font-size: 56px; color: var(--gray-300); }
+      .mensajes-empty h5 { font-weight: 700; color: var(--gray-700); margin: 0; }
+      [data-theme="dark"] .mensajes-empty h5 { color: var(--gray-300); }
+      .mensajes-empty p { margin: 0; font-size: var(--font-size-sm); }
+      .mensajes-chat-active { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+      .mensajes-chat-header { display: flex; align-items: center; gap: var(--spacing-3); padding: var(--spacing-4); border-bottom: 1px solid var(--gray-200); background: var(--white); }
+      [data-theme="dark"] .mensajes-chat-header { background: #1e293b; border-bottom-color: rgba(255,255,255,0.08); }
+      .mensajes-chat-header-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--gradient-primary); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+      .mensajes-chat-header-info { flex: 1; min-width: 0; }
+      .mensajes-chat-header-name { font-weight: 700; font-size: var(--font-size-base); color: var(--gray-900); margin: 0; }
+      [data-theme="dark"] .mensajes-chat-header-name { color: var(--white); }
+      .mensajes-chat-header-item { font-size: var(--font-size-xs); color: var(--primary-red); margin: 0; }
+      .mensajes-chat-messages { flex: 1; overflow-y: auto; padding: var(--spacing-4); display: flex; flex-direction: column; gap: var(--spacing-3); background: var(--gray-50); }
+      [data-theme="dark"] .mensajes-chat-messages { background: rgba(0,0,0,0.15); }
+      .mensajes-msg { max-width: 70%; padding: var(--spacing-3) var(--spacing-4); border-radius: var(--radius-lg); font-size: var(--font-size-sm); line-height: 1.4; word-wrap: break-word; }
+      .mensajes-msg.from-me { align-self: flex-end; background: var(--gradient-primary); color: var(--white); border-bottom-right-radius: 4px; }
+      .mensajes-msg.from-them { align-self: flex-start; background: var(--white); color: var(--gray-800); border: 1px solid var(--gray-200); border-bottom-left-radius: 4px; }
+      [data-theme="dark"] .mensajes-msg.from-them { background: #334155; color: var(--white); border-color: rgba(255,255,255,0.08); }
+      .mensajes-msg-time { font-size: 10px; opacity: 0.65; margin-top: 4px; display: block; }
+      .mensajes-chat-input-area { display: flex; gap: var(--spacing-2); padding: var(--spacing-3); border-top: 1px solid var(--gray-200); background: var(--white); }
+      [data-theme="dark"] .mensajes-chat-input-area { background: #1e293b; border-top-color: rgba(255,255,255,0.08); }
+      .mensajes-chat-input-area textarea { flex: 1; resize: none; min-height: 44px; max-height: 120px; padding: var(--spacing-2) var(--spacing-3); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); font-size: var(--font-size-sm); font-family: inherit; color: var(--gray-800); background: var(--white); transition: all var(--transition-base); }
+      .mensajes-chat-input-area textarea:focus { outline: none; border-color: var(--primary-red); box-shadow: 0 0 0 3px rgba(229,62,62,0.1); }
+      [data-theme="dark"] .mensajes-chat-input-area textarea { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.08); color: var(--white); }
+      .mensajes-chat-send { width: 44px; height: 44px; border-radius: 50%; border: none; background: var(--gradient-primary); color: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all var(--transition-base); flex-shrink: 0; align-self: flex-end; }
+      .mensajes-chat-send:hover:not(:disabled) { transform: scale(1.05); box-shadow: var(--shadow-md); }
+      .mensajes-chat-send:disabled { opacity: 0.5; cursor: not-allowed; }
+      .mensajes-list-empty { padding: var(--spacing-6) var(--spacing-4); text-align: center; color: var(--gray-500); }
+      .mensajes-list-empty i { font-size: 36px; color: var(--gray-300); margin-bottom: var(--spacing-2); display: block; }
+      .mensajes-list-empty p { margin: 0; font-size: var(--font-size-sm); }
+      @media (max-width: 768px) {
+        .mensajes-layout { grid-template-columns: 1fr; height: calc(100vh - 220px); }
+        .mensajes-list-panel { display: none; }
+        .mensajes-layout.show-list .mensajes-list-panel { display: flex; }
+        .mensajes-layout.show-list .mensajes-chat-panel { display: none; }
+      }
+
       /* ---- Mis Compras ---- */
       .filter-tabs { display: flex; gap: var(--spacing-2); flex-wrap: wrap; margin-bottom: var(--spacing-5); }
       .filter-tab { padding: var(--spacing-2) var(--spacing-4); border: 2px solid var(--gray-200); background: var(--white); color: var(--gray-700); border-radius: var(--radius-full); font-size: var(--font-size-sm); font-weight: 600; cursor: pointer; transition: all var(--transition-base); }
@@ -903,6 +1030,20 @@
       .help-search-banner p { opacity: .85; margin-bottom: 0; }
       .help-cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px,1fr)); gap: var(--spacing-3); margin-bottom: var(--spacing-6); }
       .empresa-banner { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-4); background: linear-gradient(135deg,#fff7ed,#fff); border: 2px solid #fed7aa; border-radius: var(--radius-xl); padding: var(--spacing-5); margin-bottom: var(--spacing-2); flex-wrap: wrap; }
+      [data-theme="dark"] .empresa-banner { background: linear-gradient(135deg, rgba(249,115,22,0.12), rgba(255,255,255,0.02)); border-color: rgba(249,115,22,0.35); }
+      [data-theme="dark"] .empresa-banner-info i { color: #fb923c; }
+      [data-theme="dark"] .empresa-form-card { background: #1e293b; border-color: rgba(255,255,255,0.08); }
+      [data-theme="dark"] .help-cat-card { background: #1e293b; border-color: rgba(255,255,255,0.08); }
+      [data-theme="dark"] .help-cat-card b { color: var(--gray-900); }
+      [data-theme="dark"] .contact-form-box,
+      [data-theme="dark"] .order-card,
+      [data-theme="dark"] .help-search-banner + * .accordion-item,
+      [data-theme="dark"] .accordion-item {
+        background: #1e293b; border-color: rgba(255,255,255,0.08);
+      }
+      [data-theme="dark"] .accordion-button { background: #1e293b; color: var(--gray-800); }
+      [data-theme="dark"] .accordion-button:not(.collapsed) { background: rgba(214,48,49,0.15); color: #fca5a5; }
+      [data-theme="dark"] .accordion-body { color: var(--gray-700); }
       .empresa-banner-info { display: flex; align-items: flex-start; gap: var(--spacing-3); }
       .empresa-banner-info i { font-size: 28px; color: #ea580c; flex-shrink: 0; }
       .empresa-banner-info b { display: block; font-size: var(--font-size-base); color: var(--gray-900); margin-bottom: 2px; }
@@ -992,7 +1133,7 @@
       AOS.init({ duration: 800, once: true, offset: 100 });
 
       // ===== NAVEGACIÓN DE SECCIONES =====
-      const allSections = ['notifications','mi-perfil','mis-compras','centro-ayuda','contacto','reportar-problema','estado-servicio','seguridad'];
+      const allSections = ['notifications','mi-perfil','mensajes','mis-compras','centro-ayuda','contacto','reportar-problema','estado-servicio','seguridad'];
 
       function showSection(name) {
         allSections.forEach(s => {
@@ -1010,6 +1151,12 @@
         // Mostrar/ocultar botones de acción del header
         const headerActions = document.querySelector('.header-actions');
         if (headerActions) headerActions.style.display = name === 'notifications' ? '' : 'none';
+        // Inicializar sección de mensajes si corresponde
+        if (name === 'mensajes' && typeof initMensajesSection === 'function') {
+          initMensajesSection();
+        } else if (typeof stopMensajesPolling === 'function') {
+          stopMensajesPolling();
+        }
       }
 
       // Sidebar nav items
@@ -1197,6 +1344,318 @@
       });
 
       renderAddresses();
+
+      // ===== MENSAJES =====
+      let mensajesState = {
+        conversations: [],
+        activeConversationId: null,
+        messages: [],
+        pollingInterval: null,
+        badgeInterval: null,
+        initialized: false,
+        currentUserId: null
+      };
+
+      function escapeHtml(s) {
+        if (s == null) return '';
+        return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+      }
+
+      function formatMensajesTime(iso) {
+        if (!iso) return '';
+        const d = new Date(iso);
+        const now = new Date();
+        const diffMs = now - d;
+        const diffMin = Math.floor(diffMs / 60000);
+        if (diffMin < 1) return 'ahora';
+        if (diffMin < 60) return diffMin + 'm';
+        const diffH = Math.floor(diffMin / 60);
+        if (diffH < 24) return diffH + 'h';
+        const diffD = Math.floor(diffH / 24);
+        if (diffD < 7) return diffD + 'd';
+        return d.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit' });
+      }
+
+      function formatMensajesFullTime(iso) {
+        if (!iso) return '';
+        const d = new Date(iso);
+        return d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+      }
+
+      function getInitials(name) {
+        if (!name) return '?';
+        const parts = name.trim().split(/\s+/);
+        if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+        return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+      }
+
+      function getCurrentUserId() {
+        if (mensajesState.currentUserId) return mensajesState.currentUserId;
+        try {
+          if (window.authManager && typeof window.authManager.getCurrentUser === 'function') {
+            const user = window.authManager.getCurrentUser();
+            if (user && user.id) { mensajesState.currentUserId = user.id; return user.id; }
+          }
+          const user = JSON.parse(localStorage.getItem('daledealer_user') || 'null');
+          if (user && user.id) { mensajesState.currentUserId = user.id; return user.id; }
+        } catch(e) {}
+        return null;
+      }
+
+      function getOtherParticipant(conv) {
+        if (!conv) return { id: null, name: 'Usuario', avatar: null };
+        return {
+          id: conv.other_user_id,
+          name: conv.other_user_name || 'Usuario',
+          avatar: conv.other_user_avatar || null
+        };
+      }
+
+      function renderMensajesList() {
+        const body = document.getElementById('mensajesListBody');
+        if (!body) return;
+        const convs = mensajesState.conversations || [];
+        if (convs.length === 0) {
+          body.innerHTML = '<div class="mensajes-list-empty"><i class="bi bi-chat-dots"></i><p>Aún no tenés conversaciones.</p><p style="font-size:11px;color:var(--gray-400);margin-top:8px;">Cuando compres un producto o contrates un servicio se creará una conversación automáticamente.</p></div>';
+          return;
+        }
+        const search = (document.getElementById('mensajesSearchInput')?.value || '').toLowerCase().trim();
+        const filtered = search ? convs.filter(c => {
+          const other = getOtherParticipant(c);
+          return (other.name || '').toLowerCase().includes(search) || (c.item_title || '').toLowerCase().includes(search) || (c.last_message || '').toLowerCase().includes(search);
+        }) : convs;
+
+        body.innerHTML = filtered.map(c => {
+          const other = getOtherParticipant(c);
+          const isActive = c.id === mensajesState.activeConversationId;
+          const unread = c.unread_count || 0;
+          return `
+            <div class="mensajes-list-item ${isActive ? 'active' : ''}" data-conv-id="${c.id}">
+              <div class="mensajes-list-item-avatar">${escapeHtml(getInitials(other.name))}</div>
+              <div class="mensajes-list-item-info">
+                <p class="mensajes-list-item-name">${escapeHtml(other.name)}</p>
+                <p class="mensajes-list-item-preview">${escapeHtml(c.last_message || 'Sin mensajes aún')}</p>
+              </div>
+              <div class="mensajes-list-item-meta">
+                <span class="mensajes-list-item-time">${formatMensajesTime(c.last_message_at || c.created_at)}</span>
+                ${unread > 0 ? `<span class="mensajes-list-item-unread">${unread}</span>` : ''}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        body.querySelectorAll('.mensajes-list-item').forEach(el => {
+          el.addEventListener('click', () => {
+            const id = parseInt(el.dataset.convId, 10);
+            openMensajesConversation(id);
+          });
+        });
+      }
+
+      function renderMensajesChat() {
+        const empty = document.getElementById('mensajesEmptyState');
+        const active = document.getElementById('mensajesChatActive');
+        if (!mensajesState.activeConversationId) {
+          if (empty) empty.style.display = '';
+          if (active) active.style.display = 'none';
+          return;
+        }
+        if (empty) empty.style.display = 'none';
+        if (active) active.style.display = 'flex';
+
+        const conv = mensajesState.conversations.find(c => c.id === mensajesState.activeConversationId);
+        if (!conv) return;
+        const other = getOtherParticipant(conv);
+
+        const headerAvatar = document.getElementById('mensajesChatAvatar');
+        const headerName = document.getElementById('mensajesChatName');
+        const headerItem = document.getElementById('mensajesChatItem');
+        if (headerAvatar) {
+          // Replace img with div avatar with initials
+          const initials = getInitials(other.name);
+          const newAvatar = document.createElement('div');
+          newAvatar.className = 'mensajes-chat-header-avatar';
+          newAvatar.id = 'mensajesChatAvatar';
+          newAvatar.textContent = initials;
+          if (headerAvatar.tagName === 'IMG' || headerAvatar.classList.contains('mensajes-chat-avatar')) {
+            headerAvatar.parentNode.replaceChild(newAvatar, headerAvatar);
+          } else {
+            headerAvatar.textContent = initials;
+          }
+        }
+        if (headerName) headerName.textContent = other.name;
+        if (headerItem) headerItem.textContent = conv.item_title ? ((conv.item_type === 'service' ? 'Servicio: ' : 'Producto: ') + conv.item_title) : '';
+
+        const msgsBox = document.getElementById('mensajesChatMessages');
+        if (!msgsBox) return;
+        const myId = getCurrentUserId();
+        const msgs = mensajesState.messages || [];
+        if (msgs.length === 0) {
+          msgsBox.innerHTML = '<div style="text-align:center;color:var(--gray-500);padding:32px;font-size:13px;">Aún no hay mensajes. ¡Empezá la conversación!</div>';
+          return;
+        }
+        msgsBox.innerHTML = msgs.map(m => {
+          const fromMe = m.sender_id === myId;
+          return `<div class="mensajes-msg ${fromMe ? 'from-me' : 'from-them'}">${escapeHtml(m.body)}<span class="mensajes-msg-time">${formatMensajesFullTime(m.created_at)}</span></div>`;
+        }).join('');
+        msgsBox.scrollTop = msgsBox.scrollHeight;
+      }
+
+      async function loadMensajesConversations() {
+        if (!window.DaleDeal || !window.DaleDeal.api || !window.DaleDeal.api.messages) return;
+        try {
+          const res = await window.DaleDeal.api.messages.listConversations();
+          mensajesState.conversations = Array.isArray(res) ? res : (res.data || res.conversations || []);
+          renderMensajesList();
+          updateMensajesBadge();
+        } catch (err) {
+          console.error('[mensajes] error loading conversations', err);
+        }
+      }
+
+      async function openMensajesConversation(convId) {
+        mensajesState.activeConversationId = convId;
+        renderMensajesList();
+        try {
+          const res = await window.DaleDeal.api.messages.getMessages(convId);
+          mensajesState.messages = Array.isArray(res) ? res : (res.data || res.messages || []);
+          renderMensajesChat();
+          // Mark as read
+          await window.DaleDeal.api.messages.markConversationRead(convId);
+          const conv = mensajesState.conversations.find(c => c.id === convId);
+          if (conv) conv.unread_count = 0;
+          renderMensajesList();
+          updateMensajesBadge();
+        } catch (err) {
+          console.error('[mensajes] error opening conversation', err);
+        }
+      }
+
+      async function sendMensajesMessage() {
+        const input = document.getElementById('mensajesChatInput');
+        if (!input || !mensajesState.activeConversationId) return;
+        const body = input.value.trim();
+        if (!body) return;
+        const convId = mensajesState.activeConversationId;
+        const myId = getCurrentUserId();
+
+        // Optimistic UI
+        const tempMsg = { id: 'tmp-' + Date.now(), sender_id: myId, body, created_at: new Date().toISOString() };
+        mensajesState.messages.push(tempMsg);
+        renderMensajesChat();
+        input.value = '';
+        input.style.height = '44px';
+
+        try {
+          const realMsg = await window.DaleDeal.api.messages.sendMessage(convId, body);
+          mensajesState.messages = mensajesState.messages.filter(m => m.id !== tempMsg.id);
+          if (realMsg) mensajesState.messages.push(realMsg);
+          renderMensajesChat();
+          // Update conversation last message in list
+          const conv = mensajesState.conversations.find(c => c.id === convId);
+          if (conv) {
+            conv.last_message = body;
+            conv.last_message_at = new Date().toISOString();
+            // Re-order: move to top
+            mensajesState.conversations = [conv, ...mensajesState.conversations.filter(x => x.id !== convId)];
+            renderMensajesList();
+          }
+        } catch (err) {
+          console.error('[mensajes] error sending message', err);
+          mensajesState.messages = mensajesState.messages.filter(m => m.id !== tempMsg.id);
+          renderMensajesChat();
+          alert('No se pudo enviar el mensaje. Intentá de nuevo.');
+        }
+      }
+
+      async function pollMensajesMessages() {
+        if (!mensajesState.activeConversationId) return;
+        try {
+          const res = await window.DaleDeal.api.messages.getMessages(mensajesState.activeConversationId);
+          const newMsgs = Array.isArray(res) ? res : (res.data || res.messages || []);
+          if (newMsgs.length !== mensajesState.messages.length) {
+            mensajesState.messages = newMsgs;
+            renderMensajesChat();
+            await window.DaleDeal.api.messages.markConversationRead(mensajesState.activeConversationId);
+          }
+        } catch (err) { /* silent */ }
+      }
+
+      async function updateMensajesBadge() {
+        const badge = document.getElementById('profileMensajesBadge');
+        if (!badge || !window.DaleDeal || !window.DaleDeal.api || !window.DaleDeal.api.messages) return;
+        try {
+          const res = await window.DaleDeal.api.messages.getUnreadCount();
+          const count = typeof res === 'number' ? res : ((res && (res.unread || res.count || res.unread_count)) || 0);
+          if (count > 0) {
+            badge.textContent = count > 99 ? '99+' : count;
+            badge.style.display = '';
+          } else {
+            badge.style.display = 'none';
+          }
+        } catch (err) { /* silent */ }
+      }
+
+      function stopMensajesPolling() {
+        if (mensajesState.pollingInterval) {
+          clearInterval(mensajesState.pollingInterval);
+          mensajesState.pollingInterval = null;
+        }
+      }
+
+      function initMensajesSection() {
+        if (!window.DaleDeal || !window.DaleDeal.api || !window.DaleDeal.api.messages) {
+          console.warn('[mensajes] API no disponible');
+          const body = document.getElementById('mensajesListBody');
+          if (body) body.innerHTML = '<div class="mensajes-list-empty"><i class="bi bi-exclamation-circle"></i><p>Iniciá sesión para ver tus mensajes.</p></div>';
+          return;
+        }
+        // Auto-abrir conversación si viene ?conv=ID en la URL
+        const params = new URLSearchParams(window.location.search);
+        const convParam = params.get('conv');
+        loadMensajesConversations().then(() => {
+          if (convParam) {
+            const id = parseInt(convParam, 10);
+            if (!Number.isNaN(id)) openMensajesConversation(id);
+            // limpiar el query para que un refresh no reabra la conv
+            const url = new URL(window.location.href);
+            url.searchParams.delete('conv');
+            window.history.replaceState({}, '', url.toString());
+          }
+        });
+        stopMensajesPolling();
+        mensajesState.pollingInterval = setInterval(() => {
+          loadMensajesConversations();
+          pollMensajesMessages();
+        }, 5000);
+
+        if (!mensajesState.initialized) {
+          mensajesState.initialized = true;
+          // Wire up send button
+          const sendBtn = document.getElementById('mensajesChatSend');
+          const input = document.getElementById('mensajesChatInput');
+          const search = document.getElementById('mensajesSearchInput');
+          if (sendBtn) sendBtn.addEventListener('click', sendMensajesMessage);
+          if (input) {
+            input.addEventListener('keydown', e => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMensajesMessage();
+              }
+            });
+            input.addEventListener('input', () => {
+              input.style.height = '44px';
+              input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+              if (sendBtn) sendBtn.disabled = input.value.trim().length === 0;
+            });
+          }
+          if (search) search.addEventListener('input', renderMensajesList);
+        }
+      }
+
+      // Badge de unread en el sidebar - actualizar periódicamente
+      setTimeout(updateMensajesBadge, 1500);
+      setInterval(updateMensajesBadge, 30000);
 
       // Navegar a sección según hash (al cargar y al cambiar)
       function navigateToHash() {
