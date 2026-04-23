@@ -4419,7 +4419,7 @@
   background: rgba(255,255,255,0.35);
 }
 [data-theme="dark"] .badge-offer,
-[data-theme="dark"] .badge-featured { color: var(--white) !important; }
+[data-theme="dark"] .badge-featured { color: #fff !important; box-shadow: none !important; }
 
 /* Footer */
 [data-theme="dark"] .footer {
@@ -4634,15 +4634,6 @@
   transform: scale(0.97) !important;
 }
 
-/* Badge de oferta: animación pulse suave */
-.badge-offer {
-  animation: pulseBadge 2.5s ease-in-out infinite;
-}
-
-@keyframes pulseBadge {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.78; }
-}
 
 /* Links del footer: underline animado */
 .footer-links a {
