@@ -175,6 +175,24 @@
 
 .navbar .container-fluid {
   overflow: visible !important;
+  display: grid !important;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+}
+
+.navbar .container-fluid .navbar-brand {
+  justify-self: start;
+}
+
+.navbar .container-fluid .search-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 var(--spacing-4);
+  flex: unset;
+}
+
+.navbar .container-fluid .navbar-actions {
+  justify-self: end;
 }
 
 .navbar-brand {
