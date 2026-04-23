@@ -815,7 +815,7 @@
   top: var(--spacing-3);
   left: var(--spacing-3);
   background: var(--primary-red);
-  color: var(--white);
+  color: #fff !important;
   padding: var(--spacing-2) var(--spacing-3);
   border-radius: var(--radius-md);
   font-size: var(--font-size-xs);

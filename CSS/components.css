@@ -1951,7 +1951,7 @@
 /* Badge de oferta */
 .badge-offer {
   background: var(--primary-red);
-  color: var(--white);
+  color: #fff !important;
 }
 
 /* Badge de envío gratis */
