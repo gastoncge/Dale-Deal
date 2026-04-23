@@ -156,6 +156,20 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
+[data-theme="dark"] .hero-badge,
+[data-theme="dark"] .offer-badge,
+[data-theme="dark"] .product-badge,
+[data-theme="dark"] .service-badge {
+  color: #000 !important;
+}
+
+[data-theme="dark"] .hero-badge .bi,
+[data-theme="dark"] .offer-badge .bi,
+[data-theme="dark"] .product-badge .bi,
+[data-theme="dark"] .service-badge .bi {
+  color: #000 !important;
+}
+
 .hero-title {
   font-size: clamp(var(--font-size-3xl), 5vw, var(--font-size-5xl));
   font-weight: 800;
