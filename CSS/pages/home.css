@@ -103,7 +103,7 @@
 }
 
 .hero-slide-product .hero-price .current-price {
-  color: var(--white);
+  color: #fff;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
@@ -114,7 +114,7 @@
 
 .hero-slide-product .hero-price .discount {
   background: var(--primary-red);
-  color: var(--white);
+  color: #fff;
 }
 
 .hero-badge {
@@ -227,7 +227,7 @@
 .current-price {
   font-size: var(--font-size-3xl);
   font-weight: 800;
-  color: var(--white);
+  color: #fff;
   margin-right: var(--spacing-3);
 }
 
@@ -240,7 +240,7 @@
 
 .discount {
   background: rgba(255, 255, 255, 0.2);
-  color: var(--white);
+  color: #fff;
   padding: var(--spacing-1) var(--spacing-2);
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
