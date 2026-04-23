@@ -335,7 +335,8 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 4px rgba(214, 48, 49, 0.3);
-  border: 2px solid var(--white);
+  border: none;
+  color: #fff !important;
 }
 
 /* ===== PERFIL DE USUARIO ===== */

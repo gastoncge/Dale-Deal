@@ -139,7 +139,8 @@ html, body {
   line-height: 20px !important;
   text-align: center !important;
   box-shadow: 0 2px 4px rgba(214, 48, 49, 0.3) !important;
-  border: 2px solid var(--white) !important;
+  border: none !important;
+  color: #fff !important;
 }
 
 /* ===== LAYOUT: PRODUCTS-STYLE SIDEBAR + MAIN ===== */
