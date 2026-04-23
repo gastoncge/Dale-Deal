@@ -3158,8 +3158,14 @@
             productsToShow.forEach((productData, index) => {
               const product = productData.productData || this.findProductById(productData.id);
               if (product) {
-                const productCard = this.createProductCard(product, index);
-                container.appendChild(productCard);
+                if (window.HomePageLoader?.renderProductCard) {
+                  const wrapper = document.createElement('div');
+                  wrapper.innerHTML = window.HomePageLoader.renderProductCard(product);
+                  const card = wrapper.firstElementChild;
+                  if (card) container.appendChild(card);
+                } else {
+                  container.appendChild(this.createProductCard(product, index));
+                }
               }
             });
 
