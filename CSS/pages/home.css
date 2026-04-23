@@ -121,7 +121,7 @@
   display: inline-block;
   padding: var(--spacing-2) var(--spacing-4);
   background: rgba(255, 255, 255, 0.95);
-  color: var(--gray-700);
+  color: #374151;
   font-size: var(--font-size-sm);
   font-weight: 600;
   text-transform: uppercase;
@@ -133,14 +133,14 @@
 }
 
 .offer-badge {
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--gray-700);
+  background: rgba(255, 255, 255, 0.95);
+  color: #374151;
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .product-badge {
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--gray-700);
+  background: rgba(255, 255, 255, 0.95);
+  color: #374151;
   border: 1px solid rgba(255, 255, 255, 0.3);
   position: static;
   display: inline-block;
@@ -151,9 +151,9 @@
 }
 
 .service-badge {
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.95);
+  color: #374151;
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .hero-title {
