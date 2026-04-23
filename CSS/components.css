@@ -3296,7 +3296,7 @@
 }
 
 .legal-link:hover {
-  color: #fff;
+  color: var(--primary-yellow);
 }
 
 /* Responsive Footer */
@@ -4441,7 +4441,7 @@
 [data-theme="dark"] .copyright-text,
 [data-theme="dark"] .footer-tagline,
 [data-theme="dark"] .legal-link { color: #94a3b8 !important; }
-[data-theme="dark"] .legal-link:hover { color: #fff !important; }
+[data-theme="dark"] .legal-link:hover { color: var(--primary-yellow) !important; }
 [data-theme="dark"] .footer-social a { color: #94a3b8; }
 [data-theme="dark"] .footer-social a:hover { color: #fff; }
 
