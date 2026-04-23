@@ -4424,17 +4424,26 @@
 /* Footer */
 [data-theme="dark"] .footer {
   background: linear-gradient(135deg, #1e293b 0%, #162032 100%) !important;
-  color: var(--gray-300);
-  border-top: 3px solid var(--primary-red);
+  color: #cbd5e1;
+  border-top: none;
 }
 [data-theme="dark"] .footer-bottom {
   border-top-color: rgba(255,255,255,0.1);
-  background: rgba(0,0,0,0.2);
+  background: transparent;
 }
-[data-theme="dark"] .footer-links a { color: var(--gray-400); }
-[data-theme="dark"] .footer-links a:hover { color: var(--white); }
-[data-theme="dark"] .footer-description { color: var(--gray-400); }
-[data-theme="dark"] .footer-title { color: var(--white); }
+[data-theme="dark"] .footer-links a { color: #94a3b8; }
+[data-theme="dark"] .footer-links a:hover { color: #fff; }
+[data-theme="dark"] .footer-description { color: #94a3b8; }
+[data-theme="dark"] .footer-title,
+[data-theme="dark"] .footer-brand-text { color: #fff !important; }
+[data-theme="dark"] .copyright-year,
+[data-theme="dark"] .copyright-brand { color: #fff !important; }
+[data-theme="dark"] .copyright-text,
+[data-theme="dark"] .footer-tagline,
+[data-theme="dark"] .legal-link { color: #94a3b8 !important; }
+[data-theme="dark"] .legal-link:hover { color: #fff !important; }
+[data-theme="dark"] .footer-social a { color: #94a3b8; }
+[data-theme="dark"] .footer-social a:hover { color: #fff; }
 
 /* Modals */
 [data-theme="dark"] .modal-content {
