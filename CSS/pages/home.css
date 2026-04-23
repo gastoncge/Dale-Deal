@@ -266,7 +266,7 @@
 #heroCarousel .carousel-indicators button.active {
   background: var(--primary-yellow) !important;
   border: none !important;
-  box-shadow: 0 0 0 2px #fff !important;
+  box-shadow: none !important;
 }
 
 .carousel-control-prev,
