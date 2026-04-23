@@ -4946,11 +4946,17 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
   color: var(--gray-800);
 }
 
-/* Badges sobre fondos claros que se ven raros */
+/* Badges en dark mode: texto siempre blanco */
 [data-theme="dark"] .badge.bg-light {
-  background: rgba(255, 255, 255, 0.08) !important;
-  color: var(--gray-800) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #fff !important;
 }
+[data-theme="dark"] .badge-new,
+[data-theme="dark"] .badge-premium,
+[data-theme="dark"] .badge-limited,
+[data-theme="dark"] .badge.bg-warning,
+[data-theme="dark"] .badge.bg-secondary { color: #fff !important; }
+[data-theme="dark"] .filter-count { color: #fff !important; }
 
 /* Inputs con autofill (Chrome) — evita el amarillo sobre fondo oscuro */
 [data-theme="dark"] input:-webkit-autofill,
