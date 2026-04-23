@@ -363,13 +363,21 @@
                       <span class="option-check"><i class="bi bi-check-lg"></i></span>
                     </label>
                     <label class="filter-option-modern">
-                      <input type="radio" name="category" value="otros" data-category="otros">
+                      <input type="radio" name="category" value="otros" data-category="otros" id="categoryOtros">
                       <span class="option-content">
                         <i class="bi bi-three-dots category-icon"></i>
                         <span class="option-text">Otros</span>
                       </span>
                       <span class="option-check"><i class="bi bi-check-lg"></i></span>
                     </label>
+                    <!-- Buscador de categoría para "Otros" -->
+                    <div id="otrosCategorySearch" style="display:none; padding: 8px 4px 4px;">
+                      <div style="position:relative;">
+                        <input type="text" id="otrosCategoryInput" placeholder="Buscar categoría..." autocomplete="off"
+                          style="width:100%; padding:6px 10px; border:1.5px solid var(--gray-200); border-radius:8px; font-size:13px; outline:none;">
+                        <ul id="otrosSuggestions" style="display:none; position:absolute; top:100%; left:0; right:0; background:#fff; border:1.5px solid var(--gray-200); border-radius:8px; margin-top:4px; padding:4px 0; list-style:none; z-index:100; max-height:160px; overflow-y:auto; box-shadow:0 4px 12px rgba(0,0,0,0.1);"></ul>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -400,7 +408,7 @@
                         <label class="price-label">Máximo</label>
                         <div class="input-with-icon">
                           <span class="currency-symbol">$</span>
-                          <input type="number" class="price-input-modern" id="maxPrice" placeholder="99999" min="0">
+                          <input type="number" class="price-input-modern" id="maxPrice" placeholder="0" min="0">
                         </div>
                       </div>
                     </div>
@@ -467,6 +475,19 @@
                       </span>
                     </label>
                     <label class="filter-rating-modern">
+                      <input type="radio" name="rating" value="5">
+                      <span class="rating-content">
+                        <span class="stars-group">
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                        </span>
+                        <span class="rating-label">o más</span>
+                      </span>
+                    </label>
+                    <label class="filter-rating-modern">
                       <input type="radio" name="rating" value="4">
                       <span class="rating-content">
                         <span class="stars-group">
@@ -486,6 +507,32 @@
                           <i class="bi bi-star-fill star-filled"></i>
                           <i class="bi bi-star-fill star-filled"></i>
                           <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star star-empty"></i>
+                          <i class="bi bi-star star-empty"></i>
+                        </span>
+                        <span class="rating-label">o más</span>
+                      </span>
+                    </label>
+                    <label class="filter-rating-modern">
+                      <input type="radio" name="rating" value="2">
+                      <span class="rating-content">
+                        <span class="stars-group">
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star star-empty"></i>
+                          <i class="bi bi-star star-empty"></i>
+                          <i class="bi bi-star star-empty"></i>
+                        </span>
+                        <span class="rating-label">o más</span>
+                      </span>
+                    </label>
+                    <label class="filter-rating-modern">
+                      <input type="radio" name="rating" value="1">
+                      <span class="rating-content">
+                        <span class="stars-group">
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star star-empty"></i>
+                          <i class="bi bi-star star-empty"></i>
                           <i class="bi bi-star star-empty"></i>
                           <i class="bi bi-star star-empty"></i>
                         </span>
@@ -1486,7 +1533,7 @@
         padding: var(--spacing-3);
         border: 2px solid var(--gray-200);
         border-radius: var(--radius-lg);
-        font-size: var(--font-size-sm);
+        font-size: var(--font-size-xs);
         font-weight: 600;
         color: var(--gray-700);
         background: var(--white);
@@ -3345,6 +3392,64 @@
           }
         });
       });
+
+      // ── Buscador de categoría "Otros" ──────────────────────────
+      (function() {
+        const otrosRadio  = document.getElementById('categoryOtros');
+        const searchPanel = document.getElementById('otrosCategorySearch');
+        const input       = document.getElementById('otrosCategoryInput');
+        const suggestions = document.getElementById('otrosSuggestions');
+
+        function getCategories(query) {
+          const products = window.productFilters?.allProducts || [];
+          const all = [...new Set(products.map(p => p.category || p.subcategory).filter(Boolean))];
+          return query
+            ? all.filter(c => c.toLowerCase().includes(query.toLowerCase()))
+            : all;
+        }
+
+        function renderSuggestions(list) {
+          suggestions.innerHTML = '';
+          if (!list.length) { suggestions.style.display = 'none'; return; }
+          list.forEach(cat => {
+            const li = document.createElement('li');
+            li.textContent = cat;
+            li.style.cssText = 'padding:6px 12px; cursor:pointer; font-size:13px;';
+            li.addEventListener('mouseenter', () => li.style.background = '#f3f4f6');
+            li.addEventListener('mouseleave', () => li.style.background = '');
+            li.addEventListener('click', () => {
+              input.value = cat;
+              suggestions.style.display = 'none';
+              if (window.productFilters) {
+                window.productFilters.currentCategory = cat.toLowerCase();
+                window.productFilters.filterAndRender();
+              }
+            });
+            suggestions.appendChild(li);
+          });
+          suggestions.style.display = 'block';
+        }
+
+        // Mostrar/ocultar panel al seleccionar "Otros"
+        document.querySelectorAll('input[name="category"]').forEach(radio => {
+          radio.addEventListener('change', () => {
+            const isOtros = radio.value === 'otros';
+            searchPanel.style.display = isOtros ? 'block' : 'none';
+            if (isOtros) {
+              input.value = '';
+              renderSuggestions(getCategories(''));
+              input.focus();
+            } else {
+              suggestions.style.display = 'none';
+            }
+          });
+        });
+
+        input.addEventListener('input', () => renderSuggestions(getCategories(input.value)));
+        document.addEventListener('click', e => {
+          if (!searchPanel.contains(e.target)) suggestions.style.display = 'none';
+        });
+      })();
     </script>
     <script src="../JS/chat.js" defer></script>
     <script src="../JS/support-widget.js" defer></script>
