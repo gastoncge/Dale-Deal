@@ -15,6 +15,7 @@ class NotificationManager {
     this.loadNotifications();
     this.bindEvents();
     this.updateBadge();
+    this.updateCounter();
   }
 
   // Cargar notificaciones desde localStorage o datos por defecto

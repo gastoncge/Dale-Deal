@@ -398,7 +398,7 @@
                         <label class="price-label">Mínimo</label>
                         <div class="input-with-icon">
                           <span class="currency-symbol">$</span>
-                          <input type="number" class="price-input-modern" id="minPrice" placeholder="0" min="0">
+                          <input type="text" inputmode="numeric" pattern="[0-9]*" class="price-input-modern" id="minPrice" placeholder="0">
                         </div>
                       </div>
                       <div class="price-divider">
@@ -408,7 +408,7 @@
                         <label class="price-label">Máximo</label>
                         <div class="input-with-icon">
                           <span class="currency-symbol">$</span>
-                          <input type="number" class="price-input-modern" id="maxPrice" placeholder="0" min="0">
+                          <input type="text" inputmode="numeric" pattern="[0-9]*" class="price-input-modern" id="maxPrice" placeholder="0">
                         </div>
                       </div>
                     </div>
@@ -742,7 +742,8 @@
         margin-left: calc(-50vw + 50%) !important;
         padding-left: calc(50vw - 50% + 1rem) !important;
         padding-right: calc(50vw - 50% + 1rem) !important;
-        border-bottom: 1px solid var(--gray-200) !important;
+        border-bottom: none !important;
+        box-shadow: none !important;
       }
 
       /* Badges iguales a la página de inicio - display controlado por JS */
@@ -1122,8 +1123,8 @@
       }
 
       .btn-clear-filters:hover {
-        background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-yellow) 100%);
-        color: var(--white);
+        background: var(--primary-red);
+        color: #fff;
       }
 
       /* Sidebar Content with Scroll */
@@ -1189,6 +1190,12 @@
 
       .filter-section-header:not(.collapsed) .toggle-icon {
         transform: rotate(180deg);
+      }
+
+      .filter-section-header:focus,
+      .filter-section-header:focus-visible {
+        outline: none;
+        box-shadow: none;
       }
 
       /* Filter Options List */
@@ -1527,6 +1534,32 @@
         color: var(--gray-600);
       }
 
+      /* "Todas las calificaciones" chip */
+      .filter-rating-modern:has(input[value="all"]) {
+        background: var(--gray-100);
+        border: 2px solid var(--gray-200);
+        border-radius: var(--radius-full);
+        justify-content: center;
+        padding: var(--spacing-2) var(--spacing-4);
+        margin-bottom: var(--spacing-2);
+      }
+      .filter-rating-modern:has(input[value="all"]) .rating-text {
+        font-size: var(--font-size-sm);
+        font-weight: 700;
+        color: var(--gray-700);
+      }
+      .filter-rating-modern:has(input[value="all"]:checked) {
+        background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-yellow) 100%);
+        border-color: transparent;
+      }
+      .filter-rating-modern:has(input[value="all"]:checked) .rating-text {
+        color: #fff;
+      }
+      .filter-rating-modern:has(input[value="all"]) input[type="radio"]:checked ~ .rating-content {
+        background: none;
+        padding: 0;
+      }
+
       /* Modern Select */
       .select-modern {
         width: 100%;
@@ -1544,8 +1577,13 @@
 
       .select-modern:focus {
         outline: none;
-        border-color: var(--primary-red);
-        box-shadow: 0 0 0 4px rgba(214, 48, 49, 0.15);
+        border-color: var(--gray-300);
+        box-shadow: none;
+      }
+
+      #clearFilters .bi,
+      #clearFilters i {
+        color: #fff !important;
       }
 
       .select-modern option {
@@ -2843,15 +2881,47 @@
                 const filterParam = new URLSearchParams(window.location.search).get('filter');
                 if (filterParam === 'ofertas') {
                   window.productFilters.onlyOffers = true;
-                  window.productFilters.filterAndRender();
                 }
+                window.productFilters.filterAndRender();
               }
             }, 100);
 
           } catch (error) {
-            DaleDeal.error('Error loading products:', error);
+            DaleDeal.warn('API no disponible, usando datos locales:', error.message);
             this.showLoading(false);
-            this.showError('Error al cargar los productos. Por favor, intenta nuevamente.');
+
+            const fallback = typeof window.getAllProducts === 'function' ? window.getAllProducts() : [];
+            if (fallback.length) {
+              this.products = fallback.map(p => ({
+                id: p.id,
+                title: p.title,
+                description: p.description || '',
+                price: p.price,
+                originalPrice: p.originalPrice || p.price,
+                discount: p.discount || 0,
+                category: (p.category || '').toLowerCase(),
+                images: Array.isArray(p.images) ? p.images : [p.images?.main || p.images],
+                image: p.images?.main || (Array.isArray(p.images) ? p.images[0] : p.images),
+                rating: p.rating || 0,
+                reviews: p.reviewCount || 0,
+                featured: (p.badges || []).some(b => /premium|vendido/i.test(b)),
+                isOffer: (p.discount || 0) > 0,
+                shipping: p.shipping || { free: true, speed: 'tomorrow' }
+              }));
+              this.createProductCards();
+              this.updateResultsCount();
+              setTimeout(() => {
+                if (window.productFilters) {
+                  window.productFilters.products = this.createFilterableProducts();
+                  window.productFilters.originalProducts = [...window.productFilters.products];
+                  window.productFilters.renderProducts = () => this.renderFilteredProducts();
+                  window.productFilters.filterAndRender();
+                }
+              }, 100);
+              DaleDeal.log(`✓ ${this.products.length} productos locales cargados como fallback`);
+            } else {
+              this.showError('Error al cargar los productos. Por favor, intenta nuevamente.');
+            }
           }
         }
 
@@ -3249,6 +3319,7 @@
       // Initialize when DOM is ready
       document.addEventListener('DOMContentLoaded', () => {
         const catalog = new ProductCatalog();
+        window.productCatalog = catalog;
 
         // Load more button
         document.getElementById('loadMoreBtn')?.addEventListener('click', () => {
@@ -3314,24 +3385,30 @@
         // Función para aplicar todos los filtros automáticamente
         function applyAllFiltersAutomatically() {
           if (window.productFilters) {
-            // Get all filter values
-            const selectedCategory = document.querySelector('input[name="category"]:checked')?.value || 'all';
+            let selectedCategory = document.querySelector('input[name="category"]:checked')?.value || 'all';
+
+            // Si "otros" está seleccionado, usar el valor del input de búsqueda
+            if (selectedCategory === 'otros') {
+              const otrosInput = document.getElementById('otrosCategoryInput');
+              const otrosVal = otrosInput?.value?.trim().toLowerCase();
+              selectedCategory = otrosVal || 'all';
+            }
+
             const minPrice = document.getElementById('minPrice')?.value;
             const maxPrice = document.getElementById('maxPrice')?.value;
             const selectedRating = document.querySelector('input[name="rating"]:checked')?.value || 'all';
             const selectedSort = document.getElementById('sortSelect')?.value || 'featured';
 
-            // Apply all filters at once
             window.productFilters.currentCategory = selectedCategory;
             window.productFilters.minPrice = minPrice ? parseFloat(minPrice) : null;
             window.productFilters.maxPrice = maxPrice ? parseFloat(maxPrice) : null;
             window.productFilters.currentRating = selectedRating;
             window.productFilters.currentSort = selectedSort;
 
-            // Render with all filters applied
             window.productFilters.filterAndRender();
           }
         }
+        window._applyAllFilters = applyAllFiltersAutomatically;
 
         // Debounce para los inputs de precio
         let priceDebounceTimer;
@@ -3401,11 +3478,17 @@
         const suggestions = document.getElementById('otrosSuggestions');
 
         function getCategories(query) {
-          const products = window.productFilters?.allProducts || [];
-          const all = [...new Set(products.map(p => p.category || p.subcategory).filter(Boolean))];
+          const catalogProds = window.productCatalog?.products || [];
+          const filterProds = window.productFilters?.originalProducts || [];
+          let cats;
+          if (catalogProds.length) {
+            cats = [...new Set(catalogProds.map(p => p.category).filter(Boolean))];
+          } else {
+            cats = [...new Set(filterProds.map(p => p.category).filter(Boolean))];
+          }
           return query
-            ? all.filter(c => c.toLowerCase().includes(query.toLowerCase()))
-            : all;
+            ? cats.filter(c => c.toLowerCase().includes(query.toLowerCase()))
+            : cats;
         }
 
         function renderSuggestions(list) {
@@ -3420,10 +3503,7 @@
             li.addEventListener('click', () => {
               input.value = cat;
               suggestions.style.display = 'none';
-              if (window.productFilters) {
-                window.productFilters.currentCategory = cat.toLowerCase();
-                window.productFilters.filterAndRender();
-              }
+              window._applyAllFilters?.();
             });
             suggestions.appendChild(li);
           });
@@ -3445,7 +3525,10 @@
           });
         });
 
-        input.addEventListener('input', () => renderSuggestions(getCategories(input.value)));
+        input.addEventListener('input', () => {
+          renderSuggestions(getCategories(input.value));
+          window._applyAllFilters?.();
+        });
         document.addEventListener('click', e => {
           if (!searchPanel.contains(e.target)) suggestions.style.display = 'none';
         });

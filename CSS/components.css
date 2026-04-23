@@ -3018,6 +3018,7 @@
 .footer-logo-img {
   height: 40px;
   width: auto;
+  filter: brightness(0) invert(1);
 }
 
 .footer-brand-text {
@@ -3392,7 +3393,7 @@
 
   /* Ocultar separadores en móviles */
   .legal-links-group .text-muted {
-    display: none;
+    display: none !important;
   }
 
   .footer-bottom {
@@ -4445,6 +4446,11 @@
   color: #cbd5e1;
   border-top: none;
 }
+/* Dots visible on dark footer in both themes */
+.legal-links-group .text-muted {
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+
 [data-theme="dark"] .footer-bottom {
   border-top-color: rgba(255,255,255,0.1);
   background: transparent;
