@@ -4503,6 +4503,14 @@
 [data-theme="dark"] p, [data-theme="dark"] span, [data-theme="dark"] li { color: var(--gray-700); }
 [data-theme="dark"] .text-muted { color: var(--gray-500) !important; }
 
+/* Excluir hero slides de la regla global de color en dark mode */
+[data-theme="dark"] .hero-slide p,
+[data-theme="dark"] .hero-slide span,
+[data-theme="dark"] .hero-slide li,
+[data-theme="dark"] .hero-subtitle,
+[data-theme="dark"] .stat-label,
+[data-theme="dark"] .stat-number { color: inherit !important; }
+
 /* =====================================================
    BOTÓN VOLVER ARRIBA (BACK TO TOP)
    ===================================================== */
