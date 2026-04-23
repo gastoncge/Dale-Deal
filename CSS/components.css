@@ -3291,12 +3291,12 @@
   text-decoration: none;
   font-size: var(--font-size-sm);
   font-weight: 500;
-  transition: color var(--transition-base);
+  transition: color 1.2s ease;
   white-space: nowrap;
 }
 
 .legal-link:hover {
-  color: var(--primary-yellow);
+  color: #fff;
 }
 
 /* Responsive Footer */
@@ -4644,12 +4644,6 @@
 }
 
 
-/* Links del footer: underline animado */
-.footer-links a {
-  position: relative;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
 
 /* Chips de filtro: transición suave */
 .filter-chip {
