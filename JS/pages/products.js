@@ -63,8 +63,23 @@ class ProductsPageLoader {
       DaleDeal.log(`✓ ${this.allProducts.length} productos cargados`);
 
     } catch (error) {
-      DaleDeal.error('Error loading products:', error);
-      this.showError();
+      DaleDeal.warn('API no disponible, usando datos locales:', error.message);
+
+      const loadingContainer = document.getElementById('loadingContainer');
+      if (loadingContainer) loadingContainer.style.display = 'none';
+
+      const fallbackProducts = typeof window.getAllProducts === 'function'
+        ? window.getAllProducts()
+        : [];
+
+      if (fallbackProducts.length) {
+        this.allProducts = fallbackProducts;
+        this.filteredProducts = [...this.allProducts];
+        this.renderProducts();
+        DaleDeal.log(`✓ ${this.allProducts.length} productos locales cargados como fallback`);
+      } else {
+        this.showError();
+      }
     }
   }
 
