@@ -3082,7 +3082,7 @@
 }
 
 .footer-links a:hover {
-  color: var(--primary-yellow);
+  color: #fff;
   padding-left: var(--spacing-2);
 }
 
@@ -4649,25 +4649,6 @@
   position: relative;
   text-decoration: none;
   transition: color 0.2s ease;
-}
-.footer-links a::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  width: 0;
-  height: 1px;
-  background: var(--primary-red);
-  transition: width 0.25s ease;
-}
-.footer-links a:hover::after { width: 100%; }
-
-/* Social links: animación de escala */
-.social-link {
-  transition: transform 0.2s ease, color 0.2s ease, background 0.2s ease !important;
-}
-.social-link:hover {
-  transform: translateY(-3px) scale(1.12) !important;
 }
 
 /* Chips de filtro: transición suave */
