@@ -1130,6 +1130,25 @@
       /* Dark mode: sin degradado en sidebar header */
       [data-theme="dark"] .sidebar-header {
         background: var(--gray-800);
+        border-bottom-color: rgba(255,255,255,0.08);
+      }
+      [data-theme="dark"] .btn-clear-filters {
+        background: var(--gray-600);
+        color: var(--gray-200);
+      }
+      [data-theme="dark"] .btn-clear-filters:hover {
+        background: var(--primary-red);
+        color: #fff;
+      }
+
+      /* Dark mode: inputs de precio sin fondo blanco */
+      [data-theme="dark"] .price-input-modern {
+        background: var(--gray-700);
+        border-color: var(--gray-600);
+        color: var(--gray-100);
+      }
+      [data-theme="dark"] .price-input-modern::placeholder {
+        color: var(--gray-400);
       }
 
       /* Dark mode: breadcrumb + header */
