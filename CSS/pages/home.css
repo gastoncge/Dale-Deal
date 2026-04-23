@@ -38,33 +38,33 @@
 
 .hero-slide-offers {
   background: linear-gradient(135deg, var(--primary-red), var(--primary-red-dark));
-  color: var(--white);
+  color: #fff;
 }
 
 .hero-slide-offers .bi {
-  color: var(--white) !important;
+  color: #fff !important;
 }
 
 .hero-slide-offers .hero-badge .bi {
-  color: var(--gray-700) !important;
+  color: var(--primary-red) !important;
 }
 
 .hero-slide-product {
   background: linear-gradient(135deg, var(--primary-yellow), var(--primary-yellow-hover));
-  color: var(--white);
+  color: #fff;
 }
 
 .hero-slide-service {
   background: linear-gradient(135deg, var(--primary-red-hover), var(--primary-red));
-  color: var(--white);
+  color: #fff;
 }
 
 .hero-slide-service .bi {
-  color: var(--white);
+  color: #fff !important;
 }
 
 .hero-slide-service .hero-badge .bi {
-  color: var(--gray-700) !important;
+  color: var(--primary-red) !important;
 }
 
 .hero-slide::before {
@@ -151,9 +151,9 @@
 }
 
 .service-badge {
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--gray-700);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 .hero-title {
@@ -254,18 +254,19 @@
   width: 12px !important;
   height: 12px !important;
   border-radius: 50% !important;
-  border: 2px solid rgba(255, 255, 255, 0.5) !important;
-  background: transparent !important;
+  border: none !important;
+  background: rgba(255, 255, 255, 0.45) !important;
   margin: 0 !important;
   padding: 0 !important;
   transition: all var(--transition-base) !important;
   flex-shrink: 0 !important;
+  box-shadow: none !important;
 }
 
 #heroCarousel .carousel-indicators button.active {
   background: var(--primary-yellow) !important;
-  border-color: var(--primary-yellow) !important;
-  box-shadow: 0 0 0 2px var(--white) !important;
+  border: none !important;
+  box-shadow: 0 0 0 2px #fff !important;
 }
 
 .carousel-control-prev,

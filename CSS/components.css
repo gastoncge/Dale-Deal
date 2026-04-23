@@ -774,7 +774,7 @@
 
 .btn-primary i,
 .btn-primary .bi {
-  color: inherit;
+  color: #fff !important;
 }
 
 .btn-primary::before {
@@ -3423,12 +3423,12 @@
   display: block;
   font-size: var(--font-size-3xl);
   font-weight: 800;
-  color: var(--white);
+  color: #fff;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .stat-number .bi {
-  color: var(--white);
+  color: #fff !important;
 }
 
 .stat-label {
