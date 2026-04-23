@@ -33,7 +33,7 @@
 
 .hero-slide-main {
   background: var(--gradient-primary);
-  color: var(--white);
+  color: #fff;
 }
 
 .hero-slide-offers {
