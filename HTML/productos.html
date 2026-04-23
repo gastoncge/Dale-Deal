@@ -603,8 +603,8 @@
                   <h3 class="empty-state-title">No se encontraron productos</h3>
                   <p class="empty-state-text">No hay productos que coincidan con tus filtros actuales</p>
                   <div class="empty-state-actions">
-                    <button class="btn btn-primary" id="clearFilters">
-                      <i class="bi bi-arrow-clockwise me-2"></i>Limpiar filtros
+                    <button class="btn btn-outline-secondary" id="clearFilters">
+                      <i class="bi bi-arrow-clockwise me-1"></i>Limpiar filtros
                     </button>
                   </div>
                 </div>
@@ -1127,12 +1127,37 @@
         color: #fff;
       }
 
+      /* Dark mode: sin degradado en sidebar header */
+      [data-theme="dark"] .sidebar-header {
+        background: var(--gray-800);
+      }
+
+      /* Dark mode: breadcrumb + header */
+      [data-theme="dark"] .page-header-new {
+        border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+      }
+      [data-theme="dark"] .breadcrumb-item a {
+        color: #94a3b8;
+      }
+      [data-theme="dark"] .breadcrumb-item.active {
+        color: #cbd5e1;
+      }
+      [data-theme="dark"] .breadcrumb-separator {
+        color: rgba(255,255,255,0.25);
+      }
+      [data-theme="dark"] .header-title {
+        color: #f1f5f9;
+      }
+      [data-theme="dark"] .separator {
+        color: rgba(255,255,255,0.3);
+      }
+
       /* Sidebar Content with Scroll */
       .filters-sidebar > div:last-child {
         overflow-y: auto;
         flex: 1;
         min-height: 0;
-        padding: var(--spacing-3) var(--spacing-4) var(--spacing-4) var(--spacing-4);
+        padding: var(--spacing-3) var(--spacing-4) var(--spacing-8) var(--spacing-4);
       }
 
       /* Filter Sections */
@@ -1583,7 +1608,7 @@
 
       #clearFilters .bi,
       #clearFilters i {
-        color: #fff !important;
+        color: currentColor;
       }
 
       .select-modern option {

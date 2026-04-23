@@ -3138,19 +3138,47 @@
   gap: var(--spacing-2);
 }
 
-.app-link {
-  display: inline-block;
-  transition: transform var(--transition-base);
+.app-store-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius-lg);
+  padding: 8px 14px;
+  text-decoration: none;
+  color: #fff;
+  transition: background var(--transition-base), transform var(--transition-base);
+  min-width: 150px;
 }
 
-.app-link:hover {
-  transform: scale(1.05);
+.app-store-btn:hover {
+  background: rgba(255,255,255,0.14);
+  transform: translateY(-1px);
+  color: #fff;
 }
 
-.app-badge {
-  height: 40px;
-  width: auto;
-  border-radius: var(--radius-md);
+.app-store-btn i {
+  font-size: 22px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.app-store-btn span {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.app-store-btn span small {
+  font-size: 10px;
+  opacity: 0.7;
+  font-weight: 400;
+}
+
+.app-store-btn span strong {
+  font-size: 14px;
+  font-weight: 700;
 }
 
 /* Newsletter Section */
@@ -3261,7 +3289,7 @@
 
 .copyright-text {
   font-size: var(--font-size-sm);
-  color: var(--gray-300);
+  color: rgba(255, 255, 255, 0.55);
   font-weight: 500;
 }
 
@@ -4462,7 +4490,7 @@
 [data-theme="dark"] .footer-brand-text { color: #fff !important; }
 [data-theme="dark"] .copyright-year,
 [data-theme="dark"] .copyright-brand { color: #fff !important; }
-[data-theme="dark"] .copyright-text,
+[data-theme="dark"] .copyright-text { color: rgba(255, 255, 255, 0.55) !important; }
 [data-theme="dark"] .footer-tagline,
 [data-theme="dark"] .legal-link { color: #94a3b8 !important; }
 [data-theme="dark"] .legal-link:hover { color: var(--primary-yellow) !important; }
