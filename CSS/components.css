@@ -3077,7 +3077,7 @@
   color: var(--gray-300);
   text-decoration: none;
   font-size: var(--font-size-base);
-  transition: all 0.7s ease;
+  transition: all 0.5s ease;
   position: relative;
 }
 
@@ -3291,7 +3291,7 @@
   text-decoration: none;
   font-size: var(--font-size-sm);
   font-weight: 500;
-  transition: color 0.7s ease;
+  transition: color 0.5s ease;
   white-space: nowrap;
 }
 
