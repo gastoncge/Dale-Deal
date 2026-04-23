@@ -795,8 +795,10 @@
   box-shadow: var(--shadow-md);
 }
 
-/* Badge de oferta/descuento — esquina superior izquierda (dentro de .service-badges) */
 .products-section .badge-offer {
+  position: absolute;
+  top: var(--spacing-3);
+  left: var(--spacing-3);
   background: var(--primary-red);
   color: var(--white);
   padding: var(--spacing-2) var(--spacing-3);
