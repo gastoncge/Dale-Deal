@@ -79,7 +79,7 @@
 
   // ── CSS inyectado ────────────────────────────────────────────────────────
   const CSS = `
-    .dd-support-widget { position: fixed; bottom: 24px; right: 24px; z-index: 99999; font-family: var(--font-family-base, system-ui, sans-serif); }
+    .dd-support-widget { position: fixed; bottom: 24px; right: 40px; z-index: 9998; font-family: var(--font-family-base, system-ui, sans-serif); }
     .dd-support-btn { width: 56px; height: 56px; border-radius: 50%; border: none; background: var(--gradient-primary, linear-gradient(135deg,#e53e3e,#f97316)); color: #fff; cursor: pointer; box-shadow: 0 10px 25px rgba(229,62,62,0.35); display: flex; align-items: center; justify-content: center; font-size: 22px; transition: transform .2s ease, box-shadow .2s ease; }
     .dd-support-btn:hover { transform: scale(1.08); box-shadow: 0 14px 32px rgba(229,62,62,0.45); }
     .dd-support-btn i { line-height: 1; }

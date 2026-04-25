@@ -8,6 +8,7 @@ class ProductFilters {
     this.currentCategory = 'all';
     this.currentSort = 'featured';
     this.searchQuery = '';
+    this.onlyOffers = false;
     this.products = [];
     this.originalProducts = [];
     this.init();
@@ -168,6 +169,11 @@ class ProductFilters {
         product.title.toLowerCase().includes(this.searchQuery) ||
         product.badges.some(badge => badge.toLowerCase().includes(this.searchQuery))
       );
+    }
+
+    // Filtro solo ofertas
+    if (this.onlyOffers) {
+      filtered = filtered.filter(p => p.isOffer);
     }
 
     // Ordenar productos

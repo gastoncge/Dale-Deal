@@ -6,33 +6,42 @@
     <title>DALE DEAL - Tu Marketplace Favorito</title>
 
     <!-- SEO Meta Tags -->
-    <meta
-      name="description"
-      content="Descubrí miles de productos y servicios en Dale Deal. Compra, vende y conecta con la mejor comunidad de marketplace de Argentina."
-    />
-    <meta
-      name="keywords"
-      content="marketplace, comprar, vender, productos, servicios, Argentina"
-    />
+    <meta name="description" content="Descubrí miles de productos y servicios en Dale Deal. Compra, vende y conecta con la mejor comunidad de marketplace de Argentina." />
+    <meta name="keywords" content="marketplace, comprar, vender, productos, servicios, Argentina" />
     <meta name="author" content="Dale Deal" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#d63031" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://daledeal.com/" />
+    <meta property="og:title" content="DALE DEAL - Tu Marketplace Favorito" />
+    <meta property="og:description" content="Descubrí miles de productos y servicios. Compra, vende y contrata servicios profesionales en Argentina." />
+    <meta property="og:image" content="https://daledeal.com/IMG/LOGO-2.png" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="DALE DEAL - Tu Marketplace Favorito" />
+    <meta name="twitter:description" content="Descubrí miles de productos y servicios en Argentina." />
+    <meta name="twitter:image" content="https://daledeal.com/IMG/LOGO-2.png" />
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="./IMG/LOGO.png" type="image/x-icon" />
 
     <!-- Bootstrap CSS -->
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous"
       rel="stylesheet"
     />
 
     <!-- Bootstrap Icons -->
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous"
     />
 
     <!-- AOS (Animate On Scroll) -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" integrity="sha384-/rJKQnzOkEo+daG0jMjU1IwwY9unxt1NBw3Ef2fmOJ3PW/TfAg2KXVoWwMZQZtw9" crossorigin="anonymous" rel="stylesheet" />
 
     <!-- Google Fonts: Space Grotesk (display) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -300,12 +309,12 @@
                           Compra, vende y contrata servicios con la mejor experiencia online en Argentina.
                         </p>
                         <div class="hero-actions">
-                          <button class="btn btn-primary btn-lg" id="heroShopBtn">
+                          <a href="HTML/productos.html" class="btn btn-primary btn-lg" id="heroShopBtn">
                             <i class="bi bi-bag me-2"></i>Explorar productos
-                          </button>
-                          <button class="btn btn-outline-light btn-lg" id="heroServicesBtn">
+                          </a>
+                          <a href="HTML/servicios.html" class="btn btn-outline-light btn-lg" id="heroServicesBtn">
                             <i class="bi bi-tools me-2"></i>Ver servicios
-                          </button>
+                          </a>
                         </div>
                       </div>
                     </div>
@@ -344,9 +353,9 @@
                           </div>
                         </div>
                         <div class="hero-actions">
-                          <button class="btn btn-primary btn-lg" id="heroOffersBtn">
+                          <a href="HTML/productos.html?filter=ofertas" class="btn btn-primary btn-lg" id="heroOffersBtn">
                             <i class="bi bi-lightning me-2"></i>Ver ofertas
-                          </button>
+                          </a>
                         </div>
                       </div>
                     </div>
@@ -389,6 +398,9 @@
                           <button class="btn btn-primary btn-lg" id="heroProductBtn">
                             <i class="bi bi-cart-plus me-2"></i>Agregar al carrito
                           </button>
+                          <a href="HTML/producto.html?id=1" class="btn btn-outline-light btn-lg ms-2">
+                            <i class="bi bi-eye me-2"></i>Ver producto
+                          </a>
                         </div>
                       </div>
                     </div>
@@ -431,9 +443,9 @@
                           </div>
                         </div>
                         <div class="hero-actions">
-                          <button class="btn btn-primary btn-lg" id="heroServiceBtn">
-                            <i class="bi bi-calendar-check me-2"></i>Reservar cita
-                          </button>
+                          <a href="HTML/servicio.html?id=installation-tech" class="btn btn-primary btn-lg" id="heroServiceBtn">
+                            <i class="bi bi-info-circle me-2"></i>Ver más información
+                          </a>
                         </div>
                       </div>
                     </div>
@@ -466,7 +478,7 @@
         <div class="container">
           <!-- Título de la sección -->
           <div class="section-header text-center mb-5" data-aos="fade-up">
-            <h2 class="section-title">Productos <span class="accent">Destacados</span></h2>
+            <h2 class="section-title">Productos <span class="accent">destacados</span></h2>
           </div>
           
           <div class="products-grid" id="productsGrid">
@@ -500,7 +512,7 @@
       <section class="services-section">
         <div class="container">
           <div class="section-header text-center mb-5">
-            <h2 class="section-title">Servicios <span class="accent">Destacados</span></h2>
+            <h2 class="section-title">Servicios <span class="accent">destacados</span></h2>
           </div>
 
 
@@ -553,9 +565,6 @@
                     <span class="service-price-badge">Desde $15.999</span>
                   </div>
                 </div>
-                <button class="btn-contact-service">
-                  <i class="bi bi-chat-dots me-2"></i>Ver más
-                </button>
               </div>
             </div>
 
@@ -607,9 +616,6 @@
                     <span class="service-price-badge">$8.999/mes</span>
                   </div>
                 </div>
-                <button class="btn-contact-service">
-                  <i class="bi bi-chat-dots me-2"></i>Ver más
-                </button>
               </div>
             </div>
 
@@ -661,9 +667,6 @@
                     <span class="service-price-badge">Desde $12.999</span>
                   </div>
                 </div>
-                <button class="btn-contact-service">
-                  <i class="bi bi-chat-dots me-2"></i>Ver más
-                </button>
               </div>
             </div>
 
@@ -715,9 +718,6 @@
                     <span class="service-price-badge">Desde $25.999</span>
                   </div>
                 </div>
-                <button class="btn-contact-service">
-                  <i class="bi bi-chat-dots me-2"></i>Ver más
-                </button>
               </div>
             </div>
 
@@ -769,9 +769,6 @@
                     <span class="service-price-badge">$19.999/visita</span>
                   </div>
                 </div>
-                <button class="btn-contact-service">
-                  <i class="bi bi-chat-dots me-2"></i>Ver más
-                </button>
               </div>
             </div>
 
@@ -823,9 +820,6 @@
                     <span class="service-price-badge">Desde $29.999</span>
                   </div>
                 </div>
-                <button class="btn-contact-service">
-                  <i class="bi bi-chat-dots me-2"></i>Ver más
-                </button>
               </div>
             </div>
 
@@ -877,9 +871,6 @@
                     <span class="service-price-badge">Desde $35.999</span>
                   </div>
                 </div>
-                <button class="btn-contact-service">
-                  <i class="bi bi-chat-dots me-2"></i>Ver más
-                </button>
               </div>
             </div>
 
@@ -931,9 +922,6 @@
                     <span class="service-price-badge">Desde $75.999</span>
                   </div>
                 </div>
-                <button class="btn-contact-service">
-                  <i class="bi bi-chat-dots me-2"></i>Ver más
-                </button>
               </div>
             </div>
 
@@ -985,9 +973,6 @@
                     <span class="service-price-badge">Desde $45.999</span>
                   </div>
                 </div>
-                <button class="btn-contact-service">
-                  <i class="bi bi-chat-dots me-2"></i>Ver más
-                </button>
               </div>
             </div>
 
@@ -1039,9 +1024,6 @@
                     <span class="service-price-badge">Desde $28.999</span>
                   </div>
                 </div>
-                <button class="btn-contact-service">
-                  <i class="bi bi-chat-dots me-2"></i>Ver más
-                </button>
               </div>
             </div>
 
@@ -1093,9 +1075,6 @@
                     <span class="service-price-badge">Desde $18.999</span>
                   </div>
                 </div>
-                <button class="btn-contact-service">
-                  <i class="bi bi-chat-dots me-2"></i>Ver más
-                </button>
               </div>
             </div>
 
@@ -1147,9 +1126,6 @@
                     <span class="service-price-badge">Desde $22.999</span>
                   </div>
                 </div>
-                <button class="btn-contact-service">
-                  <i class="bi bi-chat-dots me-2"></i>Ver más
-                </button>
               </div>
             </div>
           </div>
@@ -1174,7 +1150,7 @@
             <div class="col-lg-4 col-md-6 mb-4">
               <div class="footer-section">
                 <div class="footer-logo">
-                  <img src="./IMG/LOGO-2.png" alt="Dale Deal" class="footer-logo-img" />
+                  <img src="./IMG/LOGO-2.png" alt="Dale Deal" class="footer-logo-img" loading="lazy" />
                   <span class="footer-brand-text">DALE DEAL</span>
                 </div>
                 <p class="footer-description">
@@ -1182,13 +1158,13 @@
                   Compra, vende productos y contrata servicios profesionales de calidad.
                 </p>
                 <div class="footer-social">
-                  <a href="#" class="social-link" title="Facebook">
+                  <a href="#" class="social-link" title="Facebook" rel="noopener noreferrer">
                     <i class="bi bi-facebook"></i>
                   </a>
-                  <a href="#" class="social-link" title="Instagram">
+                  <a href="#" class="social-link" title="Instagram" rel="noopener noreferrer">
                     <i class="bi bi-instagram"></i>
                   </a>
-                  <a href="#" class="social-link" title="Twitter">
+                  <a href="#" class="social-link" title="Twitter" rel="noopener noreferrer">
                     <i class="bi bi-twitter"></i>
                   </a>
                   <a href="#" class="social-link" title="LinkedIn">
@@ -1206,20 +1182,20 @@
                   <div class="col-6">
                     <ul class="footer-links">
                       <li><a href="./HTML/notificaciones.html">Notificaciones</a></li>
-                      <li><a href="./HTML/notificaciones.html#centro-ayuda">Ayuda</a></li>
-                      <li><a href="./HTML/notificaciones.html#contacto">Contacto</a></li>
-                      <li><a href="./HTML/notificaciones.html#reportar-problema">Reportar problema</a></li>
-                      <li><a href="./HTML/notificaciones.html#estado-servicio">Estado del servicio</a></li>
-                      <li><a href="./HTML/notificaciones.html#seguridad">Seguridad</a></li>
+                      <li><a href="./HTML/centro-ayuda.html">Ayuda</a></li>
+                      <li><a href="./HTML/contacto.html">Contacto</a></li>
+                      <li><a href="./HTML/reportar-problema.html">Reportar problema</a></li>
+                      <li><a href="./HTML/estado-servicio.html">Estado del servicio</a></li>
+                      <li><a href="./HTML/seguridad.html">Seguridad</a></li>
                     </ul>
                   </div>
                   <div class="col-6">
                     <ul class="footer-links">
-                      <li><a href="./HTML/notificaciones.html#contacto">Publicidad en el sitio</a></li>
-                      <li><a href="./HTML/notificaciones.html#centro-ayuda">Soy una empresa</a></li>
-                      <li><a href="./HTML/notificaciones.html#contacto">Publicar productos</a></li>
-                      <li><a href="./HTML/notificaciones.html#centro-ayuda">Publicar servicios</a></li>
-                      <li><a href="./HTML/notificaciones.html#mis-compras">Mis compras</a></li>
+                      <li><a href="./HTML/contacto.html">Publicidad en el sitio</a></li>
+                      <li><a href="./HTML/contacto.html">Soy una empresa</a></li>
+                      <li><a href="./HTML/publicar.html">Publicar productos</a></li>
+                      <li><a href="./HTML/publicar.html">Publicar servicios</a></li>
+                      <li><a href="./HTML/notificaciones.html">Mis compras</a></li>
                     </ul>
                   </div>
                 </div>
@@ -1260,10 +1236,10 @@
                   <p class="footer-apps-title">Descarga la app</p>
                   <div class="app-links">
                     <a href="#" class="app-link">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" class="app-badge">
+                      <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" class="app-badge" loading="lazy">
                     </a>
                     <a href="#" class="app-link">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" class="app-badge">
+                      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" class="app-badge" loading="lazy">
                     </a>
                   </div>
                 </div>
@@ -1316,11 +1292,11 @@
                 <div class="col-md-4">
                   <div class="footer-legal">
                     <div class="legal-links-group">
-                      <a href="#" class="legal-link">Términos y Condiciones</a>
+                      <a href="./HTML/terminos.html" class="legal-link">Términos y Condiciones</a>
                       <span class="text-muted mx-2">•</span>
-                      <a href="#" class="legal-link">Política de Privacidad</a>
+                      <a href="./HTML/privacidad.html" class="legal-link">Política de Privacidad</a>
                       <span class="text-muted mx-2">•</span>
-                      <a href="#" class="legal-link">Política de Cookies</a>
+                      <a href="./HTML/cookies.html" class="legal-link">Política de Cookies</a>
                     </div>
                   </div>
                 </div>
@@ -1379,8 +1355,8 @@
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" integrity="sha384-wziAfh6b/qT+3LrqebF9WeK4+J5sehS6FA10J1t3a866kJ/fvU5UwofWnQyzLtwu" crossorigin="anonymous"></script>
     <!-- Theme: dark mode, anuncios, back-to-top (carga primero para evitar flash) -->
     <script src="./JS/theme.js"></script>
     <script src="./JS/utils.js"></script>
@@ -1397,227 +1373,11 @@
     <script src="./JS/api.js"></script>
     <script src="./JS/api-messages.js"></script>
     <script src="./JS/api-payments.js"></script>
+    <script src="./JS/product-data.js"></script>
     <script src="./JS/search.js"></script>
     <script src="./JS/pages/home.js"></script>
 
-    <script>
-      // Product navigation function
-      function goToProduct(productId) {
-        // Delegate to global utility (URL param + localStorage fallback)
-        window.goToProduct(productId);
-      }
-
-      // Initialize AOS
-      AOS.init({
-        duration: 800,
-        easing: "ease-out-cubic",
-        once: true,
-        offset: 50,
-      });
-
-      // Newsletter form handlers
-      const handleNewsletterSubmit = function(e) {
-        e.preventDefault();
-        const emailInput = this.querySelector('input[type="email"]');
-        const email = emailInput?.value;
-
-        if (email) {
-          // Simulate newsletter subscription
-          const btn = this.querySelector('.newsletter-btn');
-          const originalHTML = btn.innerHTML;
-
-          btn.innerHTML = '<i class="bi bi-check-circle"></i>';
-          btn.disabled = true;
-          btn.style.background = 'var(--success-600)';
-
-          setTimeout(() => {
-            btn.innerHTML = originalHTML;
-            btn.disabled = false;
-            btn.style.background = '';
-            this.reset();
-          }, 2000);
-        }
-      };
-
-      // Apply to all newsletter forms
-      document.getElementById('newsletterForm')?.addEventListener('submit', handleNewsletterSubmit);
-      document.getElementById('footerNewsletterForm')?.addEventListener('submit', handleNewsletterSubmit);
-
-      // Initialize notifications dropdown
-      document.addEventListener("DOMContentLoaded", () => {
-        // El dropdown ahora se maneja automáticamente por Bootstrap
-        // Solo necesitamos cargar las notificaciones cuando se abre
-        const notificationBtn = document.getElementById("notificationBtn");
-        if (notificationBtn) {
-          notificationBtn.addEventListener("shown.bs.dropdown", () => {
-            if (window.notificationManager) {
-              window.notificationManager.renderNotifications();
-            }
-          });
-        }
-
-        // Ejemplo: Agregar nuevas notificaciones después de 10 segundos
-        setTimeout(() => {
-          if (window.notificationManager) {
-            window.notificationManager.addNotification({
-              type: 'offers',
-              title: 'Flash Sale!',
-              message: '¡Solo por hoy! 30% de descuento en smartphones',
-              time: 'Ahora mismo',
-              icon: 'bi-lightning-fill',
-              iconColor: 'bg-warning',
-              actions: [
-                { label: 'Ver ofertas', action: 'view', data: { sale: 'flash2024' } },
-                { label: 'Recordar más tarde', action: 'remind', data: { remindIn: '1h' } }
-              ]
-            });
-          }
-        }, 10000);
-
-        // Funcionalidad de botones del carrusel
-        document.getElementById('heroShopBtn')?.addEventListener('click', () => {
-          document.querySelector('.products-section')?.scrollIntoView({ behavior: 'smooth' });
-        });
-
-        document.getElementById('heroServicesBtn')?.addEventListener('click', () => {
-          document.querySelector('.services-section')?.scrollIntoView({ behavior: 'smooth' });
-        });
-
-        document.getElementById('heroOffersBtn')?.addEventListener('click', () => {
-          // Activar filtro de ofertas y navegar a productos
-          setTimeout(() => {
-            if (window.productFilters) {
-              window.productFilters.currentCategory = 'all';
-              window.productFilters.currentSort = 'featured';
-              window.productFilters.filterAndRender();
-            }
-          }, 500);
-          document.querySelector('.products-section')?.scrollIntoView({ behavior: 'smooth' });
-        });
-
-        document.getElementById('heroProductBtn')?.addEventListener('click', () => {
-          // Agregar iPhone al carrito
-          if (window.cartManager) {
-            const iphoneProduct = {
-              id: 'hero-iphone',
-              title: 'iPhone 15 Pro Max 256GB',
-              price: 1299999,
-              image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=400&fit=crop',
-              quantity: 1
-            };
-            window.cartManager.addItem(iphoneProduct);
-          }
-        });
-
-        document.getElementById('heroServiceBtn')?.addEventListener('click', () => {
-          document.querySelector('.services-section')?.scrollIntoView({ behavior: 'smooth' });
-        });
-
-        // Filtros de servicios
-        class ServiceFilters {
-          constructor() {
-            this.currentCategory = 'all';
-            this.currentSort = 'featured';
-            this.services = [];
-            this.init();
-          }
-
-          init() {
-            this.loadServices();
-            this.bindEvents();
-          }
-
-          loadServices() {
-            const serviceCards = document.querySelectorAll('.service-card');
-            this.services = Array.from(serviceCards).map(card => {
-              const category = card.dataset.serviceCategory;
-              const price = parseInt(card.dataset.servicePrice) || 0;
-              const title = card.querySelector('.service-title')?.textContent || '';
-              
-              return {
-                element: card,
-                category,
-                price,
-                title
-              };
-            });
-          }
-
-          bindEvents() {
-            // Filtros de categoría
-            document.querySelectorAll('.service-filter-tab').forEach(tab => {
-              tab.addEventListener('click', (e) => this.handleCategoryFilter(e));
-            });
-
-            // Botón de ordenar (simplificado)
-            document.getElementById('serviceSortBtn')?.addEventListener('click', () => {
-              this.currentSort = this.currentSort === 'price-asc' ? 'price-desc' : 'price-asc';
-              this.filterAndRender();
-            });
-          }
-
-          handleCategoryFilter(e) {
-            e.preventDefault();
-            
-            // Actualizar estado visual
-            document.querySelectorAll('.service-filter-tab').forEach(tab => tab.classList.remove('active'));
-            e.target.classList.add('active');
-            
-            // Actualizar categoría actual
-            this.currentCategory = e.target.dataset.serviceCategory;
-            
-            // Filtrar y renderizar
-            this.filterAndRender();
-          }
-
-          filterAndRender() {
-            let filteredServices = [...this.services];
-
-            // Filtro por categoría
-            if (this.currentCategory && this.currentCategory !== 'all') {
-              filteredServices = filteredServices.filter(service => 
-                service.category === this.currentCategory
-              );
-            }
-
-            // Ordenar
-            if (this.currentSort === 'price-asc') {
-              filteredServices.sort((a, b) => a.price - b.price);
-            } else if (this.currentSort === 'price-desc') {
-              filteredServices.sort((a, b) => b.price - a.price);
-            }
-
-            this.renderServices(filteredServices);
-          }
-
-          renderServices(filteredServices) {
-            // Ocultar todos los servicios
-            this.services.forEach(service => {
-              service.element.style.display = 'none';
-            });
-
-            // Mostrar servicios filtrados
-            filteredServices.forEach((service, index) => {
-              service.element.style.display = 'block';
-              service.element.style.animationDelay = `${index * 0.1}s`;
-            });
-          }
-        }
-
-        // Botón ver todos los productos
-        document.getElementById('viewAllProductsBtn')?.addEventListener('click', () => {
-          // Crear página de productos o redirigir a una sección específica
-          window.location.href = './HTML/productos.html';
-        });
-
-        // Inicializar filtros de servicios
-        new ServiceFilters();
-      });
-    </script>
-
-    <!-- Component Loader - DESHABILITADO
-    <script src="./JS/component-loader.js" defer></script>
-    -->
+    <script>AOS.init({ duration: 800, easing: "ease-out-cubic", once: true, offset: 50 });</script>
     <script src="./JS/chat.js" defer></script>
     <script src="./JS/support-widget.js" defer></script>
   </body>

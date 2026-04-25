@@ -15,11 +15,12 @@ class NotificationManager {
     this.loadNotifications();
     this.bindEvents();
     this.updateBadge();
+    this.updateCounter();
   }
 
   // Cargar notificaciones desde localStorage o datos por defecto
   loadNotifications() {
-    const stored = localStorage.getItem('daledealt_notifications');
+    const stored = localStorage.getItem('daledeal_notifications');
     if (stored) {
       try {
         this.notifications = JSON.parse(stored);
@@ -97,7 +98,7 @@ class NotificationManager {
 
   // Guardar notificaciones en localStorage
   saveNotifications() {
-    localStorage.setItem('daledealt_notifications', JSON.stringify(this.notifications));
+    localStorage.setItem('daledeal_notifications', JSON.stringify(this.notifications));
   }
 
   // Vincular eventos

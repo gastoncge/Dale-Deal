@@ -5,7 +5,7 @@
 
 class FavoritesManager {
   constructor() {
-    this.storageKey = 'daledealt_favorites';
+    this.storageKey = 'daledeal_favorites';
     this.favorites = this.loadFavorites();
     this.init();
   }

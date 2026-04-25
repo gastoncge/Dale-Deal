@@ -71,18 +71,27 @@ function renderShippingBadges(shipping) {
  * Renderiza una tarjeta de producto
  */
 function renderProductCard(product) {
+  // Normalizar imágenes tanto para datos de API como para datos estáticos
+  if (!product.images || typeof product.images !== 'object') {
+    const src = Array.isArray(product.images) ? product.images[0] : (product.images || 'https://images.unsplash.com/photo-1560393464-5c69a73c5770?w=600&h=600&fit=crop');
+    product.images = { main: src, gallery: [src] };
+  } else if (!product.images.main && Array.isArray(product.images)) {
+    product.images = { main: product.images[0], gallery: product.images };
+  } else if (!product.images.main) {
+    product.images.main = 'https://images.unsplash.com/photo-1560393464-5c69a73c5770?w=600&h=600&fit=crop';
+  }
+
   const hasDiscount = product.discount && product.discount > 0;
   const hasMultipleImages = product.images?.gallery?.length > 1;
 
-  // Determinar badges
-  const badges = product.badges || [];
-  const badgesHTML = badges.map(badge => {
-    if (badge.includes('OFF')) {
-      return `<span class="badge-offer">${badge}</span>`;
-    } else {
-      return `<span class="badge-featured">${badge}</span>`;
-    }
-  }).join('');
+  // Solo mostrar badges de oferta/descuento/más vendido — en rojo
+  const BADGE_KEYWORDS = ['off', 'oferta', 'descuento', 'más vendido', 'mas vendido'];
+  const badges = (product.badges || []).filter(b =>
+    BADGE_KEYWORDS.some(kw => b.toLowerCase().includes(kw))
+  );
+  const badgesHTML = badges.map(badge =>
+    `<span class="badge-offer">${badge}</span>`
+  ).join('');
 
   // Renderizar imágenes
   let imagesHTML = '';
@@ -94,6 +103,7 @@ function renderProductCard(product) {
             src="${img}"
             alt="${product.title} - Vista ${index + 1}"
             class="product-image ${index === 0 ? 'active' : ''}"
+            loading="lazy"
           />
         `).join('')}
 
@@ -119,6 +129,7 @@ function renderProductCard(product) {
         src="${product.images.main}"
         alt="${product.title}"
         class="product-image"
+        loading="lazy"
       />
     `;
   }
@@ -155,8 +166,8 @@ function renderProductCard(product) {
 
         <div class="product-meta-group">
           <div class="product-rating">
-            <div class="stars">${renderStars(product.rating)}</div>
-            <span class="reviews-count">(${product.reviewCount.toLocaleString('es-AR')})</span>
+            <div class="stars">${renderStars(product.rating || 0)}</div>
+            <span class="reviews-count">(${(product.reviewCount || 0).toLocaleString('es-AR')})</span>
             ${product.shipping?.free ? `<span class="shipping-badge"><i class="bi bi-truck"></i> Envío gratis</span>` : ''}
           </div>
           <div class="product-location">
@@ -224,19 +235,45 @@ async function loadProducts() {
     DaleDeal.log(`✓ ${products.length} productos cargados en el home`);
 
   } catch (error) {
-    DaleDeal.error('Error al cargar productos:', error);
+    DaleDeal.warn('API no disponible, usando datos locales:', error.message);
+
+    const loadingContainer = document.getElementById('loadingContainer');
+    if (loadingContainer) loadingContainer.style.display = 'none';
 
     const productsGrid = document.getElementById('productsGrid');
-    if (productsGrid) {
+    if (!productsGrid) return;
+
+    // Fallback: datos estáticos de product-data.js
+    const fallbackProducts = typeof window.getAllProducts === 'function'
+      ? window.getAllProducts()
+      : [];
+
+    if (!fallbackProducts.length) {
       productsGrid.innerHTML = `
         <div class="col-12">
-          <div class="alert alert-danger" role="alert">
+          <div class="alert alert-warning" role="alert">
             <i class="bi bi-exclamation-triangle me-2"></i>
-            Error al cargar los productos. Por favor, intenta nuevamente más tarde.
+            No se pudo conectar con el servidor. Intentá de nuevo más tarde.
           </div>
         </div>
       `;
+      return;
     }
+
+    productsGrid.innerHTML = '';
+    const productsPerRow = 3;
+    for (let i = 0; i < Math.min(fallbackProducts.length, 6); i += productsPerRow) {
+      const row = document.createElement('div');
+      row.className = 'products-row';
+      row.innerHTML = fallbackProducts
+        .slice(i, i + productsPerRow)
+        .map(p => renderProductCard(p))
+        .join('');
+      productsGrid.appendChild(row);
+    }
+
+    initializeProductListeners();
+    DaleDeal.log(`✓ ${Math.min(fallbackProducts.length, 6)} productos locales cargados como fallback`);
   }
 }
 
@@ -309,3 +346,109 @@ if (typeof window !== 'undefined') {
     renderShippingBadges
   };
 }
+
+// ===== INICIALIZACIÓN HOME PAGE =====
+// Handlers específicos de index.html (servicios, newsletter, hero, notifications)
+(function initHomeHandlers() {
+  function run() {
+    // Notificaciones dropdown
+    document.getElementById('notificationBtn')?.addEventListener('shown.bs.dropdown', () => {
+      window.notificationManager?.renderNotifications();
+    });
+
+    // Botón hero: agregar iPhone al carrito
+    document.getElementById('heroProductBtn')?.addEventListener('click', () => {
+      window.cartManager?.addItem({
+        id: 1,
+        title: 'iPhone 15 Pro Max 256GB',
+        price: 1299999,
+        priceText: '$1.299.999',
+        image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=400&fit=crop',
+        quantity: 1
+      });
+    });
+
+    // Botón ver todos los productos
+    document.getElementById('viewAllProductsBtn')?.addEventListener('click', () => {
+      window.location.href = './HTML/productos.html';
+    });
+
+    // Newsletter forms
+    const handleNewsletterSubmit = function(e) {
+      e.preventDefault();
+      const email = this.querySelector('input[type="email"]')?.value;
+      if (!email) return;
+      const btn = this.querySelector('.newsletter-btn');
+      const originalHTML = btn.innerHTML;
+      btn.innerHTML = '<i class="bi bi-check-circle"></i>';
+      btn.disabled = true;
+      btn.style.background = 'var(--success-600)';
+      setTimeout(() => {
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+        btn.style.background = '';
+        this.reset();
+      }, 2000);
+    };
+    document.getElementById('newsletterForm')?.addEventListener('submit', handleNewsletterSubmit);
+    document.getElementById('footerNewsletterForm')?.addEventListener('submit', handleNewsletterSubmit);
+
+    // Filtros de servicios en la home
+    class ServiceFilters {
+      constructor() {
+        this.currentCategory = 'all';
+        this.currentSort = 'featured';
+        this.services = [];
+        this.loadServices();
+        this.bindEvents();
+      }
+
+      loadServices() {
+        this.services = Array.from(document.querySelectorAll('.service-card')).map(card => ({
+          element: card,
+          category: card.dataset.serviceCategory,
+          price: parseInt(card.dataset.servicePrice) || 0,
+          title: card.querySelector('.service-title')?.textContent || ''
+        }));
+      }
+
+      bindEvents() {
+        document.querySelectorAll('.service-filter-tab').forEach(tab => {
+          tab.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.service-filter-tab').forEach(t => t.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            this.currentCategory = e.currentTarget.dataset.serviceCategory;
+            this.filterAndRender();
+          });
+        });
+        document.getElementById('serviceSortBtn')?.addEventListener('click', () => {
+          this.currentSort = this.currentSort === 'price-asc' ? 'price-desc' : 'price-asc';
+          this.filterAndRender();
+        });
+      }
+
+      filterAndRender() {
+        let filtered = [...this.services];
+        if (this.currentCategory && this.currentCategory !== 'all') {
+          filtered = filtered.filter(s => s.category === this.currentCategory);
+        }
+        if (this.currentSort === 'price-asc') filtered.sort((a, b) => a.price - b.price);
+        else if (this.currentSort === 'price-desc') filtered.sort((a, b) => b.price - a.price);
+        this.services.forEach(s => { s.element.style.display = 'none'; });
+        filtered.forEach((s, i) => {
+          s.element.style.display = 'block';
+          s.element.style.animationDelay = `${i * 0.1}s`;
+        });
+      }
+    }
+
+    new ServiceFilters();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run);
+  } else {
+    run();
+  }
+})();

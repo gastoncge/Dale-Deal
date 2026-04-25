@@ -787,7 +787,7 @@ class ProductPage {
       const id = String(this.currentProduct.id);
       let recent = this.getRecentlyViewed().filter(x => x !== id);
       recent.unshift(id);
-      localStorage.setItem('daledealt_recently_viewed', JSON.stringify(recent.slice(0, 10)));
+      localStorage.setItem('daledeal_recently_viewed', JSON.stringify(recent.slice(0, 10)));
     } catch (err) {
       DaleDeal.error('Error guardando reciente:', err);
     }
@@ -795,7 +795,7 @@ class ProductPage {
 
   getRecentlyViewed() {
     try {
-      const raw = localStorage.getItem('daledealt_recently_viewed');
+      const raw = localStorage.getItem('daledeal_recently_viewed');
       return raw ? JSON.parse(raw) : [];
     } catch {
       return [];

@@ -33,38 +33,38 @@
 
 .hero-slide-main {
   background: var(--gradient-primary);
-  color: var(--white);
+  color: #fff;
 }
 
 .hero-slide-offers {
   background: linear-gradient(135deg, var(--primary-red), var(--primary-red-dark));
-  color: var(--white);
+  color: #fff;
 }
 
 .hero-slide-offers .bi {
-  color: var(--white) !important;
+  color: #fff !important;
 }
 
 .hero-slide-offers .hero-badge .bi {
-  color: var(--gray-700) !important;
+  color: var(--primary-red) !important;
 }
 
 .hero-slide-product {
   background: linear-gradient(135deg, var(--primary-yellow), var(--primary-yellow-hover));
-  color: var(--white);
+  color: #fff;
 }
 
 .hero-slide-service {
   background: linear-gradient(135deg, var(--primary-red-hover), var(--primary-red));
-  color: var(--white);
+  color: #fff;
 }
 
 .hero-slide-service .bi {
-  color: var(--white);
+  color: #fff !important;
 }
 
 .hero-slide-service .hero-badge .bi {
-  color: var(--gray-700) !important;
+  color: var(--primary-red) !important;
 }
 
 .hero-slide::before {
@@ -103,7 +103,7 @@
 }
 
 .hero-slide-product .hero-price .current-price {
-  color: var(--white);
+  color: #fff;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
@@ -114,14 +114,14 @@
 
 .hero-slide-product .hero-price .discount {
   background: var(--primary-red);
-  color: var(--white);
+  color: #fff;
 }
 
 .hero-badge {
   display: inline-block;
   padding: var(--spacing-2) var(--spacing-4);
   background: rgba(255, 255, 255, 0.95);
-  color: var(--gray-700);
+  color: #374151;
   font-size: var(--font-size-sm);
   font-weight: 600;
   text-transform: uppercase;
@@ -133,14 +133,14 @@
 }
 
 .offer-badge {
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--gray-700);
+  background: rgba(255, 255, 255, 0.95);
+  color: #374151;
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .product-badge {
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--gray-700);
+  background: rgba(255, 255, 255, 0.95);
+  color: #374151;
   border: 1px solid rgba(255, 255, 255, 0.3);
   position: static;
   display: inline-block;
@@ -151,9 +151,23 @@
 }
 
 .service-badge {
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--gray-700);
+  background: rgba(255, 255, 255, 0.95);
+  color: #374151;
   border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+[data-theme="dark"] .hero-badge,
+[data-theme="dark"] .offer-badge,
+[data-theme="dark"] .product-badge,
+[data-theme="dark"] .service-badge {
+  color: #000 !important;
+}
+
+[data-theme="dark"] .hero-badge .bi,
+[data-theme="dark"] .offer-badge .bi,
+[data-theme="dark"] .product-badge .bi,
+[data-theme="dark"] .service-badge .bi {
+  color: #000 !important;
 }
 
 .hero-title {
@@ -213,7 +227,7 @@
 .current-price {
   font-size: var(--font-size-3xl);
   font-weight: 800;
-  color: var(--white);
+  color: #fff;
   margin-right: var(--spacing-3);
 }
 
@@ -226,7 +240,7 @@
 
 .discount {
   background: rgba(255, 255, 255, 0.2);
-  color: var(--white);
+  color: #fff;
   padding: var(--spacing-1) var(--spacing-2);
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
@@ -254,18 +268,19 @@
   width: 12px !important;
   height: 12px !important;
   border-radius: 50% !important;
-  border: 2px solid rgba(255, 255, 255, 0.5) !important;
-  background: transparent !important;
+  border: none !important;
+  background: rgba(255, 255, 255, 0.45) !important;
   margin: 0 !important;
   padding: 0 !important;
   transition: all var(--transition-base) !important;
   flex-shrink: 0 !important;
+  box-shadow: none !important;
 }
 
 #heroCarousel .carousel-indicators button.active {
   background: var(--primary-yellow) !important;
-  border-color: var(--primary-yellow) !important;
-  box-shadow: 0 0 0 2px var(--white) !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .carousel-control-prev,
@@ -795,16 +810,19 @@
   box-shadow: var(--shadow-md);
 }
 
-/* Badge de oferta/descuento — esquina superior izquierda (dentro de .service-badges) */
 .products-section .badge-offer {
+  position: absolute;
+  top: var(--spacing-3);
+  left: var(--spacing-3);
   background: var(--primary-red);
-  color: var(--white);
+  color: #fff !important;
   padding: var(--spacing-2) var(--spacing-3);
   border-radius: var(--radius-md);
   font-size: var(--font-size-xs);
   font-weight: 700;
+  text-transform: uppercase;
   z-index: 3;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 
 

@@ -37,6 +37,9 @@
 
   /* ===== COLORES DE ESTADO ===== */
   --success: #10b981;
+  --success-50:  #ecfdf5;
+  --success-200: #a7f3d0;
+  --success-600: #059669;
   --success-light: #d1fae5;
   --warning: #f59e0b;
   --warning-light: #fef3c7;

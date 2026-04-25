@@ -175,6 +175,24 @@
 
 .navbar .container-fluid {
   overflow: visible !important;
+  display: grid !important;
+  grid-template-columns: 1fr minmax(300px, 600px) 1fr;
+  align-items: center;
+}
+
+.navbar .container-fluid .navbar-brand {
+  justify-self: start;
+}
+
+.navbar .container-fluid .search-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 var(--spacing-4);
+  flex: unset;
+}
+
+.navbar .container-fluid .navbar-actions {
+  justify-self: end;
 }
 
 .navbar-brand {
@@ -335,7 +353,8 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 4px rgba(214, 48, 49, 0.3);
-  border: 2px solid var(--white);
+  border: none;
+  color: #fff !important;
 }
 
 /* ===== PERFIL DE USUARIO ===== */
@@ -754,9 +773,12 @@
 }
 
 .btn-primary {
+  --bs-btn-color: #fff;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-color: #fff;
   background: var(--gradient-primary);
-  color: var(--white);
-  box-shadow: var(--shadow-md);
+  color: #fff;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
   transition: all var(--transition-base);
   position: relative;
   overflow: hidden;
@@ -764,8 +786,13 @@
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-xl);
-  color: var(--white);
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+  color: #fff;
+}
+
+.btn-primary i,
+.btn-primary .bi {
+  color: #fff !important;
 }
 
 .btn-primary::before {
@@ -845,7 +872,7 @@
   border: 1px solid var(--gray-200);
   border-radius: var(--radius-2xl);
   overflow: hidden;
-  transition: all var(--transition-base) !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   position: relative;
   height: 100%;
   display: flex;
@@ -892,7 +919,7 @@
   top: 50%;
   transform: translateY(-50%);
   background: rgba(0, 0, 0, 0.6);
-  color: var(--white);
+  color: #fff;
   border: none;
   width: 36px;
   height: 36px;
@@ -1942,7 +1969,7 @@
 /* Badge de oferta */
 .badge-offer {
   background: var(--primary-red);
-  color: var(--white);
+  color: #fff !important;
 }
 
 /* Badge de envío gratis */
@@ -2012,9 +2039,8 @@
   transition: all var(--transition-base);
 }
 
-/* Cuando hay badge de oferta, mover el corazón hacia la izquierda */
 .product-card.has-offer .product-actions {
-  right: calc(var(--spacing-3) + 90px) !important ;
+  right: var(--spacing-3);
 }
 
 .product-card:hover .product-actions {
@@ -2375,14 +2401,8 @@
   line-height: 1.1;
 }
 
-/* Acento: segunda palabra del título con gradiente de marca
-   (ej: "Productos <span>Destacados</span>") */
 .section-title .accent {
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
+  color: var(--gray-900);
   font-weight: 700;
 }
 
@@ -2977,7 +2997,7 @@
   background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%);
   color: var(--white);
   padding: var(--spacing-16) 0 0;
-  margin-top: var(--spacing-20);
+  margin-top: 0;
 }
 
 .footer-content {
@@ -2996,8 +3016,9 @@
 }
 
 .footer-logo-img {
-  height: 40px;
+  height: 36px;
   width: auto;
+  border-radius: 6px;
 }
 
 .footer-brand-text {
@@ -3031,15 +3052,15 @@
   border-radius: 50%;
   text-decoration: none;
   font-size: var(--font-size-lg);
-  transition: all var(--transition-base);
+  transition: all 0.5s ease;
   backdrop-filter: blur(10px);
 }
 
 .social-link:hover {
   background: var(--primary-red);
-  color: var(--white);
+  color: #fff;
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .footer-title {
@@ -3075,12 +3096,12 @@
   color: var(--gray-300);
   text-decoration: none;
   font-size: var(--font-size-base);
-  transition: all var(--transition-base);
+  transition: all 0.5s ease;
   position: relative;
 }
 
 .footer-links a:hover {
-  color: var(--primary-yellow);
+  color: #fff;
   padding-left: var(--spacing-2);
 }
 
@@ -3117,19 +3138,47 @@
   gap: var(--spacing-2);
 }
 
-.app-link {
-  display: inline-block;
-  transition: transform var(--transition-base);
+.app-store-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius-lg);
+  padding: 8px 14px;
+  text-decoration: none;
+  color: #fff;
+  transition: background var(--transition-base), transform var(--transition-base);
+  min-width: 150px;
 }
 
-.app-link:hover {
-  transform: scale(1.05);
+.app-store-btn:hover {
+  background: rgba(255,255,255,0.14);
+  transform: translateY(-1px);
+  color: #fff;
 }
 
-.app-badge {
-  height: 40px;
-  width: auto;
-  border-radius: var(--radius-md);
+.app-store-btn i {
+  font-size: 22px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.app-store-btn span {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.app-store-btn span small {
+  font-size: 10px;
+  opacity: 0.7;
+  font-weight: 400;
+}
+
+.app-store-btn span strong {
+  font-size: 14px;
+  font-weight: 700;
 }
 
 /* Newsletter Section */
@@ -3240,7 +3289,7 @@
 
 .copyright-text {
   font-size: var(--font-size-sm);
-  color: var(--gray-300);
+  color: rgba(255, 255, 255, 0.55);
   font-weight: 500;
 }
 
@@ -3289,7 +3338,7 @@
   text-decoration: none;
   font-size: var(--font-size-sm);
   font-weight: 500;
-  transition: color var(--transition-base);
+  transition: color 0.5s ease;
   white-space: nowrap;
 }
 
@@ -3372,7 +3421,7 @@
 
   /* Ocultar separadores en móviles */
   .legal-links-group .text-muted {
-    display: none;
+    display: none !important;
   }
 
   .footer-bottom {
@@ -3421,12 +3470,12 @@
   display: block;
   font-size: var(--font-size-3xl);
   font-weight: 800;
-  color: var(--white);
+  color: #fff;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .stat-number .bi {
-  color: var(--white);
+  color: #fff !important;
 }
 
 .stat-label {
@@ -4408,14 +4457,45 @@
   border-color: rgba(255,255,255,0.08);
   color: var(--gray-800);
 }
-[data-theme="dark"] .product-card:hover { border-color: var(--primary-red); }
+[data-theme="dark"] .product-card:hover { border-color: rgba(255,255,255,0.15); }
+[data-theme="dark"] .carousel-control {
+  background: rgba(255,255,255,0.25);
+  color: #fff !important;
+}
+[data-theme="dark"] .carousel-control:hover {
+  background: rgba(255,255,255,0.5);
+}
+[data-theme="dark"] .badge-offer,
+[data-theme="dark"] .badge-featured { color: #fff !important; box-shadow: none !important; }
 
 /* Footer */
 [data-theme="dark"] .footer {
-  background: #0f172a !important;
-  color: var(--gray-700);
+  background: linear-gradient(135deg, #1e293b 0%, #162032 100%) !important;
+  color: #cbd5e1;
+  border-top: none;
 }
-[data-theme="dark"] .footer-bottom { border-top-color: rgba(255,255,255,0.08); }
+/* Dots visible on dark footer in both themes */
+.legal-links-group .text-muted {
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+
+[data-theme="dark"] .footer-bottom {
+  border-top-color: rgba(255,255,255,0.1);
+  background: transparent;
+}
+[data-theme="dark"] .footer-links a { color: #94a3b8; }
+[data-theme="dark"] .footer-links a:hover { color: #fff; }
+[data-theme="dark"] .footer-description { color: #94a3b8; }
+[data-theme="dark"] .footer-title,
+[data-theme="dark"] .footer-brand-text { color: #fff !important; }
+[data-theme="dark"] .copyright-year,
+[data-theme="dark"] .copyright-brand { color: #fff !important; }
+[data-theme="dark"] .copyright-text { color: rgba(255, 255, 255, 0.55) !important; }
+[data-theme="dark"] .footer-tagline,
+[data-theme="dark"] .legal-link { color: #94a3b8 !important; }
+[data-theme="dark"] .legal-link:hover { color: var(--primary-yellow) !important; }
+[data-theme="dark"] .footer-social a { color: #94a3b8; }
+[data-theme="dark"] .footer-social a:hover { color: #fff; }
 
 /* Modals */
 [data-theme="dark"] .modal-content {
@@ -4474,6 +4554,14 @@
 }
 [data-theme="dark"] p, [data-theme="dark"] span, [data-theme="dark"] li { color: var(--gray-700); }
 [data-theme="dark"] .text-muted { color: var(--gray-500) !important; }
+
+/* Excluir hero slides de la regla global de color en dark mode */
+[data-theme="dark"] .hero-slide p,
+[data-theme="dark"] .hero-slide span,
+[data-theme="dark"] .hero-slide li,
+[data-theme="dark"] .hero-subtitle,
+[data-theme="dark"] .stat-label,
+[data-theme="dark"] .stat-number { color: inherit !important; }
 
 /* =====================================================
    BOTÓN VOLVER ARRIBA (BACK TO TOP)
@@ -4615,46 +4703,7 @@
   transform: scale(0.97) !important;
 }
 
-/* Tarjetas: transición suave en sombra */
-.product-card {
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease !important;
-}
 
-/* Badge de oferta: animación pulse suave */
-.badge-offer {
-  animation: pulseBadge 2.5s ease-in-out infinite;
-}
-
-@keyframes pulseBadge {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.78; }
-}
-
-/* Links del footer: underline animado */
-.footer-links a {
-  position: relative;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-.footer-links a::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  width: 0;
-  height: 1px;
-  background: var(--primary-red);
-  transition: width 0.25s ease;
-}
-.footer-links a:hover::after { width: 100%; }
-
-/* Social links: animación de escala */
-.social-link {
-  transition: transform 0.2s ease, color 0.2s ease, background 0.2s ease !important;
-}
-.social-link:hover {
-  transform: translateY(-3px) scale(1.12) !important;
-}
 
 /* Chips de filtro: transición suave */
 .filter-chip {
@@ -4705,9 +4754,17 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
   background: var(--gradient-primary); border: none; cursor: pointer;
   box-shadow: 0 8px 32px rgba(214, 48, 49, 0.4);
   position: relative; display: flex; align-items: center; justify-content: center;
-  transition: all var(--transition-base); overflow: visible; padding: 0;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease, box-shadow var(--transition-base);
+  overflow: visible; padding: 0;
 }
 .chat-float-btn:hover { transform: scale(1.08); box-shadow: 0 12px 40px rgba(214, 48, 49, 0.5); }
+
+/* Ocultar burbuja cuando el chat está abierto */
+.chat-float-widget:has(.chat-float-panel.chat-float-open) .chat-float-btn {
+  opacity: 0;
+  transform: scale(0.5);
+  pointer-events: none;
+}
 .chat-float-logo { width: 42px; height: 42px; object-fit: contain; pointer-events: none; border-radius: 50%; }
 
 .chat-float-badge {
@@ -4715,12 +4772,12 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
   background: var(--primary-red); color: var(--white);
   font-size: 11px; font-weight: 700; border-radius: var(--radius-full);
   min-width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25); border: 2.5px solid var(--white);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
   pointer-events: none; padding: 0 4px; z-index: 10001;
 }
 
 .chat-float-panel {
-  position: fixed; bottom: 104px; right: 48px; width: 360px;
+  position: fixed; bottom: 28px; right: 48px; width: 360px;
   background: var(--white); border-radius: var(--radius-2xl);
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.18); border: 1px solid var(--gray-200);
   overflow: hidden; transform: scale(0.85) translateY(16px);
@@ -4758,7 +4815,7 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
 
 @media (max-width: 479px) {
   .chat-float-widget { bottom: 16px; right: 16px; }
-  .chat-float-panel { width: calc(100vw - 32px); right: 16px; bottom: 96px; }
+  .chat-float-panel { width: calc(100vw - 32px); right: 16px; bottom: 16px; }
 }
 
 /* =====================================================
@@ -4925,11 +4982,17 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
   color: var(--gray-800);
 }
 
-/* Badges sobre fondos claros que se ven raros */
+/* Badges en dark mode: texto siempre blanco */
 [data-theme="dark"] .badge.bg-light {
-  background: rgba(255, 255, 255, 0.08) !important;
-  color: var(--gray-800) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #fff !important;
 }
+[data-theme="dark"] .badge-new,
+[data-theme="dark"] .badge-premium,
+[data-theme="dark"] .badge-limited,
+[data-theme="dark"] .badge.bg-warning,
+[data-theme="dark"] .badge.bg-secondary { color: #fff !important; }
+[data-theme="dark"] .filter-count { color: #fff !important; }
 
 /* Inputs con autofill (Chrome) — evita el amarillo sobre fondo oscuro */
 [data-theme="dark"] input:-webkit-autofill,

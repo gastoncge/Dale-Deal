@@ -20,18 +20,18 @@
 
     <!-- Bootstrap CSS -->
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous"
       rel="stylesheet"
     />
 
     <!-- Bootstrap Icons -->
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous"
     />
 
     <!-- AOS (Animate On Scroll) -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" integrity="sha384-/rJKQnzOkEo+daG0jMjU1IwwY9unxt1NBw3Ef2fmOJ3PW/TfAg2KXVoWwMZQZtw9" crossorigin="anonymous" rel="stylesheet" />
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../CSS/variables.css" />
@@ -363,13 +363,21 @@
                       <span class="option-check"><i class="bi bi-check-lg"></i></span>
                     </label>
                     <label class="filter-option-modern">
-                      <input type="radio" name="category" value="otros" data-category="otros">
+                      <input type="radio" name="category" value="otros" data-category="otros" id="categoryOtros">
                       <span class="option-content">
                         <i class="bi bi-three-dots category-icon"></i>
                         <span class="option-text">Otros</span>
                       </span>
                       <span class="option-check"><i class="bi bi-check-lg"></i></span>
                     </label>
+                    <!-- Buscador de categoría para "Otros" -->
+                    <div id="otrosCategorySearch" style="display:none; padding: 8px 4px 4px;">
+                      <div style="position:relative;">
+                        <input type="text" id="otrosCategoryInput" placeholder="Buscar categoría..." autocomplete="off"
+                          style="width:100%; padding:6px 10px; border:1.5px solid var(--gray-200); border-radius:8px; font-size:13px; outline:none;">
+                        <ul id="otrosSuggestions" style="display:none; position:absolute; top:100%; left:0; right:0; background:#fff; border:1.5px solid var(--gray-200); border-radius:8px; margin-top:4px; padding:4px 0; list-style:none; z-index:100; max-height:160px; overflow-y:auto; box-shadow:0 4px 12px rgba(0,0,0,0.1);"></ul>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -390,7 +398,7 @@
                         <label class="price-label">Mínimo</label>
                         <div class="input-with-icon">
                           <span class="currency-symbol">$</span>
-                          <input type="number" class="price-input-modern" id="minPrice" placeholder="0" min="0">
+                          <input type="text" inputmode="numeric" pattern="[0-9]*" class="price-input-modern" id="minPrice" placeholder="0">
                         </div>
                       </div>
                       <div class="price-divider">
@@ -400,7 +408,7 @@
                         <label class="price-label">Máximo</label>
                         <div class="input-with-icon">
                           <span class="currency-symbol">$</span>
-                          <input type="number" class="price-input-modern" id="maxPrice" placeholder="99999" min="0">
+                          <input type="text" inputmode="numeric" pattern="[0-9]*" class="price-input-modern" id="maxPrice" placeholder="0">
                         </div>
                       </div>
                     </div>
@@ -467,6 +475,19 @@
                       </span>
                     </label>
                     <label class="filter-rating-modern">
+                      <input type="radio" name="rating" value="5">
+                      <span class="rating-content">
+                        <span class="stars-group">
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                        </span>
+                        <span class="rating-label">o más</span>
+                      </span>
+                    </label>
+                    <label class="filter-rating-modern">
                       <input type="radio" name="rating" value="4">
                       <span class="rating-content">
                         <span class="stars-group">
@@ -486,6 +507,32 @@
                           <i class="bi bi-star-fill star-filled"></i>
                           <i class="bi bi-star-fill star-filled"></i>
                           <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star star-empty"></i>
+                          <i class="bi bi-star star-empty"></i>
+                        </span>
+                        <span class="rating-label">o más</span>
+                      </span>
+                    </label>
+                    <label class="filter-rating-modern">
+                      <input type="radio" name="rating" value="2">
+                      <span class="rating-content">
+                        <span class="stars-group">
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star star-empty"></i>
+                          <i class="bi bi-star star-empty"></i>
+                          <i class="bi bi-star star-empty"></i>
+                        </span>
+                        <span class="rating-label">o más</span>
+                      </span>
+                    </label>
+                    <label class="filter-rating-modern">
+                      <input type="radio" name="rating" value="1">
+                      <span class="rating-content">
+                        <span class="stars-group">
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star star-empty"></i>
+                          <i class="bi bi-star star-empty"></i>
                           <i class="bi bi-star star-empty"></i>
                           <i class="bi bi-star star-empty"></i>
                         </span>
@@ -556,8 +603,8 @@
                   <h3 class="empty-state-title">No se encontraron productos</h3>
                   <p class="empty-state-text">No hay productos que coincidan con tus filtros actuales</p>
                   <div class="empty-state-actions">
-                    <button class="btn btn-primary" id="clearFilters">
-                      <i class="bi bi-arrow-clockwise me-2"></i>Limpiar filtros
+                    <button class="btn btn-outline-secondary" id="clearFilters">
+                      <i class="bi bi-arrow-clockwise me-1"></i>Limpiar filtros
                     </button>
                   </div>
                 </div>
@@ -626,10 +673,10 @@
     </div>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
     
     <!-- AOS JS -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" integrity="sha384-wziAfh6b/qT+3LrqebF9WeK4+J5sehS6FA10J1t3a866kJ/fvU5UwofWnQyzLtwu" crossorigin="anonymous"></script>
 
     <!-- Custom Scripts -->
     <script src="../JS/theme.js"></script>
@@ -696,7 +743,13 @@
         margin-left: calc(-50vw + 50%) !important;
         padding-left: calc(50vw - 50% + 1rem) !important;
         padding-right: calc(50vw - 50% + 1rem) !important;
-        border-bottom: 1px solid var(--gray-200) !important;
+        border-bottom: none !important;
+        box-shadow: none !important;
+      }
+
+      [data-theme="dark"] .page-header-new {
+        background: transparent !important;
+        border-bottom: none !important;
       }
 
       /* Badges iguales a la página de inicio - display controlado por JS */
@@ -1076,8 +1129,52 @@
       }
 
       .btn-clear-filters:hover {
-        background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-yellow) 100%);
-        color: var(--white);
+        background: var(--primary-red);
+        color: #fff;
+      }
+
+      /* Dark mode: sin degradado en sidebar header */
+      [data-theme="dark"] .sidebar-header {
+        background: var(--gray-800);
+        border-bottom-color: rgba(255,255,255,0.08);
+      }
+      [data-theme="dark"] .btn-clear-filters {
+        background: var(--gray-600);
+        color: var(--gray-200);
+      }
+      [data-theme="dark"] .btn-clear-filters:hover {
+        background: var(--primary-red);
+        color: #fff;
+      }
+
+      /* Dark mode: inputs de precio oscuros */
+      [data-theme="dark"] .price-input-modern {
+        background: #1e293b !important;
+        border-color: #334155 !important;
+        color: #e2e8f0 !important;
+      }
+      [data-theme="dark"] .price-input-modern::placeholder {
+        color: #64748b !important;
+      }
+
+      /* Dark mode: breadcrumb + header */
+      [data-theme="dark"] .page-header-new {
+        border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+      }
+      [data-theme="dark"] .breadcrumb-item a {
+        color: #94a3b8;
+      }
+      [data-theme="dark"] .breadcrumb-item.active {
+        color: #cbd5e1;
+      }
+      [data-theme="dark"] .breadcrumb-separator {
+        color: rgba(255,255,255,0.25);
+      }
+      [data-theme="dark"] .header-title {
+        color: #f1f5f9;
+      }
+      [data-theme="dark"] .separator {
+        color: rgba(255,255,255,0.3);
       }
 
       /* Sidebar Content with Scroll */
@@ -1085,7 +1182,7 @@
         overflow-y: auto;
         flex: 1;
         min-height: 0;
-        padding: var(--spacing-3) var(--spacing-4) var(--spacing-4) var(--spacing-4);
+        padding: var(--spacing-3) var(--spacing-4) var(--spacing-8) var(--spacing-4);
       }
 
       /* Filter Sections */
@@ -1143,6 +1240,12 @@
 
       .filter-section-header:not(.collapsed) .toggle-icon {
         transform: rotate(180deg);
+      }
+
+      .filter-section-header:focus,
+      .filter-section-header:focus-visible {
+        outline: none;
+        box-shadow: none;
       }
 
       /* Filter Options List */
@@ -1481,13 +1584,39 @@
         color: var(--gray-600);
       }
 
+      /* "Todas las calificaciones" chip */
+      .filter-rating-modern:has(input[value="all"]) {
+        background: var(--gray-100);
+        border: 2px solid var(--gray-200);
+        border-radius: var(--radius-full);
+        justify-content: center;
+        padding: 5px var(--spacing-3);
+        margin-bottom: var(--spacing-2);
+      }
+      .filter-rating-modern:has(input[value="all"]) .rating-text {
+        font-size: var(--font-size-xs);
+        font-weight: 600;
+        color: var(--gray-700);
+      }
+      .filter-rating-modern:has(input[value="all"]:checked) {
+        background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-yellow) 100%);
+        border-color: transparent;
+      }
+      .filter-rating-modern:has(input[value="all"]:checked) .rating-text {
+        color: #fff;
+      }
+      .filter-rating-modern:has(input[value="all"]) input[type="radio"]:checked ~ .rating-content {
+        background: none;
+        padding: 0;
+      }
+
       /* Modern Select */
       .select-modern {
         width: 100%;
         padding: var(--spacing-3);
         border: 2px solid var(--gray-200);
         border-radius: var(--radius-lg);
-        font-size: var(--font-size-sm);
+        font-size: var(--font-size-xs);
         font-weight: 600;
         color: var(--gray-700);
         background: var(--white);
@@ -1498,8 +1627,13 @@
 
       .select-modern:focus {
         outline: none;
-        border-color: var(--primary-red);
-        box-shadow: 0 0 0 4px rgba(214, 48, 49, 0.15);
+        border-color: var(--gray-300);
+        box-shadow: none;
+      }
+
+      #clearFilters .bi,
+      #clearFilters i {
+        color: currentColor;
       }
 
       .select-modern option {
@@ -2792,13 +2926,52 @@
                 // Load products into the filter system
                 window.productFilters.products = this.createFilterableProducts();
                 window.productFilters.originalProducts = [...window.productFilters.products];
+
+                // Aplicar filtro de ofertas si viene en la URL
+                const filterParam = new URLSearchParams(window.location.search).get('filter');
+                if (filterParam === 'ofertas') {
+                  window.productFilters.onlyOffers = true;
+                }
+                window.productFilters.filterAndRender();
               }
             }, 100);
 
           } catch (error) {
-            DaleDeal.error('Error loading products:', error);
+            DaleDeal.warn('API no disponible, usando datos locales:', error.message);
             this.showLoading(false);
-            this.showError('Error al cargar los productos. Por favor, intenta nuevamente.');
+
+            const fallback = typeof window.getAllProducts === 'function' ? window.getAllProducts() : [];
+            if (fallback.length) {
+              this.products = fallback.map(p => ({
+                id: p.id,
+                title: p.title,
+                description: p.description || '',
+                price: p.price,
+                originalPrice: p.originalPrice || p.price,
+                discount: p.discount || 0,
+                category: (p.category || '').toLowerCase(),
+                images: Array.isArray(p.images) ? p.images : [p.images?.main || p.images],
+                image: p.images?.main || (Array.isArray(p.images) ? p.images[0] : p.images),
+                rating: p.rating || 0,
+                reviews: p.reviewCount || 0,
+                featured: (p.badges || []).some(b => /premium|vendido/i.test(b)),
+                isOffer: (p.discount || 0) > 0,
+                shipping: p.shipping || { free: true, speed: 'tomorrow' }
+              }));
+              this.createProductCards();
+              this.updateResultsCount();
+              setTimeout(() => {
+                if (window.productFilters) {
+                  window.productFilters.products = this.createFilterableProducts();
+                  window.productFilters.originalProducts = [...window.productFilters.products];
+                  window.productFilters.renderProducts = () => this.renderFilteredProducts();
+                  window.productFilters.filterAndRender();
+                }
+              }, 100);
+              DaleDeal.log(`✓ ${this.products.length} productos locales cargados como fallback`);
+            } else {
+              this.showError('Error al cargar los productos. Por favor, intenta nuevamente.');
+            }
           }
         }
 
@@ -2930,6 +3103,7 @@
             rating: product.rating,
             category: product.category,
             imageUrl: product.image,
+            isOffer: !!product.isOffer,
             badges: this.extractBadges(product),
             element: null, // Will be created dynamically
             productData: product
@@ -2985,8 +3159,14 @@
             productsToShow.forEach((productData, index) => {
               const product = productData.productData || this.findProductById(productData.id);
               if (product) {
-                const productCard = this.createProductCard(product, index);
-                container.appendChild(productCard);
+                if (window.HomePageLoader?.renderProductCard) {
+                  const wrapper = document.createElement('div');
+                  wrapper.innerHTML = window.HomePageLoader.renderProductCard(product);
+                  const card = wrapper.firstElementChild;
+                  if (card) container.appendChild(card);
+                } else {
+                  container.appendChild(this.createProductCard(product, index));
+                }
               }
             });
 
@@ -3195,6 +3375,7 @@
       // Initialize when DOM is ready
       document.addEventListener('DOMContentLoaded', () => {
         const catalog = new ProductCatalog();
+        window.productCatalog = catalog;
 
         // Load more button
         document.getElementById('loadMoreBtn')?.addEventListener('click', () => {
@@ -3260,24 +3441,30 @@
         // Función para aplicar todos los filtros automáticamente
         function applyAllFiltersAutomatically() {
           if (window.productFilters) {
-            // Get all filter values
-            const selectedCategory = document.querySelector('input[name="category"]:checked')?.value || 'all';
+            let selectedCategory = document.querySelector('input[name="category"]:checked')?.value || 'all';
+
+            // Si "otros" está seleccionado, usar el valor del input de búsqueda
+            if (selectedCategory === 'otros') {
+              const otrosInput = document.getElementById('otrosCategoryInput');
+              const otrosVal = otrosInput?.value?.trim().toLowerCase();
+              selectedCategory = otrosVal || 'all';
+            }
+
             const minPrice = document.getElementById('minPrice')?.value;
             const maxPrice = document.getElementById('maxPrice')?.value;
             const selectedRating = document.querySelector('input[name="rating"]:checked')?.value || 'all';
             const selectedSort = document.getElementById('sortSelect')?.value || 'featured';
 
-            // Apply all filters at once
             window.productFilters.currentCategory = selectedCategory;
             window.productFilters.minPrice = minPrice ? parseFloat(minPrice) : null;
             window.productFilters.maxPrice = maxPrice ? parseFloat(maxPrice) : null;
             window.productFilters.currentRating = selectedRating;
             window.productFilters.currentSort = selectedSort;
 
-            // Render with all filters applied
             window.productFilters.filterAndRender();
           }
         }
+        window._applyAllFilters = applyAllFiltersAutomatically;
 
         // Debounce para los inputs de precio
         let priceDebounceTimer;
@@ -3338,6 +3525,70 @@
           }
         });
       });
+
+      // ── Buscador de categoría "Otros" ──────────────────────────
+      (function() {
+        const otrosRadio  = document.getElementById('categoryOtros');
+        const searchPanel = document.getElementById('otrosCategorySearch');
+        const input       = document.getElementById('otrosCategoryInput');
+        const suggestions = document.getElementById('otrosSuggestions');
+
+        function getCategories(query) {
+          const catalogProds = window.productCatalog?.products || [];
+          const filterProds = window.productFilters?.originalProducts || [];
+          let cats;
+          if (catalogProds.length) {
+            cats = [...new Set(catalogProds.map(p => p.category).filter(Boolean))];
+          } else {
+            cats = [...new Set(filterProds.map(p => p.category).filter(Boolean))];
+          }
+          return query
+            ? cats.filter(c => c.toLowerCase().includes(query.toLowerCase()))
+            : cats;
+        }
+
+        function renderSuggestions(list) {
+          suggestions.innerHTML = '';
+          if (!list.length) { suggestions.style.display = 'none'; return; }
+          list.forEach(cat => {
+            const li = document.createElement('li');
+            li.textContent = cat;
+            li.style.cssText = 'padding:6px 12px; cursor:pointer; font-size:13px;';
+            li.addEventListener('mouseenter', () => li.style.background = '#f3f4f6');
+            li.addEventListener('mouseleave', () => li.style.background = '');
+            li.addEventListener('click', () => {
+              input.value = cat;
+              suggestions.style.display = 'none';
+              window._applyAllFilters?.();
+            });
+            suggestions.appendChild(li);
+          });
+          suggestions.style.display = 'block';
+        }
+
+        // Mostrar/ocultar panel al seleccionar "Otros"
+        document.querySelectorAll('input[name="category"]').forEach(radio => {
+          radio.addEventListener('change', () => {
+            const isOtros = radio.value === 'otros';
+            searchPanel.style.display = isOtros ? 'block' : 'none';
+            if (isOtros) {
+              input.value = '';
+              renderSuggestions(getCategories(''));
+              input.focus();
+            } else {
+              suggestions.style.display = 'none';
+            }
+          });
+        });
+
+        input.addEventListener('input', () => {
+          renderSuggestions(getCategories(input.value));
+          window._applyAllFilters?.();
+        });
+        document.addEventListener('click', e => {
+          if (!searchPanel.contains(e.target)) suggestions.style.display = 'none';
+        });
+      })();
     </script>
     <script src="../JS/chat.js" defer></script>
     <script src="../JS/support-widget.js" defer></script>
