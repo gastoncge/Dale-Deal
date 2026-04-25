@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pago exitoso - DALE DEAL</title>
+
+    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="../CSS/variables.css" />
+
+    <style>
+      body {
+        background: var(--gray-50);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .pago-wrap {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+      }
+      .pago-card {
+        background: var(--white);
+        border-radius: 20px;
+        box-shadow: var(--shadow-lg, 0 10px 30px rgba(0, 0, 0, 0.08));
+        max-width: 560px;
+        width: 100%;
+        padding: 2.5rem;
+        text-align: center;
+      }
+      .pago-icon {
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        background: var(--success-light);
+        color: var(--success);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 52px;
+        margin: 0 auto 1.25rem;
+      }
+      .pago-title {
+        font-family: var(--font-display);
+        font-size: 1.9rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin-bottom: 0.5rem;
+      }
+      .pago-subtitle {
+        color: var(--gray-600);
+        margin-bottom: 2rem;
+      }
+      .pago-details {
+        background: var(--gray-50);
+        border: 1px solid var(--gray-200);
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        text-align: left;
+        margin-bottom: 1.5rem;
+      }
+      .pago-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.35rem 0;
+        font-size: 0.95rem;
+      }
+      .pago-row .label {
+        color: var(--gray-600);
+      }
+      .pago-row .value {
+        color: var(--gray-900);
+        font-weight: 600;
+      }
+      .pago-row.total {
+        border-top: 1px solid var(--gray-200);
+        margin-top: 0.5rem;
+        padding-top: 0.75rem;
+        font-size: 1.05rem;
+      }
+      .pago-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .btn-dd-primary {
+        background: var(--gradient-primary);
+        color: #fff;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .btn-dd-primary:hover {
+        opacity: 0.92;
+        color: #fff;
+      }
+      .btn-dd-ghost {
+        background: transparent;
+        border: 1px solid var(--gray-300);
+        color: var(--gray-700);
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .btn-dd-ghost:hover {
+        background: var(--gray-100);
+        color: var(--gray-900);
+      }
+      .pago-pending-note {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: var(--warning-light);
+        border: 1px solid var(--warning);
+        border-radius: 10px;
+        color: var(--gray-800);
+        font-size: 0.92rem;
+        text-align: left;
+      }
+      .pago-pending-note strong {
+        color: var(--warning);
+      }
+      .pago-footer {
+        text-align: center;
+        padding: 1.25rem;
+        color: var(--gray-500);
+        font-size: 0.85rem;
+      }
+      .logo-mini {
+        width: 120px;
+        display: block;
+        margin: 0 auto 1.5rem;
+        opacity: 0.7;
+      }
+      .spinner-mini {
+        width: 18px;
+        height: 18px;
+        border: 2px solid var(--gray-300);
+        border-top-color: var(--primary-red);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        display: inline-block;
+        vertical-align: middle;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="pago-wrap">
+      <div class="pago-card">
+        <img src="../IMG/LOGO-2.png" alt="Dale Deal" class="logo-mini" />
+
+        <div class="pago-icon">
+          <i class="bi bi-check-lg"></i>
+        </div>
+
+        <h1 class="pago-title">¡Pago recibido!</h1>
+        <p class="pago-subtitle">
+          Tu compra quedó registrada. Ya podés coordinar la entrega con el vendedor desde el chat.
+        </p>
+
+        <div id="paymentStatus">
+          <div style="padding: 2rem 0; color: var(--gray-500);">
+            <span class="spinner-mini"></span>&nbsp; Consultando estado del pago…
+          </div>
+        </div>
+
+        <div class="pago-actions mt-3">
+          <a href="#" id="btnChat" class="btn-dd-primary">
+            <i class="bi bi-chat-dots"></i>
+            Abrir chat con el vendedor
+          </a>
+          <a href="./notificaciones.html#pedidos" class="btn-dd-ghost">
+            <i class="bi bi-bag"></i>
+            Ver mis compras
+          </a>
+        </div>
+
+        <div id="pendingOrdersNote" class="pago-pending-note" style="display: none;">
+          <strong>Atención:</strong>
+          Tu carrito tenía más de un producto. Todavía te quedan
+          <span id="pendingOrdersCount">0</span> orden(es) por pagar:
+          <div id="pendingOrdersList" class="mt-2"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pago-footer">
+      <a href="../index.html" style="color: var(--gray-500); text-decoration: none;">
+        ← Volver al inicio
+      </a>
+    </div>
+
+    <script src="../JS/theme.js"></script>
+    <script src="../JS/api.js"></script>
+    <script src="../JS/api-payments.js"></script>
+    <script>
+      (async function () {
+        const params = new URLSearchParams(window.location.search);
+        const orderId =
+          params.get('order_id') ||
+          params.get('external_reference')?.match(/order-(\d+)/)?.[1] ||
+          localStorage.getItem('dd_current_payment_order');
+
+        const mpPaymentId = params.get('payment_id');
+        const mpStatus    = params.get('status'); // 'approved' por back_urls de MP
+        const mpMerchant  = params.get('merchant_order_id');
+
+        const statusEl = document.getElementById('paymentStatus');
+        const chatBtn  = document.getElementById('btnChat');
+
+        // Si no hay sesión, redirigir a login
+        if (!localStorage.getItem('daledeal_token')) {
+          statusEl.innerHTML = `
+            <div class="pago-details">
+              <p>Iniciá sesión para ver el detalle de tu orden.</p>
+            </div>
+          `;
+          chatBtn.href = './login.html';
+          return;
+        }
+
+        if (!orderId) {
+          statusEl.innerHTML = `
+            <div class="pago-details">
+              <p style="color: var(--warning);">No pudimos identificar la orden. Revisá "Mis compras".</p>
+            </div>
+          `;
+          chatBtn.href = './notificaciones.html#pedidos';
+          return;
+        }
+
+        // Consultar estado actual
+        try {
+          const { order } = await window.DaleDeal.payments.getStatus(orderId);
+
+          const fmt = (n) =>
+            new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(n || 0);
+
+          const statusLabel = {
+            paid:        { text: 'Aprobado', color: 'var(--success)' },
+            in_process:  { text: 'En proceso', color: 'var(--warning)' },
+            authorized:  { text: 'Autorizado', color: 'var(--warning)' },
+            pending:     { text: 'Pendiente', color: 'var(--warning)' },
+            rejected:    { text: 'Rechazado', color: 'var(--error)' },
+            failed:      { text: 'Fallido', color: 'var(--error)' },
+          }[order.payment_status] || { text: order.payment_status || '—', color: 'var(--gray-700)' };
+
+          statusEl.innerHTML = `
+            <div class="pago-details">
+              <div class="pago-row">
+                <span class="label">Orden</span>
+                <span class="value">#${order.id}</span>
+              </div>
+              <div class="pago-row">
+                <span class="label">Producto</span>
+                <span class="value">${order.product_title || '—'}</span>
+              </div>
+              <div class="pago-row">
+                <span class="label">Cantidad</span>
+                <span class="value">${order.quantity}</span>
+              </div>
+              <div class="pago-row">
+                <span class="label">Estado del pago</span>
+                <span class="value" style="color: ${statusLabel.color}">${statusLabel.text}</span>
+              </div>
+              ${order.mp_payment_id ? `
+              <div class="pago-row">
+                <span class="label">ID Mercado Pago</span>
+                <span class="value" style="font-family: monospace; font-size: 0.85rem;">${order.mp_payment_id}</span>
+              </div>` : ''}
+              <div class="pago-row total">
+                <span class="label">Total</span>
+                <span class="value">${fmt(order.total_price)}</span>
+              </div>
+            </div>
+          `;
+
+          // Chat con el vendedor
+          if (order.conversation_id) {
+            chatBtn.href = `./notificaciones.html?conv=${order.conversation_id}#mensajes`;
+          } else {
+            chatBtn.href = './notificaciones.html#mensajes';
+          }
+        } catch (err) {
+          console.error('[pago-exitoso] error consultando estado:', err);
+          statusEl.innerHTML = `
+            <div class="pago-details">
+              <p style="color: var(--warning);">
+                Tu pago fue procesado pero no pudimos consultar el detalle ahora.
+                Intentá recargar esta página en unos segundos, o revisá "Mis compras".
+              </p>
+            </div>
+          `;
+          chatBtn.href = './notificaciones.html#pedidos';
+        }
+
+        // Limpiar la orden "en curso"
+        localStorage.removeItem('dd_current_payment_order');
+
+        // ¿Órdenes pendientes (del carrito múltiple)?
+        try {
+          const pending = JSON.parse(localStorage.getItem('dd_pending_orders') || '[]');
+          if (Array.isArray(pending) && pending.length > 0) {
+            document.getElementById('pendingOrdersNote').style.display = 'block';
+            document.getElementById('pendingOrdersCount').textContent = pending.length;
+
+            const list = document.getElementById('pendingOrdersList');
+            pending.forEach((id) => {
+              const btn = document.createElement('button');
+              btn.className = 'btn-dd-primary me-2 mb-2';
+              btn.style.fontSize = '0.9rem';
+              btn.style.padding = '0.5rem 1rem';
+              btn.innerHTML = `<i class="bi bi-credit-card"></i> Pagar orden #${id}`;
+              btn.addEventListener('click', async () => {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-mini"></span>&nbsp; Redirigiendo…';
+                try {
+                  // Sacar esta orden de la lista de pendientes antes de redirigir
+                  const rest = pending.filter((p) => p !== id);
+                  if (rest.length > 0) {
+                    localStorage.setItem('dd_pending_orders', JSON.stringify(rest));
+                  } else {
+                    localStorage.removeItem('dd_pending_orders');
+                  }
+                  await window.DaleDeal.payments.redirectToCheckout(id);
+                } catch (err) {
+                  btn.disabled = false;
+                  btn.innerHTML = `<i class="bi bi-credit-card"></i> Pagar orden #${id}`;
+                  alert('No se pudo iniciar el pago: ' + err.message);
+                }
+              });
+              list.appendChild(btn);
+            });
+          }
+        } catch (_) {}
+      })();
+    </script>
+  </body>
+</html>

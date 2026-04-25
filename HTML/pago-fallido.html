@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pago rechazado - DALE DEAL</title>
+
+    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="../CSS/variables.css" />
+
+    <style>
+      body {
+        background: var(--gray-50);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .pago-wrap {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+      }
+      .pago-card {
+        background: var(--white);
+        border-radius: 20px;
+        box-shadow: var(--shadow-lg, 0 10px 30px rgba(0, 0, 0, 0.08));
+        max-width: 560px;
+        width: 100%;
+        padding: 2.5rem;
+        text-align: center;
+      }
+      .pago-icon {
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        background: var(--error-light);
+        color: var(--error);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 52px;
+        margin: 0 auto 1.25rem;
+      }
+      .pago-title {
+        font-family: var(--font-display);
+        font-size: 1.9rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin-bottom: 0.5rem;
+      }
+      .pago-subtitle {
+        color: var(--gray-600);
+        margin-bottom: 2rem;
+      }
+      .pago-reason {
+        background: var(--error-light);
+        border: 1px solid var(--error);
+        border-radius: 10px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.5rem;
+        text-align: left;
+        color: var(--gray-800);
+        font-size: 0.95rem;
+      }
+      .pago-reason strong {
+        color: var(--error);
+        display: block;
+        margin-bottom: 0.25rem;
+      }
+      .pago-tips {
+        text-align: left;
+        background: var(--gray-50);
+        border: 1px solid var(--gray-200);
+        border-radius: 10px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+        color: var(--gray-700);
+      }
+      .pago-tips ul {
+        margin: 0.5rem 0 0 1.25rem;
+        padding: 0;
+      }
+      .pago-tips li {
+        margin-bottom: 0.25rem;
+      }
+      .pago-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .btn-dd-primary {
+        background: var(--gradient-primary);
+        color: #fff;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+      }
+      .btn-dd-primary:hover {
+        opacity: 0.92;
+        color: #fff;
+      }
+      .btn-dd-primary:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      .btn-dd-ghost {
+        background: transparent;
+        border: 1px solid var(--gray-300);
+        color: var(--gray-700);
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .btn-dd-ghost:hover {
+        background: var(--gray-100);
+        color: var(--gray-900);
+      }
+      .logo-mini {
+        width: 120px;
+        display: block;
+        margin: 0 auto 1.5rem;
+        opacity: 0.7;
+      }
+      .pago-footer {
+        text-align: center;
+        padding: 1.25rem;
+        color: var(--gray-500);
+        font-size: 0.85rem;
+      }
+      .spinner-mini {
+        width: 18px;
+        height: 18px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        display: inline-block;
+        vertical-align: middle;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="pago-wrap">
+      <div class="pago-card">
+        <img src="../IMG/LOGO-2.png" alt="Dale Deal" class="logo-mini" />
+
+        <div class="pago-icon">
+          <i class="bi bi-x-lg"></i>
+        </div>
+
+        <h1 class="pago-title">El pago no se completó</h1>
+        <p class="pago-subtitle">
+          No te preocupes — no se te cobró nada. Podés intentarlo de nuevo o elegir otro medio de pago.
+        </p>
+
+        <div id="reasonBox" class="pago-reason" style="display: none;">
+          <strong>Motivo:</strong>
+          <span id="reasonText">—</span>
+        </div>
+
+        <div class="pago-tips">
+          <strong>Sugerencias:</strong>
+          <ul>
+            <li>Revisá que los datos de la tarjeta estén correctos.</li>
+            <li>Verificá que tengas saldo o límite disponible.</li>
+            <li>Probá con otra tarjeta o con dinero en cuenta de Mercado Pago.</li>
+            <li>Si el problema persiste, contactá al emisor de tu tarjeta.</li>
+          </ul>
+        </div>
+
+        <div class="pago-actions">
+          <button id="btnRetry" class="btn-dd-primary">
+            <i class="bi bi-arrow-clockwise"></i>
+            Intentar de nuevo
+          </button>
+          <a href="./notificaciones.html#pedidos" class="btn-dd-ghost">
+            <i class="bi bi-bag"></i>
+            Ver mis órdenes
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="pago-footer">
+      <a href="../index.html" style="color: var(--gray-500); text-decoration: none;">
+        ← Volver al inicio
+      </a>
+    </div>
+
+    <script src="../JS/theme.js"></script>
+    <script src="../JS/api.js"></script>
+    <script src="../JS/api-payments.js"></script>
+    <script>
+      (async function () {
+        const params = new URLSearchParams(window.location.search);
+        const orderId =
+          params.get('order_id') ||
+          localStorage.getItem('dd_current_payment_order');
+
+        // MP a veces pasa status_detail con info del rechazo
+        const mpStatus   = params.get('status');         // 'rejected' | 'null' | ...
+        const mpDetail   = params.get('status_detail');  // 'cc_rejected_insufficient_amount' | ...
+
+        const reasonMap = {
+          cc_rejected_insufficient_amount:   'Saldo o límite insuficiente en la tarjeta.',
+          cc_rejected_bad_filled_card_number:'Número de tarjeta incorrecto.',
+          cc_rejected_bad_filled_date:       'Fecha de vencimiento incorrecta.',
+          cc_rejected_bad_filled_security_code: 'Código de seguridad incorrecto.',
+          cc_rejected_call_for_authorize:    'Tu banco rechazó el pago. Tenés que autorizarlo con tu banco.',
+          cc_rejected_card_disabled:         'La tarjeta está deshabilitada.',
+          cc_rejected_duplicated_payment:    'Ya realizaste un pago por ese monto.',
+          cc_rejected_high_risk:              'El pago fue rechazado por seguridad.',
+          cc_rejected_other_reason:          'Rechazado por el emisor de la tarjeta.',
+        };
+
+        const reasonText = mpDetail ? reasonMap[mpDetail] : null;
+        if (reasonText) {
+          document.getElementById('reasonBox').style.display = 'block';
+          document.getElementById('reasonText').textContent = reasonText;
+        } else if (mpStatus === 'rejected') {
+          document.getElementById('reasonBox').style.display = 'block';
+          document.getElementById('reasonText').textContent = 'El pago fue rechazado.';
+        }
+
+        // Botón "Intentar de nuevo" → genera una nueva preferencia para la misma orden
+        const btnRetry = document.getElementById('btnRetry');
+        btnRetry.addEventListener('click', async () => {
+          if (!orderId) {
+            alert('No pudimos identificar la orden. Revisá "Mis órdenes".');
+            return;
+          }
+          if (!localStorage.getItem('daledeal_token')) {
+            window.location.href = './login.html';
+            return;
+          }
+
+          btnRetry.disabled = true;
+          const original = btnRetry.innerHTML;
+          btnRetry.innerHTML = '<span class="spinner-mini"></span>&nbsp; Redirigiendo…';
+          try {
+            await window.DaleDeal.payments.redirectToCheckout(orderId);
+          } catch (err) {
+            btnRetry.disabled = false;
+            btnRetry.innerHTML = original;
+            alert('No se pudo iniciar el pago: ' + err.message);
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

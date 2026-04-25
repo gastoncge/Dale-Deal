@@ -585,7 +585,19 @@ class ProductPage {
       const productId = this.currentProduct?.id;
       if (!productId) throw new Error('Producto inválido');
 
-      // Crear la orden — el backend genera la conversación automáticamente
+      // Si hay integración de pagos, vamos directo a Mercado Pago.
+      // Si no (modo legacy/sin MP), caemos al flujo de orden + chat.
+      const payments = window.DaleDeal?.payments;
+      if (payments?.buyProductNow) {
+        this.showNotification('Redirigiendo a Mercado Pago…', 'info');
+        await payments.buyProductNow({
+          product_id: productId,
+          quantity:   this.quantity || 1,
+        });
+        return; // la función redirige — no se llega acá
+      }
+
+      // Fallback: sin MP → comportamiento viejo (crear orden + abrir chat)
       const apiFetch = window.DaleDeal?.api?.apiFetch;
       if (!apiFetch) throw new Error('API no disponible');
 
@@ -599,7 +611,6 @@ class ProductPage {
 
       this.showNotification('¡Compra realizada! Abriendo chat con el vendedor…', 'success');
 
-      // Abrir la conversación creada automáticamente
       const convId = res?.conversation?.id;
       if (convId && window.DaleDeal?.chat) {
         setTimeout(() => window.DaleDeal.chat.openConversation(convId), 800);
