@@ -74,6 +74,26 @@
         border-bottom: 1px solid var(--gray-200) !important;
       }
 
+      [data-theme="dark"] .page-header-new {
+        background: var(--white) !important;
+        border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+      }
+      [data-theme="dark"] .breadcrumb-item a {
+        color: #94a3b8;
+      }
+      [data-theme="dark"] .breadcrumb-item.active {
+        color: #cbd5e1;
+      }
+      [data-theme="dark"] .breadcrumb-separator {
+        color: rgba(255,255,255,0.25);
+      }
+      [data-theme="dark"] .header-title {
+        color: #f1f5f9;
+      }
+      [data-theme="dark"] .separator {
+        color: rgba(255,255,255,0.3);
+      }
+
       /* Badges iguales a la página de inicio - display controlado por JS */
       .notification-badge,
       .cart-badge {
@@ -394,6 +414,57 @@
         color: var(--white);
       }
 
+      /* Dark mode: sidebar header */
+      [data-theme="dark"] .sidebar-header {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        border-bottom-color: rgba(255,255,255,0.08);
+      }
+      [data-theme="dark"] .btn-clear-filters {
+        background: #334155;
+        color: #e2e8f0;
+      }
+      [data-theme="dark"] .btn-clear-filters:hover {
+        background: var(--primary-red);
+        color: #fff;
+      }
+
+      /* Dark mode: price stepper */
+      [data-theme="dark"] .price-stepper {
+        background: #1e293b !important;
+        border-color: #334155 !important;
+      }
+      [data-theme="dark"] .price-input-modern {
+        background: transparent !important;
+        color: #e2e8f0 !important;
+      }
+      [data-theme="dark"] .price-input-modern::placeholder {
+        color: #64748b !important;
+      }
+      [data-theme="dark"] .stepper-btn {
+        background: #1e293b !important;
+        color: #94a3b8 !important;
+        border-bottom-color: #334155 !important;
+      }
+      [data-theme="dark"] .stepper-btn:hover {
+        background: var(--primary-red) !important;
+        color: #fff !important;
+      }
+
+      /* Dark mode: buscador de categoría "Otros" */
+      [data-theme="dark"] #otrosCategoryInput {
+        background: #1e293b !important;
+        border-color: #334155 !important;
+        color: #e2e8f0 !important;
+      }
+      [data-theme="dark"] #otrosCategoryInput::placeholder {
+        color: #64748b !important;
+      }
+      [data-theme="dark"] #otrosSuggestions {
+        background: #1e293b !important;
+        border-color: #334155 !important;
+        color: #e2e8f0 !important;
+      }
+
       /* Sidebar Content with Scroll */
       .filters-sidebar > div:last-child {
         overflow-y: auto;
@@ -565,35 +636,7 @@
         letter-spacing: 0.5px;
       }
 
-      .input-with-icon {
-        position: relative;
-      }
-
-      .currency-symbol {
-        position: absolute;
-        left: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--gray-500);
-        font-weight: 600;
-        font-size: var(--font-size-sm);
-      }
-
-      .price-input-modern {
-        width: 100%;
-        border: 2px solid var(--gray-200);
-        border-radius: var(--radius-lg);
-        padding: var(--spacing-3) var(--spacing-3) var(--spacing-3) 32px;
-        font-size: var(--font-size-sm);
-        font-weight: 600;
-        transition: all var(--transition-base);
-      }
-
-      .price-input-modern:focus {
-        outline: none;
-        border-color: var(--primary-red);
-        box-shadow: 0 0 0 4px rgba(214, 48, 49, 0.15);
-      }
+      /* price-stepper usa los estilos de services.css */
 
       .price-divider {
         display: flex;
@@ -2040,13 +2083,6 @@
   </head>
 
   <body>
-    <!-- Barra de Anuncios Rotativos -->
-    <div class="announcement-bar" id="announcementBar">
-      <div class="container-fluid">
-        <span class="announcement-text" id="announcementText">🔥 Envío gratis en compras mayores a $50.000 | Hasta 12 cuotas sin interés</span>
-        <button class="announcement-close" id="announcementClose" title="Cerrar"><i class="bi bi-x"></i></button>
-      </div>
-    </div>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
@@ -2209,7 +2245,7 @@
                 </a>
               </li>
               <li>
-                <a class="dropdown-item" href="#" id="favoritesLink">
+                <a class="dropdown-item" href="./notificaciones.html#favoritos" id="favoritesLink">
                   <i class="bi bi-heart me-2"></i>Favoritos
                 </a>
               </li>
@@ -2347,6 +2383,22 @@
                       </span>
                       <span class="option-check"><i class="bi bi-check-lg"></i></span>
                     </label>
+                    <label class="filter-option-modern">
+                      <input type="radio" name="category" value="otros" data-category="otros" id="categoryOtros">
+                      <span class="option-content">
+                        <i class="bi bi-three-dots category-icon"></i>
+                        <span class="option-text">Otros</span>
+                      </span>
+                      <span class="option-check"><i class="bi bi-check-lg"></i></span>
+                    </label>
+                    <!-- Buscador de categoría para "Otros" -->
+                    <div id="otrosCategorySearch" style="display:none; padding: 8px 4px 4px;">
+                      <div style="position:relative;">
+                        <input type="text" id="otrosCategoryInput" placeholder="Buscar categoría..." autocomplete="off"
+                          style="width:100%; padding:6px 10px; border:1.5px solid var(--gray-200); border-radius:8px; font-size:13px; outline:none;">
+                        <ul id="otrosSuggestions" style="display:none; position:absolute; top:100%; left:0; right:0; background:var(--white); border:1.5px solid var(--gray-200); border-radius:8px; margin-top:4px; padding:4px 0; list-style:none; z-index:100; max-height:160px; overflow-y:auto; box-shadow:0 4px 12px rgba(0,0,0,0.1);"></ul>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -2365,9 +2417,13 @@
                     <div class="price-inputs-group">
                       <div class="price-input-wrapper">
                         <label class="price-label">Mínimo</label>
-                        <div class="input-with-icon">
+                        <div class="price-stepper">
                           <span class="currency-symbol">$</span>
                           <input type="number" class="price-input-modern" id="minPrice" placeholder="0" min="0">
+                          <div class="stepper-btns">
+                            <button type="button" class="stepper-btn" data-target="minPrice" data-dir="up">▲</button>
+                            <button type="button" class="stepper-btn" data-target="minPrice" data-dir="down">▼</button>
+                          </div>
                         </div>
                       </div>
                       <div class="price-divider">
@@ -2375,9 +2431,13 @@
                       </div>
                       <div class="price-input-wrapper">
                         <label class="price-label">Máximo</label>
-                        <div class="input-with-icon">
+                        <div class="price-stepper">
                           <span class="currency-symbol">$</span>
                           <input type="number" class="price-input-modern" id="maxPrice" placeholder="99999" min="0">
+                          <div class="stepper-btns">
+                            <button type="button" class="stepper-btn" data-target="maxPrice" data-dir="up">▲</button>
+                            <button type="button" class="stepper-btn" data-target="maxPrice" data-dir="down">▼</button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -2819,6 +2879,19 @@
             });
           });
 
+          // --- Price stepper buttons ---
+          document.querySelectorAll('.stepper-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const input = document.getElementById(btn.dataset.target);
+              if (!input) return;
+              const step = 500;
+              let val = parseFloat(input.value) || 0;
+              val = btn.dataset.dir === 'up' ? val + step : Math.max(0, val - step);
+              input.value = val;
+              input.dispatchEvent(new Event('input'));
+            });
+          });
+
           // --- Price inputs (debounced 500ms) ---
           let priceTimer;
           const minPrice = document.getElementById('minPrice');
@@ -2956,9 +3029,15 @@
           this.currentPage = 1;
 
           // Start from all services
-          let filtered = this.currentCategory === 'all'
-            ? [...this.services]
-            : this.services.filter(s => s.category === this.currentCategory);
+          let filtered;
+          if (this.currentCategory === 'all') {
+            filtered = [...this.services];
+          } else if (this.currentCategory === 'otros') {
+            const predefined = ['installation','repair','maintenance','consultation','catering','construction'];
+            filtered = this.services.filter(s => !predefined.includes(s.category));
+          } else {
+            filtered = this.services.filter(s => s.category === this.currentCategory || s.category?.toLowerCase().includes(this.currentCategory.toLowerCase()));
+          }
 
           // Search term
           if (this.searchTerm) {
@@ -3039,6 +3118,10 @@
           document.querySelectorAll('input[name="category"]').forEach(r => {
             r.checked = r.value === 'all';
           });
+          const otrosSearchPanel = document.getElementById('otrosCategorySearch');
+          const otrosInput = document.getElementById('otrosCategoryInput');
+          if (otrosSearchPanel) otrosSearchPanel.style.display = 'none';
+          if (otrosInput) otrosInput.value = '';
           document.querySelectorAll('input[name="rating"]').forEach(r => {
             r.checked = r.value === 'all';
           });
@@ -3362,6 +3445,69 @@
             }
           }, 200);
         }
+
+        // ── Buscador de categoría "Otros" ──────────────────────────
+        (function() {
+          const searchPanel = document.getElementById('otrosCategorySearch');
+          const input       = document.getElementById('otrosCategoryInput');
+          const suggestions = document.getElementById('otrosSuggestions');
+          if (!searchPanel || !input || !suggestions) return;
+
+          function getCategories(query) {
+            const services = window.serviceCatalog?.services || [];
+            const cats = [...new Set(services.map(s => s.category).filter(Boolean))];
+            return query
+              ? cats.filter(c => c.toLowerCase().includes(query.toLowerCase()))
+              : cats;
+          }
+
+          function renderSuggestions(list) {
+            suggestions.innerHTML = '';
+            if (!list.length) { suggestions.style.display = 'none'; return; }
+            list.forEach(cat => {
+              const li = document.createElement('li');
+              li.textContent = cat;
+              li.style.cssText = 'padding:6px 12px; cursor:pointer; font-size:13px;';
+              li.addEventListener('mouseenter', () => li.style.background = document.documentElement.getAttribute('data-theme') === 'dark' ? '#334155' : '#f3f4f6');
+              li.addEventListener('mouseleave', () => li.style.background = '');
+              li.addEventListener('click', () => {
+                input.value = cat;
+                suggestions.style.display = 'none';
+                if (window.serviceCatalog) {
+                  window.serviceCatalog.currentCategory = cat;
+                  window.serviceCatalog.applyFilters();
+                }
+              });
+              suggestions.appendChild(li);
+            });
+            suggestions.style.display = 'block';
+          }
+
+          document.querySelectorAll('input[name="category"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+              const isOtros = radio.value === 'otros';
+              searchPanel.style.display = isOtros ? 'block' : 'none';
+              if (isOtros) {
+                input.value = '';
+                suggestions.style.display = 'none';
+                input.focus();
+              } else {
+                suggestions.style.display = 'none';
+              }
+            });
+          });
+
+          input.addEventListener('input', () => {
+            renderSuggestions(getCategories(input.value));
+            if (window.serviceCatalog) {
+              window.serviceCatalog.currentCategory = input.value.trim() || 'otros';
+              window.serviceCatalog.applyFilters();
+            }
+          });
+          document.addEventListener('click', e => {
+            if (!searchPanel.contains(e.target)) suggestions.style.display = 'none';
+          });
+        })();
       });
     </script>
     <script src="../JS/api.js" defer></script>

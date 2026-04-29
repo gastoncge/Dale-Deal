@@ -156,18 +156,18 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-[data-theme="dark"] .hero-badge,
-[data-theme="dark"] .offer-badge,
-[data-theme="dark"] .product-badge,
-[data-theme="dark"] .service-badge {
-  color: #000 !important;
+[data-theme="dark"] .hero-slide .hero-badge,
+[data-theme="dark"] .hero-slide .offer-badge,
+[data-theme="dark"] .hero-slide .product-badge,
+[data-theme="dark"] .hero-slide .service-badge {
+  color: #374151 !important;
 }
 
-[data-theme="dark"] .hero-badge .bi,
-[data-theme="dark"] .offer-badge .bi,
-[data-theme="dark"] .product-badge .bi,
-[data-theme="dark"] .service-badge .bi {
-  color: #000 !important;
+[data-theme="dark"] .hero-slide .hero-badge .bi,
+[data-theme="dark"] .hero-slide .offer-badge .bi,
+[data-theme="dark"] .hero-slide .product-badge .bi,
+[data-theme="dark"] .hero-slide .service-badge .bi {
+  color: #374151 !important;
 }
 
 .hero-title {

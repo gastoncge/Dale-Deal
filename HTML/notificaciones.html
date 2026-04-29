@@ -67,6 +67,21 @@
 
         <!-- User Actions -->
         <div class="navbar-actions" data-aos="fade-left" data-aos-delay="200">
+          <!-- Publicar Button -->
+          <div class="action-item d-none d-md-flex">
+            <a href="./publicar.html" class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-3" title="Publicar producto o servicio" style="border-radius: 20px; font-weight: 600;">
+              <i class="bi bi-plus-circle-fill"></i>
+              <span>Publicar</span>
+            </a>
+          </div>
+
+          <!-- Dark Mode Toggle -->
+          <div class="action-item d-none d-md-flex">
+            <button class="theme-toggle" id="themeToggle" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">
+              <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+            </button>
+          </div>
+
           <!-- Products Link -->
           <div class="action-item">
             <a href="./productos.html" class="action-link" title="Productos">
@@ -202,7 +217,7 @@
                 </a>
               </li>
               <li>
-                <a class="dropdown-item" href="#" id="favoritesLink">
+                <a class="dropdown-item" href="./notificaciones.html#favoritos" id="favoritesLink">
                   <i class="bi bi-heart me-2"></i>Favoritos
                 </a>
               </li>
@@ -334,6 +349,11 @@
                 <a href="#" class="sidebar-nav-item" data-section="mis-compras">
                   <i class="bi bi-bag me-2"></i>
                   <span>Mis compras</span>
+                </a>
+                <a href="#" class="sidebar-nav-item" data-section="favoritos">
+                  <i class="bi bi-heart me-2"></i>
+                  <span>Favoritos</span>
+                  <span class="filter-count" id="favoritosBadge" style="display:none;">0</span>
                 </a>
               </nav>
 
@@ -670,6 +690,49 @@
                     </div>
                   </div>
                 </section>
+              </div>
+            </div>
+
+            <!-- ===== SECCIÓN: FAVORITOS ===== -->
+            <div id="view-favoritos" class="centro-section" style="display:none">
+              <div class="centro-section-header">
+                <h2 class="centro-section-title"><i class="bi bi-heart-fill me-2" style="color:var(--primary-red)"></i>Mis Favoritos</h2>
+                <div class="d-flex gap-2 align-items-center flex-wrap">
+                  <span class="text-muted small" id="favoritosCount">0 elementos</span>
+                  <button class="btn btn-sm btn-outline-secondary" id="favAddAllToCart" style="display:none">
+                    <i class="bi bi-cart-plus me-1"></i>Agregar todo al carrito
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" id="favClearAll" style="display:none">
+                    <i class="bi bi-trash me-1"></i>Limpiar todo
+                  </button>
+                </div>
+              </div>
+
+              <!-- Vacío -->
+              <div id="favoritosEmpty" class="text-center py-5">
+                <i class="bi bi-heart" style="font-size:3rem;color:var(--gray-300)"></i>
+                <h5 class="mt-3 text-muted">No tenés favoritos todavía</h5>
+                <p class="text-muted small">Explorá productos y servicios y guardá los que más te gusten.</p>
+                <a href="./productos.html" class="btn btn-primary mt-2">
+                  <i class="bi bi-bag me-2"></i>Explorar productos
+                </a>
+              </div>
+
+              <!-- Grid -->
+              <div id="favoritosGrid" style="display:none">
+                <!-- Tabs productos / servicios -->
+                <div class="d-flex gap-2 mb-4 flex-wrap" id="favoritosTabs">
+                  <button class="btn btn-sm btn-primary active" data-fav-tab="all">Todos</button>
+                  <button class="btn btn-sm btn-outline-secondary" data-fav-tab="product">
+                    <i class="bi bi-box-seam me-1"></i>Productos
+                    <span class="ms-1" id="favProdCount"></span>
+                  </button>
+                  <button class="btn btn-sm btn-outline-secondary" data-fav-tab="service">
+                    <i class="bi bi-tools me-1"></i>Servicios
+                    <span class="ms-1" id="favServCount"></span>
+                  </button>
+                </div>
+                <div class="row g-3" id="favoritosContent"></div>
               </div>
             </div>
 
@@ -1068,7 +1131,7 @@
       AOS.init({ duration: 800, once: true, offset: 100 });
 
       // ===== NAVEGACIÓN DE SECCIONES =====
-      const allSections = ['notifications','mi-perfil','mensajes','mis-compras','centro-ayuda','contacto','reportar-problema','estado-servicio','seguridad'];
+      const allSections = ['notifications','mi-perfil','mensajes','mis-compras','favoritos','centro-ayuda','contacto','reportar-problema','estado-servicio','seguridad'];
 
       function showSection(name) {
         allSections.forEach(s => {
@@ -1092,7 +1155,76 @@
         } else if (typeof stopMensajesPolling === 'function') {
           stopMensajesPolling();
         }
+        if (name === 'favoritos') renderFavoritosPage();
       }
+
+      // ===== FAVORITOS =====
+      let favTabActivo = 'all';
+
+      function renderFavoritosPage() {
+        const fm = window.favoritesManager;
+        const favs = fm ? fm.getFavorites() : [];
+        const empty   = document.getElementById('favoritosEmpty');
+        const grid    = document.getElementById('favoritosGrid');
+        const count   = document.getElementById('favoritosCount');
+        const badge   = document.getElementById('favoritosBadge');
+        const btnCart = document.getElementById('favAddAllToCart');
+        const btnClear= document.getElementById('favClearAll');
+        const prodCnt = document.getElementById('favProdCount');
+        const servCnt = document.getElementById('favServCount');
+
+        const products = favs.filter(f => f.type === 'product');
+        const services = favs.filter(f => f.type === 'service');
+
+        if (count)  count.textContent  = `${favs.length} elemento${favs.length !== 1 ? 's' : ''}`;
+        if (badge)  { badge.textContent = favs.length; badge.style.display = favs.length ? 'inline' : 'none'; }
+        if (prodCnt) prodCnt.textContent = products.length ? `(${products.length})` : '';
+        if (servCnt) servCnt.textContent = services.length ? `(${services.length})` : '';
+        if (btnCart) btnCart.style.display = products.length ? '' : 'none';
+        if (btnClear) btnClear.style.display = favs.length ? '' : 'none';
+
+        if (!favs.length) {
+          empty.style.display = '';
+          grid.style.display  = 'none';
+          return;
+        }
+        empty.style.display = 'none';
+        grid.style.display  = '';
+
+        const visible = favTabActivo === 'product' ? products
+                      : favTabActivo === 'service' ? services
+                      : favs;
+
+        const content = document.getElementById('favoritosContent');
+        if (!content) return;
+        content.innerHTML = visible.map(f =>
+          f.type === 'product' ? fm.renderFavoriteProduct(f) : fm.renderFavoriteService(f)
+        ).join('');
+      }
+
+      // Tabs de favoritos
+      document.querySelectorAll('[data-fav-tab]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('[data-fav-tab]').forEach(b => {
+            b.classList.remove('btn-primary', 'active');
+            b.classList.add('btn-outline-secondary');
+          });
+          btn.classList.remove('btn-outline-secondary');
+          btn.classList.add('btn-primary', 'active');
+          favTabActivo = btn.dataset.favTab;
+          renderFavoritosPage();
+        });
+      });
+
+      // Botones acciones
+      document.getElementById('favAddAllToCart')?.addEventListener('click', () => {
+        window.favoritesManager?.addAllToCart();
+        setTimeout(renderFavoritosPage, 100);
+      });
+      document.getElementById('favClearAll')?.addEventListener('click', () => {
+        window.favoritesManager?.clearFavorites();
+        renderFavoritosPage();
+      });
 
       // Sidebar nav items
       document.querySelectorAll('.sidebar-nav-item[data-section]').forEach(link => {

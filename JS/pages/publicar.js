@@ -2,7 +2,66 @@
 // DALE DEAL - Publicar Producto / Servicio
 // =====================================================
 
+// =====================================================
+// EDITORES QUILL — Descripción enriquecida
+// =====================================================
+let quillProduct = null;
+let quillService = null;
+
+function initQuillEditors() {
+  if (typeof Quill === 'undefined') return;
+
+  const toolbarOptions = [
+    [{ header: [1, 2, 3, false] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ color: [] }, { background: [] }],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+    ['link', 'image'],
+    ['clean'],
+  ];
+
+  function imageUrlHandler(quillInstance) {
+    const url = prompt('Pegá la URL de la imagen o GIF:');
+    if (url && url.trim()) {
+      const range = quillInstance.getSelection(true);
+      quillInstance.insertEmbed(range.index, 'image', url.trim());
+      quillInstance.setSelection(range.index + 1);
+    }
+  }
+
+  quillProduct = new Quill('#p-description-editor', {
+    theme: 'snow',
+    placeholder: 'Describí tu producto: características, estado, detalles importantes...',
+    modules: {
+      toolbar: {
+        container: toolbarOptions,
+        handlers: { image: () => imageUrlHandler(quillProduct) },
+      },
+    },
+  });
+
+  quillService = new Quill('#s-description-editor', {
+    theme: 'snow',
+    placeholder: 'Describí tu servicio: qué incluye, experiencia, cómo trabajás...',
+    modules: {
+      toolbar: {
+        container: toolbarOptions,
+        handlers: { image: () => imageUrlHandler(quillService) },
+      },
+    },
+  });
+
+  // Sincronizar contenido con inputs hidden al escribir
+  quillProduct.on('text-change', () => {
+    document.getElementById('p-description').value = quillProduct.root.innerHTML;
+  });
+  quillService.on('text-change', () => {
+    document.getElementById('s-description').value = quillService.root.innerHTML;
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  initQuillEditors();
 
   // ── Verificar autenticación ──────────────────────────────────────────
   const authWarning = document.getElementById('authWarning');
@@ -48,6 +107,25 @@ document.addEventListener('DOMContentLoaded', () => {
       const priceFields = document.getElementById('price-range-fields');
       if (priceFields) {
         priceFields.style.display = type === 'quote' ? 'none' : 'flex';
+      }
+    });
+  });
+
+  // ── Opciones de entrega ──────────────────────────────────────────────
+  document.querySelectorAll('input[name="p-delivery"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      const val = radio.value;
+      document.getElementById('p-delivery-type').value = val;
+      const wrap  = document.getElementById('p-delivery-location-wrap');
+      const label = document.getElementById('p-delivery-location-label');
+      if (val === 'pickup' || val === 'meetup') {
+        wrap.classList.remove('d-none');
+        label.textContent = val === 'pickup' ? 'Dirección de retiro' : 'Punto de encuentro';
+        document.getElementById('p-delivery-location').placeholder =
+          val === 'pickup' ? 'Ej: Av. Corrientes 1234, CABA' : 'Ej: Obelisco, CABA';
+      } else {
+        wrap.classList.add('d-none');
+        document.getElementById('p-delivery-location').value = '';
       }
     });
   });
@@ -112,9 +190,23 @@ function fillSelect(selectId, items) {
   select.innerHTML = '<option value="">Seleccioná una categoría</option>';
   items.forEach(item => {
     const opt = document.createElement('option');
-    opt.value = item.id;
+    opt.value = item.name.toLowerCase().includes('otro') ? 'otros' : item.id;
     opt.textContent = item.name;
     select.appendChild(opt);
+  });
+
+  // Toggle del campo "Otros" al cambiar la selección
+  const otherId = selectId === 'p-category' ? 'p-category-other-wrap' : 's-category-other-wrap';
+  select.addEventListener('change', () => {
+    const wrap = document.getElementById(otherId);
+    if (!wrap) return;
+    if (select.value === 'otros') {
+      wrap.classList.remove('d-none');
+      wrap.querySelector('input').focus();
+    } else {
+      wrap.classList.add('d-none');
+      wrap.querySelector('input').value = '';
+    }
   });
 }
 
@@ -125,9 +217,31 @@ async function submitProduct() {
   const btn = document.getElementById('btn-publish-product');
   const title = document.getElementById('p-title').value.trim();
   const price = document.getElementById('p-price').value;
+  const categoryVal = document.getElementById('p-category').value;
+  const isCustomCategory = categoryVal === 'otros';
+  const customCategory = isCustomCategory
+    ? document.getElementById('p-category-other').value.trim()
+    : '';
 
   if (!title) { showError('product-error', 'El título es obligatorio.'); return; }
   if (!price || price <= 0) { showError('product-error', 'El precio es obligatorio.'); return; }
+  if (isCustomCategory && !customCategory) {
+    showError('product-error', 'Escribí el nombre de tu categoría.');
+    document.getElementById('p-category-other').focus();
+    return;
+  }
+
+  const deliveryType     = document.getElementById('p-delivery-type').value;
+  const deliveryLocation = document.getElementById('p-delivery-location').value.trim();
+
+  if ((deliveryType === 'pickup' || deliveryType === 'meetup') && !deliveryLocation) {
+    showError('product-error',
+      deliveryType === 'pickup'
+        ? 'Indicá la dirección de retiro.'
+        : 'Indicá el punto de encuentro.');
+    document.getElementById('p-delivery-location').focus();
+    return;
+  }
 
   const productData = {
     title,
@@ -135,8 +249,12 @@ async function submitProduct() {
     price: parseFloat(price),
     stock: parseInt(document.getElementById('p-stock').value) || 1,
     condition: document.getElementById('p-condition').value,
-    category_id: document.getElementById('p-category').value || null,
+    category_id: isCustomCategory ? null : (categoryVal || null),
+    custom_category: isCustomCategory ? customCategory : undefined,
+    status: isCustomCategory ? 'pending_approval' : 'active',
     location: document.getElementById('p-location').value.trim(),
+    delivery_type: deliveryType,
+    delivery_location: (deliveryType === 'pickup' || deliveryType === 'meetup') ? deliveryLocation : undefined,
     images: getImageUrls('p-image-list'),
     currency: 'ARS',
   };
@@ -146,12 +264,20 @@ async function submitProduct() {
 
   try {
     const result = await window.DaleDeal.api.createProduct(productData);
-    showSuccess('product-success', 'product-success-msg', `"${result.title}" publicado correctamente.`);
+    const successMsg = isCustomCategory
+      ? `"${result.title || title}" enviado. Quedará visible una vez que aprobemos la categoría "${customCategory}".`
+      : `"${result.title || title}" publicado correctamente.`;
+    showSuccess('product-success', 'product-success-msg', successMsg);
     document.getElementById('productForm').reset();
     document.getElementById('p-condition').value = 'new';
     document.querySelectorAll('.condition-btn').forEach((b, i) => {
       b.classList.toggle('active', i === 0);
     });
+    document.getElementById('p-category-other-wrap').classList.add('d-none');
+    document.getElementById('p-delivery-location-wrap').classList.add('d-none');
+    document.getElementById('p-delivery-type').value = 'buyer_pays';
+    document.querySelector('input[name="p-delivery"][value="buyer_pays"]').checked = true;
+    if (quillProduct) { quillProduct.setContents([]); document.getElementById('p-description').value = ''; }
     resetImageList('p-image-list');
   } catch (err) {
     showError('product-error', err.message || 'Error al publicar. Intentá nuevamente.');
@@ -166,8 +292,18 @@ async function submitProduct() {
 async function submitService() {
   const btn = document.getElementById('btn-publish-service');
   const title = document.getElementById('s-title').value.trim();
+  const categoryVal = document.getElementById('s-category').value;
+  const isCustomCategory = categoryVal === 'otros';
+  const customCategory = isCustomCategory
+    ? document.getElementById('s-category-other').value.trim()
+    : '';
 
   if (!title) { showError('service-error', 'El título es obligatorio.'); return; }
+  if (isCustomCategory && !customCategory) {
+    showError('service-error', 'Escribí el nombre de tu categoría.');
+    document.getElementById('s-category-other').focus();
+    return;
+  }
 
   const zonesRaw = document.getElementById('s-zones').value.trim();
   const zones = zonesRaw ? zonesRaw.split(',').map(z => z.trim()).filter(Boolean) : [];
@@ -178,7 +314,9 @@ async function submitService() {
     price_from: parseFloat(document.getElementById('s-price-from').value) || null,
     price_to: parseFloat(document.getElementById('s-price-to').value) || null,
     price_type: document.getElementById('s-price-type').value,
-    category_id: document.getElementById('s-category').value || null,
+    category_id: isCustomCategory ? null : (categoryVal || null),
+    custom_category: isCustomCategory ? customCategory : undefined,
+    status: isCustomCategory ? 'pending_approval' : 'active',
     location: document.getElementById('s-location').value.trim(),
     zones_covered: zones,
     images: getImageUrls('s-image-list'),
@@ -190,12 +328,17 @@ async function submitService() {
 
   try {
     const result = await window.DaleDeal.api.createService(serviceData);
-    showSuccess('service-success', 'service-success-msg', `"${result.title}" publicado correctamente.`);
+    const successMsg = isCustomCategory
+      ? `"${result.title || title}" enviado. Quedará visible una vez que aprobemos la categoría "${customCategory}".`
+      : `"${result.title || title}" publicado correctamente.`;
+    showSuccess('service-success', 'service-success-msg', successMsg);
     document.getElementById('serviceForm').reset();
     document.getElementById('s-price-type').value = 'fixed';
     document.querySelectorAll('.price-type-btn').forEach((b, i) => {
       b.classList.toggle('active', i === 0);
     });
+    document.getElementById('s-category-other-wrap').classList.add('d-none');
+    if (quillService) { quillService.setContents([]); document.getElementById('s-description').value = ''; }
     resetImageList('s-image-list');
   } catch (err) {
     showError('service-error', err.message || 'Error al publicar. Intentá nuevamente.');

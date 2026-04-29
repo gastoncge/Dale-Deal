@@ -38,13 +38,13 @@ class CartManager {
   // Agregar producto al carrito
   addItem(product) {
     try {
-      const existingItem = this.items.find((item) => item.id === product.id);
+      const existingItem = this.items.find((item) => String(item.id) === String(product.id));
 
       if (existingItem) {
         existingItem.quantity += product.quantity || 1;
       } else {
         this.items.push({
-          id: product.id,
+          id: String(product.id),
           title: product.title,
           price: product.price,
           priceText: product.priceText,
@@ -67,7 +67,7 @@ class CartManager {
   // Remover producto del carrito
   removeItem(productId) {
     try {
-      const itemIndex = this.items.findIndex((item) => item.id === productId);
+      const itemIndex = this.items.findIndex((item) => String(item.id) === String(productId));
       if (itemIndex > -1) {
         const removedItem = this.items.splice(itemIndex, 1)[0];
         this.saveCart();
@@ -88,7 +88,7 @@ class CartManager {
   // Actualizar cantidad de producto
   updateQuantity(productId, newQuantity) {
     try {
-      const item = this.items.find((item) => item.id === productId);
+      const item = this.items.find((item) => String(item.id) === String(productId));
       if (item && newQuantity > 0) {
         const oldQuantity = item.quantity;
         item.quantity = newQuantity;
@@ -387,7 +387,7 @@ class CartManager {
           
           switch (action) {
             case 'increase':
-              const currentItem = this.items.find(item => item.id === productId);
+              const currentItem = this.items.find(item => String(item.id) === String(productId));
               if (currentItem) {
                 DaleDeal.log(`Incrementando cantidad para ${currentItem.title}: ${currentItem.quantity} → ${currentItem.quantity + 1}`);
                 this.updateQuantity(productId, currentItem.quantity + 1);
@@ -395,7 +395,7 @@ class CartManager {
               break;
               
             case 'decrease':
-              const currentItemDec = this.items.find(item => item.id === productId);
+              const currentItemDec = this.items.find(item => String(item.id) === String(productId));
               if (currentItemDec && currentItemDec.quantity > 1) {
                 DaleDeal.log(`Decrementando cantidad para ${currentItemDec.title}: ${currentItemDec.quantity} → ${currentItemDec.quantity - 1}`);
                 this.updateQuantity(productId, currentItemDec.quantity - 1);

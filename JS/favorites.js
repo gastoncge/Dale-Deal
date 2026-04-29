@@ -67,11 +67,18 @@ class FavoritesManager {
       }
     });
 
-    // Enlace de favoritos en el menú
+    // Enlace de favoritos en el menú → navega a Mi Centro / Favoritos
     document.addEventListener('click', (e) => {
-      if (e.target.closest('#favoritesLink')) {
+      const link = e.target.closest('#favoritesLink');
+      if (link) {
+        // Solo interceptar si el href apunta a la página con hash
+        const href = link.getAttribute('href') || '';
+        if (href.includes('notificaciones.html#favoritos')) return; // dejar navegar
         e.preventDefault();
-        this.showFavoritesModal();
+        // fallback si el href es '#' (páginas no actualizadas)
+        const path = window.location.pathname;
+        const base = path.includes('/HTML/') ? './notificaciones.html' : './HTML/notificaciones.html';
+        window.location.href = base + '#favoritos';
       }
     });
 

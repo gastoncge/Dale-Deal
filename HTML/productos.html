@@ -42,13 +42,6 @@
   </head>
 
   <body>
-    <!-- Barra de Anuncios Rotativos -->
-    <div class="announcement-bar" id="announcementBar">
-      <div class="container-fluid">
-        <span class="announcement-text" id="announcementText">🔥 Envío gratis en compras mayores a $50.000 | Hasta 12 cuotas sin interés</span>
-        <button class="announcement-close" id="announcementClose" title="Cerrar"><i class="bi bi-x"></i></button>
-      </div>
-    </div>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
@@ -216,7 +209,7 @@
                 </a>
               </li>
               <li>
-                <a class="dropdown-item" href="#" id="favoritesLink">
+                <a class="dropdown-item" href="./notificaciones.html#favoritos" id="favoritesLink">
                   <i class="bi bi-heart me-2"></i>Favoritos
                 </a>
               </li>
@@ -375,7 +368,7 @@
                       <div style="position:relative;">
                         <input type="text" id="otrosCategoryInput" placeholder="Buscar categoría..." autocomplete="off"
                           style="width:100%; padding:6px 10px; border:1.5px solid var(--gray-200); border-radius:8px; font-size:13px; outline:none;">
-                        <ul id="otrosSuggestions" style="display:none; position:absolute; top:100%; left:0; right:0; background:#fff; border:1.5px solid var(--gray-200); border-radius:8px; margin-top:4px; padding:4px 0; list-style:none; z-index:100; max-height:160px; overflow-y:auto; box-shadow:0 4px 12px rgba(0,0,0,0.1);"></ul>
+                        <ul id="otrosSuggestions" style="display:none; position:absolute; top:100%; left:0; right:0; background:var(--white); border:1.5px solid var(--gray-200); border-radius:8px; margin-top:4px; padding:4px 0; list-style:none; z-index:100; max-height:160px; overflow-y:auto; box-shadow:0 4px 12px rgba(0,0,0,0.1);"></ul>
                       </div>
                     </div>
                   </div>
@@ -743,13 +736,12 @@
         margin-left: calc(-50vw + 50%) !important;
         padding-left: calc(50vw - 50% + 1rem) !important;
         padding-right: calc(50vw - 50% + 1rem) !important;
-        border-bottom: none !important;
-        box-shadow: none !important;
+        border-bottom: 1px solid var(--gray-200) !important;
       }
 
       [data-theme="dark"] .page-header-new {
-        background: transparent !important;
-        border-bottom: none !important;
+        background: var(--white) !important;
+        border-bottom: 1px solid rgba(255,255,255,0.06) !important;
       }
 
       /* Badges iguales a la página de inicio - display controlado por JS */
@@ -1133,14 +1125,14 @@
         color: #fff;
       }
 
-      /* Dark mode: sin degradado en sidebar header */
+      /* Dark mode: sidebar header */
       [data-theme="dark"] .sidebar-header {
-        background: var(--gray-800);
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
         border-bottom-color: rgba(255,255,255,0.08);
       }
       [data-theme="dark"] .btn-clear-filters {
-        background: var(--gray-600);
-        color: var(--gray-200);
+        background: #334155;
+        color: #e2e8f0;
       }
       [data-theme="dark"] .btn-clear-filters:hover {
         background: var(--primary-red);
@@ -1157,10 +1149,22 @@
         color: #64748b !important;
       }
 
-      /* Dark mode: breadcrumb + header */
-      [data-theme="dark"] .page-header-new {
-        border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+      /* Dark mode: buscador de categoría "Otros" */
+      [data-theme="dark"] #otrosCategoryInput {
+        background: #1e293b !important;
+        border-color: #334155 !important;
+        color: #e2e8f0 !important;
       }
+      [data-theme="dark"] #otrosCategoryInput::placeholder {
+        color: #64748b !important;
+      }
+      [data-theme="dark"] #otrosSuggestions {
+        background: #1e293b !important;
+        border-color: #334155 !important;
+        color: #e2e8f0 !important;
+      }
+
+      /* Dark mode: breadcrumb + header */
       [data-theme="dark"] .breadcrumb-item a {
         color: #94a3b8;
       }
@@ -3554,7 +3558,7 @@
             const li = document.createElement('li');
             li.textContent = cat;
             li.style.cssText = 'padding:6px 12px; cursor:pointer; font-size:13px;';
-            li.addEventListener('mouseenter', () => li.style.background = '#f3f4f6');
+            li.addEventListener('mouseenter', () => li.style.background = document.documentElement.getAttribute('data-theme') === 'dark' ? '#334155' : '#f3f4f6');
             li.addEventListener('mouseleave', () => li.style.background = '');
             li.addEventListener('click', () => {
               input.value = cat;
@@ -3573,7 +3577,7 @@
             searchPanel.style.display = isOtros ? 'block' : 'none';
             if (isOtros) {
               input.value = '';
-              renderSuggestions(getCategories(''));
+              suggestions.style.display = 'none';
               input.focus();
             } else {
               suggestions.style.display = 'none';
