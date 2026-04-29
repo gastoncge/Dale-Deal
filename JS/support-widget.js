@@ -15,9 +15,11 @@
   'use strict';
 
   const STORAGE_KEY         = 'dd_support_widget_state';
-  const AUTO_OPEN_DELAY_MS  = 8000;   // esperar 8s después del load
-  const AUTO_CLOSE_DELAY_MS = 15000;  // si el usuario no interactúa, se cierra solo
+  const AUTO_OPEN_DELAY_MS  = 3000;   // esperar 3s después del load
+  const AUTO_CLOSE_DELAY_MS = 20000;  // si el usuario no interactúa, se cierra solo
   const REMIND_AFTER_DAYS   = 7;
+  const DEBUG               = true;   // logs a consola
+  const log = (...a) => DEBUG && console.log('[dd-support]', ...a);
 
   const isHtmlSubdir = window.location.pathname.includes('/HTML/');
   const contactUrl = isHtmlSubdir
@@ -255,20 +257,37 @@
   }
 
   function init() {
-    if (window._ddSupportInitialized) return;
+    if (window._ddSupportInitialized) { log('ya inicializado'); return; }
     window._ddSupportInitialized = true;
 
+    log('init()');
     inject();
     wire();
+    log('DOM inyectado. Botón:', !!document.getElementById('ddSupportBtn'));
 
     // primera visita: marcar en el estado (para telemetría futura)
     const s = getState();
+    log('estado actual:', s);
     if (!s.firstVisitAt) saveState({ firstVisitAt: Date.now() });
 
     if (shouldAutoOpen()) {
-      setTimeout(showTooltip, AUTO_OPEN_DELAY_MS);
+      log('programando auto-open en', AUTO_OPEN_DELAY_MS, 'ms');
+      setTimeout(() => { log('mostrando tooltip'); showTooltip(); }, AUTO_OPEN_DELAY_MS);
+    } else {
+      log('no se auto-abre (hasOpenedEver o dismissedAt reciente)');
     }
   }
+
+  // Utilidad pública para debugging desde consola:
+  //   DaleDealSupport.reset()  → limpia estado y recarga
+  //   DaleDealSupport.open()   → abre el panel manualmente
+  //   DaleDealSupport.tooltip() → muestra el tooltip
+  window.DaleDealSupport = {
+    reset() { try { localStorage.removeItem(STORAGE_KEY); } catch {} location.reload(); },
+    open()  { openPanel(); },
+    tooltip() { showTooltip(); },
+    state() { return getState(); },
+  };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

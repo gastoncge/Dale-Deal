@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pago pendiente - DALE DEAL</title>
+
+    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="../CSS/variables.css" />
+
+    <style>
+      body {
+        background: var(--gray-50);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .pago-wrap {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+      }
+      .pago-card {
+        background: var(--white);
+        border-radius: 20px;
+        box-shadow: var(--shadow-lg, 0 10px 30px rgba(0, 0, 0, 0.08));
+        max-width: 560px;
+        width: 100%;
+        padding: 2.5rem;
+        text-align: center;
+      }
+      .pago-icon {
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        background: var(--warning-light);
+        color: var(--warning);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 52px;
+        margin: 0 auto 1.25rem;
+      }
+      .pago-title {
+        font-family: var(--font-display);
+        font-size: 1.9rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin-bottom: 0.5rem;
+      }
+      .pago-subtitle {
+        color: var(--gray-600);
+        margin-bottom: 2rem;
+      }
+      .pago-details {
+        background: var(--gray-50);
+        border: 1px solid var(--gray-200);
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        text-align: left;
+        margin-bottom: 1.5rem;
+      }
+      .pago-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.35rem 0;
+        font-size: 0.95rem;
+      }
+      .pago-row .label {
+        color: var(--gray-600);
+      }
+      .pago-row .value {
+        color: var(--gray-900);
+        font-weight: 600;
+      }
+      .pago-info {
+        background: var(--info-light, rgba(59, 130, 246, 0.1));
+        border: 1px solid var(--info);
+        border-radius: 10px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.5rem;
+        text-align: left;
+        color: var(--gray-800);
+        font-size: 0.92rem;
+      }
+      .pago-info strong {
+        color: var(--info);
+        display: block;
+        margin-bottom: 0.25rem;
+      }
+      .pago-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .btn-dd-primary {
+        background: var(--gradient-primary);
+        color: #fff;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .btn-dd-primary:hover {
+        opacity: 0.92;
+        color: #fff;
+      }
+      .btn-dd-ghost {
+        background: transparent;
+        border: 1px solid var(--gray-300);
+        color: var(--gray-700);
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .btn-dd-ghost:hover {
+        background: var(--gray-100);
+        color: var(--gray-900);
+      }
+      .logo-mini {
+        width: 120px;
+        display: block;
+        margin: 0 auto 1.5rem;
+        opacity: 0.7;
+      }
+      .pago-footer {
+        text-align: center;
+        padding: 1.25rem;
+        color: var(--gray-500);
+        font-size: 0.85rem;
+      }
+      .spinner-mini {
+        width: 18px;
+        height: 18px;
+        border: 2px solid var(--gray-300);
+        border-top-color: var(--warning);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        display: inline-block;
+        vertical-align: middle;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="pago-wrap">
+      <div class="pago-card">
+        <img src="../IMG/LOGO-2.png" alt="Dale Deal" class="logo-mini" />
+
+        <div class="pago-icon">
+          <i class="bi bi-hourglass-split"></i>
+        </div>
+
+        <h1 class="pago-title">Estamos procesando tu pago</h1>
+        <p class="pago-subtitle">
+          Tu operación fue aceptada pero todavía no está acreditada. Esto es normal con algunos medios de pago.
+        </p>
+
+        <div id="paymentStatus">
+          <div style="padding: 1rem 0; color: var(--gray-500);">
+            <span class="spinner-mini"></span>&nbsp; Consultando estado…
+          </div>
+        </div>
+
+        <div class="pago-info">
+          <strong>¿Qué pasa ahora?</strong>
+          Mercado Pago nos va a avisar cuando se confirme (puede tardar desde unos minutos hasta 2 días hábiles,
+          según el medio de pago). Te vamos a notificar por email y podés ver el estado en "Mis compras".
+        </div>
+
+        <div class="pago-actions">
+          <a href="./notificaciones.html#pedidos" class="btn-dd-primary">
+            <i class="bi bi-bag"></i>
+            Ver mis compras
+          </a>
+          <a href="../index.html" class="btn-dd-ghost">
+            <i class="bi bi-house"></i>
+            Volver al inicio
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="pago-footer">
+      <span>¿Dudas? Escribinos desde el widget de ayuda.</span>
+    </div>
+
+    <script src="../JS/theme.js"></script>
+    <script src="../JS/api.js"></script>
+    <script src="../JS/api-payments.js"></script>
+    <script>
+      (async function () {
+        const params = new URLSearchParams(window.location.search);
+        const orderId =
+          params.get('order_id') ||
+          localStorage.getItem('dd_current_payment_order');
+
+        const statusEl = document.getElementById('paymentStatus');
+
+        if (!orderId || !localStorage.getItem('daledeal_token')) {
+          statusEl.innerHTML = '';
+          return;
+        }
+
+        try {
+          const { order } = await window.DaleDeal.payments.getStatus(orderId);
+          const fmt = (n) =>
+            new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(n || 0);
+
+          statusEl.innerHTML = `
+            <div class="pago-details">
+              <div class="pago-row">
+                <span class="label">Orden</span>
+                <span class="value">#${order.id}</span>
+              </div>
+              <div class="pago-row">
+                <span class="label">Producto</span>
+                <span class="value">${order.product_title || '—'}</span>
+              </div>
+              <div class="pago-row">
+                <span class="label">Estado</span>
+                <span class="value" style="color: var(--warning);">
+                  ${order.payment_status === 'in_process' ? 'En proceso' : 'Pendiente'}
+                </span>
+              </div>
+              <div class="pago-row">
+                <span class="label">Total</span>
+                <span class="value">${fmt(order.total_price)}</span>
+              </div>
+            </div>
+          `;
+        } catch (err) {
+          console.error('[pago-pendiente] error:', err);
+          statusEl.innerHTML = '';
+        }
+
+        // Limpiar la orden en curso del storage
+        localStorage.removeItem('dd_current_payment_order');
+      })();
+    </script>
+  </body>
+</html>

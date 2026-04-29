@@ -285,15 +285,18 @@ class CartManager {
         return;
       }
 
-      const apiFetch = window.DaleDeal?.api?.apiFetch;
+      const apiFetch  = window.DaleDeal?.api?.apiFetch;
+      const payments  = window.DaleDeal?.payments;
       if (!apiFetch) {
         DaleDeal.utils?.showNotification?.('API no disponible.', 'error');
         return;
       }
 
-      // Crear una orden por cada item (una conversación por vendedor gracias al hook backend)
-      const createdConversations = [];
-      const errors = [];
+      // Crear una orden por cada item — el backend abre una conversación
+      // con cada vendedor (hook en createOrder).
+      const createdOrders   = [];
+      const pendingOrderIds = [];
+      const errors          = [];
       for (const item of this.items) {
         try {
           const res = await apiFetch('/orders', {
@@ -303,29 +306,69 @@ class CartManager {
               quantity:   item.quantity || 1,
             }),
           });
-          if (res?.conversation?.id) createdConversations.push(res.conversation.id);
+          const orderId = res?.order?.id || res?.id;
+          if (orderId) {
+            createdOrders.push({
+              order_id:        orderId,
+              conversation_id: res?.conversation?.id || null,
+              title:           item.title,
+            });
+            pendingOrderIds.push(orderId);
+          }
         } catch (err) {
           errors.push(`${item.title || 'Producto'}: ${err.message}`);
         }
       }
 
-      if (errors.length > 0) {
+      if (createdOrders.length === 0) {
         DaleDeal.utils?.showNotification?.(
-          `Se completaron ${this.items.length - errors.length} de ${this.items.length} compras. Errores: ${errors.join(' | ')}`,
-          'warning'
+          'No se pudo crear ninguna orden. ' + (errors[0] || ''),
+          'error'
         );
-      } else {
-        DaleDeal.utils?.showNotification?.('¡Compras realizadas! Abriendo chat con los vendedores…', 'success');
+        return;
       }
 
-      // Vaciar carrito
+      if (errors.length > 0) {
+        DaleDeal.utils?.showNotification?.(
+          `Se crearon ${createdOrders.length} de ${this.items.length} órdenes. Vas a pagarlas una por una.`,
+          'warning'
+        );
+      }
+
+      // Vaciar carrito (las órdenes ya existen)
       this.items = [];
       this.saveCart?.();
-      this.updateCartUI?.();
+      this.updateCartDropdown?.();
 
-      // Abrir la primera conversación
-      if (createdConversations.length > 0 && window.DaleDeal?.chat) {
-        setTimeout(() => window.DaleDeal.chat.openConversation(createdConversations[0]), 800);
+      // Si MP está disponible, empezamos el flujo de pago por la primera orden.
+      // Las restantes quedan guardadas en localStorage para que, al volver
+      // de pago-exitoso, el usuario vea las que le faltan.
+      if (payments?.redirectToCheckout) {
+        try {
+          // El resto va a localStorage — pago-exitoso.html las muestra.
+          const rest = pendingOrderIds.slice(1);
+          if (rest.length > 0) {
+            localStorage.setItem('dd_pending_orders', JSON.stringify(rest));
+          } else {
+            localStorage.removeItem('dd_pending_orders');
+          }
+          DaleDeal.utils?.showNotification?.('Redirigiendo a Mercado Pago…', 'info');
+          await payments.redirectToCheckout(pendingOrderIds[0]);
+          return; // redirect ya disparado
+        } catch (err) {
+          DaleDeal.error('Error al iniciar pago:', err);
+          DaleDeal.utils?.showNotification?.(
+            err.message || 'No pudimos iniciar el pago. Intentá desde el detalle de la orden.',
+            'error'
+          );
+        }
+      }
+
+      // Fallback (sin MP): abrir la primera conversación creada
+      const firstConv = createdOrders[0]?.conversation_id;
+      if (firstConv && window.DaleDeal?.chat) {
+        DaleDeal.utils?.showNotification?.('Abrimos el chat con el vendedor para coordinar el pago.', 'info');
+        setTimeout(() => window.DaleDeal.chat.openConversation(firstConv), 800);
       }
     });
 
