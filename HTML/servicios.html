@@ -851,7 +851,7 @@
       .btn-toggle-filters {
         display: none;
         background: var(--primary-red);
-        color: var(--white);
+        color: #ffffff;
         border: none;
         padding: var(--spacing-2) var(--spacing-4);
         border-radius: var(--radius-md);
@@ -862,7 +862,7 @@
       }
 
       .btn-toggle-filters:hover {
-        background: var(--red-600);
+        background: var(--primary-red-hover);
       }
 
       /* Sidebar Overlay for Mobile */
@@ -2215,7 +2215,7 @@
               </li>
               <li><hr class="dropdown-divider" /></li>
               <li>
-                <a class="dropdown-item" href="./login.html">
+                <a class="dropdown-item" href="./login.html" id="loginLink">
                   <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
                 </a>
               </li>
@@ -2654,10 +2654,13 @@
           this.servicesPerPage = 12;
           this.isLoading = false;
 
-          // Filter state
+          // Filter state — leer ?q= del URL si viene del search global
+          const urlParams = new URLSearchParams(window.location.search);
+          const initialQ  = (urlParams.get('q') || '').trim().toLowerCase();
+
           this.currentCategory = 'all';
           this.currentSort = 'featured';
-          this.searchTerm = '';
+          this.searchTerm = initialQ;
           this.filters = {
             priceMin: null,
             priceMax: null,
@@ -2923,6 +2926,11 @@
           const searchInput = document.getElementById('searchInput');
           let searchTimer;
           if (searchInput) {
+            // Si veníamos con ?q= en la URL, pre-llenar el input y aplicar filtro
+            if (self.searchTerm) {
+              searchInput.value = self.searchTerm;
+              setTimeout(() => self.applyFilters(), 50);
+            }
             searchInput.addEventListener('input', (e) => {
               self.searchTerm = e.target.value.toLowerCase();
               clearTimeout(searchTimer);

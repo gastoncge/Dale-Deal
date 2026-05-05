@@ -4545,7 +4545,7 @@
 [data-theme="dark"] .notifications-footer,
 [data-theme="dark"] .cart-footer { border-top-color: rgba(255,255,255,0.08); background: #0f172a; }
 [data-theme="dark"] .filter-chip { background: rgba(255,255,255,0.08); color: var(--gray-700); }
-[data-theme="dark"] .filter-chip.active { background: var(--primary-red); color: var(--white); }
+[data-theme="dark"] .filter-chip.active { background: var(--primary-red); color: #ffffff; }
 
 /* Texto genérico */
 [data-theme="dark"] h1, [data-theme="dark"] h2, [data-theme="dark"] h3,
@@ -5012,4 +5012,55 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
 }
 [data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.22);
+}
+
+/* =====================================================
+   DARK MODE — RED DE SEGURIDAD: Botones con fondo de marca
+   -----------------------------------------------------
+   Bug histórico: muchos botones (.btn-primary, .filter-tab.active,
+   .btn-toggle-filters, etc.) usan `color: var(--white)` para texto
+   blanco sobre fondo rojo/gradiente. En dark mode --white pasa a
+   #0f172a (azul oscuro), por lo que el texto y los iconos se vuelven
+   casi invisibles sobre el fondo rojo. Forzamos blanco literal.
+   ===================================================== */
+
+[data-theme="dark"] .btn-primary,
+[data-theme="dark"] .btn-primary i,
+[data-theme="dark"] .btn-primary .bi,
+[data-theme="dark"] .btn-success,
+[data-theme="dark"] .btn-success i,
+[data-theme="dark"] .btn-danger,
+[data-theme="dark"] .btn-danger i,
+[data-theme="dark"] .filter-tab.active,
+[data-theme="dark"] .filter-tab.active i,
+[data-theme="dark"] .filter-chip.active,
+[data-theme="dark"] .filter-chip.active i,
+[data-theme="dark"] .btn-toggle-filters,
+[data-theme="dark"] .btn-toggle-filters i,
+[data-theme="dark"] .btn-publish-product,
+[data-theme="dark"] .btn-publish-product i,
+[data-theme="dark"] .btn-publish-service,
+[data-theme="dark"] .btn-publish-service i,
+[data-theme="dark"] .btn-buy-now,
+[data-theme="dark"] .btn-buy-now i,
+[data-theme="dark"] .btn-add-cart,
+[data-theme="dark"] .btn-add-cart i,
+[data-theme="dark"] .btn-contact-service,
+[data-theme="dark"] .btn-contact-service i,
+[data-theme="dark"] .badge-offer,
+[data-theme="dark"] .service-price-badge,
+[data-theme="dark"] .cta-primary,
+[data-theme="dark"] .dd-support-btn,
+[data-theme="dark"] .dd-support-btn i,
+[data-theme="dark"] .dd-support-cta-primary,
+[data-theme="dark"] .newsletter-btn,
+[data-theme="dark"] .newsletter-btn i,
+[data-theme="dark"] .btn-dd-primary,
+[data-theme="dark"] .btn-dd-primary i,
+[data-theme="dark"] .announcement-bar,
+[data-theme="dark"] .announcement-bar i,
+[data-theme="dark"] .btn-load-more-reviews,
+[data-theme="dark"] .btn[class*="bg-gradient"],
+[data-theme="dark"] [class*="bg-primary"]:not(.bi):not(i) {
+  color: #ffffff !important;
 }
