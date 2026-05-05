@@ -847,10 +847,12 @@ class MessagesManager {
 
   renderConversations() {
     if (!this.listBody) return;
+    // El backend devuelve campos PLANOS: other_user_name, last_message (string),
+    // item_title, etc. — no objetos anidados.
     const filtered = this.conversations.filter(c => {
       if (!this.searchQuery) return true;
-      const name = (c.other_user?.name || '').toLowerCase();
-      const preview = (c.last_message?.body || '').toLowerCase();
+      const name = (c.other_user_name || '').toLowerCase();
+      const preview = (c.last_message || '').toLowerCase();
       return name.includes(this.searchQuery) || preview.includes(this.searchQuery);
     });
 
@@ -867,22 +869,22 @@ class MessagesManager {
   }
 
   conversationItemHTML(conv) {
-    const user = conv.other_user || {};
-    const initials = (user.name || '?').charAt(0).toUpperCase();
-    const avatar = user.avatar_url
-      ? `<img src="${user.avatar_url}" alt="${initials}" class="mensajes-list-item-avatar" style="object-fit:cover;">`
+    const userName = conv.other_user_name || 'Usuario';
+    const userAvatar = conv.other_user_avatar;
+    const initials = userName.charAt(0).toUpperCase();
+    const avatar = userAvatar
+      ? `<img src="${userAvatar}" alt="${initials}" class="mensajes-list-item-avatar" loading="lazy" decoding="async" style="object-fit:cover;">`
       : `<div class="mensajes-list-item-avatar">${initials}</div>`;
-    const preview = conv.last_message?.body || 'Sin mensajes';
+    const preview = conv.last_message || 'Sin mensajes';
     const unread = conv.unread_count || 0;
-    const time = conv.last_message?.created_at
-      ? this.relativeTime(conv.last_message.created_at) : '';
+    const time = conv.last_message_at ? this.relativeTime(conv.last_message_at) : '';
     const isActive = conv.id === this.activeConvId ? 'active' : '';
 
     return `
       <div class="mensajes-list-item ${isActive}" data-conv-id="${conv.id}">
         ${avatar}
         <div class="mensajes-list-item-info">
-          <p class="mensajes-list-item-name">${this.escapeHtml(user.name || 'Usuario')}</p>
+          <p class="mensajes-list-item-name">${this.escapeHtml(userName)}</p>
           <p class="mensajes-list-item-preview">${this.escapeHtml(preview.substring(0, 60))}</p>
         </div>
         <div class="mensajes-list-item-meta">
@@ -903,13 +905,14 @@ class MessagesManager {
     if (this.emptyState) this.emptyState.style.display = 'none';
     if (this.chatActive) this.chatActive.style.display = 'flex';
 
-    // Header de la conversación
-    const user = conv.other_user || {};
-    if (this.chatName) this.chatName.textContent = user.name || 'Usuario';
-    if (this.chatItem) this.chatItem.textContent = conv.item?.title || '';
+    // Header de la conversación (el backend devuelve campos planos)
+    const userName = conv.other_user_name || 'Usuario';
+    const userAvatar = conv.other_user_avatar;
+    if (this.chatName) this.chatName.textContent = userName;
+    if (this.chatItem) this.chatItem.textContent = conv.item_title || '';
     if (this.chatAvatar) {
-      if (user.avatar_url) {
-        this.chatAvatar.src = user.avatar_url;
+      if (userAvatar) {
+        this.chatAvatar.src = userAvatar;
         this.chatAvatar.style.display = '';
       } else {
         this.chatAvatar.style.display = 'none';
@@ -956,8 +959,8 @@ class MessagesManager {
       const isSent = m.sender_id === myId;
       const time = m.created_at ? this.relativeTime(m.created_at) : '';
       return `
-        <div class="mensajes-msg ${isSent ? 'mensajes-msg-sent' : 'mensajes-msg-received'}">
-          <div class="mensajes-bubble">${this.escapeHtml(m.body)}</div>
+        <div class="mensajes-msg ${isSent ? 'from-me' : 'from-them'}">
+          ${this.escapeHtml(m.body)}
           <span class="mensajes-msg-time">${time}</span>
         </div>`;
     }).join('');
@@ -985,17 +988,24 @@ class MessagesManager {
       const isSent = !msg?.sender_id || msg.sender_id === myId;
       const time = msg?.created_at ? this.relativeTime(msg.created_at) : 'Ahora';
       const msgEl = document.createElement('div');
-      msgEl.className = `mensajes-msg ${isSent ? 'mensajes-msg-sent' : 'mensajes-msg-received'}`;
-      msgEl.innerHTML = `<div class="mensajes-bubble">${this.escapeHtml(body)}</div><span class="mensajes-msg-time">${time}</span>`;
+      msgEl.className = `mensajes-msg ${isSent ? 'from-me' : 'from-them'}`;
+      msgEl.innerHTML = `${this.escapeHtml(body)}<span class="mensajes-msg-time">${time}</span>`;
       // Quitar empty state si existe
       this.chatMessages?.querySelector('.mensajes-empty')?.remove();
       this.chatMessages?.appendChild(msgEl);
       this.chatMessages && (this.chatMessages.scrollTop = this.chatMessages.scrollHeight);
 
-      // Actualizar preview en la lista
+      // Actualizar preview en la lista (formato plano que devuelve el backend)
       const conv = this.conversations.find(c => c.id === this.activeConvId);
       if (conv) {
-        conv.last_message = { body, created_at: new Date().toISOString() };
+        conv.last_message = body;
+        conv.last_message_at = new Date().toISOString();
+        // Mover esta conversación al tope de la lista (ahora es la más reciente)
+        const idx = this.conversations.indexOf(conv);
+        if (idx > 0) {
+          this.conversations.splice(idx, 1);
+          this.conversations.unshift(conv);
+        }
         this.renderConversations();
       }
     } catch (err) {

@@ -2,7 +2,60 @@
 // DALE DEAL - Publicar Producto / Servicio
 // =====================================================
 
+// ── Editores Quill (descripción producto / servicio) ─────────────────
+let pDescriptionEditor = null;
+let sDescriptionEditor = null;
+
+function initQuillEditors() {
+  if (typeof Quill === 'undefined') {
+    DaleDeal?.warn?.('Quill no se cargó — descripción no editable');
+    return;
+  }
+
+  const toolbarOptions = [
+    ['bold', 'italic', 'underline'],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+    [{ header: [2, 3, false] }],
+    ['link'],
+    ['clean'],
+  ];
+
+  // Producto
+  const pHost = document.getElementById('p-description-editor');
+  const pHidden = document.getElementById('p-description');
+  if (pHost && !pHost.classList.contains('ql-container')) {
+    pDescriptionEditor = new Quill(pHost, {
+      theme: 'snow',
+      placeholder: 'Describí el producto: estado, características, accesorios incluidos…',
+      modules: { toolbar: toolbarOptions },
+    });
+    // Mantener sincronizado el input hidden con el HTML del editor
+    pDescriptionEditor.on('text-change', () => {
+      const text = pDescriptionEditor.getText().trim();
+      pHidden.value = text ? pDescriptionEditor.root.innerHTML : '';
+    });
+  }
+
+  // Servicio
+  const sHost = document.getElementById('s-description-editor');
+  const sHidden = document.getElementById('s-description');
+  if (sHost && !sHost.classList.contains('ql-container')) {
+    sDescriptionEditor = new Quill(sHost, {
+      theme: 'snow',
+      placeholder: 'Describí el servicio: experiencia, herramientas, alcance…',
+      modules: { toolbar: toolbarOptions },
+    });
+    sDescriptionEditor.on('text-change', () => {
+      const text = sDescriptionEditor.getText().trim();
+      sHidden.value = text ? sDescriptionEditor.root.innerHTML : '';
+    });
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+
+  // ── Inicializar editores de descripción ──────────────────────────────
+  initQuillEditors();
 
   // ── Verificar autenticación ──────────────────────────────────────────
   const authWarning = document.getElementById('authWarning');
@@ -50,6 +103,31 @@ document.addEventListener('DOMContentLoaded', () => {
         priceFields.style.display = type === 'quote' ? 'none' : 'flex';
       }
     });
+  });
+
+  // ── Toggles de envío ─────────────────────────────────────────────────
+  const shipReq      = document.getElementById('p-shipping-required');
+  const shipBlock    = document.getElementById('p-shipping-options');
+  const offersDelv   = document.getElementById('p-offers-delivery');
+  const delvFields   = document.getElementById('p-delivery-fields');
+  const offersPick   = document.getElementById('p-offers-pickup');
+  const pickFields   = document.getElementById('p-pickup-fields');
+
+  shipReq?.addEventListener('change', () => {
+    if (shipBlock) shipBlock.style.display = shipReq.checked ? 'block' : 'none';
+    // Si se desactiva, limpiar todo
+    if (!shipReq.checked) {
+      if (offersDelv) offersDelv.checked = false;
+      if (offersPick) offersPick.checked = false;
+      if (delvFields) delvFields.style.display = 'none';
+      if (pickFields) pickFields.style.display = 'none';
+    }
+  });
+  offersDelv?.addEventListener('change', () => {
+    if (delvFields) delvFields.style.display = offersDelv.checked ? 'block' : 'none';
+  });
+  offersPick?.addEventListener('change', () => {
+    if (pickFields) pickFields.style.display = offersPick.checked ? 'block' : 'none';
   });
 
   // ── Cargar categorías ────────────────────────────────────────────────
@@ -129,6 +207,27 @@ async function submitProduct() {
   if (!title) { showError('product-error', 'El título es obligatorio.'); return; }
   if (!price || price <= 0) { showError('product-error', 'El precio es obligatorio.'); return; }
 
+  // Datos de envío
+  const shippingRequired = !!document.getElementById('p-shipping-required')?.checked;
+  const offersDelivery   = !!document.getElementById('p-offers-delivery')?.checked;
+  const offersPickup     = !!document.getElementById('p-offers-pickup')?.checked;
+  const shippingCostRaw  = document.getElementById('p-shipping-cost')?.value;
+  const pickupAddress    = document.getElementById('p-pickup-address')?.value.trim() || '';
+
+  // Validación cliente: si activó envío, al menos un método
+  if (shippingRequired && !offersDelivery && !offersPickup) {
+    showError('product-error', 'Activaste envío pero no marcaste ningún método (envío o retiro).');
+    return;
+  }
+  if (shippingRequired && offersDelivery && (shippingCostRaw === '' || shippingCostRaw === null)) {
+    showError('product-error', 'Ingresá el costo del envío (poné 0 si es gratis).');
+    return;
+  }
+  if (shippingRequired && offersPickup && !pickupAddress) {
+    showError('product-error', 'Ingresá la zona o dirección de retiro.');
+    return;
+  }
+
   const productData = {
     title,
     description: document.getElementById('p-description').value.trim(),
@@ -139,6 +238,11 @@ async function submitProduct() {
     location: document.getElementById('p-location').value.trim(),
     images: getImageUrls('p-image-list'),
     currency: 'ARS',
+    shipping_required: shippingRequired,
+    offers_delivery:   shippingRequired && offersDelivery,
+    offers_pickup:     shippingRequired && offersPickup,
+    shipping_cost:     shippingRequired && offersDelivery ? parseFloat(shippingCostRaw) || 0 : null,
+    pickup_address:    shippingRequired && offersPickup ? pickupAddress : null,
   };
 
   setLoading(btn, true, 'Publicando...');
@@ -153,6 +257,17 @@ async function submitProduct() {
       b.classList.toggle('active', i === 0);
     });
     resetImageList('p-image-list');
+    // Limpiar editor Quill (el form.reset() no lo toca)
+    if (pDescriptionEditor) pDescriptionEditor.setText('');
+    // Reset estado del bloque de envío
+    document.getElementById('p-shipping-required').checked = false;
+    document.getElementById('p-shipping-options').style.display = 'none';
+    ['p-offers-delivery', 'p-offers-pickup'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.checked = false;
+    });
+    document.getElementById('p-delivery-fields').style.display = 'none';
+    document.getElementById('p-pickup-fields').style.display = 'none';
   } catch (err) {
     showError('product-error', err.message || 'Error al publicar. Intentá nuevamente.');
   } finally {
@@ -197,6 +312,7 @@ async function submitService() {
       b.classList.toggle('active', i === 0);
     });
     resetImageList('s-image-list');
+    if (sDescriptionEditor) sDescriptionEditor.setText('');
   } catch (err) {
     showError('service-error', err.message || 'Error al publicar. Intentá nuevamente.');
   } finally {
