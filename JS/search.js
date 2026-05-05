@@ -67,28 +67,38 @@ class SearchManager {
   }
 
   /**
-   * Realiza la búsqueda de productos
+   * Realiza la búsqueda. Comportamiento contextual:
+   *  - En productos.html → busca productos y filtra el grid
+   *  - En servicios.html → busca servicios (delega al input nativo de la página)
+   *  - En cualquier otra página → redirige a productos.html?q=…
    */
   async performSearch(query) {
     try {
       this.isSearching = true;
       DaleDeal.log(`🔍 Buscando: "${query}"`);
+      const path = window.location.pathname;
 
-      // Usar la API para buscar
-      if (window.DaleDeal?.api) {
-        this.searchResults = await window.DaleDeal.api.searchProducts(query);
-
-        // Si estamos en la página de productos, actualizar el grid
-        if (window.location.pathname.includes('productos.html')) {
-          this.renderSearchResults();
-        } else {
-          // Si estamos en otra página, redirigir a productos con el query
-          this.redirectToProductsPage(query);
-        }
-      } else {
-        DaleDeal.error('API no disponible para búsqueda');
+      // Si estamos en servicios.html, dejamos que el manager interno
+      // de esa página filtre vía su searchTerm. Solo disparamos el input event.
+      if (path.includes('servicios.html')) {
+        // No hacemos nada extra: el input #searchInput tiene listener nativo
+        // en servicios.html que filtra el grid de servicios.
+        return;
       }
 
+      if (!window.DaleDeal?.api) {
+        DaleDeal.error('API no disponible para búsqueda');
+        return;
+      }
+
+      this.searchResults = await window.DaleDeal.api.searchProducts(query);
+
+      if (path.includes('productos.html')) {
+        this.renderSearchResults();
+      } else {
+        // Cualquier otra página → redirigir a productos
+        this.redirectToProductsPage(query);
+      }
     } catch (error) {
       DaleDeal.error('Error al buscar productos:', error);
       this.showSearchError();
@@ -111,17 +121,23 @@ class SearchManager {
       resultsCount.textContent = `${this.searchResults.length} producto${this.searchResults.length !== 1 ? 's' : ''} encontrado${this.searchResults.length !== 1 ? 's' : ''}`;
     }
 
-    // Si no hay resultados
+    // Si no hay resultados → sugerir buscar en servicios
     if (this.searchResults.length === 0) {
+      const query = encodeURIComponent(this.searchInput?.value || '');
       productsGrid.innerHTML = `
         <div class="col-12">
           <div class="no-results-container text-center py-5">
             <i class="bi bi-search display-1 text-muted mb-3"></i>
             <h4 class="text-muted">No se encontraron productos</h4>
-            <p class="text-muted">Intenta con otros términos de búsqueda</p>
-            <button class="btn btn-primary" onclick="window.searchManager.clearSearchResults()">
-              <i class="bi bi-arrow-left me-2"></i>Ver todos los productos
-            </button>
+            <p class="text-muted">Probá con otros términos o buscá entre los servicios profesionales.</p>
+            <div class="d-flex gap-2 justify-content-center flex-wrap mt-3">
+              <button class="btn btn-outline-secondary" onclick="window.searchManager.clearSearchResults()">
+                <i class="bi bi-arrow-left me-2"></i>Ver todos los productos
+              </button>
+              <a class="btn btn-primary" href="./servicios.html?q=${query}">
+                <i class="bi bi-tools me-2"></i>Buscar en servicios
+              </a>
+            </div>
           </div>
         </div>
       `;

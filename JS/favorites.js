@@ -14,26 +14,81 @@ class FavoritesManager {
     this.bindEvents();
     this.updateFavoriteButtons();
     this.updateWishlistButton();
+    // Si el usuario ya está logueado al cargar la página, sincronizar con backend
+    this.syncFromBackend();
+    // Cuando se loguea o se cierra sesión, re-sincronizar
+    document.addEventListener('daledeal:header-loaded', () => this.syncFromBackend());
   }
 
-  // Cargar favoritos desde localStorage
+  // ───────────────────────────────────────────────────────────────────
+  // PERSISTENCIA: backend si está logueado, localStorage si no.
+  // El localStorage se mantiene como cache para evitar parpadeo en la UI
+  // mientras carga desde la API.
+  // ───────────────────────────────────────────────────────────────────
+
+  isLoggedIn() {
+    return !!localStorage.getItem('daledeal_token');
+  }
+
+  // Carga inicial: localStorage (rápido, sincrónico)
   loadFavorites() {
     try {
       const favorites = localStorage.getItem(this.storageKey);
       return favorites ? JSON.parse(favorites) : [];
     } catch (error) {
-      DaleDeal.error('Error cargando favoritos:', error);
+      if (typeof DaleDeal !== 'undefined') DaleDeal.error('Error cargando favoritos:', error);
       return [];
     }
   }
 
-  // Guardar favoritos en localStorage
   saveFavorites() {
     try {
       localStorage.setItem(this.storageKey, JSON.stringify(this.favorites));
     } catch (error) {
-      DaleDeal.error('Error guardando favoritos:', error);
+      if (typeof DaleDeal !== 'undefined') DaleDeal.error('Error guardando favoritos:', error);
     }
+  }
+
+  // Trae favoritos del backend y reemplaza el cache local.
+  // Tolera errores: si la API falla, deja el cache de localStorage.
+  async syncFromBackend() {
+    if (!this.isLoggedIn() || !window.DaleDeal?.api?.fetchFavorites) return;
+    try {
+      const res = await window.DaleDeal.api.fetchFavorites();
+      const remoteFavs = res?.data || [];
+      // Normalizar al formato que usa el resto del código (id string + type)
+      this.favorites = remoteFavs.map(f => this.backendToLocal(f)).filter(Boolean);
+      this.saveFavorites();
+      this.updateFavoriteButtons();
+      this.updateWishlistButton();
+    } catch (err) {
+      // Silencioso: si la API rebota (ej. token expirado), seguimos con cache local
+      if (typeof DaleDeal !== 'undefined') DaleDeal.warn('No se pudieron sincronizar favoritos:', err.message);
+    }
+  }
+
+  // Convierte la respuesta del backend al formato de localStorage
+  backendToLocal(f) {
+    if (!f || !f.itemId) return null;
+    const isProduct = f.type === 'product';
+    const images = Array.isArray(f.images) ? f.images : [];
+    const mainImage = images[0] || '';
+    const priceText = isProduct
+      ? this.formatPrice(parseFloat(f.price) || 0)
+      : (f.priceFrom ? this.formatPrice(parseFloat(f.priceFrom)) : 'Consultar');
+    return {
+      id:                String(f.itemId),
+      type:              f.type,
+      title:             f.title || 'Sin título',
+      priceText,
+      originalPriceText: '',
+      imageUrl:          mainImage,
+      rating:            0,
+      ratingCount:       '',
+      dateAdded:         f.savedAt ? new Date(f.savedAt).getTime() : Date.now(),
+      // metadata extra
+      backendFavoriteId: f.favoriteId,
+    };
   }
 
   // Vincular eventos
@@ -265,18 +320,37 @@ class FavoritesManager {
     return this.favorites.some(fav => fav.id === productId);
   }
 
-  // Agregar a favoritos
+  // Agregar a favoritos (sincroniza al backend si está logueado)
   addToFavorites(productData) {
-    if (!this.isFavorite(productData.id)) {
-      this.favorites.unshift(productData);
-      this.saveFavorites();
+    if (this.isFavorite(productData.id)) return;
+    // Optimistic update: agregar local primero, sincronizar después
+    this.favorites.unshift(productData);
+    this.saveFavorites();
+
+    if (this.isLoggedIn() && window.DaleDeal?.api?.addFavoriteApi) {
+      const itemType = productData.type || 'product';
+      window.DaleDeal.api.addFavoriteApi(itemType, productData.id).catch(err => {
+        // Si falla con 409 (ya existía) lo ignoramos. Otros errores: revertir.
+        const msg = String(err?.message || '');
+        if (!msg.includes('Ya está en')) {
+          if (typeof DaleDeal !== 'undefined') DaleDeal.warn('No se pudo guardar favorito en backend:', msg);
+        }
+      });
     }
   }
 
-  // Remover de favoritos
+  // Remover de favoritos (sincroniza al backend si está logueado)
   removeFromFavorites(productId) {
+    const removed = this.favorites.find(f => f.id === productId);
     this.favorites = this.favorites.filter(fav => fav.id !== productId);
     this.saveFavorites();
+
+    if (removed && this.isLoggedIn() && window.DaleDeal?.api?.removeFavoriteApi) {
+      const itemType = removed.type || 'product';
+      window.DaleDeal.api.removeFavoriteApi(itemType, productId).catch(err => {
+        if (typeof DaleDeal !== 'undefined') DaleDeal.warn('No se pudo borrar favorito en backend:', err.message);
+      });
+    }
   }
 
   // Actualizar todos los botones de favoritos (productos y servicios)
@@ -344,20 +418,40 @@ class FavoritesManager {
     return this.favorites.length;
   }
 
-  // Limpiar favoritos
+  // Limpiar favoritos (también en backend si está logueado)
   clearFavorites() {
     if (this.favorites.length === 0) return;
-    
+
+    const wasLoggedIn = this.isLoggedIn();
+    const itemsToDelete = [...this.favorites];
+
     this.favorites = [];
     this.saveFavorites();
     this.updateFavoriteButtons();
     this.renderFavoritesContent();
     this.showToast('Todos los favoritos han sido eliminados', 'info');
+
+    // Borrar uno por uno en backend (no hay endpoint bulk-delete)
+    if (wasLoggedIn && window.DaleDeal?.api?.removeFavoriteApi) {
+      itemsToDelete.forEach(f => {
+        window.DaleDeal.api.removeFavoriteApi(f.type || 'product', f.id).catch(() => {});
+      });
+    }
   }
 
-  // Mostrar modal de favoritos
+  // Mostrar modal de favoritos.
+  // Si la página actual no tiene el modal (ej. producto.html, publicar.html),
+  // redirige a index.html con ?openFavorites=1 que se abre solo al cargar.
   showFavoritesModal() {
-    const modal = new bootstrap.Modal(document.getElementById('favoritesModal'));
+    const modalEl = document.getElementById('favoritesModal');
+    if (!modalEl) {
+      // Redirigir a index con flag para auto-abrir
+      const path = window.location.pathname;
+      const target = path.includes('/HTML/') ? '../index.html' : './index.html';
+      window.location.href = `${target}?openFavorites=1`;
+      return;
+    }
+    const modal = new bootstrap.Modal(modalEl);
     this.renderFavoritesContent();
     modal.show();
   }
@@ -1030,4 +1124,17 @@ document.head.appendChild(favoritesStyle);
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
   window.favoritesManager = new FavoritesManager();
+
+  // Auto-abrir modal si venimos de otra página con ?openFavorites=1
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('openFavorites') === '1') {
+    // Esperar un toque para que sincronice con backend antes de mostrar
+    setTimeout(() => {
+      window.favoritesManager?.showFavoritesModal();
+      // Limpiar el query param de la URL sin recargar
+      const url = new URL(window.location);
+      url.searchParams.delete('openFavorites');
+      window.history.replaceState({}, '', url);
+    }, 400);
+  }
 });

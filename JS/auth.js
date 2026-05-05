@@ -714,6 +714,10 @@ function initializeAuth() {
     authManager = new AuthManager();
   }
 
+  // Exportar inmediatamente para que component-loader y otros módulos
+  // puedan llamar a updateUI() después de inyectar el header.
+  window.authManager = authManager;
+
   // Setup específico según la página
   const currentPage = window.location.pathname;
 
@@ -733,6 +737,12 @@ if (document.readyState === "loading") {
   initializeAuth();
 }
 
-// Exportar para uso global
-window.authManager = authManager;
+// Re-aplicar updateUI cuando el header termine de cargarse
+// (caso típico: index.html, productos.html, etc. usan navbar-placeholder
+// y component-loader.js inyecta el header después de DOMContentLoaded).
+document.addEventListener('daledeal:header-loaded', () => {
+  try { window.authManager?.updateUI(); } catch (_) {}
+});
+
+// Exportar clase
 window.AuthManager = AuthManager;

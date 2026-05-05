@@ -201,6 +201,16 @@ async function loadAllComponents() {
     setTimeout(() => {
       fixHeaderPaths();
       initializeHeaderComponents();
+      // Avisar a auth.js que ya tiene los elementos del navbar disponibles
+      // (el header se carga async, después de que auth.js corrió updateUI()
+      //  por primera vez con elementos inexistentes)
+      try {
+        if (window.authManager?.updateUI) {
+          window.authManager.updateUI();
+        }
+      } catch (_) {}
+      // Evento global por si otros módulos lo necesitan
+      document.dispatchEvent(new CustomEvent('daledeal:header-loaded'));
     }, 100);
   }
 

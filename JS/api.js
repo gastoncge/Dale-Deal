@@ -3,10 +3,22 @@
 // Conecta el frontend con el backend Express + PostgreSQL
 // =====================================================
 
-// URL del backend: usa localhost en desarrollo, API_BASE_URL en producción
+// URL del backend, resolución en orden:
+//   1) window.DaleDeal.CONFIG.API_BASE_URL si está definido (override manual)
+//   2) localhost:3000 si el frontend está corriendo en localhost / 127.0.0.1
+//   3) Si está en cualquier otro hostname (producción), asume que el backend
+//      está deployado en daledeal-backend.up.railway.app — cambialo cuando
+//      tengas tu backend real desplegado.
 function getApiUrl() {
-  if (window.DaleDeal?.CONFIG?.DEBUG) return 'http://localhost:3000';
-  return window.DaleDeal?.CONFIG?.API_BASE_URL || 'http://localhost:3000';
+  if (window.DaleDeal?.CONFIG?.API_BASE_URL) {
+    return window.DaleDeal.CONFIG.API_BASE_URL;
+  }
+  const host = window.location.hostname;
+  if (host === 'localhost' || host === '127.0.0.1' || host === '') {
+    return 'http://localhost:3000';
+  }
+  // ⬇⬇⬇  EDITAR cuando deployes el backend ⬇⬇⬇
+  return 'https://daledeal-backend.up.railway.app';
 }
 const API_URL = null; // legacy — no usar directamente
 
@@ -41,6 +53,10 @@ function transformProduct(p) {
   const images = Array.isArray(p.images) ? p.images : [];
   const mainImage = images[0] || 'https://images.unsplash.com/photo-1560393464-5c69a73c5770?w=600&h=600&fit=crop';
 
+  // Rating real desde el backend; 0 cuando todavía no tiene reseñas.
+  const realRating = p.avg_rating != null ? parseFloat(p.avg_rating) : 0;
+  const realCount  = p.review_count != null ? parseInt(p.review_count) : 0;
+
   return {
     id: p.id,
     title: p.title,
@@ -50,8 +66,8 @@ function transformProduct(p) {
     price: parseFloat(p.price),
     originalPrice: null,
     discount: null,
-    rating: 4.5,
-    reviewCount: 0,
+    rating: realRating,
+    reviewCount: realCount,
     soldCount: 0,
     stock: p.stock || 0,
     condition: p.condition || 'new',
@@ -70,6 +86,12 @@ function transformProduct(p) {
     specifications: {},
     badges: (p.stock > 0 && p.stock < 5) ? ['Stock limitado'] : [],
     shipping: { free: parseFloat(p.price) > 50000 },
+    // Campos de envío del sprint logística (migración 003)
+    shipping_required: !!p.shipping_required,
+    offers_delivery:   !!p.offers_delivery,
+    offers_pickup:     !!p.offers_pickup,
+    shipping_cost:     p.shipping_cost != null ? parseFloat(p.shipping_cost) : null,
+    pickup_address:    p.pickup_address || null,
   };
 }
 
@@ -79,6 +101,8 @@ function transformProduct(p) {
 
 function transformService(s) {
   const images = Array.isArray(s.images) ? s.images : [];
+  const realRating = s.avg_rating != null ? parseFloat(s.avg_rating) : 0;
+  const realCount  = s.review_count != null ? parseInt(s.review_count) : 0;
   return {
     id: s.id,
     title: s.title,
@@ -88,8 +112,8 @@ function transformService(s) {
     priceFrom: parseFloat(s.price_from) || null,
     priceTo: parseFloat(s.price_to) || null,
     priceType: s.price_type || 'fixed',
-    rating: 4.5,
-    reviewCount: 0,
+    rating: realRating,
+    reviewCount: realCount,
     location: s.location || 'Argentina',
     image: images[0] || 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=400&h=300&fit=crop',
     badges: [],
@@ -220,6 +244,62 @@ async function getMyServices() {
 }
 
 // =====================================================
+// FAVORITOS
+// =====================================================
+
+async function fetchFavorites() {
+  return apiFetch('/favorites');
+}
+
+async function addFavoriteApi(item_type, item_id) {
+  return apiFetch('/favorites', {
+    method: 'POST',
+    body: JSON.stringify({ item_type, item_id: Number(item_id) }),
+  });
+}
+
+async function removeFavoriteApi(item_type, item_id) {
+  return apiFetch(`/favorites/item/${item_type}/${Number(item_id)}`, {
+    method: 'DELETE',
+  });
+}
+
+async function checkFavoriteApi(item_type, item_id) {
+  return apiFetch(`/favorites/check/${item_type}/${Number(item_id)}`);
+}
+
+// =====================================================
+// RESEÑAS (REVIEWS)
+// =====================================================
+
+async function fetchReviews(itemType, itemId, { page = 1, limit = 10 } = {}) {
+  const path = `/reviews/${itemType}/${itemId}?page=${page}&limit=${limit}`;
+  return apiFetch(path);
+}
+
+async function createReview({ item_type, item_id, rating, title, body }) {
+  return apiFetch('/reviews', {
+    method: 'POST',
+    body: JSON.stringify({ item_type, item_id, rating, title, body }),
+  });
+}
+
+async function updateReview(id, { rating, title, body }) {
+  return apiFetch(`/reviews/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({ rating, title, body }),
+  });
+}
+
+async function deleteReview(id) {
+  return apiFetch(`/reviews/${id}`, { method: 'DELETE' });
+}
+
+async function fetchUserReviews(userId, { page = 1, limit = 10 } = {}) {
+  return apiFetch(`/reviews/user/${userId}?page=${page}&limit=${limit}`);
+}
+
+// =====================================================
 // EXPORTAR PARA USO GLOBAL
 // =====================================================
 
@@ -245,6 +325,17 @@ if (typeof window !== 'undefined') {
     updateProfile,
     getMyProducts,
     getMyServices,
+    // Reseñas
+    fetchReviews,
+    createReview,
+    updateReview,
+    deleteReview,
+    fetchUserReviews,
+    // Favoritos
+    fetchFavorites,
+    addFavoriteApi,
+    removeFavoriteApi,
+    checkFavoriteApi,
     // Helper de bajo nivel
     apiFetch,
   };
