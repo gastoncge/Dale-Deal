@@ -31,13 +31,7 @@
             <p class="auth-welcome-subtitle">Ingresá tu email y te enviaremos instrucciones</p>
           </div>
 
-          <!-- Demo Notice -->
-          <div class="alert alert-warning d-flex align-items-start gap-2 py-2 px-3 mb-3" role="status" style="font-size:.82rem;border-radius:10px;">
-            <i class="bi bi-cone-striped flex-shrink-0 mt-1"></i>
-            <span><strong>Versión demo.</strong> No existe un backend real. No se enviará ningún correo.</span>
-          </div>
-
-          <!-- Step 1: Email form -->
+          <!-- Step 1: Email form (default) -->
           <div id="stepEmail">
             <form class="auth-form" id="recoverForm" novalidate>
               <div class="auth-form-floating">
@@ -70,17 +64,78 @@
             <div class="mb-3" style="font-size:3rem;color:var(--primary-red)">
               <i class="bi bi-envelope-check"></i>
             </div>
-            <h5 class="fw-bold mb-2">Revisá tu email (demo)</h5>
+            <h5 class="fw-bold mb-2">Revisá tu email</h5>
             <p class="text-muted mb-3" style="font-size:.9rem;">
-              En una versión real, recibirías un enlace para restablecer tu contraseña en
-              <strong id="confirmedEmail"></strong>.
+              Si <strong id="confirmedEmail"></strong> está registrado en Dale Deal,
+              vas a recibir un link para restablecer tu contraseña en los próximos
+              minutos. El link es válido por 60 minutos.
             </p>
             <p class="text-muted" style="font-size:.82rem;">
-              No se envió ningún correo real ya que Dale Deal está en modo demo.
+              ¿No te llegó? Revisá la carpeta de spam o probá con otro email.
             </p>
             <button type="button" class="auth-btn-primary mt-3" id="tryAgainBtn">
               Intentar con otro email
             </button>
+          </div>
+
+          <!-- Step 3: Reset password (cuando viene ?token=X en la URL) -->
+          <div id="stepReset" style="display:none;">
+            <form class="auth-form" id="resetForm" novalidate>
+              <p class="text-muted mb-3" style="font-size:.9rem;">
+                Ingresá tu nueva contraseña. Tiene que tener al menos 8 caracteres.
+              </p>
+              <div class="auth-form-floating">
+                <input
+                  type="password"
+                  class="form-control"
+                  id="newPassword"
+                  name="new_password"
+                  placeholder="Nueva contraseña"
+                  minlength="8"
+                  required
+                />
+                <label for="newPassword">Nueva contraseña</label>
+                <div class="invalid-feedback">Mínimo 8 caracteres.</div>
+              </div>
+              <div class="auth-form-floating">
+                <input
+                  type="password"
+                  class="form-control"
+                  id="newPasswordConfirm"
+                  placeholder="Repetir contraseña"
+                  minlength="8"
+                  required
+                />
+                <label for="newPasswordConfirm">Repetir contraseña</label>
+                <div class="invalid-feedback">Las contraseñas no coinciden.</div>
+              </div>
+
+              <div id="resetError" class="alert alert-danger d-none small mb-3" role="alert"></div>
+
+              <button type="submit" class="auth-btn-primary" id="resetBtn">
+                <span class="btn-text">
+                  <i class="bi bi-shield-lock me-2"></i>Cambiar contraseña
+                </span>
+                <span class="btn-loading d-none">
+                  <div class="loading-spinner"></div>
+                  Guardando...
+                </span>
+              </button>
+            </form>
+          </div>
+
+          <!-- Step 4: Success after reset -->
+          <div id="stepDone" class="text-center py-3" style="display:none;">
+            <div class="mb-3" style="font-size:3rem;color:var(--success, #16a34a)">
+              <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <h5 class="fw-bold mb-2">¡Contraseña actualizada!</h5>
+            <p class="text-muted mb-3" style="font-size:.9rem;">
+              Ya podés iniciar sesión con tu nueva contraseña.
+            </p>
+            <a href="./login.html" class="auth-btn-primary d-inline-block text-decoration-none">
+              <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar sesión
+            </a>
           </div>
 
           <div class="auth-nav-link-section mt-3">
@@ -132,15 +187,35 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
     <script src="../JS/utils.js"></script>
-    <script src="../JS/demo-adapter.js"></script>
+    <script src="../JS/api.js"></script>
     <script src="../JS/auth.js"></script>
     <script src="../JS/component-loader.js" defer></script>
     <script>
+      // ===========================================================
+      // Recuperar contraseña — flujo real conectado al backend
+      // 1) Sin token en URL: pedimos email → POST /auth/forgot-password
+      // 2) Con ?token=X en URL: mostramos form para nueva contraseña
+      //    → POST /auth/reset-password
+      // ===========================================================
+
+      const params = new URLSearchParams(window.location.search);
+      const tokenInUrl = params.get('token');
+
+      // Helper para llamar al backend
+      const apiFetch = window.DaleDeal?.api?.apiFetch;
+
+      // Si vino con token, mostramos directamente el step de reset
+      if (tokenInUrl) {
+        document.getElementById('stepEmail').style.display    = 'none';
+        document.getElementById('stepReset').style.display    = 'block';
+      }
+
+      // ── STEP 1: pedir email ──────────────────────────────────
       const form = document.getElementById('recoverForm');
       const btn  = document.getElementById('recoverBtn');
       const emailInput = document.getElementById('recoverEmail');
 
-      form.addEventListener('submit', async (e) => {
+      form?.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (!emailInput.checkValidity()) {
           emailInput.classList.add('is-invalid');
@@ -148,26 +223,89 @@
         }
         emailInput.classList.remove('is-invalid');
 
-        // Demo delay
         btn.disabled = true;
         btn.querySelector('.btn-text').classList.add('d-none');
         btn.querySelector('.btn-loading').classList.remove('d-none');
 
-        await DemoAdapter.demoDelay(1200);
+        try {
+          if (apiFetch) {
+            await apiFetch('/auth/forgot-password', {
+              method: 'POST',
+              body: JSON.stringify({ email: emailInput.value.trim() }),
+            });
+          }
+        } catch (_) {
+          // Backend siempre devuelve OK genérico; cualquier error de red
+          // tampoco queremos que se filtre. Igual mostramos el siguiente paso.
+        }
 
-        // Show confirmation step
         document.getElementById('confirmedEmail').textContent = emailInput.value;
         document.getElementById('stepEmail').style.display = 'none';
         document.getElementById('stepConfirm').style.display = 'block';
       });
 
-      document.getElementById('tryAgainBtn').addEventListener('click', () => {
+      document.getElementById('tryAgainBtn')?.addEventListener('click', () => {
         form.reset();
         btn.disabled = false;
         btn.querySelector('.btn-text').classList.remove('d-none');
         btn.querySelector('.btn-loading').classList.add('d-none');
         document.getElementById('stepEmail').style.display = 'block';
         document.getElementById('stepConfirm').style.display = 'none';
+      });
+
+      // ── STEP 3: cambiar contraseña con token ─────────────────
+      const resetForm = document.getElementById('resetForm');
+      const resetBtn  = document.getElementById('resetBtn');
+      const newPwd    = document.getElementById('newPassword');
+      const newPwd2   = document.getElementById('newPasswordConfirm');
+      const resetErr  = document.getElementById('resetError');
+
+      function showResetError(msg) {
+        if (!resetErr) return;
+        resetErr.textContent = msg;
+        resetErr.classList.remove('d-none');
+      }
+      function clearResetError() {
+        if (resetErr) resetErr.classList.add('d-none');
+      }
+
+      resetForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearResetError();
+        newPwd.classList.remove('is-invalid');
+        newPwd2.classList.remove('is-invalid');
+
+        if (!newPwd.checkValidity() || newPwd.value.length < 8) {
+          newPwd.classList.add('is-invalid');
+          return;
+        }
+        if (newPwd.value !== newPwd2.value) {
+          newPwd2.classList.add('is-invalid');
+          return;
+        }
+
+        resetBtn.disabled = true;
+        resetBtn.querySelector('.btn-text').classList.add('d-none');
+        resetBtn.querySelector('.btn-loading').classList.remove('d-none');
+
+        try {
+          if (!apiFetch) throw new Error('API no disponible');
+          await apiFetch('/auth/reset-password', {
+            method: 'POST',
+            body: JSON.stringify({
+              token: tokenInUrl,
+              new_password: newPwd.value,
+            }),
+          });
+          // Éxito → step final
+          document.getElementById('stepReset').style.display = 'none';
+          document.getElementById('stepDone').style.display  = 'block';
+        } catch (err) {
+          showResetError(err.message || 'No se pudo cambiar la contraseña');
+          resetBtn.disabled = false;
+          resetBtn.querySelector('.btn-text').classList.remove('d-none');
+          resetBtn.querySelector('.btn-loading').classList.add('d-none');
+        }
       });
     </script>
   </body>

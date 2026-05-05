@@ -127,33 +127,40 @@
                 </div>
               </div>
 
+              <!-- Asunto -->
+              <div class="mb-4">
+                <label class="form-label">Asunto / título corto (opcional)</label>
+                <input type="text" class="form-control mt-2" id="reportSubject" placeholder="Ej: No me llegó el código de verificación" maxlength="200">
+              </div>
+
               <!-- Descripción -->
               <div class="mb-4">
                 <label class="form-label">Descripción del problema <span class="text-danger">*</span></label>
-                <textarea class="form-control mt-2" rows="5" placeholder="¿Qué pasó? ¿Cuándo ocurrió? ¿Pudiste reproducirlo? Describí los pasos que seguiste..." required></textarea>
+                <textarea class="form-control mt-2" id="reportBody" rows="5" placeholder="¿Qué pasó? ¿Cuándo ocurrió? ¿Pudiste reproducirlo? Describí los pasos que seguiste..." required minlength="10" maxlength="5000"></textarea>
+                <small class="text-muted">Mínimo 10 caracteres.</small>
               </div>
 
               <!-- URL -->
               <div class="mb-4">
                 <label class="form-label">URL o sección afectada (opcional)</label>
-                <input type="url" class="form-control mt-2" placeholder="https://daledeal.com/...">
-              </div>
-
-              <!-- Upload -->
-              <div class="mb-5">
-                <label class="form-label mb-2">Captura de pantalla (opcional)</label>
-                <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
-                  <i class="bi bi-cloud-arrow-up"></i>
-                  <p class="fw-600 mb-1">Arrastrá o hacé clic para subir</p>
-                  <small class="text-muted">PNG, JPG, GIF hasta 5 MB</small>
-                </div>
-                <input type="file" id="fileInput" accept="image/*" class="d-none">
+                <input type="url" class="form-control mt-2" id="reportUrl" placeholder="https://daledeal.com.ar/HTML/...">
               </div>
 
               <!-- Email -->
               <div class="mb-5">
                 <label class="form-label">Tu email (para seguimiento)</label>
-                <input type="email" class="form-control mt-2" placeholder="tu@email.com">
+                <input type="email" class="form-control mt-2" id="reportEmail" placeholder="tu@email.com">
+                <small class="text-muted">Si estás logueado lo tomamos automáticamente.</small>
+              </div>
+
+              <!-- Mensajes de feedback -->
+              <div id="reportSuccess" class="alert alert-success d-none mb-3" role="status">
+                <i class="bi bi-check-circle me-2"></i>
+                <span id="reportSuccessMsg">¡Recibimos tu reporte! Te respondemos a la brevedad.</span>
+              </div>
+              <div id="reportError" class="alert alert-danger d-none mb-3" role="alert">
+                <i class="bi bi-exclamation-circle me-2"></i>
+                <span id="reportErrorMsg"></span>
               </div>
 
               <button type="submit" class="btn btn-primary btn-lg w-100">
@@ -183,6 +190,7 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" integrity="sha384-wziAfh6b/qT+3LrqebF9WeK4+J5sehS6FA10J1t3a866kJ/fvU5UwofWnQyzLtwu" crossorigin="anonymous"></script>
     <script src="../JS/theme.js"></script>
     <script src="../JS/utils.js"></script>
+    <script src="../JS/api.js"></script>
     <script src="../JS/auth.js"></script>
     <script src="../JS/cart.js"></script>
     <script src="../JS/notifications.js"></script>
@@ -191,10 +199,25 @@
     <script>
       AOS.init({ duration: 800, once: true, offset: 100 });
 
+      // Selectores de tipo / gravedad — guardamos el seleccionado en data
+      let selectedType = null;
+      let selectedSev  = 'medium';
+
+      // Mapeo del data-type del UI al category del backend
+      const TYPE_TO_CATEGORY = {
+        pago:       'payment',
+        pedido:     'shipping',
+        cuenta:     'account',
+        tecnico:    'technical',
+        contenido:  'content',
+        otro:       'other',
+      };
+
       document.querySelectorAll('.problem-type-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           document.querySelectorAll('.problem-type-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
+          selectedType = btn.dataset.type;
         });
       });
 
@@ -202,15 +225,74 @@
         btn.addEventListener('click', () => {
           document.querySelectorAll('.severity-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
+          selectedSev = btn.dataset.sev;
         });
       });
 
-      document.getElementById('reportForm').addEventListener('submit', function(e) {
+      // Pre-llenar el email si hay sesión activa
+      try {
+        const u = JSON.parse(localStorage.getItem('daledealer_user') || 'null');
+        if (u?.email) document.getElementById('reportEmail').value = u.email;
+      } catch (_) {}
+
+      function showError(msg) {
+        const el = document.getElementById('reportError');
+        document.getElementById('reportErrorMsg').textContent = msg;
+        el.classList.remove('d-none');
+        document.getElementById('reportSuccess').classList.add('d-none');
+        setTimeout(() => el.classList.add('d-none'), 6000);
+      }
+
+      document.getElementById('reportForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        document.getElementById('ticketNum').textContent = Math.floor(10000 + Math.random() * 90000);
-        document.getElementById('formState').style.display = 'none';
-        document.getElementById('successState').classList.add('show');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('reportError').classList.add('d-none');
+        document.getElementById('reportSuccess').classList.add('d-none');
+
+        if (!selectedType) {
+          showError('Elegí un tipo de problema');
+          return;
+        }
+        const body = document.getElementById('reportBody').value.trim();
+        if (body.length < 10) {
+          showError('Contale más detalle (mínimo 10 caracteres)');
+          return;
+        }
+
+        const subject = document.getElementById('reportSubject').value.trim();
+        const url     = document.getElementById('reportUrl').value.trim();
+        const email   = document.getElementById('reportEmail').value.trim();
+
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalHTML = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Enviando…';
+
+        try {
+          const apiFetch = window.DaleDeal?.api?.apiFetch;
+          if (!apiFetch) throw new Error('API no disponible');
+
+          const result = await apiFetch('/reports', {
+            method: 'POST',
+            body: JSON.stringify({
+              category: TYPE_TO_CATEGORY[selectedType] || 'other',
+              subject:  subject || `[${selectedSev}] ${selectedType}`,
+              body,
+              url:      url || window.location.href,
+              reporter_email: email || null,
+            }),
+          });
+
+          // Mostrar success state con el ID del ticket
+          document.getElementById('ticketNum').textContent = String(result?.report?.id || '----');
+          document.getElementById('formState').style.display = 'none';
+          document.getElementById('successState').classList.add('show');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } catch (err) {
+          showError(err.message || 'No se pudo enviar el reporte. Intentá de nuevo.');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalHTML;
+        }
       });
     </script>
   </body>
