@@ -30,18 +30,61 @@ function getToken() {
   return localStorage.getItem('daledeal_token');
 }
 
+/**
+ * Traduce errores HTTP / de red a mensajes amigables en castellano,
+ * priorizando el mensaje del backend si vino algo razonable.
+ */
+function friendlyError(status, backendMsg) {
+  if (status === 0) {
+    return 'No pudimos conectarnos al servidor. Revisá tu internet y volvé a intentar.';
+  }
+  if (status === 401) {
+    return backendMsg && backendMsg !== 'Token requerido'
+      ? backendMsg
+      : 'Tu sesión expiró. Volvé a iniciar sesión.';
+  }
+  if (status === 403) return backendMsg || 'No tenés permiso para hacer esto.';
+  if (status === 404) return backendMsg || 'No encontramos lo que buscabas.';
+  if (status === 409) return backendMsg || 'Ya hay un registro con esos datos.';
+  if (status === 429) return 'Demasiados intentos. Esperá un minuto y volvé a intentar.';
+  if (status >= 500) return 'Tuvimos un problema en el servidor. Probá en unos minutos.';
+  // 4xx genérico — usamos el mensaje del backend si existe
+  return backendMsg || `Algo no funcionó (HTTP ${status}).`;
+}
+
 async function apiFetch(path, options = {}) {
   const token = getToken();
   const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
-  const res = await fetch(`${getApiUrl()}${path}`, { ...options, headers });
-
-  if (!res.ok) {
-    const errBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
-    throw new Error(errBody.error || `HTTP ${res.status}`);
+  let res;
+  try {
+    res = await fetch(`${getApiUrl()}${path}`, { ...options, headers });
+  } catch (networkErr) {
+    // Sin red, CORS, DNS, etc.
+    const err = new Error(friendlyError(0));
+    err.status = 0;
+    err.cause  = networkErr;
+    throw err;
   }
 
+  if (!res.ok) {
+    const errBody = await res.json().catch(() => ({}));
+    const err = new Error(friendlyError(res.status, errBody?.error));
+    err.status = res.status;
+    err.body   = errBody;
+    // Auto-logout si el token expiró
+    if (res.status === 401 && token) {
+      try {
+        localStorage.removeItem('daledeal_token');
+        localStorage.removeItem('daledealer_user');
+      } catch (_) {}
+    }
+    throw err;
+  }
+
+  // 204 No Content
+  if (res.status === 204) return null;
   return res.json();
 }
 
