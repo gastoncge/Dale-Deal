@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Botón de arrepentimiento — Dale Deal</title>
+  <meta name="description" content="Ejercé tu derecho a desistir de una compra dentro de los 10 días corridos. Resolución 424/2020 SCI." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://daledeal.com.ar/HTML/arrepentimiento.html" />
+  <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="../CSS/variables.css" />
+  <link rel="stylesheet" href="../CSS/components.css" />
+  <link rel="stylesheet" href="../CSS/responsive.css" />
+
+  <style>
+    .arr-card {
+      background: var(--white); border: 2px solid var(--gray-200);
+      border-radius: var(--radius-2xl); padding: var(--spacing-8);
+      max-width: 720px; margin: 0 auto;
+    }
+    .arr-hero {
+      background: linear-gradient(135deg, #ff8000 0%, #d63031 100%);
+      color: #fff; padding: 48px 16px; text-align: center;
+    }
+    .form-label { font-weight: 600; }
+    .law-box {
+      background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px;
+      padding: 16px 20px; font-size: 14px; line-height: 1.6; color: #374151;
+    }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main>
+    <section class="arr-hero">
+      <div class="container">
+        <h1 style="margin:0 0 8px;font-weight:800;letter-spacing:-.5px;">Botón de arrepentimiento</h1>
+        <p style="margin:0;opacity:.92;">Ejercé tu derecho a desistir de una compra dentro de los 10 días corridos.</p>
+      </div>
+    </section>
+
+    <section style="padding:40px 16px;">
+      <div class="arr-card">
+        <div class="law-box mb-4">
+          <strong>¿De qué se trata?</strong><br>
+          La Ley 24.240 de Defensa del Consumidor y la Resolución 424/2020 SCI te
+          permiten desistir de una compra realizada por internet en un plazo de
+          <strong>10 días corridos</strong> desde que recibís el producto o
+          contratás el servicio, sin necesidad de justificar tu decisión y sin
+          costo alguno (más allá de la devolución del producto en su estado
+          original).
+        </div>
+
+        <form id="formArrepentimiento" novalidate>
+          <div class="mb-3">
+            <label class="form-label" for="arr-orden">N.º de orden</label>
+            <input type="text" class="form-control" id="arr-orden" required maxlength="40"
+                   placeholder="Ej: #1234" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="arr-email">Email de tu cuenta</label>
+            <input type="email" class="form-control" id="arr-email" required maxlength="120"
+                   placeholder="tunombre@gmail.com" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="arr-fecha">Fecha de la compra</label>
+            <input type="date" class="form-control" id="arr-fecha" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="arr-motivo">Motivo (opcional)</label>
+            <textarea class="form-control" id="arr-motivo" rows="4" maxlength="2000"
+                      placeholder="Si querés contarnos por qué (no es obligatorio)…"></textarea>
+          </div>
+
+          <div class="alert alert-info small">
+            <i class="bi bi-info-circle me-1"></i>
+            Vamos a procesar tu pedido en un máximo de <strong>72 hs hábiles</strong>
+            y a comunicarte por email cómo continuar con la devolución del producto y
+            el reintegro del dinero.
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-lg w-100" id="arr-submit">
+            <i class="bi bi-arrow-counterclockwise me-2"></i>
+            Enviar solicitud de arrepentimiento
+          </button>
+        </form>
+
+        <div id="arr-success" class="alert alert-success mt-4 d-none">
+          <i class="bi bi-check-circle me-2"></i>
+          Recibimos tu solicitud. Te vamos a contactar al email indicado en las
+          próximas 72 hs hábiles.
+        </div>
+        <div id="arr-error" class="alert alert-danger mt-4 d-none"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="../JS/utils.js" defer></script>
+  <script src="../JS/api.js" defer></script>
+  <script src="../JS/component-loader.js" defer></script>
+  <script src="../JS/auth.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('formArrepentimiento');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const orden  = document.getElementById('arr-orden').value.trim();
+        const email  = document.getElementById('arr-email').value.trim();
+        const fecha  = document.getElementById('arr-fecha').value;
+        const motivo = document.getElementById('arr-motivo').value.trim();
+
+        const errBox = document.getElementById('arr-error');
+        const okBox  = document.getElementById('arr-success');
+        errBox.classList.add('d-none');
+        okBox.classList.add('d-none');
+
+        if (!orden || !email || !fecha) {
+          errBox.textContent = 'Completá orden, email y fecha de compra.';
+          errBox.classList.remove('d-none');
+          return;
+        }
+
+        const btn = document.getElementById('arr-submit');
+        btn.disabled = true;
+        try {
+          await window.DaleDeal.api.apiFetch('/reports', {
+            method: 'POST',
+            body: JSON.stringify({
+              category: 'arrepentimiento',
+              subject:  `Arrepentimiento — Orden ${orden}`,
+              body:     `Email: ${email}\nFecha de compra: ${fecha}\nMotivo: ${motivo || '(no informado)'}`,
+              reporter_email: email,
+              url: window.location.href,
+            }),
+          });
+          okBox.classList.remove('d-none');
+          form.reset();
+        } catch (err) {
+          errBox.textContent = err.message || 'No pudimos enviar tu solicitud. Intentá de nuevo en unos minutos.';
+          errBox.classList.remove('d-none');
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    });
+  </script>
+</body>
+</html>
