@@ -204,8 +204,24 @@ async function submitProduct() {
   const title = document.getElementById('p-title').value.trim();
   const price = document.getElementById('p-price').value;
 
-  if (!title) { showError('product-error', 'El título es obligatorio.'); return; }
-  if (!price || price <= 0) { showError('product-error', 'El precio es obligatorio.'); return; }
+  if (!title || title.length < 3) {
+    showError('product-error', 'El título debe tener al menos 3 caracteres.');
+    return;
+  }
+  const priceNum = parseFloat(price);
+  if (!Number.isFinite(priceNum) || priceNum <= 0) {
+    showError('product-error', 'El precio debe ser un número mayor a 0.');
+    return;
+  }
+  if (priceNum > 999_999_999) {
+    showError('product-error', 'El precio supera el máximo permitido.');
+    return;
+  }
+  const stockNum = parseInt(document.getElementById('p-stock').value, 10) || 1;
+  if (stockNum < 0 || stockNum > 100_000) {
+    showError('product-error', 'El stock debe estar entre 0 y 100.000.');
+    return;
+  }
 
   // Datos de envío
   const shippingRequired = !!document.getElementById('p-shipping-required')?.checked;
@@ -236,7 +252,7 @@ async function submitProduct() {
     condition: document.getElementById('p-condition').value,
     category_id: document.getElementById('p-category').value || null,
     location: document.getElementById('p-location').value.trim(),
-    images: getImageUrls('p-image-list'),
+    images: getProductImages(),
     currency: 'ARS',
     shipping_required: shippingRequired,
     offers_delivery:   shippingRequired && offersDelivery,
@@ -256,7 +272,9 @@ async function submitProduct() {
     document.querySelectorAll('.condition-btn').forEach((b, i) => {
       b.classList.toggle('active', i === 0);
     });
-    resetImageList('p-image-list');
+    resetImageList('p-photo-area');
+    document.getElementById('p-photo-previews').innerHTML = '';
+    document.getElementById('p-video-previews').innerHTML = '';
     // Limpiar editor Quill (el form.reset() no lo toca)
     if (pDescriptionEditor) pDescriptionEditor.setText('');
     // Reset estado del bloque de envío
@@ -282,7 +300,28 @@ async function submitService() {
   const btn = document.getElementById('btn-publish-service');
   const title = document.getElementById('s-title').value.trim();
 
-  if (!title) { showError('service-error', 'El título es obligatorio.'); return; }
+  if (!title || title.length < 3) {
+    showError('service-error', 'El título debe tener al menos 3 caracteres.');
+    return;
+  }
+
+  const priceFrom = parseFloat(document.getElementById('s-price-from').value);
+  const priceTo   = parseFloat(document.getElementById('s-price-to').value);
+  const priceType = document.getElementById('s-price-type').value;
+  if (priceType !== 'quote') {
+    if (Number.isFinite(priceFrom) && priceFrom <= 0) {
+      showError('service-error', 'El precio "desde" debe ser mayor a 0.');
+      return;
+    }
+    if (Number.isFinite(priceTo) && priceTo <= 0) {
+      showError('service-error', 'El precio "hasta" debe ser mayor a 0.');
+      return;
+    }
+    if (Number.isFinite(priceFrom) && Number.isFinite(priceTo) && priceTo < priceFrom) {
+      showError('service-error', 'El precio "hasta" no puede ser menor al "desde".');
+      return;
+    }
+  }
 
   const zonesRaw = document.getElementById('s-zones').value.trim();
   const zones = zonesRaw ? zonesRaw.split(',').map(z => z.trim()).filter(Boolean) : [];
@@ -290,13 +329,13 @@ async function submitService() {
   const serviceData = {
     title,
     description: document.getElementById('s-description').value.trim(),
-    price_from: parseFloat(document.getElementById('s-price-from').value) || null,
-    price_to: parseFloat(document.getElementById('s-price-to').value) || null,
-    price_type: document.getElementById('s-price-type').value,
+    price_from: Number.isFinite(priceFrom) ? priceFrom : null,
+    price_to:   Number.isFinite(priceTo)   ? priceTo   : null,
+    price_type: priceType,
     category_id: document.getElementById('s-category').value || null,
     location: document.getElementById('s-location').value.trim(),
     zones_covered: zones,
-    images: getImageUrls('s-image-list'),
+    images: getServiceImages(),
     currency: 'ARS',
   };
 
@@ -311,7 +350,9 @@ async function submitService() {
     document.querySelectorAll('.price-type-btn').forEach((b, i) => {
       b.classList.toggle('active', i === 0);
     });
-    resetImageList('s-image-list');
+    resetImageList('s-photo-area');
+    document.getElementById('s-photo-previews').innerHTML = '';
+    document.getElementById('s-video-previews').innerHTML = '';
     if (sDescriptionEditor) sDescriptionEditor.setText('');
   } catch (err) {
     showError('service-error', err.message || 'Error al publicar. Intentá nuevamente.');
@@ -323,45 +364,169 @@ async function submitService() {
 // =====================================================
 // HELPERS DE IMÁGENES
 // =====================================================
-function getImageUrls(listId) {
-  const inputs = document.querySelectorAll(`#${listId} input[type="url"]`);
+//
+// Estado: el upload directo de archivos a un storage propio (S3/Cloudinary)
+// está en roadmap. Mientras tanto:
+//   1) El usuario puede seleccionar archivos: se muestran en preview pero
+//      NO se envían al backend (el data URL es muy pesado para guardar).
+//   2) Como fallback, hidratamos cada selección a un campo de URL editable
+//      por debajo del file picker. Si pegan URLs públicas (Imgur, Drive,
+//      etc.) ESAS sí se mandan al backend.
+//
+// Esto evita el bug de "publico sin imágenes" mientras no haya upload real.
+
+function getProductImages() { return readImageUrlsFromExtra('p-photo-area'); }
+function getServiceImages() { return readImageUrlsFromExtra('s-photo-area'); }
+
+function readImageUrlsFromExtra(areaId) {
+  // Buscamos un sub-bloque de URLs adicionales que se inyecta on-demand.
+  const wrap = document.getElementById(`${areaId}-urls`);
+  if (!wrap) return [];
+  const inputs = wrap.querySelectorAll('input[type="url"]');
   return Array.from(inputs)
     .map(i => i.value.trim())
-    .filter(url => url.length > 0);
+    .filter(url => /^https?:\/\/.+/i.test(url));
 }
 
-function addImageRow(listId) {
-  const list = document.getElementById(listId);
+function ensureExtraUrlBlock(areaId) {
+  const id = `${areaId}-urls`;
+  let wrap = document.getElementById(id);
+  if (wrap) return wrap;
+  const area = document.getElementById(areaId);
+  if (!area) return null;
+  wrap = document.createElement('div');
+  wrap.id = id;
+  wrap.className = 'mt-3';
+  wrap.innerHTML = `
+    <label class="form-label small mb-1">URLs de fotos hosteadas (opcional, se publican)</label>
+    <div class="image-url-list">
+      <div class="image-url-row d-flex gap-2 align-items-center mb-2">
+        <input type="url" class="form-control form-control-sm" placeholder="https://..." />
+        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addImageUrlRow('${id}')">+</button>
+      </div>
+    </div>
+    <div class="form-text">El upload directo está en beta. Por ahora pegá URLs públicas de tus fotos (Imgur, Drive, etc.).</div>
+  `;
+  area.parentElement.appendChild(wrap);
+  return wrap;
+}
+
+function addImageUrlRow(wrapId) {
+  const wrap = document.getElementById(wrapId);
+  if (!wrap) return;
+  const list = wrap.querySelector('.image-url-list');
+  const rows = list.querySelectorAll('.image-url-row').length;
+  if (rows >= 20) return;
   const row = document.createElement('div');
-  row.className = 'image-url-row';
+  row.className = 'image-url-row d-flex gap-2 align-items-center mb-2';
   row.innerHTML = `
-    <input type="url" class="form-control" placeholder="https://..." />
-    <button type="button" class="btn-remove-image" onclick="removeImageRow(this)">
-      <i class="bi bi-x-circle"></i>
-    </button>
+    <input type="url" class="form-control form-control-sm" placeholder="https://..." />
+    <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.parentElement.remove()">×</button>
   `;
   list.appendChild(row);
 }
+window.addImageUrlRow = addImageUrlRow;
 
-function removeImageRow(btn) {
-  const list = btn.closest('.image-url-list');
-  if (list.querySelectorAll('.image-url-row').length > 1) {
-    btn.closest('.image-url-row').remove();
-  } else {
-    btn.closest('.image-url-row').querySelector('input').value = '';
-  }
+function resetImageList(areaIdSuffix) {
+  // No-op: el bloque se mantiene tras submit; queda al usuario.
+  // Esta función se mantiene para no romper llamadas existentes.
+  const wrap = document.getElementById(`${areaIdSuffix.replace(/-list$/, '-urls')}`)
+            || document.getElementById(`${areaIdSuffix}-urls`);
+  if (!wrap) return;
+  const inputs = wrap.querySelectorAll('input[type="url"]');
+  inputs.forEach(i => i.value = '');
 }
 
-function resetImageList(listId) {
-  const list = document.getElementById(listId);
-  list.innerHTML = `
-    <div class="image-url-row">
-      <input type="url" class="form-control" placeholder="https://..." />
-      <button type="button" class="btn-remove-image" onclick="removeImageRow(this)">
-        <i class="bi bi-x-circle"></i>
-      </button>
-    </div>
-  `;
+// =====================================================
+// HANDLERS INLINE QUE EL HTML INVOCA (handleMediaUpload, etc.)
+// =====================================================
+
+/**
+ * Lee los archivos elegidos en un <input type="file">, los muestra
+ * en preview y abre el bloque de URLs adicionales (donde el usuario
+ * puede pegar las URLs reales para publicar). Limita 10 fotos / 1 video.
+ */
+function handleMediaUpload(input, previewId, type) {
+  const previews = document.getElementById(previewId);
+  if (!previews) return;
+  previews.innerHTML = '';
+  const files = Array.from(input.files || []);
+  const max = type === 'video' ? 1 : 10;
+  const limited = files.slice(0, max);
+  if (files.length > max) {
+    alert(type === 'video'
+      ? 'Solo podés subir 1 video.'
+      : `Solo podés subir hasta ${max} fotos.`);
+  }
+  limited.forEach(file => {
+    const url = URL.createObjectURL(file);
+    const el = document.createElement('div');
+    el.className = 'media-preview-item';
+    el.style.cssText = 'display:inline-block;margin:6px;position:relative;';
+    el.innerHTML = type === 'video'
+      ? `<video src="${url}" controls style="max-width:160px;max-height:120px;border-radius:8px;"></video>`
+      : `<img src="${url}" alt="${escapeAttr(file.name)}" style="width:120px;height:120px;object-fit:cover;border-radius:8px;" />`;
+    previews.appendChild(el);
+  });
+  // Abrir el bloque de URLs adicionales si seleccionó algo (para que sepa
+  // que tiene que pegar las URLs)
+  if (limited.length > 0) {
+    const areaId = input.closest('.media-upload-area')?.id;
+    if (areaId) ensureExtraUrlBlock(areaId);
+  }
+}
+window.handleMediaUpload = handleMediaUpload;
+
+/**
+ * Actualiza el preview visual del cartel (badge) cuando el usuario
+ * cambia el texto o el color en publicar.
+ */
+function updateBadgePreview(badgeId) {
+  const text  = document.getElementById(`${badgeId}-text`)?.value || 'VISTA';
+  const color = document.getElementById(`${badgeId}-color`)?.value || '#ef4444';
+  const prev  = document.getElementById(`${badgeId}-preview`);
+  if (!prev) return;
+  prev.textContent     = text || 'VISTA';
+  prev.style.background = color;
+}
+window.updateBadgePreview = updateBadgePreview;
+
+/**
+ * Selección de plan en la grilla de planes (Estándar / Destacado / Pro).
+ * Por ahora todos los planes se cobran después del MVP — guardamos la
+ * elección y la mostramos en el modal de pago.
+ */
+function seleccionarPlan(nombrePlan, precio) {
+  window.__daledealPlanSeleccionado = { nombre: nombrePlan, precio: Number(precio) || 0 };
+  // Mostrar mensaje claro
+  if (precio > 0) {
+    const ok = confirm(`Plan "${nombrePlan}" ($${precio.toLocaleString('es-AR')}/mes).\n\nLa monetización de planes destacados está en activación. Por ahora podés seguir publicando con el plan Estándar (gratis). ¿Querés volver a la publicación gratuita?`);
+    if (ok) document.querySelector('#publishTabs .nav-link.active')?.click();
+  } else {
+    alert(`Elegiste el plan "${nombrePlan}" — gratis. Completá el formulario y dale a "Publicar".`);
+  }
+}
+window.seleccionarPlan = seleccionarPlan;
+
+/** Confirmar pago del plan elegido (placeholder hasta que esté MP de planes). */
+function confirmarPago() {
+  const plan = window.__daledealPlanSeleccionado;
+  if (!plan) {
+    alert('Primero elegí un plan.');
+    return;
+  }
+  alert(`El cobro de planes destacados se va a habilitar en breve. Te avisamos por email cuando "${plan.nombre}" esté disponible.`);
+  // Cerrar el modal si Bootstrap está disponible
+  const modal = document.getElementById('modalPago');
+  if (modal && window.bootstrap) {
+    bootstrap.Modal.getInstance(modal)?.hide();
+  }
+}
+window.confirmarPago = confirmarPago;
+
+function escapeAttr(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+    ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 }
 
 // =====================================================
