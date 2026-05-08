@@ -56,8 +56,10 @@
         background: var(--white) !important;
       }
 
-      /* Breadcrumb ocupa todo el ancho — mismas reglas que productos.html
-         para que las dos páginas hermanas se vean idénticas. */
+      /* Breadcrumb ocupa todo el ancho — mismas reglas que productos.html.
+         Usa var(--gray-50) que resuelve a #f8fafc en light y #1e293b en dark
+         — el MISMO color que .navbar global, así no hay transición visible
+         entre la navbar y la zona del título. */
       .page-header-new {
         background: var(--gray-50) !important;
         width: 100vw !important;
@@ -66,11 +68,6 @@
         padding-right: calc(50vw - 50% + 1rem) !important;
         border-bottom: none !important;
         box-shadow: none !important;
-      }
-
-      [data-theme="dark"] .page-header-new {
-        background: transparent !important;
-        border-bottom: none !important;
       }
 
       /* Badges iguales a la página de inicio - display controlado por JS */
