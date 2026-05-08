@@ -43,8 +43,29 @@
 
     <!-- Services Page Styles - Same as Products -->
     <style>
+      /* La navbar usa la regla global de CSS/components.css —
+         no la pisamos acá para que sea idéntica a la del resto del sitio. */
+
+      /* Main content sin bordes */
+      .main-content {
+        background: var(--white) !important;
+      }
+
+      /* Breadcrumb ocupa todo el ancho — mismas reglas que productos.html
+         para que las dos páginas hermanas se vean idénticas. */
+      .page-header-new {
+        background: var(--gray-50) !important;
+        width: 100vw !important;
+        margin-left: calc(-50vw + 50%) !important;
+        padding-left: calc(50vw - 50% + 1rem) !important;
+        padding-right: calc(50vw - 50% + 1rem) !important;
+        border-bottom: none !important;
+        box-shadow: none !important;
+      }
+
       [data-theme="dark"] .page-header-new {
-        border-bottom: 1px solid rgba(255,255,255,0.06);
+        background: transparent !important;
+        border-bottom: none !important;
       }
       [data-theme="dark"] .breadcrumb-item a {
         color: #94a3b8;
@@ -874,9 +895,7 @@
 
       /* ===== NEW PAGE HEADER STYLES ===== */
       .page-header-new {
-        background: transparent;
         padding: var(--spacing-4) 0;
-        border-bottom: none;
       }
 
       /* Breadcrumbs */
