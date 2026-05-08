@@ -410,6 +410,25 @@
       [data-theme="dark"] .ql-snow .ql-stroke { stroke: var(--gray-600); }
       [data-theme="dark"] .ql-snow .ql-fill { fill: var(--gray-600); }
       [data-theme="dark"] .ql-snow .ql-picker-label { color: var(--gray-700); }
+
+      /* ===== Quill: hardening en mobile (no se desborde la toolbar) ===== */
+      .ql-toolbar.ql-snow {
+        flex-wrap: wrap;
+      }
+      .ql-toolbar.ql-snow .ql-formats {
+        margin-right: 8px;
+        margin-bottom: 4px;
+      }
+      @media (max-width: 480px) {
+        .ql-toolbar.ql-snow {
+          padding: 6px 4px;
+        }
+        .ql-toolbar.ql-snow .ql-formats button {
+          width: 26px;
+          height: 26px;
+          padding: 2px;
+        }
+      }
       [data-theme="dark"] .ql-snow .ql-picker-options {
         background: #1e293b;
         border-color: rgba(255, 255, 255, 0.12);
@@ -534,7 +553,7 @@
               </li>
               <li><hr class="dropdown-divider" /></li>
               <li>
-                <a class="dropdown-item" href="./login.html">
+                <a class="dropdown-item" href="./login.html" id="loginLink">
                   <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
                 </a>
               </li>
@@ -658,62 +677,52 @@
                 </div>
               </div>
 
-              <!-- Entrega -->
+              <!-- Envío y entrega -->
               <div class="publish-card">
-                <h5><i class="bi bi-truck"></i>Entrega</h5>
-                <p class="text-muted small mb-3">¿Cómo recibe el comprador el producto?</p>
+                <h5><i class="bi bi-truck"></i>Envío y entrega</h5>
 
-                <div class="delivery-options">
-                  <label class="delivery-option">
-                    <input type="radio" name="p-delivery" value="buyer_pays" checked />
-                    <div class="delivery-option-card">
-                      <i class="bi bi-box-seam"></i>
-                      <div>
-                        <strong>Envío a cargo del comprador</strong>
-                        <small>El comprador abona el costo del envío al momento de comprar</small>
-                      </div>
-                    </div>
+                <div class="form-check form-switch mb-3">
+                  <input class="form-check-input" type="checkbox" id="p-shipping-required" />
+                  <label class="form-check-label fw-semibold" for="p-shipping-required">
+                    Este producto requiere envío o retiro
                   </label>
-                  <label class="delivery-option">
-                    <input type="radio" name="p-delivery" value="free_shipping" />
-                    <div class="delivery-option-card">
-                      <i class="bi bi-truck"></i>
-                      <div>
-                        <strong>Envío gratis</strong>
-                        <small>Vos pagás el envío — el comprador lo recibe sin costo adicional</small>
-                      </div>
-                    </div>
-                  </label>
-                  <label class="delivery-option">
-                    <input type="radio" name="p-delivery" value="pickup" />
-                    <div class="delivery-option-card">
-                      <i class="bi bi-geo-alt-fill"></i>
-                      <div>
-                        <strong>Retiro en un lugar físico</strong>
-                        <small>El comprador va a buscar el producto a tu dirección</small>
-                      </div>
-                    </div>
-                  </label>
-                  <label class="delivery-option">
-                    <input type="radio" name="p-delivery" value="meetup" />
-                    <div class="delivery-option-card">
-                      <i class="bi bi-people-fill"></i>
-                      <div>
-                        <strong>Nos encontramos en un lugar</strong>
-                        <small>Acordás con el comprador un punto de encuentro para la entrega</small>
-                      </div>
-                    </div>
-                  </label>
+                  <div class="form-text">
+                    Activá esta opción si es un producto físico que el comprador necesita recibir.
+                    Para servicios o ítems digitales, dejá esto desactivado.
+                  </div>
                 </div>
 
-                <div id="p-delivery-location-wrap" class="d-none mt-3">
-                  <label class="form-label" id="p-delivery-location-label">Dirección de retiro</label>
-                  <input type="text" class="form-control" id="p-delivery-location"
-                    placeholder="Ej: Av. Corrientes 1234, CABA" maxlength="150" />
-                  <small class="form-text text-muted">Esta dirección será visible para el comprador una vez confirmada la compra.</small>
-                </div>
+                <div id="p-shipping-options" style="display:none;">
+                  <!-- Envío a domicilio -->
+                  <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="p-offers-delivery" />
+                    <label class="form-check-label fw-semibold" for="p-offers-delivery">
+                      <i class="bi bi-box-seam me-1"></i> Ofrezco envío a domicilio
+                    </label>
+                  </div>
+                  <div id="p-delivery-fields" class="mb-3 ms-4" style="display:none;">
+                    <label class="form-label small">Costo del envío (ARS)</label>
+                    <div class="input-group" style="max-width:240px;">
+                      <span class="input-group-text">$</span>
+                      <input type="number" class="form-control" id="p-shipping-cost" placeholder="0" min="0" step="100" />
+                    </div>
+                    <div class="form-text">Poné 0 si el envío es gratis para el comprador.</div>
+                  </div>
 
-                <input type="hidden" id="p-delivery-type" value="buyer_pays" />
+                  <!-- Retiro en persona -->
+                  <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="p-offers-pickup" />
+                    <label class="form-check-label fw-semibold" for="p-offers-pickup">
+                      <i class="bi bi-geo-alt me-1"></i> Acepto retiro en persona
+                    </label>
+                  </div>
+                  <div id="p-pickup-fields" class="ms-4" style="display:none;">
+                    <label class="form-label small">Zona / dirección de retiro</label>
+                    <input type="text" class="form-control" id="p-pickup-address"
+                           placeholder="Ej: Palermo, CABA · cerca del subte D" maxlength="255" />
+                    <div class="form-text">Esta info la ve el comprador al elegir retiro. No pongas tu dirección exacta acá.</div>
+                  </div>
+                </div>
               </div>
 
               <!-- Fotos y Videos -->
@@ -1249,10 +1258,7 @@
                   Compra, vende productos y contrata servicios profesionales de calidad.
                 </p>
                 <div class="footer-social">
-                  <a aria-disabled="true" tabindex="-1" class="social-link" title="Facebook — próximamente" style="opacity:.45;cursor:default;pointer-events:none;"><i class="bi bi-facebook"></i></a>
                   <a href="https://www.instagram.com/daledeal.ar/" class="social-link" title="Instagram" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram"></i></a>
-                  <a aria-disabled="true" tabindex="-1" class="social-link" title="Twitter/X — próximamente" style="opacity:.45;cursor:default;pointer-events:none;"><i class="bi bi-twitter"></i></a>
-                  <a aria-disabled="true" tabindex="-1" class="social-link" title="LinkedIn — próximamente" style="opacity:.45;cursor:default;pointer-events:none;"><i class="bi bi-linkedin"></i></a>
                 </div>
               </div>
             </div>

@@ -1,0 +1,36 @@
+# =============================================
+# Dale Deal — robots.txt
+# =============================================
+
+User-agent: *
+Allow: /
+Allow: /HTML/
+
+# No indexar páginas privadas / de transacción
+Disallow: /HTML/login.html
+Disallow: /HTML/signup.html
+Disallow: /HTML/recuperar-contrasena.html
+Disallow: /HTML/notificaciones.html
+Disallow: /HTML/mis-ventas.html
+Disallow: /HTML/admin.html
+Disallow: /HTML/pago-exitoso.html
+Disallow: /HTML/pago-fallido.html
+Disallow: /HTML/pago-pendiente.html
+Disallow: /HTML/reportar-problema.html
+
+# Bots de IA / scraping comercial — bloqueados por defecto
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+# Sitemap (index → apunta a estático + dinámicos del backend)
+Sitemap: https://daledeal.com.ar/sitemap-index.xml
+Sitemap: https://daledeal.com.ar/sitemap.xml

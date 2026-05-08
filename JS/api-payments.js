@@ -84,18 +84,27 @@
   //
   // Devuelve la Promise del redirect — no vuelve.
   // -------------------------------------------------------
-  async function buyProductNow({ product_id, quantity = 1 }) {
+  async function buyProductNow({
+    product_id,
+    quantity = 1,
+    shipping_method,        // 'delivery' | 'pickup' | undefined
+    shipping_address_obj,   // { recipient_name, phone, street, city, province, postal_code, notes }
+  }) {
     if (!product_id) throw new Error('product_id es requerido');
 
     const apiFetch = getApiFetch();
 
-    // 1) Crear orden
+    // 1) Crear orden (con datos de envío si aplica)
+    const orderBody = {
+      product_id: Number(product_id),
+      quantity:   Number(quantity) || 1,
+    };
+    if (shipping_method)      orderBody.shipping_method      = shipping_method;
+    if (shipping_address_obj) orderBody.shipping_address_obj = shipping_address_obj;
+
     const orderRes = await apiFetch('/orders', {
       method: 'POST',
-      body: JSON.stringify({
-        product_id: Number(product_id),
-        quantity:   Number(quantity) || 1,
-      }),
+      body: JSON.stringify(orderBody),
     });
 
     const order = orderRes?.order || orderRes;

@@ -16,89 +16,184 @@ class NotificationManager {
     this.bindEvents();
     this.updateBadge();
     this.updateCounter();
+    // Re-cargar cuando el header termine y haya token (login post-DOMContentLoaded)
+    document.addEventListener('daledeal:header-loaded', () => this.loadNotifications());
   }
 
-  // Cargar notificaciones desde localStorage o datos por defecto
-  loadNotifications() {
-    const stored = localStorage.getItem('daledeal_notifications');
-    if (stored) {
-      try {
-        this.notifications = JSON.parse(stored);
-      } catch (e) {
-        DaleDeal.error('Error al parsear notificaciones del localStorage:', e);
-        this.notifications = null;
-      }
-    } else {
-      // Datos de ejemplo
-      this.notifications = [
-        {
-          id: 1,
-          type: 'orders',
-          title: 'Pedido confirmado',
-          message: 'Tu pedido #12345 ha sido confirmado y está siendo procesado',
-          time: 'Hace 2 horas',
-          timestamp: Date.now() - 2 * 60 * 60 * 1000,
-          read: false,
-          icon: 'bi-check-circle',
-          iconColor: 'bg-success',
-          actions: [
-            { label: 'Ver detalles', action: 'view', data: { orderId: '12345' } },
-            { label: 'Rastrear', action: 'track', data: { orderId: '12345' } }
-          ]
-        },
-        {
-          id: 2,
-          type: 'orders',
-          title: 'Envío en camino',
-          message: 'Tu pedido #12340 está siendo preparado para el envío',
-          time: 'Hace 1 día',
-          timestamp: Date.now() - 24 * 60 * 60 * 1000,
-          read: false,
-          icon: 'bi-truck',
-          iconColor: 'bg-info',
-          actions: [
-            { label: 'Ver detalles', action: 'view', data: { orderId: '12340' } },
-            { label: 'Rastrear', action: 'track', data: { orderId: '12340' } }
-          ]
-        },
-        {
-          id: 3,
-          type: 'offers',
-          title: 'Nueva oferta disponible',
-          message: 'Hasta 20% de descuento en toda la categoría electrónicos',
-          time: 'Hace 2 días',
-          timestamp: Date.now() - 48 * 60 * 60 * 1000,
-          read: false,
-          icon: 'bi-star',
-          iconColor: 'bg-warning',
-          actions: [
-            { label: 'Ver ofertas', action: 'view', data: { category: 'electronics' } },
-            { label: 'Guardar', action: 'save', data: { offerId: 'promo2024' } }
-          ]
-        },
-        {
-          id: 4,
-          type: 'orders',
-          title: 'Pedido entregado',
-          message: 'Tu pedido #12330 ha sido entregado exitosamente',
-          time: 'Hace 3 días',
-          timestamp: Date.now() - 72 * 60 * 60 * 1000,
-          read: true,
-          icon: 'bi-box-seam',
-          iconColor: 'bg-success',
-          actions: [
-            { label: 'Calificar', action: 'rate', data: { orderId: '12330' } },
-            { label: 'Soporte', action: 'support', data: { orderId: '12330' } }
-          ]
-        }
-      ];
-      this.saveNotifications();
+  // Cargar notificaciones reales desde el backend (órdenes del usuario).
+  // Si no está logueado o falla la API, deja la lista vacía.
+  async loadNotifications() {
+    const token = localStorage.getItem('daledeal_token');
+    if (!token || !window.DaleDeal?.api?.apiFetch) {
+      this.notifications = [];
+      this.renderNotifications();
+      this.updateBadge();
+      this.updateCounter();
+      return;
+    }
+
+    try {
+      const apiFetch = window.DaleDeal.api.apiFetch;
+
+      // Traemos compras y ventas en paralelo
+      const [myOrders, mySales] = await Promise.all([
+        apiFetch('/orders/my?limit=20').catch(() => ({ data: [] })),
+        apiFetch('/orders/sales?limit=20').catch(() => ({ data: [] })),
+      ]);
+
+      const dismissed = this.getDismissedSet();
+      const seen      = this.getSeenSet();
+
+      const notifs = [];
+
+      // Como comprador
+      (myOrders?.data || []).forEach(o => {
+        const ev = this.buildBuyerNotification(o);
+        if (ev) notifs.push(ev);
+      });
+
+      // Como vendedor
+      (mySales?.data || []).forEach(o => {
+        const ev = this.buildSellerNotification(o);
+        if (ev) notifs.push(ev);
+      });
+
+      // Filtrar las descartadas, ordenar más nuevo primero, marcar leídas si ya las vio
+      this.notifications = notifs
+        .filter(n => !dismissed.has(n.id))
+        .map(n => ({ ...n, read: seen.has(n.id) }))
+        .sort((a, b) => b.timestamp - a.timestamp)
+        .slice(0, 20);
+
+      this.renderNotifications();
+      this.updateBadge();
+      this.updateCounter();
+    } catch (err) {
+      if (typeof DaleDeal !== 'undefined') DaleDeal.warn('No se pudieron cargar notificaciones reales:', err.message);
+      this.notifications = [];
+      this.renderNotifications();
+      this.updateBadge();
     }
   }
 
-  // Guardar notificaciones en localStorage
+  // Construye la notificación según el estado de la orden, vista del comprador
+  buildBuyerNotification(o) {
+    const id = `buyer-${o.id}-${o.status}`;
+    const ts = new Date(o.updated_at || o.created_at).getTime();
+    const product = o.product_title || 'tu compra';
+    const orderId = o.id;
+
+    if (o.status === 'shipped') {
+      return {
+        id, type: 'orders', timestamp: ts, time: this.relativeTime(ts), read: false,
+        title: 'Tu pedido fue despachado',
+        message: `${product} (#${orderId}) está en camino${o.tracking_number ? ` · Tracking: ${o.tracking_number}` : ''}`,
+        icon: 'bi-truck', iconColor: 'bg-info',
+        actions: [{ label: 'Ver detalles', action: 'view', data: { orderId } }],
+      };
+    }
+    if (o.status === 'delivered') {
+      return {
+        id, type: 'orders', timestamp: ts, time: this.relativeTime(ts), read: false,
+        title: 'Pedido entregado',
+        message: `${product} fue entregado. ¿Cómo fue tu experiencia?`,
+        icon: 'bi-box-seam', iconColor: 'bg-success',
+        actions: [{ label: 'Dejar reseña', action: 'rate', data: { orderId } }],
+      };
+    }
+    if (o.status === 'confirmed' || o.payment_status === 'paid') {
+      return {
+        id, type: 'orders', timestamp: ts, time: this.relativeTime(ts), read: false,
+        title: 'Compra confirmada',
+        message: `${product} (#${orderId}) está siendo preparado por el vendedor`,
+        icon: 'bi-check-circle', iconColor: 'bg-success',
+        actions: [{ label: 'Ver detalles', action: 'view', data: { orderId } }],
+      };
+    }
+    if (o.status === 'cancelled') {
+      return {
+        id, type: 'orders', timestamp: ts, time: this.relativeTime(ts), read: false,
+        title: 'Pedido cancelado',
+        message: `${product} (#${orderId}) fue cancelado`,
+        icon: 'bi-x-circle', iconColor: 'bg-danger',
+        actions: [],
+      };
+    }
+    return null;
+  }
+
+  // Vista del vendedor
+  buildSellerNotification(o) {
+    const id = `seller-${o.id}-${o.status}`;
+    const ts = new Date(o.updated_at || o.created_at).getTime();
+    const product = o.product_title || 'tu producto';
+    const orderId = o.id;
+    const buyer   = o.buyer_name || 'un comprador';
+
+    // Nueva venta (pago confirmado)
+    if (o.status === 'confirmed' || o.payment_status === 'paid') {
+      return {
+        id, type: 'orders', timestamp: ts, time: this.relativeTime(ts), read: false,
+        title: '¡Tenés una venta nueva!',
+        message: `${buyer} compró "${product}". Preparalo para envío.`,
+        icon: 'bi-cart-check', iconColor: 'bg-success',
+        actions: [{ label: 'Ver venta', action: 'view-sale', data: { orderId } }],
+      };
+    }
+    if (o.status === 'delivered') {
+      return {
+        id, type: 'orders', timestamp: ts, time: this.relativeTime(ts), read: false,
+        title: 'Venta completada',
+        message: `${buyer} recibió "${product}". Tu pago está liberado.`,
+        icon: 'bi-cash-coin', iconColor: 'bg-success',
+        actions: [],
+      };
+    }
+    return null;
+  }
+
+  // Texto relativo "Hace X tiempo"
+  relativeTime(ts) {
+    const diff = Date.now() - ts;
+    const m = Math.floor(diff / 60000);
+    const h = Math.floor(diff / 3600000);
+    const d = Math.floor(diff / 86400000);
+    if (m < 1) return 'Recién';
+    if (m < 60) return `Hace ${m} min`;
+    if (h < 24) return `Hace ${h} h`;
+    if (d < 30) return `Hace ${d} día${d === 1 ? '' : 's'}`;
+    return new Date(ts).toLocaleDateString('es-AR', { day: '2-digit', month: 'short' });
+  }
+
+  // IDs de notificaciones que el usuario descartó (X)
+  getDismissedSet() {
+    try {
+      const raw = localStorage.getItem('daledeal_notif_dismissed');
+      return new Set(raw ? JSON.parse(raw) : []);
+    } catch { return new Set(); }
+  }
+  saveDismissedSet(set) {
+    try { localStorage.setItem('daledeal_notif_dismissed', JSON.stringify([...set])); } catch {}
+  }
+
+  // IDs de notificaciones que ya marcó como leídas
+  getSeenSet() {
+    try {
+      const raw = localStorage.getItem('daledeal_notif_seen');
+      return new Set(raw ? JSON.parse(raw) : []);
+    } catch { return new Set(); }
+  }
+  saveSeenSet(set) {
+    try { localStorage.setItem('daledeal_notif_seen', JSON.stringify([...set])); } catch {}
+  }
+
+  // Guardar estado (qué fueron leídas) en localStorage.
+  // Como las notificaciones se generan dinámicamente desde el backend,
+  // solo persistimos el estado: qué IDs el usuario ya vio o descartó.
   saveNotifications() {
-    localStorage.setItem('daledeal_notifications', JSON.stringify(this.notifications));
+    const seen = new Set();
+    this.notifications.forEach(n => { if (n.read) seen.add(n.id); });
+    this.saveSeenSet(seen);
   }
 
   // Vincular eventos
@@ -248,23 +343,22 @@ class NotificationManager {
     this.showToast(`${markedCount} notificación${markedCount > 1 ? 'es' : ''} marcada${markedCount > 1 ? 's' : ''} como leída${markedCount > 1 ? 's' : ''}`, 'success');
   }
 
-  // Descartar notificación
+  // Descartar notificación: la agregamos al set de "dismissed" para que
+  // no vuelva a aparecer aunque la API la siga devolviendo.
   dismissNotification(notificationId) {
     const index = this.notifications.findIndex(n => n.id === notificationId);
-    if (index !== -1) {
-      const notification = this.notifications[index];
-      const confirmed = confirm(`¿Eliminar la notificación "${notification.title}"?`);
-      
-      if (confirmed) {
-        this.notifications.splice(index, 1);
-        this.selectedNotifications.delete(notificationId);
-        this.saveNotifications();
-        this.renderNotifications();
-        this.updateBadge();
-        
-        this.showToast('Notificación eliminada', 'info');
-      }
-    }
+    if (index === -1) return;
+
+    this.notifications.splice(index, 1);
+    this.selectedNotifications.delete(notificationId);
+
+    const dismissed = this.getDismissedSet();
+    dismissed.add(notificationId);
+    this.saveDismissedSet(dismissed);
+
+    this.renderNotifications();
+    this.updateBadge();
+    this.showToast('Notificación eliminada', 'info');
   }
 
   // Manejar acciones de notificación
@@ -279,22 +373,27 @@ class NotificationManager {
       this.updateBadge();
     }
 
-    // Ejecutar acción específica
+    // Resolver navegación según acción + datos
+    const data = notification.actions?.find(a => a.action === action)?.data || {};
+    const isInHtmlFolder = window.location.pathname.includes('/HTML/');
+    const prefix = isInHtmlFolder ? './' : './HTML/';
+
     switch (action) {
-      case 'view':
-        this.showToast(`Abriendo detalles...`, 'info');
-        break;
+      case 'view':         // Comprador ve detalle de su orden
       case 'track':
-        this.showToast(`Abriendo rastreo...`, 'info');
+        // Centro de mando, sección "mis compras"
+        window.location.href = `${prefix}notificaciones.html#mis-compras`;
         break;
-      case 'save':
-        this.showToast(`Oferta guardada`, 'success');
+      case 'view-sale':    // Vendedor ve la venta
+        window.location.href = `${prefix}mis-ventas.html`;
         break;
-      case 'rate':
-        this.showToast(`Abriendo calificaciones...`, 'info');
+      case 'rate':         // Dejar reseña: ir al producto, scrollear al tab
+        if (data.orderId) {
+          window.location.href = `${prefix}notificaciones.html#mis-compras`;
+        }
         break;
       case 'support':
-        this.showToast(`Contactando soporte...`, 'info');
+        window.location.href = `${prefix}centro-ayuda.html`;
         break;
       default:
         this.showToast(`Acción: ${action}`, 'info');

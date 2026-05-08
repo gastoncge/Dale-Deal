@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Página no encontrada — DALE DEAL</title>
+    <meta name="description" content="La página que buscás no existe o fue movida. Volvé al marketplace." />
+    <meta name="robots" content="noindex, follow" />
+
+    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="../CSS/variables.css" />
+    <link rel="stylesheet" href="../CSS/components.css" />
+    <link rel="stylesheet" href="../CSS/responsive.css" />
+
+    <style>
+      body {
+        background: var(--gray-50);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        font-family: var(--font-family, 'Inter', sans-serif);
+      }
+      .nf-wrap {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+      }
+      .nf-card {
+        background: var(--white);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        max-width: 560px;
+        width: 100%;
+        padding: 2.5rem;
+        text-align: center;
+      }
+      .nf-code {
+        font-size: clamp(72px, 18vw, 120px);
+        font-weight: 800;
+        line-height: 1;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 0 0 .5rem;
+        letter-spacing: -3px;
+      }
+      .nf-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0 0 .75rem;
+      }
+      .nf-text {
+        color: var(--gray-600);
+        margin: 0 0 1.5rem;
+      }
+      .nf-search {
+        display: flex;
+        gap: .5rem;
+        margin: 1.5rem 0;
+      }
+      .nf-search input {
+        flex: 1;
+        padding: .7rem 1rem;
+        border: 1.5px solid var(--gray-200);
+        border-radius: 10px;
+        font-size: .95rem;
+        background: var(--white);
+        color: var(--gray-800);
+      }
+      .nf-search input:focus {
+        outline: none;
+        border-color: var(--primary-red);
+      }
+      .nf-search button {
+        background: var(--primary-red);
+        color: #fff;
+        border: none;
+        padding: 0 1.25rem;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .nf-actions {
+        display: flex;
+        gap: .75rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 1.5rem;
+      }
+      .nf-btn-primary {
+        background: var(--gradient-primary);
+        color: #fff;
+        padding: .75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+      }
+      .nf-btn-ghost {
+        background: transparent;
+        border: 1px solid var(--gray-300);
+        color: var(--gray-700);
+        padding: .75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+      }
+      .nf-quick-links {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--gray-200);
+        font-size: .85rem;
+        color: var(--gray-500);
+      }
+      .nf-quick-links a {
+        color: var(--primary-red);
+        text-decoration: none;
+        margin: 0 .35rem;
+      }
+      .nf-quick-links a:hover { text-decoration: underline; }
+    </style>
+  </head>
+  <body>
+    <main class="nf-wrap">
+      <div class="nf-card">
+        <p class="nf-code">404</p>
+        <h1 class="nf-title">No encontramos esta página</h1>
+        <p class="nf-text">
+          La URL que buscás no existe, fue movida o está rota.<br>
+          Pero hay miles de productos y servicios esperándote.
+        </p>
+
+        <form class="nf-search" onsubmit="goSearch(event)">
+          <input type="search" id="nfQuery" placeholder="Buscar productos o servicios…" autofocus />
+          <button type="submit"><i class="bi bi-search"></i></button>
+        </form>
+
+        <div class="nf-actions">
+          <a href="../index.html" class="nf-btn-primary">
+            <i class="bi bi-house-fill"></i> Ir al inicio
+          </a>
+          <a href="./productos.html" class="nf-btn-ghost">
+            <i class="bi bi-bag"></i> Ver productos
+          </a>
+          <a href="./servicios.html" class="nf-btn-ghost">
+            <i class="bi bi-tools"></i> Ver servicios
+          </a>
+        </div>
+
+        <div class="nf-quick-links">
+          ¿Necesitás ayuda?
+          <a href="./centro-ayuda.html">Centro de Ayuda</a>·
+          <a href="./contacto.html">Contacto</a>·
+          <a href="./reportar-problema.html">Reportar un problema</a>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      function goSearch(e) {
+        e.preventDefault();
+        const q = document.getElementById('nfQuery').value.trim();
+        if (!q) {
+          window.location.href = './productos.html';
+          return;
+        }
+        window.location.href = './productos.html?q=' + encodeURIComponent(q);
+      }
+    </script>
+  </body>
+</html>

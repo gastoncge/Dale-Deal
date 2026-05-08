@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel de Admin - DALE DEAL</title>
+
+    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="../CSS/variables.css" />
+    <link rel="stylesheet" href="../CSS/components.css" />
+    <link rel="stylesheet" href="../CSS/responsive.css" />
+
+    <style>
+      body {
+        background: var(--gray-50);
+        min-height: 100vh;
+        font-family: var(--font-family, 'Inter', sans-serif);
+      }
+      .admin-wrap {
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        min-height: 100vh;
+      }
+      .admin-sidebar {
+        background: var(--white);
+        border-right: 1px solid var(--gray-200);
+        padding: 1.5rem 1rem;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+      }
+      .admin-sidebar-brand {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        margin-bottom: 2rem;
+        padding: 0 .5rem;
+      }
+      .admin-sidebar-brand img { width: 32px; height: 32px; }
+      .admin-sidebar-brand strong {
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 1.1rem;
+        letter-spacing: -.3px;
+      }
+      .admin-sidebar-brand small { color: var(--gray-500); font-size: .7rem; }
+      .admin-nav {
+        display: flex;
+        flex-direction: column;
+        gap: .25rem;
+      }
+      .admin-nav-item {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        padding: .65rem .9rem;
+        border-radius: 8px;
+        color: var(--gray-700);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: .9rem;
+        cursor: pointer;
+        transition: all .15s ease;
+      }
+      .admin-nav-item:hover {
+        background: var(--gray-100);
+        color: var(--gray-900);
+      }
+      .admin-nav-item.active {
+        background: var(--primary-red-light);
+        color: var(--primary-red);
+      }
+      .admin-nav-item i { font-size: 1.1rem; width: 20px; text-align: center; }
+
+      .admin-main {
+        padding: 2rem 2.5rem;
+        overflow-x: auto;
+      }
+      .admin-section { display: none; }
+      .admin-section.active { display: block; }
+      .admin-section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      .admin-section-header h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+      }
+      .admin-stat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+      .admin-stat-card {
+        background: var(--white);
+        border: 1px solid var(--gray-200);
+        border-radius: 12px;
+        padding: 1.25rem;
+      }
+      .admin-stat-label {
+        font-size: .8rem;
+        color: var(--gray-500);
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        margin: 0 0 .25rem;
+      }
+      .admin-stat-value {
+        font-size: 1.7rem;
+        font-weight: 700;
+        margin: 0;
+        color: var(--gray-900);
+      }
+      .admin-stat-detail {
+        font-size: .8rem;
+        color: var(--gray-500);
+        margin: .25rem 0 0;
+      }
+
+      .admin-toolbar {
+        display: flex;
+        gap: .5rem;
+        align-items: center;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+      }
+      .admin-toolbar input,
+      .admin-toolbar select {
+        max-width: 280px;
+      }
+
+      .admin-table {
+        width: 100%;
+        background: var(--white);
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid var(--gray-200);
+        font-size: .85rem;
+      }
+      .admin-table thead {
+        background: var(--gray-50);
+      }
+      .admin-table th, .admin-table td {
+        padding: .65rem .9rem;
+        text-align: left;
+        border-bottom: 1px solid var(--gray-100);
+      }
+      .admin-table tr:last-child td { border-bottom: none; }
+      .admin-table tr:hover { background: var(--gray-50); }
+
+      .admin-pill {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: .7rem;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .admin-pill-success { background: rgba(16,185,129,.15); color: #065f46; }
+      .admin-pill-warning { background: rgba(245,158,11,.15); color: #92400e; }
+      .admin-pill-danger  { background: rgba(239,68,68,.15);  color: #991b1b; }
+      .admin-pill-info    { background: rgba(59,130,246,.15); color: #1e40af; }
+      .admin-pill-muted   { background: var(--gray-100);      color: var(--gray-700); }
+
+      [data-theme="dark"] .admin-pill-success { color: #34d399; }
+      [data-theme="dark"] .admin-pill-warning { color: #fbbf24; }
+      [data-theme="dark"] .admin-pill-danger  { color: #f87171; }
+      [data-theme="dark"] .admin-pill-info    { color: #60a5fa; }
+
+      .admin-actions { display: flex; gap: .35rem; flex-wrap: wrap; }
+
+      .admin-empty {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--gray-500);
+      }
+      .admin-empty i { font-size: 2.5rem; opacity: .4; }
+
+      /* Mobile */
+      @media (max-width: 767px) {
+        .admin-wrap {
+          grid-template-columns: 1fr;
+        }
+        .admin-sidebar {
+          position: static;
+          height: auto;
+          border-right: none;
+          border-bottom: 1px solid var(--gray-200);
+        }
+        .admin-nav {
+          flex-direction: row;
+          overflow-x: auto;
+          gap: .5rem;
+        }
+        .admin-nav-item {
+          white-space: nowrap;
+          flex-shrink: 0;
+        }
+        .admin-main {
+          padding: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="admin-loading" style="display:flex;justify-content:center;align-items:center;min-height:100vh;flex-direction:column;gap:1rem;">
+      <div class="spinner-border text-danger"></div>
+      <p>Verificando permisos…</p>
+    </div>
+
+    <div id="admin-denied" style="display:none;justify-content:center;align-items:center;min-height:100vh;flex-direction:column;gap:1rem;text-align:center;padding:2rem;">
+      <i class="bi bi-shield-exclamation" style="font-size:3rem;color:var(--primary-red);"></i>
+      <h3>Acceso denegado</h3>
+      <p class="text-muted">Esta área es solo para administradores.</p>
+      <a href="../index.html" class="btn btn-primary">Volver al inicio</a>
+    </div>
+
+    <div class="admin-wrap" id="admin-content" style="display:none;">
+      <aside class="admin-sidebar">
+        <div class="admin-sidebar-brand">
+          <img src="../IMG/LOGO.png" alt="Dale Deal" />
+          <div>
+            <strong>DALE DEAL</strong><br />
+            <small>Panel de Admin</small>
+          </div>
+        </div>
+
+        <nav class="admin-nav">
+          <a class="admin-nav-item active" data-tab="dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+          <a class="admin-nav-item" data-tab="users"><i class="bi bi-people"></i> Usuarios</a>
+          <a class="admin-nav-item" data-tab="products"><i class="bi bi-bag"></i> Productos</a>
+          <a class="admin-nav-item" data-tab="orders"><i class="bi bi-cart-check"></i> Órdenes</a>
+          <a class="admin-nav-item" data-tab="reviews"><i class="bi bi-star"></i> Reseñas</a>
+          <a class="admin-nav-item" data-tab="reports"><i class="bi bi-flag"></i> Reportes <span id="reports-badge" class="admin-pill admin-pill-danger" style="display:none;font-size:.65rem;padding:1px 6px;">0</span></a>
+          <a class="admin-nav-item" href="../index.html" style="margin-top:1.5rem;color:var(--gray-500);">
+            <i class="bi bi-arrow-left"></i> Volver al sitio
+          </a>
+        </nav>
+      </aside>
+
+      <main class="admin-main">
+
+        <!-- DASHBOARD -->
+        <section class="admin-section active" id="section-dashboard">
+          <div class="admin-section-header">
+            <h1><i class="bi bi-speedometer2 me-2"></i>Dashboard</h1>
+            <button class="btn btn-outline-secondary btn-sm" id="btn-refresh-stats">
+              <i class="bi bi-arrow-clockwise me-1"></i>Refrescar
+            </button>
+          </div>
+
+          <div id="stats-loading" class="admin-empty"><div class="spinner-border"></div></div>
+
+          <div id="stats-content" style="display:none;">
+            <div class="admin-stat-grid">
+              <div class="admin-stat-card">
+                <p class="admin-stat-label">Usuarios activos</p>
+                <p class="admin-stat-value" id="stat-users">—</p>
+                <p class="admin-stat-detail">+<span id="stat-users-7d">0</span> en últimos 7 días</p>
+              </div>
+              <div class="admin-stat-card">
+                <p class="admin-stat-label">Productos activos</p>
+                <p class="admin-stat-value" id="stat-products">—</p>
+              </div>
+              <div class="admin-stat-card">
+                <p class="admin-stat-label">Servicios activos</p>
+                <p class="admin-stat-value" id="stat-services">—</p>
+              </div>
+              <div class="admin-stat-card">
+                <p class="admin-stat-label">Órdenes totales</p>
+                <p class="admin-stat-value" id="stat-orders">—</p>
+                <p class="admin-stat-detail">+<span id="stat-orders-7d">0</span> en últimos 7 días</p>
+              </div>
+              <div class="admin-stat-card">
+                <p class="admin-stat-label">Órdenes pagadas</p>
+                <p class="admin-stat-value" id="stat-orders-paid">—</p>
+              </div>
+              <div class="admin-stat-card">
+                <p class="admin-stat-label">GMV (ARS)</p>
+                <p class="admin-stat-value" id="stat-gmv">—</p>
+                <p class="admin-stat-detail">Volumen bruto de mercancía</p>
+              </div>
+              <div class="admin-stat-card">
+                <p class="admin-stat-label">Comisión acumulada</p>
+                <p class="admin-stat-value" id="stat-commission">—</p>
+                <p class="admin-stat-detail">5% sobre subtotales pagados</p>
+              </div>
+              <div class="admin-stat-card">
+                <p class="admin-stat-label">Reseñas</p>
+                <p class="admin-stat-value" id="stat-reviews">—</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- USUARIOS -->
+        <section class="admin-section" id="section-users">
+          <div class="admin-section-header"><h1><i class="bi bi-people me-2"></i>Usuarios</h1></div>
+          <div class="admin-toolbar">
+            <input type="search" class="form-control" id="users-search" placeholder="Buscar por nombre o email…" />
+            <select class="form-select" id="users-status">
+              <option value="">Todos</option>
+              <option value="active">Activos</option>
+              <option value="suspended">Suspendidos</option>
+            </select>
+            <select class="form-select" id="users-role">
+              <option value="">Todos los roles</option>
+              <option value="user">Usuario</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div id="users-content"></div>
+        </section>
+
+        <!-- PRODUCTOS -->
+        <section class="admin-section" id="section-products">
+          <div class="admin-section-header"><h1><i class="bi bi-bag me-2"></i>Productos</h1></div>
+          <div class="admin-toolbar">
+            <input type="search" class="form-control" id="products-search" placeholder="Buscar por título o descripción…" />
+            <select class="form-select" id="products-status">
+              <option value="">Todos los estados</option>
+              <option value="active">Activos</option>
+              <option value="paused">Pausados</option>
+              <option value="sold">Vendidos</option>
+              <option value="deleted">Eliminados</option>
+            </select>
+          </div>
+          <div id="products-content"></div>
+        </section>
+
+        <!-- ÓRDENES -->
+        <section class="admin-section" id="section-orders">
+          <div class="admin-section-header"><h1><i class="bi bi-cart-check me-2"></i>Órdenes</h1></div>
+          <div class="admin-toolbar">
+            <select class="form-select" id="orders-status">
+              <option value="">Todos los estados</option>
+              <option value="pending">Pendientes</option>
+              <option value="confirmed">Confirmadas</option>
+              <option value="shipped">Despachadas</option>
+              <option value="delivered">Entregadas</option>
+              <option value="cancelled">Canceladas</option>
+            </select>
+            <select class="form-select" id="orders-payment">
+              <option value="">Todos los pagos</option>
+              <option value="paid">Pagadas</option>
+              <option value="pending">Pago pendiente</option>
+              <option value="rejected">Rechazadas</option>
+              <option value="refunded">Reembolsadas</option>
+            </select>
+          </div>
+          <div id="orders-content"></div>
+        </section>
+
+        <!-- RESEÑAS -->
+        <section class="admin-section" id="section-reviews">
+          <div class="admin-section-header"><h1><i class="bi bi-star me-2"></i>Reseñas</h1></div>
+          <div id="reviews-content"></div>
+        </section>
+
+        <!-- REPORTES -->
+        <section class="admin-section" id="section-reports">
+          <div class="admin-section-header"><h1><i class="bi bi-flag me-2"></i>Reportes de problemas</h1></div>
+          <div class="admin-toolbar">
+            <select class="form-select" id="reports-status">
+              <option value="">Todos los estados</option>
+              <option value="open">Abiertos</option>
+              <option value="in_review">En revisión</option>
+              <option value="resolved">Resueltos</option>
+              <option value="dismissed">Descartados</option>
+            </select>
+            <select class="form-select" id="reports-category">
+              <option value="">Todas las categorías</option>
+              <option value="technical">Técnico</option>
+              <option value="payment">Pago</option>
+              <option value="content">Contenido</option>
+              <option value="fraud">Fraude</option>
+              <option value="account">Cuenta</option>
+              <option value="shipping">Envío</option>
+              <option value="other">Otro</option>
+            </select>
+          </div>
+          <div id="reports-content"></div>
+        </section>
+
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../JS/theme.js" defer></script>
+    <script src="../JS/utils.js" defer></script>
+    <script src="../JS/api.js" defer></script>
+    <script src="../JS/auth.js" defer></script>
+    <script src="../JS/pages/admin.js" defer></script>
+  </body>
+</html>

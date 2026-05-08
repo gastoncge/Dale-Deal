@@ -56,9 +56,9 @@
 
           <!-- Welcome Section -->
           <div class="auth-welcome-section">
-            <p class="auth-welcome-title">Únete a</p>
+            <p class="auth-welcome-title">Sumate a</p>
             <h1 class="auth-brand-name">DALE DEAL</h1>
-            <p class="auth-welcome-subtitle">Crea tu cuenta y comienza a comprar</p>
+            <p class="auth-welcome-subtitle">Creá tu cuenta y empezá a comprar</p>
           </div>
 
           <!-- Registration Form -->
@@ -71,6 +71,9 @@
                 id="fullName"
                 name="fullName"
                 placeholder="Ej: Juan Pérez"
+                minlength="2"
+                maxlength="100"
+                autocomplete="name"
                 required
               />
               <label for="fullName">Nombre completo</label>
@@ -84,7 +87,8 @@
                 class="form-control"
                 id="email"
                 name="email"
-                placeholder="ejemplo@daledealer.com"
+                placeholder="tunombre@gmail.com"
+                autocomplete="email"
                 required
               />
               <label for="email">Email</label>
@@ -98,7 +102,9 @@
                 class="form-control"
                 id="password"
                 name="password"
-                placeholder="Mínimo 8 caracteres"
+                placeholder="Mínimo 8 caracteres, una mayúscula y un número"
+                minlength="8"
+                autocomplete="new-password"
                 required
               />
               <label for="password">Contraseña</label>
@@ -134,7 +140,9 @@
                 class="form-control"
                 id="confirmPassword"
                 name="confirmPassword"
-                placeholder="Repite tu contraseña"
+                placeholder="Repetí tu contraseña"
+                minlength="8"
+                autocomplete="new-password"
                 required
               />
               <label for="confirmPassword">Confirmar contraseña</label>
@@ -199,14 +207,14 @@
 
           <!-- Login Link -->
           <div class="auth-nav-link-section">
-            ¿Ya tienes cuenta?
+            ¿Ya tenés cuenta?
             <a href="./login.html" class="auth-nav-link">Iniciar sesión</a>
           </div>
 
           <!-- Empresa Link -->
           <div class="auth-empresa-section">
             <a href="#" class="auth-empresa-link" data-bs-toggle="modal" data-bs-target="#empresaModal">
-              <i class="bi bi-building me-1"></i>¿Sos una empresa? Registrate aquí
+              <i class="bi bi-building me-1"></i>¿Sos una empresa? Registrate acá
             </a>
           </div>
 

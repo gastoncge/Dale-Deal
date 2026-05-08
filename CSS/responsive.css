@@ -14,14 +14,60 @@
 
 /* ===== GLOBAL MOBILE FIXES ===== */
 
-/* Prevenir scroll horizontal en ambos niveles (body solo no basta en iOS) */
+/* Prevenir scroll horizontal en ambos niveles.
+ * En iOS Safari (y algunas versiones de Android Chrome) el overflow-x:hidden
+ * sobre <html> solo no se aplica — hace falta en <body> también, sino el
+ * usuario puede hacer "swipe" lateral y los elementos del lado derecho
+ * (ej: el botón de perfil del navbar) quedan fuera de pantalla.
+ */
 html {
   overflow-x: hidden;
   min-width: 320px;
+  /* Evita que el navegador agregue scroll horizontal por bounce */
+  position: relative;
 }
 
 body {
+  overflow-x: hidden;
   min-width: 320px;
+  position: relative;
+  width: 100%;
+}
+
+/* Defensas globales para evitar overflow horizontal en mobile */
+@media (max-width: 767px) {
+  /* Imágenes y media siempre adaptarse al contenedor */
+  img, video, iframe, picture {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Títulos largos: cortar en cualquier punto si hace falta
+   * (evita que un nombre tipo "PlayStation5DigitalSpiderManRagnarok"
+   *  empuje la card más allá del viewport) */
+  h1, h2, h3, h4, h5, h6,
+  .product-title, .order-title, .page-title {
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  /* Tablas largas: scrolleo interno en lugar de empujar la página */
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Containers de Bootstrap: que no excedan el viewport */
+  .container, .container-fluid, .container-lg, .container-md, .container-sm {
+    max-width: 100vw !important;
+  }
+
+  /* Pre / code largos: scrolleo interno */
+  pre, code {
+    max-width: 100%;
+    overflow-x: auto;
+  }
 }
 
 /* Prevent ANY horizontal overflow */
@@ -236,6 +282,40 @@ svg,
   }
 }
 
+/* ===== NAVBAR - MOBILE STANDARD (≤ 575px): garantizar que entren todos los iconos
+ * Caso típico de bug: el botón de perfil queda fuera de pantalla porque
+ * "DALE DEAL" + 3 iconos no entran en 320-360px de viewport.
+ * Solución: ocultar el texto de la marca y dejar solo el logo en mobile.
+ */
+@media (max-width: 575px) {
+  .brand-text {
+    display: none !important;
+  }
+
+  .navbar .container-fluid {
+    padding-left: var(--spacing-2) !important;
+    padding-right: var(--spacing-2) !important;
+  }
+
+  .navbar-actions {
+    gap: 2px !important;
+  }
+
+  /* Asegurar que cada botón de acción no exceda lo necesario */
+  .navbar-actions .action-btn,
+  .navbar-actions .profile-btn {
+    padding: 4px 6px !important;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  /* Avatar más chico */
+  .profile-image {
+    width: 28px !important;
+    height: 28px !important;
+  }
+}
+
 /* ===== NAVBAR - MOBILE SMALL (320px-374px) ===== */
 @media (max-width: 374px) {
   .navbar {
@@ -319,6 +399,31 @@ svg,
 
   /* Ocultar etiquetas de texto de los action-links */
   .action-link .action-text {
+    display: none;
+  }
+}
+
+/* ===== ANNOUNCEMENT BAR - MOBILE ===== */
+@media (max-width: 767px) {
+  /* La barra superior con "🔥 Envío gratis..." puede desbordar
+   * por su padding lateral grande (40px+40px) en pantallas chicas. */
+  .announcement-bar .container-fluid {
+    padding: 0 var(--spacing-3) !important;
+    gap: var(--spacing-2);
+  }
+  .announcement-text {
+    font-size: var(--font-size-xs);
+    line-height: 1.3;
+  }
+}
+
+@media (max-width: 374px) {
+  .announcement-bar {
+    padding: 6px 0;
+    font-size: 11px;
+  }
+  /* Ocultar la X de cerrar en pantallas muy chicas, deja más espacio al texto */
+  .announcement-close {
     display: none;
   }
 }
@@ -834,6 +939,63 @@ svg,
   footer .row > [class*="col-"],
   .site-footer .row > [class*="col-"] {
     margin-bottom: var(--spacing-6);
+  }
+
+  /* Newsletter form: que el botón no salga del input-group */
+  .footer-newsletter .input-group {
+    flex-wrap: nowrap;
+    max-width: 100%;
+  }
+  .footer-newsletter .newsletter-input {
+    min-width: 0;
+    flex: 1;
+  }
+
+  /* Apps: que los botones de "Disponible en Google Play" no se desborden */
+  .footer-apps .app-links {
+    flex-direction: column;
+    gap: var(--spacing-2);
+    align-items: stretch;
+  }
+  .footer-apps .app-store-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Contact items: icono + texto en línea, con truncado si hace falta */
+  .footer-contact .contact-item {
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  /* Legal links bottom: stackeo limpio sin barras inline raras */
+  .footer-legal {
+    margin-top: var(--spacing-3);
+    text-align: center;
+  }
+  .legal-links-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-2);
+  }
+  .legal-links-group .text-muted {
+    display: none; /* esconder los "•" separadores cuando wrappea */
+  }
+
+  /* Copyright: centrar */
+  .footer-copyright {
+    text-align: center;
+  }
+}
+
+/* Footer especial < 480px: ocultar logo grande y reordenar */
+@media (max-width: 479px) {
+  .footer-logo .footer-brand-text {
+    font-size: var(--font-size-lg);
+  }
+  .footer-social {
+    justify-content: center;
   }
 }
 

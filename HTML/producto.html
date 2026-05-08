@@ -16,25 +16,35 @@
     />
     <meta name="robots" content="index, follow" />
 
-    <!-- Canonical -->
-    <link rel="canonical" href="https://daledeal.com/HTML/producto.html" />
+    <!-- Canonical (se actualiza con JS según el producto cargado) -->
+    <link rel="canonical" href="https://daledeal.com.ar/HTML/producto.html" id="canonicalLink" />
 
-    <!-- Open Graph -->
-    <meta property="og:type" content="product" />
-    <meta property="og:site_name" content="Dale Deal" />
-    <meta property="og:title" content="iPhone 15 Pro Max 256GB — Dale Deal" />
-    <meta property="og:description" content="iPhone 15 Pro Max 256GB al mejor precio. Chip A17 Pro, cámara 48MP, titanio y USB-C. Envío gratis y 12 cuotas sin interés." />
-    <meta property="og:url" content="https://daledeal.com/HTML/producto.html" />
-    <meta property="og:image" content="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=1200&h=630&fit=crop" />
-    <meta property="og:locale" content="es_AR" />
-    <meta property="product:price:amount" content="1299999" />
+    <!-- Open Graph (todas con id para que product.js las actualice dinámicamente) -->
+    <meta property="og:type"        content="product" />
+    <meta property="og:site_name"   content="Dale Deal" />
+    <meta property="og:title"       content="Producto en Dale Deal" id="ogTitle" />
+    <meta property="og:description" content="Encontrá productos al mejor precio en Dale Deal." id="ogDescription" />
+    <meta property="og:url"         content="https://daledeal.com.ar/HTML/producto.html" id="ogUrl" />
+    <meta property="og:image"       content="https://daledeal.com.ar/IMG/LOGO-2.png" id="ogImage" />
+    <meta property="og:locale"      content="es_AR" />
+    <meta property="product:price:amount"   content="0"   id="ogPriceAmount" />
     <meta property="product:price:currency" content="ARS" />
 
     <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="iPhone 15 Pro Max 256GB — Dale Deal" />
-    <meta name="twitter:description" content="iPhone 15 Pro Max 256GB al mejor precio. Envío gratis y 12 cuotas sin interés en Dale Deal." />
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=1200&h=630&fit=crop" />
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content="Producto en Dale Deal"                  id="twTitle" />
+    <meta name="twitter:description" content="Encontrá productos al mejor precio."   id="twDescription" />
+    <meta name="twitter:image"       content="https://daledeal.com.ar/IMG/LOGO-2.png" id="twImage" />
+
+    <!-- JSON-LD Schema.org Product (se actualiza con product.js cuando carga el producto) -->
+    <script type="application/ld+json" id="productSchema">
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": "Producto en Dale Deal",
+      "description": "Encontrá productos al mejor precio en Dale Deal."
+    }
+    </script>
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
@@ -262,7 +272,7 @@
               </li>
               <li><hr class="dropdown-divider" /></li>
               <li>
-                <a class="dropdown-item" href="./login.html">
+                <a class="dropdown-item" href="./login.html" id="loginLink">
                   <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
                 </a>
               </li>

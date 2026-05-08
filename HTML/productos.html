@@ -215,7 +215,7 @@
               </li>
               <li><hr class="dropdown-divider" /></li>
               <li>
-                <a class="dropdown-item" href="./login.html">
+                <a class="dropdown-item" href="./login.html" id="loginLink">
                   <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
                 </a>
               </li>
@@ -366,7 +366,7 @@
                       <div style="position:relative;">
                         <input type="text" id="otrosCategoryInput" placeholder="Buscar categoría..." autocomplete="off"
                           style="width:100%; padding:6px 10px; border:1.5px solid var(--gray-200); border-radius:8px; font-size:13px; outline:none;">
-                        <ul id="otrosSuggestions" style="display:none; position:absolute; top:100%; left:0; right:0; background:var(--white); border:1.5px solid var(--gray-200); border-radius:8px; margin-top:4px; padding:4px 0; list-style:none; z-index:100; max-height:160px; overflow-y:auto; box-shadow:0 4px 12px rgba(0,0,0,0.1);"></ul>
+                        <ul id="otrosSuggestions" style="display:none; position:absolute; top:100%; left:0; right:0; background:var(--white); color:var(--gray-800); border:1.5px solid var(--gray-200); border-radius:8px; margin-top:4px; padding:4px 0; list-style:none; z-index:100; max-height:160px; overflow-y:auto; box-shadow:0 4px 12px rgba(0,0,0,0.15);"></ul>
                       </div>
                     </div>
                   </div>
@@ -711,16 +711,8 @@
         background: var(--white) !important;
       }
 
-      /* Navbar igual a inicio - sin línea oscura */
-      .navbar {
-        background: var(--gray-50) !important;
-        border-bottom: none !important;
-        box-shadow: var(--shadow-md) !important;
-        width: 100% !important;
-        margin: 0 !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-      }
+      /* La navbar usa la regla global de CSS/components.css —
+         no la pisamos acá para que sea idéntica a la del resto del sitio. */
 
       /* Main content sin bordes */
       .main-content {
@@ -1128,14 +1120,16 @@
         color: #fff;
       }
 
-      /* Dark mode: sidebar header */
       [data-theme="dark"] .sidebar-header {
-        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        background: var(--gray-100);
         border-bottom-color: rgba(255,255,255,0.08);
       }
+      [data-theme="dark"] .sidebar-title {
+        color: var(--gray-800);
+      }
       [data-theme="dark"] .btn-clear-filters {
-        background: #334155;
-        color: #e2e8f0;
+        background: rgba(255,255,255,0.08);
+        color: var(--gray-700);
       }
       [data-theme="dark"] .btn-clear-filters:hover {
         background: var(--primary-red);
@@ -1737,7 +1731,7 @@
       }
 
       .btn-toggle-filters:hover {
-        background: var(--red-600);
+        background: var(--primary-red-hover);
       }
 
       /* Sidebar Overlay for Mobile */

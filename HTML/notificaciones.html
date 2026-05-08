@@ -223,7 +223,7 @@
               </li>
               <li><hr class="dropdown-divider" /></li>
               <li>
-                <a class="dropdown-item" href="./login.html">
+                <a class="dropdown-item" href="./login.html" id="loginLink">
                   <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
                 </a>
               </li>
@@ -440,23 +440,23 @@
                 </div>
                 <div class="perfil-hero-info">
                   <div class="perfil-name-row">
-                    <h4 class="perfil-name" id="perfilDisplayName">Juan García</h4>
-                    <span class="perfil-verified-badge" id="perfilVerifiedBadge" title="Identidad verificada">
+                    <h4 class="perfil-name" id="perfilDisplayName">Usuario</h4>
+                    <span class="perfil-verified-badge" id="perfilVerifiedBadge" title="Identidad verificada" style="display:none;">
                       <i class="bi bi-patch-check-fill"></i> Verificado
                     </span>
                   </div>
-                  <p class="perfil-since"><i class="bi bi-calendar3 me-1"></i>Miembro desde enero 2024</p>
+                  <p class="perfil-since" id="perfilSinceText"><i class="bi bi-calendar3 me-1"></i>Miembro de Dale Deal</p>
                   <div class="perfil-stats">
                     <div class="perfil-stat">
-                      <span class="perfil-stat-value">12</span>
+                      <span class="perfil-stat-value" id="perfilStatPurchases">0</span>
                       <span class="perfil-stat-label">Compras</span>
                     </div>
                     <div class="perfil-stat">
-                      <span class="perfil-stat-value">8</span>
+                      <span class="perfil-stat-value" id="perfilStatFavorites">0</span>
                       <span class="perfil-stat-label">Favoritos</span>
                     </div>
                     <div class="perfil-stat">
-                      <span class="perfil-stat-value">4.9</span>
+                      <span class="perfil-stat-value" id="perfilStatRating">—</span>
                       <span class="perfil-stat-label">Reputación</span>
                     </div>
                   </div>
@@ -471,46 +471,27 @@
                 <form id="perfilForm">
                   <div class="row g-4">
                     <div class="col-md-6">
-                      <label class="form-label">Nombre <small class="text-muted fw-normal">(no editable)</small></label>
-                      <div class="input-group">
-                        <input type="text" class="form-control" value="Juan" readonly>
-                        <span class="input-group-text text-success"><i class="bi bi-check-circle-fill"></i></span>
-                      </div>
+                      <label class="form-label">Nombre y apellido</label>
+                      <input type="text" class="form-control" id="perfilName" placeholder="Tu nombre completo" maxlength="100">
                     </div>
                     <div class="col-md-6">
-                      <label class="form-label">Apellido <small class="text-muted fw-normal">(no editable)</small></label>
+                      <label class="form-label">Email <small class="text-muted fw-normal">(no editable)</small></label>
                       <div class="input-group">
-                        <input type="text" class="form-control" value="García" readonly>
-                        <span class="input-group-text text-success"><i class="bi bi-check-circle-fill"></i></span>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label">Email</label>
-                      <div class="input-group">
-                        <input type="email" class="form-control" placeholder="tu@email.com" value="juan.garcia@email.com">
+                        <input type="email" class="form-control" id="perfilEmail" readonly>
                         <span class="input-group-text text-success"><i class="bi bi-check-circle-fill"></i></span>
                       </div>
                     </div>
                     <div class="col-md-6">
                       <label class="form-label">Teléfono</label>
-                      <input type="tel" class="form-control" placeholder="+54 11 0000-0000" value="+54 11 4567-8900">
+                      <input type="tel" class="form-control" id="perfilPhone" placeholder="+54 11 0000-0000" maxlength="30">
                     </div>
                     <div class="col-md-6">
-                      <label class="form-label">Fecha de nacimiento <small class="text-muted fw-normal">(no editable)</small></label>
-                      <div class="input-group">
-                        <input type="date" class="form-control" value="1990-05-15" readonly>
-                        <span class="input-group-text text-success"><i class="bi bi-check-circle-fill"></i></span>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label">DNI <small class="text-muted fw-normal">(no editable)</small></label>
-                      <div class="input-group">
-                        <input type="text" class="form-control" value="32.456.789" readonly>
-                        <span class="input-group-text text-success"><i class="bi bi-check-circle-fill"></i></span>
-                      </div>
+                      <label class="form-label">Ubicación</label>
+                      <input type="text" class="form-control" id="perfilLocation" placeholder="Ej: Buenos Aires, CABA" maxlength="150">
                     </div>
                     <div class="col-12">
-                      <button type="submit" class="btn btn-primary px-5">
+                      <div id="perfilFormStatus" class="alert d-none mb-3" role="status"></div>
+                      <button type="submit" class="btn btn-primary px-5" id="perfilSubmitBtn">
                         <i class="bi bi-check-lg me-2"></i>Guardar cambios
                       </button>
                     </div>
@@ -1296,21 +1277,154 @@
         this.reset();
       });
 
-      // ===== MI PERFIL =====
-      document.getElementById('perfilForm')?.addEventListener('submit', function(e) {
+      // ===== MI PERFIL — conectado al backend =====
+      async function loadPerfilData() {
+        const u = window.authManager?.getCurrentUser?.();
+        if (!u) return;
+        const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+        setVal('perfilName',     u.name);
+        setVal('perfilEmail',    u.email);
+        setVal('perfilPhone',    u.phone);
+        setVal('perfilLocation', u.location);
+
+        const displayName = document.getElementById('perfilDisplayName');
+        if (displayName) displayName.textContent = u.name || 'Usuario';
+
+        const avatarImg = document.getElementById('perfilAvatarImg');
+        if (avatarImg) {
+          avatarImg.src = u.avatar
+            || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name || 'Usuario')}&background=e53e3e&color=fff&size=128`;
+        }
+
+        // Cargar stats reales en paralelo (silencioso si falla)
+        loadPerfilStats(u.id);
+      }
+
+      async function loadPerfilStats(userId) {
+        const apiFetch = window.DaleDeal?.api?.apiFetch;
+        const api      = window.DaleDeal?.api;
+        if (!apiFetch || !userId) return;
+
+        const setStat = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+
+        // En paralelo: compras, favoritos, reputación recibida
+        try {
+          const [ordersRes, favsRes, reviewsRes] = await Promise.all([
+            apiFetch('/orders/my?limit=100').catch(() => null),
+            api?.fetchFavorites?.().catch(() => null) || null,
+            api?.fetchUserReviews?.(userId, { limit: 1 }).catch(() => null) || null,
+          ]);
+
+          const purchases = (ordersRes?.data || []).length;
+          const favorites = (favsRes?.data || []).length;
+          const stats     = reviewsRes?.stats || {};
+          const reviews   = parseInt(stats.total_reviews || 0);
+          const avg       = parseFloat(stats.avg_rating || 0);
+
+          setStat('perfilStatPurchases', purchases.toLocaleString('es-AR'));
+          setStat('perfilStatFavorites', favorites.toLocaleString('es-AR'));
+          setStat('perfilStatRating',    reviews > 0 ? avg.toFixed(1) : '—');
+
+          // "Miembro desde X"
+          const sinceText = document.getElementById('perfilSinceText');
+          if (sinceText && u && u.loginTime) {
+            // No tenemos el created_at del backend en localStorage, pero
+            // el authManager tiene loginTime. Si en el futuro guardamos
+            // created_at, usar eso aquí.
+          }
+        } catch (_) { /* silencioso */ }
+      }
+
+      // Cargar al inicio + cuando se navega a la sección
+      loadPerfilData();
+      document.addEventListener('daledeal:header-loaded', loadPerfilData);
+      // Hookear con el sistema de showSection (definido más arriba en este script)
+      const _origShowSection = typeof showSection === 'function' ? showSection : null;
+      if (_origShowSection) {
+        window.showSection = function(name) {
+          _origShowSection(name);
+          if (name === 'mi-perfil') loadPerfilData();
+        };
+      }
+
+      function showPerfilStatus(msg, type) {
+        const el = document.getElementById('perfilFormStatus');
+        if (!el) return;
+        el.className = `alert alert-${type === 'error' ? 'danger' : 'success'} mb-3`;
+        el.textContent = msg;
+        el.classList.remove('d-none');
+        setTimeout(() => el.classList.add('d-none'), 4000);
+      }
+
+      document.getElementById('perfilForm')?.addEventListener('submit', async function(e) {
         e.preventDefault();
-        if (window.DaleDeal?.utils?.showNotification) {
-          window.DaleDeal.utils.showNotification('Perfil actualizado correctamente', 'success');
+        const apiFetch = window.DaleDeal?.api?.apiFetch;
+        if (!apiFetch) return showPerfilStatus('No se pudo conectar con el servidor', 'error');
+
+        const btn = document.getElementById('perfilSubmitBtn');
+        const origText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando…';
+
+        try {
+          const payload = {
+            name:     document.getElementById('perfilName').value.trim() || null,
+            phone:    document.getElementById('perfilPhone').value.trim() || null,
+            location: document.getElementById('perfilLocation').value.trim() || null,
+          };
+          // Si hay avatar nuevo en pendingAvatarDataURL, lo mandamos
+          if (window._pendingAvatarDataURL) {
+            payload.avatar_url = window._pendingAvatarDataURL;
+          }
+          const updated = await apiFetch('/users/me', {
+            method: 'PUT',
+            body: JSON.stringify(payload),
+          });
+
+          // Actualizar localStorage del authManager con los datos nuevos
+          try {
+            const stored = JSON.parse(localStorage.getItem('daledealer_user') || '{}');
+            const merged = {
+              ...stored,
+              name:     updated.name     || stored.name,
+              phone:    updated.phone    || stored.phone,
+              location: updated.location || stored.location,
+              avatar:   updated.avatar_url || stored.avatar,
+            };
+            localStorage.setItem('daledealer_user', JSON.stringify(merged));
+            if (window.authManager) window.authManager.currentUser = merged;
+          } catch (_) {}
+
+          window._pendingAvatarDataURL = null;
+          loadPerfilData();
+          showPerfilStatus('Perfil actualizado correctamente', 'success');
+          // refrescar UI global (avatar en navbar, nombre, etc.)
+          if (window.authManager?.updateUI) window.authManager.updateUI();
+        } catch (err) {
+          showPerfilStatus('Error al guardar: ' + (err.message || 'intentá de nuevo'), 'error');
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = origText;
         }
       });
 
       document.getElementById('avatarInput')?.addEventListener('change', function() {
         const file = this.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = e => { document.getElementById('perfilAvatarImg').src = e.target.result; };
-          reader.readAsDataURL(file);
+        if (!file) return;
+        // Tamaño máximo 2MB para avatar como data URL
+        if (file.size > 2 * 1024 * 1024) {
+          showPerfilStatus('La imagen es muy grande (máx 2MB)', 'error');
+          return;
         }
+        const reader = new FileReader();
+        reader.onload = e => {
+          const dataUrl = e.target.result;
+          document.getElementById('perfilAvatarImg').src = dataUrl;
+          // Guardar para mandar en el próximo submit
+          window._pendingAvatarDataURL = dataUrl;
+          showPerfilStatus('Foto cargada — apretá "Guardar cambios" para confirmar', 'success');
+        };
+        reader.readAsDataURL(file);
       });
 
       // ===== DIRECCIONES =====

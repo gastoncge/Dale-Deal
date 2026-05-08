@@ -4,6 +4,26 @@
  * =====================================================
  */
 
+// Anti-flash: si no hay token al cargar, escondemos los elementos
+// "logueado" (profile dropdown, mis-compras, etc.) ANTES de que se
+// pinten. Si hay token, escondemos #loginLink. Esto evita que se
+// vea por unos ms el navbar "logueado" cuando en realidad no lo estás
+// (o viceversa). El updateUI() final reaplica la lógica completa.
+(function preventNavbarFlash() {
+  try {
+    const hasToken = !!localStorage.getItem('daledeal_token')
+                  && !!localStorage.getItem('daledealer_user');
+    const css = hasToken
+      ? `#loginLink { display: none !important; }`
+      : `.profile-dropdown, #logoutBtn { display: none !important; }
+         .profile-name { visibility: hidden; }`;
+    const style = document.createElement('style');
+    style.id = 'daledeal-auth-flash-fix';
+    style.textContent = css;
+    (document.head || document.documentElement).appendChild(style);
+  } catch (_) { /* localStorage no disponible — no hacemos nada */ }
+})();
+
 class AuthManager {
   constructor() {
     this.storageKey = "daledealer_user";
@@ -265,6 +285,13 @@ class AuthManager {
       if (logoutBtn) logoutBtn.style.display = "none";
       if (profileDropdown) profileDropdown.style.display = "none";
     }
+
+    // Una vez resuelto el estado real, sacamos el style del anti-flash
+    // (si quedaba). Después de esto, las reglas display las maneja JS.
+    const flashStyle = document.getElementById('daledeal-auth-flash-fix');
+    if (flashStyle) flashStyle.remove();
+    // Restaurar visibility del nombre si fue escondido
+    document.querySelectorAll('.profile-name').forEach(el => el.style.visibility = '');
   }
 
   updateProfileElements() {
@@ -714,6 +741,10 @@ function initializeAuth() {
     authManager = new AuthManager();
   }
 
+  // Exportar inmediatamente para que component-loader y otros módulos
+  // puedan llamar a updateUI() después de inyectar el header.
+  window.authManager = authManager;
+
   // Setup específico según la página
   const currentPage = window.location.pathname;
 
@@ -733,6 +764,60 @@ if (document.readyState === "loading") {
   initializeAuth();
 }
 
-// Exportar para uso global
-window.authManager = authManager;
+// Re-aplicar updateUI cuando el header termine de cargarse
+// (caso típico: index.html, productos.html, etc. usan navbar-placeholder
+// y component-loader.js inyecta el header después de DOMContentLoaded).
+document.addEventListener('daledeal:header-loaded', () => {
+  try { window.authManager?.updateUI(); } catch (_) {}
+});
+
+// =====================================================
+// Newsletter footer — handler GLOBAL delegado
+// =====================================================
+// El componente footer.html aparece en (casi) todas las páginas; en algunas
+// se inyecta vía component-loader, en otras está hardcodeado. Un listener
+// delegado en `document` cubre todos los casos sin riesgo de doble-binding.
+document.addEventListener('submit', function(e) {
+  const form = e.target;
+  if (!form || form.id !== 'newsletterForm') return;
+  // Evitar que otro handler procese el mismo submit
+  if (form.dataset.daledealNewsletterHandled === '1') return;
+  form.dataset.daledealNewsletterHandled = '1';
+  setTimeout(() => { form.dataset.daledealNewsletterHandled = ''; }, 1000);
+
+  e.preventDefault();
+  const emailInput = form.querySelector('#newsletterEmail') || form.querySelector('input[type="email"]');
+  const email = (emailInput?.value || '').trim();
+  if (!email) return;
+
+  const btn = form.querySelector('.newsletter-btn, button[type="submit"]');
+  const originalHTML = btn ? btn.innerHTML : '';
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="bi bi-check-circle"></i>';
+  }
+  // TODO: hacer un POST real cuando exista /newsletter en el backend.
+  // Por ahora, persistimos local y mostramos confirmación.
+  try {
+    const list = JSON.parse(localStorage.getItem('daledeal_newsletter_subs') || '[]');
+    if (!list.includes(email)) list.push(email);
+    localStorage.setItem('daledeal_newsletter_subs', JSON.stringify(list));
+  } catch (_) {}
+
+  setTimeout(() => {
+    if (btn) {
+      btn.innerHTML = originalHTML;
+      btn.disabled = false;
+    }
+    form.reset();
+    if (window.DaleDeal?.utils?.showNotification) {
+      window.DaleDeal.utils.showNotification(
+        '¡Gracias por suscribirte! Te vamos a avisar de las mejores ofertas.',
+        'success'
+      );
+    }
+  }, 1200);
+}, true);
+
+// Exportar clase
 window.AuthManager = AuthManager;
