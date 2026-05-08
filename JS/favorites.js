@@ -806,7 +806,7 @@ favoritesStyle.textContent = `
     border-radius: 50%;
     border: none;
     background: rgba(220, 38, 38, 0.9);
-    color: var(--white);
+    color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -834,7 +834,7 @@ favoritesStyle.textContent = `
   .favorite-actions-buttons .btn-add-to-cart {
     width: 100%;
     background: var(--gradient-primary);
-    color: var(--white);
+    color: #ffffff;
     border: none;
     padding: var(--spacing-2) var(--spacing-3);
     border-radius: var(--radius-lg);
@@ -992,7 +992,7 @@ favoritesStyle.textContent = `
 
   .favorite-service-card .service-price-badge {
     background: var(--gradient-primary);
-    color: var(--white);
+    color: #ffffff;
     padding: var(--spacing-1) var(--spacing-3);
     border-radius: var(--radius-full);
     font-size: var(--font-size-sm);
@@ -1002,7 +1002,7 @@ favoritesStyle.textContent = `
   .favorite-service-card .btn-contact-service {
     width: 100%;
     background: var(--gradient-primary);
-    color: var(--white);
+    color: #ffffff;
     border: none;
     padding: var(--spacing-2) var(--spacing-3);
     border-radius: var(--radius-lg);

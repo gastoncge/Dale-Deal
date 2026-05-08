@@ -268,8 +268,8 @@ class CartManager {
 
     // Eventos para botones del dropdown del carrito
     document.getElementById('viewFullCart')?.addEventListener('click', () => {
-      // Aquí podrías redirigir a una página completa del carrito
-      DaleDeal.log('Ver carrito completo');
+      const isInHtmlFolder = window.location.pathname.includes('/HTML/');
+      window.location.href = isInHtmlFolder ? './notificaciones.html' : './HTML/notificaciones.html';
     });
 
     document.getElementById('proceedToCheckout')?.addEventListener('click', async () => {

@@ -135,12 +135,7 @@ function renderProductCard(product) {
   }
 
   // Renderizar precio
-  const priceHTML = hasDiscount ? `
-    <span class="product-current-price">${window.DaleDeal.utils.formatCurrency(product.price)}</span>
-    <span class="product-original-price">${window.DaleDeal.utils.formatCurrency(product.originalPrice)}</span>
-  ` : `
-    <span class="product-current-price">${window.DaleDeal.utils.formatCurrency(product.price)}</span>
-  `;
+  const priceHTML = `<span class="product-current-price">${window.DaleDeal.utils.formatCurrency(product.price)}</span>`;
 
   // Renderizar descripción corta (primeras 80 caracteres)
   const shortDescription = product.description
@@ -168,13 +163,10 @@ function renderProductCard(product) {
           <div class="product-rating">
             <div class="stars">${renderStars(product.rating || 0)}</div>
             <span class="reviews-count">(${(product.reviewCount || 0).toLocaleString('es-AR')})</span>
-            ${product.shipping?.free ? `<span class="shipping-badge"><i class="bi bi-truck"></i> Envío gratis</span>` : ''}
           </div>
           <div class="product-location">
             <i class="bi bi-geo-alt-fill"></i>
             <span>CABA</span>
-            ${product.shipping?.speed === 'today' ? `<span class="shipping-badge"><i class="bi bi-lightning-charge-fill"></i> Llega hoy</span>` : ''}
-            ${product.shipping?.speed === 'tomorrow' ? `<span class="shipping-badge"><i class="bi bi-clock-fill"></i> Llega mañana</span>` : ''}
           </div>
         </div>
 

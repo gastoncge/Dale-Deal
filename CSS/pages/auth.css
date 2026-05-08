@@ -340,7 +340,7 @@
   background: var(--gradient-primary);
   border: none;
   border-radius: var(--radius-xl);
-  color: var(--white);
+  color: #ffffff;
   font-size: var(--font-size-lg);
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -566,7 +566,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--spacing-10);
-  color: var(--white);
+  color: #ffffff;
 }
 
 .auth-info-content {
@@ -916,6 +916,17 @@
     gap: var(--spacing-3);
     align-items: flex-start;
   }
+}
+
+/* ===== DARK MODE — PANEL DERECHO ===== */
+/*
+ * .auth-info-panel usa color: var(--white) que en dark mode se convierte en #0f172a (oscuro).
+ * El panel tiene fondo naranja/rojo (gradient-primary) que no cambia en dark mode,
+ * por lo que el texto se vuelve negro sobre un fondo colorido — ilegible.
+ * Forzamos blanco explícito para todos los textos dentro del panel.
+ */
+[data-theme="dark"] .auth-info-panel {
+  color: #ffffff;
 }
 
 /* ===== ACCESIBILIDAD ===== */

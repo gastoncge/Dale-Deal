@@ -102,6 +102,12 @@ function fixFooterPaths() {
   const currentPath = window.location.pathname;
   const isRoot = currentPath === '/' || currentPath.endsWith('index.html') || currentPath.split('/').pop() === '';
 
+  // Always fix logo path explicitly
+  const footerLogoImg = document.querySelector('#footer-placeholder .footer-logo-img');
+  if (footerLogoImg) {
+    footerLogoImg.src = isRoot ? './IMG/LOGO-2.png' : '../IMG/LOGO-2.png';
+  }
+
   if (isRoot) {
     document.querySelectorAll('#footer-placeholder a[href]').forEach(link => {
       const href = link.getAttribute('href');
@@ -109,11 +115,6 @@ function fixFooterPaths() {
         link.setAttribute('href', './HTML/' + href.slice(2));
       }
     });
-    // Fix footer logo image
-    const footerLogoImg = document.querySelector('#footer-placeholder .footer-logo-img');
-    if (footerLogoImg) {
-      footerLogoImg.src = './IMG/LOGO-2.png';
-    }
   }
 }
 
@@ -182,7 +183,34 @@ function initializeHeaderComponents() {
     });
   }
 
+  // Botón Publicar: apuntar a sección según página actual
+  fixPublicarLink();
+
   DaleDeal.log('✓ Header components inicializados');
+}
+
+/**
+ * Ajusta el link del botón "Publicar" según la página actual.
+ * En productos.html → publicar.html con tab=producto
+ * En servicios.html → publicar.html con tab=servicio
+ * En otras páginas → publicar.html sin parámetros
+ */
+function fixPublicarLink() {
+  const path = window.location.pathname.toLowerCase();
+  const isInHtml = path.includes('/html/');
+  const base = isInHtml ? './publicar.html' : './HTML/publicar.html';
+
+  let href = base;
+  if (path.includes('productos')) {
+    href = base + '?tab=producto';
+  } else if (path.includes('servicios')) {
+    href = base + '?tab=servicio';
+  }
+
+  // Actualizar todos los links de Publicar en el header (desktop + mobile)
+  document.querySelectorAll('#navbar-placeholder a[href*="publicar"]').forEach(link => {
+    link.setAttribute('href', href);
+  });
 }
 
 /**

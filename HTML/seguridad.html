@@ -27,7 +27,7 @@
       .security-card-icon {
         width: 44px; height: 44px; background: var(--gradient-primary);
         border-radius: var(--radius-lg); display: flex; align-items: center;
-        justify-content: center; color: var(--white); font-size: 20px; flex-shrink: 0;
+        justify-content: center; color: #ffffff; font-size: 20px; flex-shrink: 0;
       }
       .security-card-title { font-weight: 700; color: var(--gray-900); font-size: var(--font-size-lg); }
       .security-card-subtitle { font-size: var(--font-size-sm); color: var(--gray-500); }
@@ -68,6 +68,18 @@
       .danger-zone { border-color: rgba(239,68,68,.3); }
       .danger-zone .security-card-header { background: rgba(239,68,68,.05); border-bottom-color: rgba(239,68,68,.2); }
       .danger-zone .security-card-icon { background: linear-gradient(135deg, #ef4444, #dc2626); }
+      /* Dark mode */
+      [data-theme="dark"] .security-card { border-color: var(--gray-200); }
+      [data-theme="dark"] .security-card-header { border-bottom-color: rgba(255,255,255,0.08); }
+      [data-theme="dark"] .security-card-title { color: var(--gray-800); }
+      [data-theme="dark"] .security-card-subtitle { color: var(--gray-500); }
+      [data-theme="dark"] .toggle-row { border-bottom-color: rgba(255,255,255,0.08); }
+      [data-theme="dark"] .toggle-info h6 { color: var(--gray-800); }
+      [data-theme="dark"] .session-item { border-bottom-color: rgba(255,255,255,0.08); }
+      [data-theme="dark"] .session-device-icon { background: var(--gray-100); }
+      [data-theme="dark"] .session-device { color: var(--gray-800); }
+      [data-theme="dark"] .danger-zone { border-color: rgba(239,68,68,.4); }
+      [data-theme="dark"] .danger-zone .security-card-header { background: rgba(239,68,68,.12); }
     </style>
   </head>
   <body>

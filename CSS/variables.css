@@ -184,6 +184,133 @@
   --primary-yellow-light: rgba(255,128,0,0.2);
 }
 
+/* ===== DARK MODE — Correcciones adicionales ===== */
+[data-theme="dark"] {
+  /* Inputs y controles de formulario */
+  --input-bg: rgba(255, 255, 255, 0.05);
+  --input-border: var(--gray-600);
+  --input-placeholder: var(--gray-500);
+}
+
+/* Modal backdrop en dark mode */
+[data-theme="dark"] .modal-backdrop {
+  opacity: 0.8 !important;
+}
+
+/* Tabs activos en dark mode */
+[data-theme="dark"] .custom-tabs {
+  background: var(--gray-50);
+}
+
+/* Sidebar en dark mode */
+[data-theme="dark"] .filters-sidebar {
+  box-shadow: 1px 0 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Hover de items en dropdown en dark mode */
+[data-theme="dark"] .dropdown-item:hover {
+  background: var(--gray-100);
+}
+
+/* ===== DARK MODE — Bootstrap component overrides ===== */
+
+/* Form controls — Bootstrap defaults white bg que no adapta */
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select,
+[data-theme="dark"] .form-control:disabled {
+  background-color: var(--gray-50);
+  border-color: var(--gray-300);
+  color: var(--gray-800);
+}
+[data-theme="dark"] .input-group-text {
+  background-color: var(--gray-100);
+  border-color: var(--gray-300);
+  color: var(--gray-700);
+}
+[data-theme="dark"] .form-control::placeholder {
+  color: var(--gray-500);
+}
+
+/* Accordion */
+[data-theme="dark"] .accordion-item {
+  background-color: var(--gray-50);
+  border-color: var(--gray-200);
+}
+[data-theme="dark"] .accordion-button {
+  background-color: var(--gray-50);
+  color: var(--gray-800);
+}
+[data-theme="dark"] .accordion-button:not(.collapsed) {
+  background-color: var(--primary-red-light);
+  color: var(--primary-red);
+  box-shadow: none;
+}
+[data-theme="dark"] .accordion-button::after {
+  filter: invert(1) brightness(1.5);
+}
+[data-theme="dark"] .accordion-body {
+  background-color: var(--white);
+  color: var(--gray-700);
+}
+
+/* Modal */
+[data-theme="dark"] .modal-content {
+  background-color: var(--gray-50);
+  border-color: var(--gray-200);
+  color: var(--gray-800);
+}
+[data-theme="dark"] .modal-header,
+[data-theme="dark"] .modal-footer {
+  border-color: var(--gray-200);
+}
+
+/* Alerts */
+[data-theme="dark"] .alert-warning {
+  background-color: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #fcd34d;
+}
+[data-theme="dark"] .alert-danger {
+  background-color: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+}
+[data-theme="dark"] .alert-success {
+  background-color: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #6ee7b7;
+}
+[data-theme="dark"] .alert-info {
+  background-color: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #93c5fd;
+}
+
+/* Tablas Bootstrap */
+[data-theme="dark"] .table {
+  color: var(--gray-700);
+  border-color: var(--gray-200);
+}
+[data-theme="dark"] .table-light,
+[data-theme="dark"] thead.table-light {
+  background-color: var(--gray-100) !important;
+  color: var(--gray-700);
+  border-color: var(--gray-200);
+}
+[data-theme="dark"] .table-light th,
+[data-theme="dark"] .table-light td {
+  background-color: var(--gray-100) !important;
+  color: var(--gray-700) !important;
+  border-color: var(--gray-200) !important;
+}
+[data-theme="dark"] .table-bordered td,
+[data-theme="dark"] .table-bordered th {
+  border-color: var(--gray-200);
+}
+[data-theme="dark"] .table tbody tr:hover {
+  background-color: rgba(255,255,255,0.03);
+}
+
 /* Transición suave al cambiar tema */
 body,
 .navbar,

@@ -374,6 +374,28 @@
         background: rgba(214, 48, 49, 0.18);
       }
       [data-theme="dark"] .form-text { color: var(--gray-500); }
+      [data-theme="dark"] .publish-card h5 { border-bottom-color: rgba(255,255,255,0.08); color: var(--gray-700); }
+      [data-theme="dark"] .promo-title { color: var(--gray-800); }
+      [data-theme="dark"] .plan-name, [data-theme="dark"] .plan-price { color: var(--gray-800); }
+
+      /* ===== RESPONSIVE ===== */
+      @media (max-width: 576px) {
+        .publish-header { padding: 1.5rem 0 1rem; }
+        .publish-header h1 { font-size: 1.4rem; }
+        .publish-tabs .nav-link { padding: 0.75rem 1rem; font-size: 0.9rem; }
+        .publish-tabs .nav-link i { margin-right: 0.3rem; font-size: 1rem; }
+        .publish-card { padding: 1.25rem; }
+        .price-type-selector { flex-direction: column; }
+        .price-type-btn { flex: none; width: 100%; }
+        .condition-selector { gap: 0.5rem; }
+        .plan-card { padding: 1.5rem 1rem; }
+        .delivery-option-card { padding: 0.65rem 0.75rem; gap: 0.6rem; }
+        .media-upload-area { padding: 1rem; }
+      }
+      @media (max-width: 374px) {
+        .publish-tabs .nav-link { padding: 0.65rem 0.75rem; font-size: 0.82rem; }
+        .condition-selector { flex-direction: column; }
+      }
 
       /* Quill en dark */
       [data-theme="dark"] .quill-editor-host { background: #0f172a; color: #e2e8f0; }
@@ -1378,7 +1400,16 @@
     <script src="../JS/pages/publicar.js"></script>
     <script src="../JS/component-loader.js" defer></script>
     <script src="../JS/support-widget.js" defer></script>
-    <script>AOS.init({ duration: 400, once: true });</script>
-    <script src="../JS/support-widget.js" defer></script>
+    <script>
+      AOS.init({ duration: 400, once: true });
+      // Activar tab según parámetro URL (?tab=producto o ?tab=servicio)
+      (function() {
+        const tab = new URLSearchParams(window.location.search).get('tab');
+        if (tab) {
+          const btn = document.getElementById('tab-' + tab);
+          if (btn) btn.click();
+        }
+      })();
+    </script>
   </body>
 </html>

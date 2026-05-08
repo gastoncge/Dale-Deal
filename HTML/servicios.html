@@ -43,40 +43,8 @@
 
     <!-- Services Page Styles - Same as Products -->
     <style>
-      /* Fondo uniforme */
-      html, body {
-        background: var(--white) !important;
-      }
-
-      /* Navbar igual a inicio - sin línea oscura */
-      .navbar {
-        background: var(--gray-50) !important;
-        border-bottom: none !important;
-        box-shadow: var(--shadow-md) !important;
-        width: 100% !important;
-        margin: 0 !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-      }
-
-      /* Main content sin bordes */
-      .main-content {
-        background: var(--white) !important;
-      }
-
-      /* Breadcrumb ocupa todo el ancho */
-      .page-header-new {
-        background: var(--gray-50) !important;
-        width: 100vw !important;
-        margin-left: calc(-50vw + 50%) !important;
-        padding-left: calc(50vw - 50% + 1rem) !important;
-        padding-right: calc(50vw - 50% + 1rem) !important;
-        border-bottom: 1px solid var(--gray-200) !important;
-      }
-
       [data-theme="dark"] .page-header-new {
-        background: var(--white) !important;
-        border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
       }
       [data-theme="dark"] .breadcrumb-item a {
         color: #94a3b8;
@@ -92,28 +60,6 @@
       }
       [data-theme="dark"] .separator {
         color: rgba(255,255,255,0.3);
-      }
-
-      /* Badges iguales a la página de inicio - display controlado por JS */
-      .notification-badge,
-      .cart-badge {
-        position: absolute !important;
-        top: -6px !important;
-        right: -6px !important;
-        background: var(--primary-red) !important;
-        color: var(--white) !important;
-        font-size: var(--font-size-2xs) !important;
-        font-weight: 700 !important;
-        padding: 0 !important;
-        border-radius: 50% !important;
-        min-width: 20px !important;
-        height: 20px !important;
-        line-height: 20px !important;
-        text-align: center !important;
-        align-items: center !important;
-        justify-content: center !important;
-        box-shadow: 0 2px 4px rgba(214, 48, 49, 0.3) !important;
-        border: 2px solid var(--white) !important;
       }
 
       /* Products page specific styles - 4 columns layout */
@@ -411,7 +357,7 @@
 
       .btn-clear-filters:hover {
         background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-yellow) 100%);
-        color: var(--white);
+        color: #ffffff;
       }
 
       /* Dark mode: sidebar header */
@@ -650,7 +596,7 @@
       .btn-apply-price {
         width: 100%;
         background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-yellow) 100%);
-        color: var(--white);
+        color: #ffffff;
         border: none;
         padding: var(--spacing-3);
         border-radius: var(--radius-lg);
@@ -681,7 +627,7 @@
       .btn-apply-filters-compact {
         width: 100%;
         background: var(--gradient-primary);
-        color: var(--white);
+        color: #ffffff;
         border: none;
         padding: var(--spacing-3) var(--spacing-5);
         border-radius: var(--radius-lg);
@@ -756,7 +702,7 @@
 
       .filter-checkbox-modern input[type="checkbox"]:checked ~ .checkbox-custom::after {
         content: '✓';
-        color: var(--white);
+        color: #ffffff;
         font-size: 14px;
         font-weight: 700;
       }
@@ -894,7 +840,7 @@
       .btn-toggle-filters {
         display: none;
         background: var(--primary-red);
-        color: var(--white);
+        color: #ffffff;
         border: none;
         padding: var(--spacing-2) var(--spacing-4);
         border-radius: var(--radius-md);
@@ -1010,7 +956,7 @@
 
       .badge-count {
         background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-yellow) 100%);
-        color: var(--white);
+        color: #ffffff;
         padding: var(--spacing-2) var(--spacing-4);
         border-radius: var(--radius-full);
         font-size: var(--font-size-sm);
@@ -1172,7 +1118,7 @@
 
       /* Enhanced products grid section */
       .products-grid-section {
-        background: var(--white);
+        background: transparent;
         min-height: auto;
         padding: 0;
         position: relative;
@@ -1269,7 +1215,6 @@
       }
 
       .product-card:hover {
-        transform: translateY(-8px);
         box-shadow: var(--shadow-2xl);
         border-color: var(--primary-red-light);
       }
@@ -1341,7 +1286,7 @@
       .filter-option-btn.active {
         background: var(--primary-red);
         border-color: var(--primary-red);
-        color: var(--white);
+        color: #ffffff;
         transform: translateY(-1px);
         box-shadow: var(--shadow-md);
       }
@@ -1456,7 +1401,7 @@
       .sort-option.active {
         background: var(--gradient-primary);
         border-color: transparent;
-        color: var(--white);
+        color: #ffffff;
       }
 
       .advanced-filters {
@@ -1528,7 +1473,7 @@
 
       .rating-option.active {
         background: var(--gradient-primary);
-        color: var(--white);
+        color: #ffffff;
       }
 
       .location-search {
@@ -1554,7 +1499,7 @@
 
       .btn-apply-filters {
         background: var(--gradient-primary);
-        color: var(--white);
+        color: #ffffff;
         border: none;
         padding: var(--spacing-3) var(--spacing-6);
         border-radius: var(--radius-lg);
@@ -1754,12 +1699,17 @@
         color: var(--gray-500);
       }
 
+      .service-badges .badge-featured,
+      .service-badges .badge-offer {
+        position: static !important;
+      }
+
       .badge-featured {
         position: absolute;
         top: var(--spacing-3);
         left: var(--spacing-3);
         background: var(--gradient-primary);
-        color: var(--white);
+        color: #ffffff;
         padding: var(--spacing-2) var(--spacing-3);
         border-radius: var(--radius-md);
         font-size: var(--font-size-xs);
@@ -1776,7 +1726,7 @@
         top: var(--spacing-3);
         right: var(--spacing-3);
         background: var(--primary-red);
-        color: var(--white);
+        color: #ffffff;
         padding: var(--spacing-2) var(--spacing-3);
         border-radius: var(--radius-md);
         font-size: var(--font-size-xs);
@@ -1964,7 +1914,7 @@
 
       .action-heart:hover {
         background: var(--primary-red) !important;
-        color: var(--white) !important;
+        color: #ffffff !important;
         border-color: var(--primary-red) !important;
         transform: scale(1.1);
       }
@@ -1972,17 +1922,17 @@
       .action-heart.favorited,
       .action-heart.active {
         background: var(--primary-red) !important;
-        color: var(--white) !important;
+        color: #ffffff !important;
         border-color: var(--primary-red) !important;
       }
 
       .action-heart.favorited i,
       .action-heart.active i {
-        color: var(--white) !important;
+        color: #ffffff !important;
       }
 
       .action-heart:hover i {
-        color: var(--white) !important;
+        color: #ffffff !important;
       }
 
       .heart-animate {
@@ -2293,12 +2243,10 @@
           <div class="header-content" data-aos="fade-up">
             <div class="header-left">
               <h1 class="header-title">
-                Servicios Profesionales
+                Catálogo de Servicios
               </h1>
               <p class="header-description">
-                <span class="badge-count" id="headerServiceCount">2000+ servicios profesionales</span>
-                <span class="separator">•</span>
-                <span class="text-muted">Profesionales verificados y calificados</span>
+                <span class="badge-count" id="headerServiceCount">2000+ servicios</span>
               </p>
             </div>
           </div>
@@ -2775,20 +2723,20 @@
 
         showLoadingState() {
           const grid = document.getElementById('servicesGrid');
-          if (grid) {
-            grid.innerHTML = `
-              <div class="col-12 text-center py-5">
-                <div class="spinner-border text-primary" role="status">
-                  <span class="visually-hidden">Cargando...</span>
-                </div>
-                <p class="mt-3 text-muted">Cargando servicios...</p>
-              </div>
-            `;
-          }
+          if (grid) grid.innerHTML = '';
+          const container = document.getElementById('emptyStateContainer');
+          const loading = document.getElementById('loadingContainer');
+          const noResults = document.getElementById('noResults');
+          if (container) container.style.display = 'flex';
+          if (loading) loading.style.display = 'block';
+          if (noResults) noResults.style.display = 'none';
         }
 
         hideLoadingState() {
-          // El grid se limpia en renderFilteredServices
+          const container = document.getElementById('emptyStateContainer');
+          const loading = document.getElementById('loadingContainer');
+          if (container) container.style.display = 'none';
+          if (loading) loading.style.display = 'none';
         }
 
         transformAPIServices(apiServices) {
@@ -3313,17 +3261,22 @@
           for (let i = 0; i < 5 - fullStars - (hasHalf ? 1 : 0); i++) starsHTML += '<i class="bi bi-star"></i>';
 
           // Badges
-          const badgesHTML = (service.badges || []).map(badge => {
-            const cls = service.emergency || badge.includes('Premium') || badge.includes('Emergencia')
-              ? 'badge-offer' : 'badge-featured';
-            return `<span class="${cls}">${badge}</span>`;
-          }).join('');
+          const getBadgeClass = (badge) => {
+            const b = badge.toLowerCase();
+            if (b.includes('certif') || b.includes('matriculado') || b.includes('verificado') || b.includes('eco') || b.includes('chef')) return 'badge-certified';
+            if (b.includes('garantía') || b.includes('garantia')) return 'badge-warranty';
+            if (b.includes('24/7') || b.includes('24h')) return 'badge-24h';
+            if (b.includes('remoto') || b.includes('medida')) return 'badge-remote';
+            if (b.includes('premium') || b.includes('emergencia') || b.includes('rápido') || b.includes('rapido')) return 'badge-offer';
+            if (b.includes('artesanal') || b.includes('personalizado') || b.includes('profesional') || b.includes('preventivo') || b.includes('programado')) return 'badge-custom';
+            if (b.includes('seguro') || b.includes('asegurado')) return 'badge-24h';
+            return 'badge-featured';
+          };
+          const badgeSpans = (service.badges || []).map(badge =>
+            `<span class="${getBadgeClass(badge)}">${badge}</span>`
+          ).join('');
+          const badgesHTML = badgeSpans ? `<div class="service-badges">${badgeSpans}</div>` : '';
 
-          // Extra indicators
-          let extraBadges = '';
-          if (service.topRated) extraBadges += '<span class="shipping-badge"><i class="bi bi-star-fill"></i> Top rated</span>';
-          if (service.emergency) extraBadges += ' <span class="shipping-badge"><i class="bi bi-lightning-charge-fill"></i> Urgencias</span>';
-          if (service.nationwide) extraBadges += ' <span class="shipping-badge"><i class="bi bi-truck"></i> Cobertura nacional</span>';
 
           const shortDesc = service.description
             ? (service.description.length > 80 ? service.description.substring(0, 80) + '...' : service.description)
@@ -3346,7 +3299,6 @@
                 <div class="product-rating">
                   <div class="stars">${starsHTML}</div>
                   <span class="reviews-count">(${(service.reviewCount || 0).toLocaleString('es-AR')})</span>
-                  ${extraBadges}
                 </div>
                 <div class="product-location">
                   <i class="bi bi-geo-alt-fill"></i>

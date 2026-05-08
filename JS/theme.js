@@ -13,13 +13,11 @@
 
   function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
+    const iconClass = theme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
     const icon = document.getElementById('themeIcon');
-    if (!icon) return;
-    if (theme === 'dark') {
-      icon.className = 'bi bi-sun-fill';
-    } else {
-      icon.className = 'bi bi-moon-stars-fill';
-    }
+    if (icon) icon.className = iconClass;
+    const iconMobile = document.getElementById('themeIconMobile');
+    if (iconMobile) iconMobile.className = iconClass;
   }
 
   function getStoredTheme() {
@@ -53,9 +51,14 @@
   document.addEventListener('DOMContentLoaded', function () {
     initTheme(); // Re-aplicar cuando el DOM esté listo (el icon puede no existir aún)
 
-    // Botón toggle en navbar
+    // Botón toggle en navbar desktop
     const btn = document.getElementById('themeToggle');
     if (btn) btn.addEventListener('click', toggleTheme);
+
+    // Botón toggle en menú mobile — delegación porque el header se carga dinámicamente
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('#themeToggleMobile')) toggleTheme();
+    });
 
     // Escuchar cambios del sistema en tiempo real
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {

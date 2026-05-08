@@ -1029,7 +1029,8 @@ advancedFiltersStyle.textContent = `
     font-size: var(--font-size-sm);
     color: var(--gray-700);
     position: relative;
-    padding-left: var(--spacing-8);
+    padding: var(--spacing-2) var(--spacing-2) var(--spacing-2) var(--spacing-8);
+    transition: color var(--transition-fast), background var(--transition-fast);
   }
 
   .option-checkbox input[type="checkbox"] {
@@ -1051,6 +1052,12 @@ advancedFiltersStyle.textContent = `
     border: 2px solid var(--gray-300);
     border-radius: var(--radius-md);
     transition: all var(--transition-fast);
+  }
+
+  .option-checkbox:hover {
+    color: var(--primary-red);
+    background: rgba(214, 48, 49, 0.07);
+    border-radius: var(--radius-md);
   }
 
   .option-checkbox:hover .checkmark {
@@ -1169,14 +1176,15 @@ advancedFiltersStyle.textContent = `
   }
 
   .rating-option:hover {
-    border-color: var(--primary-red-light);
-    background: var(--primary-red-light);
+    border-color: var(--primary-red);
+    background: rgba(214, 48, 49, 0.12);
+    color: var(--primary-red);
   }
 
   .rating-option.active {
     border-color: var(--primary-red);
     background: var(--primary-red);
-    color: var(--white);
+    color: #ffffff;
   }
 
   .rating-option .stars {
@@ -1189,8 +1197,12 @@ advancedFiltersStyle.textContent = `
     color: var(--primary-yellow);
   }
 
+  .rating-option:hover .stars i {
+    color: var(--primary-yellow);
+  }
+
   .rating-option.active .stars i {
-    color: var(--white);
+    color: #ffffff;
   }
 
   .filter-actions {

@@ -52,6 +52,14 @@ class DropdownManager {
   }
 
   positionBootstrapDropdown(dropdown, menu) {
+    // En mobile pequeño (< 576px) el CSS ya centra el dropdown como modal.
+    // Si el JS aplica positioning inline con !important, anula el CSS.
+    // Dejamos que el CSS tome control en estas pantallas.
+    if (window.innerWidth < 576) {
+      menu.classList.add("dropdown-fixed");
+      return;
+    }
+
     const toggle =
       dropdown.querySelector('[data-bs-toggle="dropdown"]') || dropdown;
     const rect = toggle.getBoundingClientRect();

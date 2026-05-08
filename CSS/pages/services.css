@@ -28,7 +28,7 @@
 
 .services-badge {
   background: linear-gradient(135deg, var(--primary-red-light), var(--primary-red));
-  color: var(--white);
+  color: #ffffff;
   padding: var(--spacing-2) var(--spacing-4);
   border-radius: var(--radius-3xl);
   font-size: var(--font-size-sm);
@@ -234,7 +234,7 @@
 
 .category-card .category-icon i {
   font-size: var(--font-size-2xl);
-  color: var(--white);
+  color: #ffffff;
 }
 
 .category-title {
@@ -299,7 +299,7 @@
   width: 60px;
   height: 60px;
   background: var(--gradient-primary);
-  color: var(--white);
+  color: #ffffff;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -493,8 +493,38 @@
   }
 }
 
+/* ===== SIDEBAR + MAIN LAYOUT (desktop) ===== */
+.products-layout {
+  display: flex;
+  gap: 0;
+  align-items: flex-start;
+}
+
+.filters-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--white);
+  border-radius: 0;
+  padding: 0;
+  box-shadow: 1px 0 8px rgba(0, 0, 0, 0.05);
+  border-right: 1px solid var(--gray-200);
+  position: sticky;
+  top: 70px;
+  height: auto;
+  max-height: calc(100vh - 70px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  align-self: flex-start;
+}
+
+[data-theme="dark"] .filters-sidebar {
+  background: #0f172a;
+  box-shadow: 1px 0 8px rgba(0, 0, 0, 0.3);
+  border-right-color: rgba(255, 255, 255, 0.06);
+}
+
 /* ===== SERVICES GRID & FILTERS PAGE LAYOUT ===== */
-/* Services page specific styles - Matching productos.html layout */
 .services-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -502,18 +532,7 @@
   width: 100%;
 }
 
-@media (max-width: 1400px) {
-  .services-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--spacing-5);
-  }
-}
-
 @media (max-width: 1200px) {
-  .filters-sidebar {
-    width: 260px;
-  }
-
   .services-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-5);
@@ -678,67 +697,6 @@
   }
 }
 
-/* ===== NEW SIDEBAR LAYOUT ===== */
-.products-layout {
-  display: flex;
-  gap: 0;
-  align-items: flex-start;
-  margin-top: 0;
-}
-
-/* Filters Sidebar */
-.filters-sidebar {
-  width: 260px;
-  flex-shrink: 0;
-  background: var(--white);
-  border-radius: 0;
-  padding: 0;
-  box-shadow: 1px 0 8px rgba(0, 0, 0, 0.05);
-  border-right: 1px solid var(--gray-200);
-  position: sticky;
-  top: 70px;
-  height: auto;
-  max-height: calc(100vh - 70px);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  align-self: flex-start;
-}
-
-/* Sidebar Header */
-.sidebar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-4) var(--spacing-5);
-  background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
-  border-bottom: 1px solid var(--gray-100);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.sidebar-title-group {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-3);
-}
-
-.sidebar-icon {
-  font-size: 20px;
-  background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-yellow) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.sidebar-title {
-  font-size: var(--font-size-lg);
-  font-weight: 700;
-  color: var(--gray-900);
-  margin: 0;
-  letter-spacing: -0.3px;
-}
 
 .btn-clear-filters {
   background: var(--gray-100);
@@ -757,7 +715,7 @@
 
 .btn-clear-filters:hover {
   background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-yellow) 100%);
-  color: var(--white);
+  color: #ffffff;
 }
 
 /* Sidebar Content with Scroll */
@@ -993,7 +951,7 @@
 }
 
 .stepper-btn:first-child { border-bottom: 1px solid var(--gray-200); }
-.stepper-btn:hover { background: var(--primary-red); color: var(--white); }
+.stepper-btn:hover { background: var(--primary-red); color: #ffffff; }
 
 /* Filters Footer */
 .filters-footer {
@@ -1009,7 +967,7 @@
 .btn-apply-filters-compact {
   width: 100%;
   background: var(--gradient-primary);
-  color: var(--white);
+  color: #ffffff;
   border: none;
   padding: var(--spacing-3) var(--spacing-5);
   border-radius: var(--radius-lg);
@@ -1084,7 +1042,7 @@
 
 .filter-checkbox-modern input[type="checkbox"]:checked ~ .checkbox-custom::after {
   content: '✓';
-  color: var(--white);
+  color: #ffffff;
   font-size: 14px;
   font-weight: 700;
 }
@@ -1222,7 +1180,7 @@
 .btn-toggle-filters {
   display: none;
   background: var(--primary-red);
-  color: var(--white);
+  color: #ffffff;
   border: none;
   padding: var(--spacing-2) var(--spacing-4);
   border-radius: var(--radius-md);
@@ -1338,7 +1296,7 @@
 
 .badge-count {
   background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-yellow) 100%);
-  color: var(--white);
+  color: #ffffff;
   padding: var(--spacing-2) var(--spacing-4);
   border-radius: var(--radius-full);
   font-size: var(--font-size-sm);

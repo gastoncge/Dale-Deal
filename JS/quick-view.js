@@ -513,7 +513,7 @@ quickViewStyle.textContent = `
     right: var(--spacing-4);
     z-index: 10;
     background: rgba(0, 0, 0, 0.7);
-    color: var(--white);
+    color: #ffffff;
     border: none;
     /* 44px mínimo táctil — WCAG 2.5.5 */
     min-width: 44px;
@@ -579,7 +579,7 @@ quickViewStyle.textContent = `
 
   .nav-btn {
     background: rgba(0, 0, 0, 0.7);
-    color: var(--white);
+    color: #ffffff;
     border: none;
     width: 48px;
     height: 48px;
@@ -777,7 +777,7 @@ quickViewStyle.textContent = `
 
   .quantity-btn:hover {
     background: var(--primary-red);
-    color: var(--white);
+    color: #ffffff;
   }
 
   .quantity-display {

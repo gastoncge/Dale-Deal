@@ -22,7 +22,7 @@
       .contact-info-card {
         background: var(--gradient-primary);
         border-radius: var(--radius-2xl); padding: var(--spacing-8);
-        color: var(--white);
+        color: #ffffff;
       }
       .contact-info-card h3 { font-weight: 800; margin-bottom: var(--spacing-2); }
       .contact-info-card p { opacity: .85; margin-bottom: var(--spacing-6); }
@@ -37,13 +37,21 @@
       .contact-hours { background: rgba(255,255,255,.15); border-radius: var(--radius-lg); padding: var(--spacing-4); margin-top: var(--spacing-6); }
       .contact-hours-title { font-weight: 700; margin-bottom: var(--spacing-3); }
       .contact-hours-row { display: flex; justify-content: space-between; font-size: var(--font-size-sm); padding: var(--spacing-1) 0; opacity: .9; }
+      /* Dark mode: el panel derecho tiene gradient naranja/rojo. En dark mode var(--white)
+         se vuelve oscuro, haciendo el texto invisible sobre el fondo colorido. */
+      [data-theme="dark"] .contact-info-card { color: #ffffff; }
       .form-label { font-weight: 600; color: var(--gray-700); font-size: var(--font-size-sm); }
       .form-control, .form-select {
         border: 2px solid var(--gray-200); border-radius: var(--radius-lg);
         padding: var(--spacing-3) var(--spacing-4); font-size: var(--font-size-base);
         transition: border-color var(--transition-base);
+        background: var(--white); color: var(--gray-800);
       }
-      .form-control:focus, .form-select:focus { border-color: var(--primary-red); box-shadow: 0 0 0 3px rgba(214,48,49,.12); }
+      .form-control:focus, .form-select:focus { border-color: var(--primary-red); box-shadow: 0 0 0 3px rgba(214,48,49,.12); outline: none; }
+      [data-theme="dark"] .form-control, [data-theme="dark"] .form-select {
+        background: var(--gray-50); border-color: var(--gray-600); color: var(--gray-800);
+      }
+      [data-theme="dark"] .contact-form-card { border-color: var(--gray-700); }
       .success-banner {
         display: none; background: rgba(34,197,94,.1); border: 2px solid rgba(34,197,94,.3);
         border-radius: var(--radius-xl); padding: var(--spacing-5);

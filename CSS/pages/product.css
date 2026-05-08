@@ -192,7 +192,7 @@
 
 .discount-badge {
   background: var(--primary-red);
-  color: var(--white);
+  color: #ffffff;
   font-size: var(--font-size-sm);
   font-weight: 700;
   padding: var(--spacing-1) var(--spacing-3);
@@ -263,7 +263,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: var(--white);
+  color: #ffffff;
   font-weight: 900;
   font-size: var(--font-size-sm);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
@@ -303,7 +303,7 @@
 .storage-option.active {
   border-color: var(--primary-red);
   background: var(--primary-red);
-  color: var(--white);
+  color: #ffffff;
   box-shadow: var(--shadow-lg);
 }
 
@@ -350,7 +350,7 @@
 
 .quantity-btn:hover {
   background: var(--primary-red);
-  color: var(--white);
+  color: #ffffff;
   transform: scale(1.05);
 }
 
@@ -399,7 +399,7 @@
   min-width: 200px;
   padding: var(--spacing-4) var(--spacing-6);
   background: var(--gradient-primary);
-  color: var(--white);
+  color: #ffffff;
   border: none;
   border-radius: var(--radius-xl);
   font-size: var(--font-size-lg);
@@ -440,7 +440,7 @@
 
 .btn-add-cart:hover {
   background: var(--primary-red);
-  color: var(--white);
+  color: #ffffff;
   transform: translateY(-3px);
   box-shadow: var(--shadow-lg);
 }
@@ -479,25 +479,25 @@
 
 .btn-wishlist.active {
   background: var(--primary-red);
-  color: var(--white) !important;
+  color: #ffffff !important;
   border-color: var(--primary-red);
   box-shadow: var(--shadow-lg);
 }
 
 .btn-wishlist.active i {
-  color: var(--white) !important;
+  color: #ffffff !important;
 }
 
 .btn-wishlist.active:hover {
   background: var(--primary-red);
-  color: var(--white) !important;
+  color: #ffffff !important;
   border-color: var(--primary-red);
   transform: translateY(-3px);
   box-shadow: var(--shadow-xl);
 }
 
 .btn-wishlist.active:hover i {
-  color: var(--white) !important;
+  color: #ffffff !important;
 }
 
 /* ===== INFORMACIÓN DE ENVÍO ===== */
@@ -695,7 +695,7 @@
 
 .custom-tabs .nav-link.active {
   background: var(--gradient-primary);
-  color: var(--white);
+  color: #ffffff;
   box-shadow: var(--shadow-md);
   transform: translateY(-2px);
 }
@@ -1024,7 +1024,7 @@
   margin: var(--spacing-8) auto 0;
   padding: var(--spacing-4) var(--spacing-8);
   background: var(--gradient-primary);
-  color: var(--white);
+  color: #ffffff;
   border: none;
   border-radius: var(--radius-3xl);
   font-size: var(--font-size-base);
@@ -1096,7 +1096,7 @@
   align-self: flex-end;
   padding: var(--spacing-3) var(--spacing-6);
   background: var(--gradient-primary);
-  color: var(--white);
+  color: #ffffff;
   border: none;
   border-radius: var(--radius-lg);
   font-size: var(--font-size-base);
@@ -1187,7 +1187,7 @@
   width: 28px;
   height: 28px;
   background: var(--success);
-  color: var(--white);
+  color: #ffffff;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1301,29 +1301,21 @@
   }
 }
 
-@media (max-width: 767px) {
-  /*
-   * Aquí los col-md-6 se apilan: galería arriba, info abajo.
-   * margin-top crea el espacio visual entre ambos bloques.
-   */
+@media (max-width: 768px) {
+  /* col-md-6 se apilan: galería arriba, info abajo */
   .product-info {
     margin-top: var(--spacing-6);
+    padding-left: 0;
   }
 
-  /* Imagen a 100% del ancho disponible en layout apilado */
   .main-image-container {
     width: 100%;
+    height: 300px;
   }
 
   .main-product-image {
     width: 100%;
     object-fit: cover;
-  }
-}
-
-@media (max-width: 768px) {
-  .main-image-container {
-    height: 300px;
   }
 
   .thumbnail {
@@ -1717,13 +1709,13 @@
 .section-nav-btn:hover {
   background: var(--primary-red);
   border-color: var(--primary-red);
-  color: var(--white);
+  color: #ffffff;
   transform: scale(1.1);
   box-shadow: var(--shadow-xl);
 }
 
 .section-nav-btn:hover .carousel-control-icon {
-  color: var(--white);
+  color: #ffffff;
 }
 
 .section-nav-btn:focus-visible {
@@ -1804,7 +1796,7 @@
 
 .carousel-control-prev:hover .carousel-control-icon,
 .carousel-control-next:hover .carousel-control-icon {
-  color: var(--white);
+  color: #ffffff;
 }
 
 .carousel-control-icon {
@@ -1959,7 +1951,7 @@
   top: var(--spacing-3);
   left: var(--spacing-3);
   background: var(--gray-800);
-  color: var(--white);
+  color: #ffffff;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -2184,7 +2176,7 @@
 .btn-contact-seller {
   background: var(--gradient-primary);
   border: none;
-  color: var(--white);
+  color: #ffffff;
   width: 40px;
   height: 40px;
   border-radius: 50%;
