@@ -48,30 +48,29 @@
         background: var(--white) !important;
       }
 
-      /* Navbar igual a inicio - sin línea oscura */
-      .navbar {
-        background: var(--gray-50) !important;
-        border-bottom: none !important;
-        box-shadow: var(--shadow-md) !important;
-        width: 100% !important;
-        margin: 0 !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-      }
+      /* La navbar usa la regla global de CSS/components.css —
+         no la pisamos acá para que sea idéntica a la del resto del sitio. */
 
       /* Main content sin bordes */
       .main-content {
         background: var(--white) !important;
       }
 
-      /* Breadcrumb ocupa todo el ancho */
+      /* Breadcrumb ocupa todo el ancho — mismas reglas que productos.html
+         para que las dos páginas hermanas se vean idénticas. */
       .page-header-new {
         background: var(--gray-50) !important;
         width: 100vw !important;
         margin-left: calc(-50vw + 50%) !important;
         padding-left: calc(50vw - 50% + 1rem) !important;
         padding-right: calc(50vw - 50% + 1rem) !important;
-        border-bottom: 1px solid var(--gray-200) !important;
+        border-bottom: none !important;
+        box-shadow: none !important;
+      }
+
+      [data-theme="dark"] .page-header-new {
+        background: transparent !important;
+        border-bottom: none !important;
       }
 
       /* Badges iguales a la página de inicio - display controlado por JS */
