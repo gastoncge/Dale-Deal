@@ -752,6 +752,14 @@
         background: #1e293b !important;
       }
 
+      /* Sacar la línea fina entre navbar y page-header-new en dark mode.
+         La regla global de la navbar tiene border-bottom 1px translúcido
+         que se ve como una línea cuando el page-header arriba tiene el
+         mismo color. */
+      [data-theme="dark"] .navbar {
+        border-bottom: none !important;
+      }
+
       /* Badges iguales a la página de inicio - display controlado por JS */
       .notification-badge,
       .cart-badge {
