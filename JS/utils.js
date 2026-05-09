@@ -5,10 +5,16 @@
  */
 
 // ===== CONFIGURACIÓN GLOBAL =====
+// API_BASE_URL: detecta automáticamente si estamos en local (localhost/127.0.0.1)
+// vs producción. NO hardcodear "https://api.daledeal.com" — ese host no existe
+// y rompe el frontend en local. La URL real de producción la define api.js
+// (Railway: daledeal-backend.up.railway.app).
+const __HOST = window.location.hostname;
+const __IS_LOCAL = __HOST === "localhost" || __HOST === "127.0.0.1" || __HOST === "";
 window.DaleDeal = {
   CONFIG: {
-    DEBUG: window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1",
-    API_BASE_URL: "https://api.daledeal.com",
+    DEBUG: __IS_LOCAL,
+    API_BASE_URL: __IS_LOCAL ? "http://localhost:3000" : "https://daledeal-backend.up.railway.app",
     PRODUCTS_PER_PAGE: 12,
     SEARCH_DELAY: 300,
     ANIMATION_DURATION: 300,

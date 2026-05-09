@@ -70,6 +70,16 @@
         box-shadow: none !important;
       }
 
+      /* Override explícito para dark mode (mayor especificidad y !important
+         para asegurar que ningún CSS posterior lo pise). #1e293b matchea
+         exactamente el color hardcodeado de la .navbar en dark. */
+      [data-theme="dark"] .page-header-new,
+      [data-theme="dark"] .page-header-new .container-fluid,
+      [data-theme="dark"] .page-header-new .header-content,
+      [data-theme="dark"] .page-header-new .header-left {
+        background: #1e293b !important;
+      }
+
       /* Badges iguales a la página de inicio - display controlado por JS */
       .notification-badge,
       .cart-badge {
