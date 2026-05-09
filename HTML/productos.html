@@ -760,6 +760,18 @@
         border-bottom: none !important;
       }
 
+      /* Sacar TODA línea/borde/sombra entre breadcrumb y título dentro del
+         page-header-new — algún CSS global o de bootstrap añade un
+         border-bottom al .breadcrumb-nav que se ve como línea horizontal
+         entre "Inicio > Productos" y "Catálogo de Productos". */
+      .page-header-new .breadcrumb-nav,
+      .page-header-new .breadcrumb-list,
+      .page-header-new .header-content,
+      .page-header-new .header-left {
+        border: none !important;
+        box-shadow: none !important;
+      }
+
       /* Badges iguales a la página de inicio - display controlado por JS */
       .notification-badge,
       .cart-badge {
