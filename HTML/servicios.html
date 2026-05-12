@@ -544,6 +544,19 @@
         transform: rotate(180deg);
       }
 
+      .filter-section-header:hover {
+        background: rgba(214, 48, 49, 0.05);
+        border-radius: var(--radius-md);
+        padding-left: var(--spacing-2);
+        padding-right: var(--spacing-2);
+      }
+      .filter-section-header:hover .filter-section-title {
+        color: var(--primary-red);
+      }
+      .filter-section-header:hover .toggle-icon {
+        color: var(--primary-red);
+      }
+
       /* Filter Options List */
       .filter-options-list {
         display: flex;
@@ -650,7 +663,37 @@
         letter-spacing: 0.5px;
       }
 
-      /* price-stepper usa los estilos de services.css */
+      /* Input de precio con ícono $ — mismo estilo que productos.html */
+      .input-with-icon {
+        position: relative;
+      }
+      .input-with-icon .currency-symbol {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray-500);
+        font-weight: 600;
+        font-size: var(--font-size-sm);
+        padding: 0;
+        flex-shrink: unset;
+      }
+      .input-with-icon .price-input-modern {
+        width: 100%;
+        border: 2px solid var(--gray-200);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-3) var(--spacing-3) var(--spacing-3) 32px;
+        font-size: var(--font-size-sm);
+        font-weight: 600;
+        transition: all var(--transition-base);
+        background: var(--white);
+        flex: unset;
+      }
+      .input-with-icon .price-input-modern:focus {
+        outline: none;
+        border-color: var(--primary-red);
+        box-shadow: 0 0 0 4px rgba(214, 48, 49, 0.15);
+      }
 
       .price-divider {
         display: flex;
@@ -850,6 +893,57 @@
       .rating-label {
         font-size: var(--font-size-xs);
         color: var(--gray-600);
+      }
+
+      /* "Todas las calificaciones" chip — mismo estilo y shimmer que productos */
+      .filter-rating-modern:has(input[value="all"]) {
+        background: var(--gray-100);
+        border: 2px solid var(--gray-200);
+        border-radius: var(--radius-full);
+        justify-content: center;
+        padding: 5px var(--spacing-3);
+        margin-bottom: var(--spacing-2);
+        cursor: pointer;
+        overflow: hidden;
+        transition: background 0.2s, border-color 0.2s;
+      }
+      .filter-rating-modern:has(input[value="all"])::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+        pointer-events: none;
+        z-index: 1;
+      }
+      .filter-rating-modern:has(input[value="all"]):hover::before {
+        left: 100%;
+      }
+      .filter-rating-modern:has(input[value="all"]) .rating-text {
+        font-size: var(--font-size-xs);
+        font-weight: 600;
+        color: var(--gray-700);
+      }
+      .filter-rating-modern:has(input[value="all"]):not(:has(input:checked)):hover {
+        background: var(--gray-200);
+        border-color: var(--primary-red);
+      }
+      .filter-rating-modern:has(input[value="all"]):not(:has(input:checked)):hover .rating-text {
+        color: var(--primary-red);
+      }
+      .filter-rating-modern:has(input[value="all"]:checked) {
+        background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-yellow) 100%);
+        border-color: transparent;
+      }
+      .filter-rating-modern:has(input[value="all"]:checked) .rating-text {
+        color: #fff;
+      }
+      .filter-rating-modern:has(input[value="all"]) input[type="radio"]:checked ~ .rating-content {
+        background: none;
+        padding: 0;
       }
 
       /* Modern Select */
@@ -2439,13 +2533,9 @@
                     <div class="price-inputs-group">
                       <div class="price-input-wrapper">
                         <label class="price-label">Mínimo</label>
-                        <div class="price-stepper">
+                        <div class="input-with-icon">
                           <span class="currency-symbol">$</span>
-                          <input type="number" class="price-input-modern" id="minPrice" placeholder="0" min="0">
-                          <div class="stepper-btns">
-                            <button type="button" class="stepper-btn" data-target="minPrice" data-dir="up">▲</button>
-                            <button type="button" class="stepper-btn" data-target="minPrice" data-dir="down">▼</button>
-                          </div>
+                          <input type="text" inputmode="numeric" pattern="[0-9]*" class="price-input-modern" id="minPrice" placeholder="0">
                         </div>
                       </div>
                       <div class="price-divider">
@@ -2453,13 +2543,9 @@
                       </div>
                       <div class="price-input-wrapper">
                         <label class="price-label">Máximo</label>
-                        <div class="price-stepper">
+                        <div class="input-with-icon">
                           <span class="currency-symbol">$</span>
-                          <input type="number" class="price-input-modern" id="maxPrice" placeholder="99999" min="0">
-                          <div class="stepper-btns">
-                            <button type="button" class="stepper-btn" data-target="maxPrice" data-dir="up">▲</button>
-                            <button type="button" class="stepper-btn" data-target="maxPrice" data-dir="down">▼</button>
-                          </div>
+                          <input type="text" inputmode="numeric" pattern="[0-9]*" class="price-input-modern" id="maxPrice" placeholder="0">
                         </div>
                       </div>
                     </div>
@@ -2526,6 +2612,19 @@
                       </span>
                     </label>
                     <label class="filter-rating-modern">
+                      <input type="radio" name="rating" value="5">
+                      <span class="rating-content">
+                        <span class="stars-group">
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                        </span>
+                        <span class="rating-label">o más</span>
+                      </span>
+                    </label>
+                    <label class="filter-rating-modern">
                       <input type="radio" name="rating" value="4">
                       <span class="rating-content">
                         <span class="stars-group">
@@ -2545,6 +2644,32 @@
                           <i class="bi bi-star-fill star-filled"></i>
                           <i class="bi bi-star-fill star-filled"></i>
                           <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star star-empty"></i>
+                          <i class="bi bi-star star-empty"></i>
+                        </span>
+                        <span class="rating-label">o más</span>
+                      </span>
+                    </label>
+                    <label class="filter-rating-modern">
+                      <input type="radio" name="rating" value="2">
+                      <span class="rating-content">
+                        <span class="stars-group">
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star star-empty"></i>
+                          <i class="bi bi-star star-empty"></i>
+                          <i class="bi bi-star star-empty"></i>
+                        </span>
+                        <span class="rating-label">o más</span>
+                      </span>
+                    </label>
+                    <label class="filter-rating-modern">
+                      <input type="radio" name="rating" value="1">
+                      <span class="rating-content">
+                        <span class="stars-group">
+                          <i class="bi bi-star-fill star-filled"></i>
+                          <i class="bi bi-star star-empty"></i>
+                          <i class="bi bi-star star-empty"></i>
                           <i class="bi bi-star star-empty"></i>
                           <i class="bi bi-star star-empty"></i>
                         </span>
