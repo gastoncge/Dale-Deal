@@ -370,6 +370,21 @@ svg,
   }
 }
 
+/* ===== AOS - neutralizar transforms en mobile =====
+ * La CSS de AOS aplica transform: translate3d(±100px, 0, 0) a [data-aos="fade-*"]
+ * incondicionalmente. Cuando JS de AOS está disabled (init-aos.js lo desactiva
+ * en ≤768px) los elementos quedan congelados en ese estado off-screen, causando
+ * overflow horizontal y bloqueando contenido above-the-fold. Forzamos el estado
+ * "animado" para que se vean en posición final sin animar.
+ */
+@media (max-width: 768px) {
+  [data-aos] {
+    transform: none !important;
+    opacity: 1 !important;
+    transition: none !important;
+  }
+}
+
 /* ===== NAVBAR - MOBILE STANDARD (375px-767px) ===== */
 @media (max-width: 767px) {
   /*
