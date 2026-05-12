@@ -1669,7 +1669,23 @@
         padding: 5px var(--spacing-3);
         margin-bottom: var(--spacing-2);
         cursor: pointer;
-        transition: background 0.2s, border-color 0.2s, transform 0.18s, box-shadow 0.18s, filter 0.18s;
+        overflow: hidden;
+        transition: background 0.2s, border-color 0.2s;
+      }
+      .filter-rating-modern:has(input[value="all"])::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+        pointer-events: none;
+        z-index: 1;
+      }
+      .filter-rating-modern:has(input[value="all"]):hover::before {
+        left: 100%;
       }
       .filter-rating-modern:has(input[value="all"]) .rating-text {
         font-size: var(--font-size-xs);
@@ -1679,7 +1695,6 @@
       .filter-rating-modern:has(input[value="all"]):not(:has(input:checked)):hover {
         background: var(--gray-200);
         border-color: var(--primary-red);
-        transform: translateY(-1px);
       }
       .filter-rating-modern:has(input[value="all"]):not(:has(input:checked)):hover .rating-text {
         color: var(--primary-red);
@@ -1691,11 +1706,6 @@
       }
       .filter-rating-modern:has(input[value="all"]:checked) .rating-text {
         color: #fff;
-      }
-      .filter-rating-modern:has(input[value="all"]:checked):hover {
-        filter: brightness(1.12);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 14px rgba(214, 48, 49, 0.45);
       }
       .filter-rating-modern:has(input[value="all"]) input[type="radio"]:checked ~ .rating-content {
         background: none;
