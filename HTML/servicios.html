@@ -52,9 +52,8 @@
       }
 
       /* Breadcrumb ocupa todo el ancho — mismas reglas que productos.html.
-         Usa var(--gray-50) que resuelve a #f8fafc en light y #1e293b en dark
-         — el MISMO color que .navbar global, así no hay transición visible
-         entre la navbar y la zona del título. */
+         En light: var(--gray-50) = #f8fafc. En dark: override a #0f172a
+         para que se funda con el fondo del área de cards. */
       .page-header-new {
         background: var(--gray-50) !important;
         width: 100vw !important;
@@ -65,14 +64,14 @@
         box-shadow: none !important;
       }
 
-      /* Override explícito para dark mode (mayor especificidad y !important
-         para asegurar que ningún CSS posterior lo pise). #1e293b matchea
-         exactamente el color hardcodeado de la .navbar en dark. */
+      /* Override explícito para dark mode. #0f172a es el mismo color que
+         el body/main-content (--white en dark), así el header se funde
+         visualmente con el área de cards. */
       [data-theme="dark"] .page-header-new,
       [data-theme="dark"] .page-header-new .container-fluid,
       [data-theme="dark"] .page-header-new .header-content,
       [data-theme="dark"] .page-header-new .header-left {
-        background: #1e293b !important;
+        background: #0f172a !important;
       }
 
       /* Sacar la línea fina entre navbar y page-header-new en dark mode.
