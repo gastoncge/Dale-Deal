@@ -128,15 +128,38 @@ window.DaleDealTheme.renderSkeletons = function (count = 8) {
    LAZY IMAGE FADE-IN
    ===================================================== */
 (function () {
-  function initLazyImages() {
-    const images = document.querySelectorAll('img[loading="lazy"]');
-    images.forEach(img => {
-      if (img.complete) {
-        img.classList.add('loaded');
-      } else {
-        img.addEventListener('load', () => img.classList.add('loaded'));
+  function markLoaded(img) {
+    if (img.classList.contains('loaded')) return;
+    if (img.complete && img.naturalWidth > 0) {
+      img.classList.add('loaded');
+    } else {
+      img.addEventListener('load', () => img.classList.add('loaded'), { once: true });
+      img.addEventListener('error', () => img.classList.add('loaded'), { once: true });
+    }
+  }
+
+  function initLazyImages(root = document) {
+    root.querySelectorAll('img[loading="lazy"]').forEach(markLoaded);
+  }
+
+  function observeNewLazyImages() {
+    const mo = new MutationObserver(mutations => {
+      for (const m of mutations) {
+        m.addedNodes.forEach(node => {
+          if (node.nodeType !== 1) return;
+          if (node.tagName === 'IMG' && node.getAttribute('loading') === 'lazy') {
+            markLoaded(node);
+          } else if (node.querySelectorAll) {
+            node.querySelectorAll('img[loading="lazy"]').forEach(markLoaded);
+          }
+        });
       }
     });
+    mo.observe(document.body, { childList: true, subtree: true });
   }
-  document.addEventListener('DOMContentLoaded', initLazyImages);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initLazyImages();
+    observeNewLazyImages();
+  });
 })();
