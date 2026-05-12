@@ -668,6 +668,7 @@
 
       .price-inputs-group {
         display: flex;
+        flex-direction: row !important;
         align-items: flex-end;
         gap: var(--spacing-3);
         margin-bottom: var(--spacing-3);
@@ -717,6 +718,18 @@
         outline: none;
         border-color: var(--primary-red);
         box-shadow: 0 0 0 4px rgba(214, 48, 49, 0.15);
+      }
+      [data-theme="dark"] .input-with-icon .price-input-modern {
+        background: #1e293b !important;
+        border-color: #334155 !important;
+        color: #e2e8f0 !important;
+      }
+      [data-theme="dark"] .input-with-icon .price-input-modern::placeholder {
+        color: #64748b !important;
+      }
+      [data-theme="dark"] .input-with-icon .price-input-modern:focus {
+        border-color: var(--primary-red) !important;
+        box-shadow: 0 0 0 4px rgba(214, 48, 49, 0.15) !important;
       }
 
       .price-divider {
