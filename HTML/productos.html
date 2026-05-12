@@ -730,15 +730,43 @@
         background: var(--gray-50) !important;
       }
 
-      /* Breadcrumb ocupa todo el ancho */
+      /* Breadcrumb ocupa todo el ancho.
+         Usa var(--gray-50) que resuelve a #f8fafc en light y #1e293b en dark
+         — el MISMO color que .navbar global, así no hay transición visible
+         entre la navbar y la zona del título. */
       .page-header-new {
         background: transparent !important;
         border-bottom: none !important;
       }
 
-      [data-theme="dark"] .page-header-new {
-        background: transparent !important;
+      /* Override explícito para dark mode (mayor especificidad y !important
+         para asegurar que ningún CSS posterior lo pise). #1e293b matchea
+         exactamente el color hardcodeado de la .navbar en dark. */
+      [data-theme="dark"] .page-header-new,
+      [data-theme="dark"] .page-header-new .container-fluid,
+      [data-theme="dark"] .page-header-new .header-content,
+      [data-theme="dark"] .page-header-new .header-left {
+        background: #1e293b !important;
+      }
+
+      /* Sacar la línea fina entre navbar y page-header-new en dark mode.
+         La regla global de la navbar tiene border-bottom 1px translúcido
+         que se ve como una línea cuando el page-header arriba tiene el
+         mismo color. */
+      [data-theme="dark"] .navbar {
         border-bottom: none !important;
+      }
+
+      /* Sacar TODA línea/borde/sombra entre breadcrumb y título dentro del
+         page-header-new — algún CSS global o de bootstrap añade un
+         border-bottom al .breadcrumb-nav que se ve como línea horizontal
+         entre "Inicio > Productos" y "Catálogo de Productos". */
+      .page-header-new .breadcrumb-nav,
+      .page-header-new .breadcrumb-list,
+      .page-header-new .header-content,
+      .page-header-new .header-left {
+        border: none !important;
+        box-shadow: none !important;
       }
 
       /* Badges iguales a la página de inicio - display controlado por JS */

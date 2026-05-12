@@ -51,8 +51,10 @@
         background: var(--white) !important;
       }
 
-      /* Breadcrumb ocupa todo el ancho — mismas reglas que productos.html
-         para que las dos páginas hermanas se vean idénticas. */
+      /* Breadcrumb ocupa todo el ancho — mismas reglas que productos.html.
+         Usa var(--gray-50) que resuelve a #f8fafc en light y #1e293b en dark
+         — el MISMO color que .navbar global, así no hay transición visible
+         entre la navbar y la zona del título. */
       .page-header-new {
         background: var(--gray-50) !important;
         width: 100vw !important;
@@ -63,9 +65,58 @@
         box-shadow: none !important;
       }
 
-      [data-theme="dark"] .page-header-new {
-        border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+      /* Override explícito para dark mode (mayor especificidad y !important
+         para asegurar que ningún CSS posterior lo pise). #1e293b matchea
+         exactamente el color hardcodeado de la .navbar en dark. */
+      [data-theme="dark"] .page-header-new,
+      [data-theme="dark"] .page-header-new .container-fluid,
+      [data-theme="dark"] .page-header-new .header-content,
+      [data-theme="dark"] .page-header-new .header-left {
+        background: #1e293b !important;
       }
+
+      /* Sacar la línea fina entre navbar y page-header-new en dark mode.
+         La regla global de la navbar tiene border-bottom 1px translúcido
+         que se ve como una línea cuando el page-header arriba tiene el
+         mismo color. */
+      [data-theme="dark"] .navbar {
+        border-bottom: none !important;
+      }
+
+      /* Sacar TODA línea/borde/sombra entre breadcrumb y título dentro del
+         page-header-new — algún CSS global o de bootstrap añade un
+         border-bottom al .breadcrumb-nav que se ve como línea horizontal
+         entre "Inicio > Servicios" y "Servicios Profesionales". */
+      .page-header-new .breadcrumb-nav,
+      .page-header-new .breadcrumb-list,
+      .page-header-new .header-content,
+      .page-header-new .header-left {
+        border: none !important;
+        box-shadow: none !important;
+      }
+
+      /* Badges iguales a la página de inicio - display controlado por JS */
+      .notification-badge,
+      .cart-badge {
+        position: absolute !important;
+        top: -6px !important;
+        right: -6px !important;
+        background: var(--primary-red) !important;
+        color: var(--white) !important;
+        font-size: var(--font-size-2xs) !important;
+        font-weight: 700 !important;
+        padding: 0 !important;
+        border-radius: 50% !important;
+        min-width: 20px !important;
+        height: 20px !important;
+        line-height: 20px !important;
+        text-align: center !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-shadow: 0 2px 4px rgba(214, 48, 49, 0.3) !important;
+        border: 2px solid var(--white) !important;
+      }
+
       [data-theme="dark"] .breadcrumb-item a {
         color: #94a3b8;
       }
