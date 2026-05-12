@@ -730,23 +730,21 @@
         background: var(--gray-50) !important;
       }
 
-      /* Breadcrumb ocupa todo el ancho.
-         Usa var(--gray-50) que resuelve a #f8fafc en light y #1e293b en dark
-         — el MISMO color que .navbar global, así no hay transición visible
-         entre la navbar y la zona del título. */
+      /* En light: fondo transparente (hereda main-content = blanco).
+         En dark: override a #0f172a para fundir con el área de cards. */
       .page-header-new {
         background: transparent !important;
-        border-bottom: none !important;
+        border-bottom: 1px solid var(--gray-200) !important;
       }
 
-      /* Override explícito para dark mode (mayor especificidad y !important
-         para asegurar que ningún CSS posterior lo pise). #1e293b matchea
-         exactamente el color hardcodeado de la .navbar en dark. */
       [data-theme="dark"] .page-header-new,
       [data-theme="dark"] .page-header-new .container-fluid,
       [data-theme="dark"] .page-header-new .header-content,
       [data-theme="dark"] .page-header-new .header-left {
-        background: #1e293b !important;
+        background: #0f172a !important;
+      }
+      [data-theme="dark"] .page-header-new {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
       }
 
       /* Sacar la línea fina entre navbar y page-header-new en dark mode.
