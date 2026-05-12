@@ -755,9 +755,8 @@
         border-bottom: none !important;
       }
 
-      /* product.css define background y border-bottom en .breadcrumb-nav.
-         Dentro del page-header-new lo pisamos para que sea transparente
-         y no quede una caja de diferente color dentro del header. */
+      /* product.css define background, padding y border-bottom en .breadcrumb-nav.
+         Dentro del page-header-new lo pisamos para igualar proporciones a servicios. */
       .page-header-new .breadcrumb-nav,
       .page-header-new .breadcrumb-list,
       .page-header-new .header-content,
@@ -765,6 +764,9 @@
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
+      }
+      .page-header-new .breadcrumb-nav {
+        padding: 0 !important;
       }
 
       /* Badges iguales a la página de inicio - display controlado por JS */
