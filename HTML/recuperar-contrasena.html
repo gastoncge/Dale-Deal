@@ -197,12 +197,16 @@
       // 2) Con ?token=X en URL: mostramos form para nueva contraseña
       //    → POST /auth/reset-password
       // ===========================================================
-
+      // Envuelto en DOMContentLoaded por dos motivos:
+      //  - Function-scope (no script-scope) para los const params/form/etc.,
+      //    evitando colisiones con globals de utils.js/api.js/auth.js.
+      //  - Garantiza que el form ya esté parseado antes de intentar bindear.
+      document.addEventListener('DOMContentLoaded', () => {
       const params = new URLSearchParams(window.location.search);
       const tokenInUrl = params.get('token');
 
       // Helper para llamar al backend
-      const apiFetch = window.DaleDeal?.api?.apiFetch;
+      const apiFetchFn = window.DaleDeal?.api?.apiFetch;
 
       // Si vino con token, mostramos directamente el step de reset
       if (tokenInUrl) {
@@ -228,8 +232,8 @@
         btn.querySelector('.btn-loading').classList.remove('d-none');
 
         try {
-          if (apiFetch) {
-            await apiFetch('/auth/forgot-password', {
+          if (apiFetchFn) {
+            await apiFetchFn('/auth/forgot-password', {
               method: 'POST',
               body: JSON.stringify({ email: emailInput.value.trim() }),
             });
@@ -289,8 +293,8 @@
         resetBtn.querySelector('.btn-loading').classList.remove('d-none');
 
         try {
-          if (!apiFetch) throw new Error('API no disponible');
-          await apiFetch('/auth/reset-password', {
+          if (!apiFetchFn) throw new Error('API no disponible');
+          await apiFetchFn('/auth/reset-password', {
             method: 'POST',
             body: JSON.stringify({
               token: tokenInUrl,
@@ -307,6 +311,7 @@
           resetBtn.querySelector('.btn-loading').classList.add('d-none');
         }
       });
+      }); // DOMContentLoaded
     </script>
   </body>
 </html>
