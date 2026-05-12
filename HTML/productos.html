@@ -755,14 +755,14 @@
         border-bottom: none !important;
       }
 
-      /* Sacar TODA línea/borde/sombra entre breadcrumb y título dentro del
-         page-header-new — algún CSS global o de bootstrap añade un
-         border-bottom al .breadcrumb-nav que se ve como línea horizontal
-         entre "Inicio > Productos" y "Catálogo de Productos". */
+      /* product.css define background y border-bottom en .breadcrumb-nav.
+         Dentro del page-header-new lo pisamos para que sea transparente
+         y no quede una caja de diferente color dentro del header. */
       .page-header-new .breadcrumb-nav,
       .page-header-new .breadcrumb-list,
       .page-header-new .header-content,
       .page-header-new .header-left {
+        background: transparent !important;
         border: none !important;
         box-shadow: none !important;
       }
