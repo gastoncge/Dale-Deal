@@ -76,6 +76,16 @@
       [data-theme="dark"] .service-name { color: var(--gray-800); }
       [data-theme="dark"] .incident-card { border-color: var(--gray-200); }
       [data-theme="dark"] .incident-title { color: var(--gray-800); }
+
+      /* Mobile: la fila tiene 6 hijos (icono, info, bars, uptime%, dot, label)
+       * con anchos rígidos y nowrap; en ≤480px no entran. Ocultamos los bars
+       * (decorativos) y dejamos que el resto se acomode con flex-wrap. */
+      @media (max-width: 540px) {
+        .service-row { flex-wrap: wrap; gap: var(--spacing-2) var(--spacing-3); }
+        .service-info { flex-basis: calc(100% - 60px); }
+        .uptime-bars { display: none; }
+        .service-uptime { order: 10; flex-basis: 100%; }
+      }
     </style>
   </head>
   <body>
