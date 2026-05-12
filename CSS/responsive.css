@@ -379,6 +379,10 @@ svg,
    * - gap: spacing-2 da espacio entre logo y botón hamburguesa.
    */
   .navbar > .container-fluid {
+    /* Override del grid 3-col que se aplica en desktop con !important. En mobile
+     * la search-container va en segunda fila (order: 3, flex-basis: 100%), lo
+     * cual requiere flex-wrap — no compatible con display: grid. */
+    display: flex !important;
     flex-wrap: wrap;
     justify-content: flex-start;
     gap: var(--spacing-2);
