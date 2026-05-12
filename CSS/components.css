@@ -5076,6 +5076,7 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
 
 /* Scrollbar en dark (WebKit) */
 [data-theme="dark"] ::-webkit-scrollbar { background: #0f172a; }
+[data-theme="dark"] ::-webkit-scrollbar-track { background: #0f172a; }
 [data-theme="dark"] ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.12);
   border-radius: 10px;
@@ -5083,6 +5084,8 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
 [data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.22);
 }
+/* Firefox dark scrollbar */
+[data-theme="dark"] { scrollbar-color: rgba(255, 255, 255, 0.12) #0f172a; }
 
 /* =====================================================
    DARK MODE — RED DE SEGURIDAD: Botones con fondo de marca
