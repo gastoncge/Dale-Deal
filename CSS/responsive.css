@@ -21,14 +21,14 @@
  * (ej: el botón de perfil del navbar) quedan fuera de pantalla.
  */
 html {
-  overflow-x: hidden;
+  overflow-x: clip;
   min-width: 320px;
   /* Evita que el navegador agregue scroll horizontal por bounce */
   position: relative;
 }
 
 body {
-  overflow-x: hidden;
+  overflow-x: clip;
   min-width: 320px;
   position: relative;
   width: 100%;

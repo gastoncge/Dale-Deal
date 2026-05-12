@@ -332,9 +332,12 @@ textarea {
   box-sizing: border-box;
 }
 
-html,
-body {
+html {
   height: 100%;
+}
+
+body {
+  min-height: 100%;
   font-family: var(--font-family);
   font-size: var(--font-size-base);
   line-height: 1.5;
@@ -342,5 +345,5 @@ body {
   background: var(--white);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden; /* Prevenir scroll horizontal global */
+  overflow-x: clip; /* Prevenir scroll horizontal sin forzar overflow-y a auto */
 }
