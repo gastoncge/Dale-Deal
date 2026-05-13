@@ -408,7 +408,8 @@
         letter-spacing: -0.3px;
       }
 
-      .btn-clear-filters {
+      /* btn-clear-filters con mayor especificidad que services.css */
+      .sidebar-header .btn-clear-filters {
         background: var(--gray-100);
         border: none;
         color: var(--gray-700);
@@ -423,7 +424,7 @@
         transition: all var(--transition-base);
       }
 
-      .btn-clear-filters:hover {
+      .sidebar-header .btn-clear-filters:hover {
         background: var(--primary-red);
         color: #fff;
       }
@@ -436,11 +437,11 @@
       [data-theme="dark"] .sidebar-title {
         color: var(--gray-800);
       }
-      [data-theme="dark"] .btn-clear-filters {
+      [data-theme="dark"] .sidebar-header .btn-clear-filters {
         background: rgba(255,255,255,0.08);
         color: var(--gray-700);
       }
-      [data-theme="dark"] .btn-clear-filters:hover {
+      [data-theme="dark"] .sidebar-header .btn-clear-filters:hover {
         background: var(--primary-red);
         color: #fff;
       }
