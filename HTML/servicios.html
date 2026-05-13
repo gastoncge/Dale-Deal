@@ -365,12 +365,16 @@
         border-right: 1px solid var(--gray-200);
         position: sticky;
         top: 70px;
-        height: auto;
-        max-height: calc(100vh - 70px);
+        height: calc(100vh - 70px);
         display: flex;
         flex-direction: column;
         overflow: hidden;
         align-self: flex-start;
+      }
+
+      [data-theme="dark"] .filters-content,
+      [data-theme="dark"] .filter-section {
+        background: #0f172a !important;
       }
 
       /* Sidebar Header */
@@ -527,6 +531,11 @@
         border-bottom: none;
         margin-bottom: 0;
         padding-bottom: 0;
+      }
+
+      .filters-sidebar .filter-section:last-child {
+        border-bottom: 1px solid var(--gray-200);
+        padding-bottom: var(--spacing-5);
       }
 
       /* Collapsible Section Header */
@@ -3596,6 +3605,7 @@
 
           card.addEventListener('click', (e) => {
             if (e.target.closest('.action-heart')) return;
+            window.location.href = `./servicio.html?id=${service.id}`;
           });
 
           return card;

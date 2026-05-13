@@ -55,6 +55,18 @@
       .severity-btn.low:hover, .severity-btn.low.active { border-color: #22c55e; background: rgba(34,197,94,.1); color: #16a34a; }
       .severity-btn.medium:hover, .severity-btn.medium.active { border-color: #f59e0b; background: rgba(245,158,11,.1); color: #d97706; }
       .severity-btn.high:hover, .severity-btn.high.active { border-color: var(--primary-red); background: var(--primary-red-light); color: var(--primary-red); }
+      .otro-detail {
+        display: none;
+        margin-bottom: var(--spacing-4);
+        animation: fadeSlideIn 0.25s ease;
+      }
+      .otro-detail.visible {
+        display: block;
+      }
+      @keyframes fadeSlideIn {
+        from { opacity: 0; transform: translateY(-6px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
       .success-state { display: none; text-align: center; padding: var(--spacing-10); }
       .success-state.show { display: block; }
       .success-icon { font-size: 64px; color: #22c55e; display: block; margin-bottom: var(--spacing-4); }
@@ -109,6 +121,12 @@
                   <div class="problem-type-btn" data-type="contenido"><span class="icon">📝</span>Contenido</div>
                   <div class="problem-type-btn" data-type="otro"><span class="icon">❓</span>Otro</div>
                 </div>
+              </div>
+
+              <!-- Especificación "Otro" -->
+              <div class="otro-detail" id="otroDetail">
+                <label class="form-label">Especificá el tipo de problema <span class="text-danger">*</span></label>
+                <input type="text" class="form-control mt-2" id="otroSpec" placeholder="Ej: Problema con una reseña, devolución, publicidad…" maxlength="200">
               </div>
 
               <!-- Gravedad -->
@@ -218,6 +236,14 @@
           document.querySelectorAll('.problem-type-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           selectedType = btn.dataset.type;
+          const otroDetail = document.getElementById('otroDetail');
+          if (selectedType === 'otro') {
+            otroDetail.classList.add('visible');
+            document.getElementById('otroSpec').focus();
+          } else {
+            otroDetail.classList.remove('visible');
+            document.getElementById('otroSpec').value = '';
+          }
         });
       });
 
@@ -252,6 +278,12 @@
           showError('Elegí un tipo de problema');
           return;
         }
+        const otroSpec = document.getElementById('otroSpec').value.trim();
+        if (selectedType === 'otro' && !otroSpec) {
+          showError('Especificá qué tipo de problema es');
+          document.getElementById('otroSpec').focus();
+          return;
+        }
         const body = document.getElementById('reportBody').value.trim();
         if (body.length < 10) {
           showError('Contale más detalle (mínimo 10 caracteres)');
@@ -275,10 +307,11 @@
             method: 'POST',
             body: JSON.stringify({
               category: TYPE_TO_CATEGORY[selectedType] || 'other',
-              subject:  subject || `[${selectedSev}] ${selectedType}`,
+              subject:  subject || (selectedType === 'otro' ? `[${selectedSev}] Otro: ${otroSpec}` : `[${selectedSev}] ${selectedType}`),
               body,
               url:      url || window.location.href,
               reporter_email: email || null,
+              ...(otroSpec && { other_type: otroSpec }),
             }),
           });
 
