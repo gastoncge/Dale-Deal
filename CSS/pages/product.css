@@ -2,32 +2,77 @@
    DALE DEAL - Página de Producto
    ===================================================== */
 
-/* ===== BREADCRUMB ===== */
-.breadcrumb-nav {
-  background: var(--gray-50);
+/* ===== PAGE HEADER / BREADCRUMB ===== */
+.page-header-new {
+  background: var(--white);
   padding: var(--spacing-4) 0;
   border-bottom: 1px solid var(--gray-200);
 }
 
-.breadcrumb {
-  margin: 0;
-  background: none;
-  padding: 0;
+[data-theme="dark"] .page-header-new,
+[data-theme="dark"] .page-header-new .container-fluid {
+  background: #0f172a !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
 }
 
-.breadcrumb-item a {
+.page-header-new .breadcrumb-nav {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.breadcrumb-list {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  list-style: none;
+  margin: 0;
+  padding: var(--spacing-3) 0;
+  flex-wrap: wrap;
+}
+
+.breadcrumb-list .breadcrumb-item a {
   color: var(--gray-600);
   text-decoration: none;
+  font-size: 14px;
   transition: color var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.breadcrumb-item a:hover {
+.breadcrumb-list .breadcrumb-item a:hover {
   color: var(--primary-red);
 }
 
-.breadcrumb-item.active {
+.breadcrumb-list .breadcrumb-item.active {
   color: var(--gray-800);
+  font-size: 14px;
   font-weight: 500;
+}
+
+[data-theme="dark"] .breadcrumb-list .breadcrumb-item a {
+  color: var(--gray-400);
+}
+
+[data-theme="dark"] .breadcrumb-list .breadcrumb-item a:hover {
+  color: var(--primary-red-light);
+}
+
+[data-theme="dark"] .breadcrumb-list .breadcrumb-item.active {
+  color: var(--gray-200);
+}
+
+.breadcrumb-separator {
+  color: var(--gray-400);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+}
+
+[data-theme="dark"] .breadcrumb-separator {
+  color: var(--gray-600);
 }
 
 /* ===== SECCIÓN HERO DEL PRODUCTO ===== */
@@ -161,11 +206,8 @@
 
 /* ===== SECCIÓN DE PRECIO ===== */
 .price-section {
-  background: var(--gradient-light);
-  border: 1px solid var(--primary-red-light);
-  border-radius: var(--radius-2xl);
-  padding: var(--spacing-6);
-  margin-bottom: var(--spacing-8);
+  padding: var(--spacing-4) 0;
+  margin-bottom: var(--spacing-6);
 }
 
 .current-price {

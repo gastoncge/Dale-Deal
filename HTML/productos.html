@@ -1096,9 +1096,13 @@
       }
 
       [data-theme="dark"] .filters-sidebar {
-        background: #0f172a;
+        background: #0f172a !important;
         box-shadow: 1px 0 8px rgba(0, 0, 0, 0.3);
         border-right-color: rgba(255, 255, 255, 0.06);
+      }
+      [data-theme="dark"] .filters-content,
+      [data-theme="dark"] .filter-section {
+        background: #0f172a !important;
       }
 
       /* Sidebar Header */
@@ -1140,10 +1144,11 @@
         background: var(--gray-100);
         border: none;
         color: var(--gray-700);
-        font-size: 14px;
+        font-size: 16px;
         cursor: pointer;
-        width: 28px;
-        height: 28px;
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
         border-radius: var(--radius-full);
         display: flex;
         align-items: center;
@@ -1157,7 +1162,7 @@
       }
 
       [data-theme="dark"] .sidebar-header {
-        background: var(--gray-100);
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
         border-bottom-color: rgba(255,255,255,0.08);
       }
       [data-theme="dark"] .sidebar-title {
@@ -1257,6 +1262,12 @@
         border-bottom: none;
         margin-bottom: 0;
         padding-bottom: 0;
+      }
+
+      /* La última sección en el sidebar sí tiene caja con borde completo — restaurar */
+      .filters-sidebar .filter-section:last-child {
+        border-bottom: 1px solid var(--gray-200);
+        padding-bottom: var(--spacing-5);
       }
 
       /* Collapsible Section Header */

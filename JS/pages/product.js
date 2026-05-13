@@ -158,9 +158,9 @@ class ProductPage {
     if (titleEl) titleEl.textContent = p.title;
 
     // Breadcrumb
-    const bcCat = document.querySelector('.breadcrumb-item:nth-child(2) a');
-    const bcSub = document.querySelector('.breadcrumb-item:nth-child(3) a');
-    const bcActive = document.querySelector('.breadcrumb-item.active');
+    const bcCat = document.querySelector('#bcCategory a');
+    const bcSub = document.querySelector('#bcSubcategory a');
+    const bcActive = document.getElementById('bcProductTitle');
     if (bcCat) bcCat.textContent = p.category;
     if (bcSub) bcSub.textContent = p.subcategory;
     if (bcActive) bcActive.textContent = p.title;
@@ -439,31 +439,41 @@ class ProductPage {
 
   // ── Otros productos del mismo vendedor ────────────────────────────────────
   async loadSellerProducts(sellerId) {
+    const section  = document.getElementById('sellerProductsSection');
+    const grid     = document.getElementById('sellerProductsGrid');
+    const subtitle = document.getElementById('sellerProductsSubtitle');
+    if (!section || !grid) return;
+
+    let others = [];
+
+    // 1. Intentar API
     try {
-      if (!window.DaleDeal?.api?.fetchProducts) return;
-      const all = await window.DaleDeal.api.fetchProducts({ seller_id: sellerId });
-      const others = all.filter(prod => prod.id !== this.currentProduct.id).slice(0, 6);
+      if (window.DaleDeal?.api?.fetchProducts) {
+        const all = await window.DaleDeal.api.fetchProducts({ seller_id: sellerId });
+        others = all.filter(p => p.id !== this.currentProduct.id).slice(0, 6);
+      }
+    } catch (_) {}
 
-      const section = document.getElementById('sellerProductsSection');
-      const grid    = document.getElementById('sellerProductsGrid');
-      const subtitle = document.getElementById('sellerProductsSubtitle');
-
-      if (!section || !grid || others.length === 0) return;
-
-      if (subtitle) subtitle.textContent = `Otros productos de ${this.currentProduct.seller_name || 'este vendedor'}`;
-
-      grid.innerHTML = others.map(prod => `
-        <div class="product-card-mini" onclick="location.href='producto.html?id=${prod.id}'">
-          <img src="${prod.images?.main || ''}" alt="${prod.title}" loading="lazy" style="width:100%;height:140px;object-fit:cover;border-radius:8px;">
-          <p style="margin:8px 0 4px;font-size:13px;font-weight:600;">${prod.title}</p>
-          <p style="color:var(--primary-red);font-weight:700;">$${prod.price.toLocaleString('es-AR')}</p>
-        </div>
-      `).join('');
-
-      section.style.display = '';
-    } catch (e) {
-      DaleDeal.warn('No se pudieron cargar productos del vendedor:', e.message);
+    // 2. Fallback local: misma categoría
+    if (others.length === 0 && window.PRODUCTS_DATA) {
+      others = Object.values(window.PRODUCTS_DATA)
+        .filter(p => p.id !== this.currentProduct.id && p.category === this.currentProduct.category)
+        .slice(0, 6);
     }
+
+    if (others.length === 0) return;
+
+    if (subtitle) subtitle.textContent = `Otros productos de ${this.currentProduct.seller_name || 'este vendedor'}`;
+
+    grid.innerHTML = others.map(prod => `
+      <div class="product-card-mini" onclick="location.href='producto.html?id=${prod.id}'" style="cursor:pointer;">
+        <img src="${prod.images?.main || prod.image || ''}" alt="${prod.title}" loading="lazy" style="width:100%;height:140px;object-fit:cover;border-radius:8px;">
+        <p style="margin:8px 0 4px;font-size:13px;font-weight:600;">${prod.title}</p>
+        <p style="color:var(--primary-red);font-weight:700;">$${(prod.price || prod.basePrice || 0).toLocaleString('es-AR')}</p>
+      </div>
+    `).join('');
+
+    section.style.display = '';
   }
 
   // ── Color options ──────────────────────────────────────────────────────────
@@ -508,35 +518,19 @@ class ProductPage {
     // selectedStorage already set in loadProductData
   }
 
-  // ── Description tab — fully dynamic ───────────────────────────────────────
+  // ── Description tab — plain text del vendedor ────────────────────────────
   updateDescriptionTab() {
     const descContent = document.querySelector('.description-content');
     if (!descContent) return;
 
-    const p = this.currentProduct;
-    const icons = ['bi-camera', 'bi-cpu', 'bi-battery-charging', 'bi-wifi', 'bi-shield-check', 'bi-star'];
+    const p = document.createElement('p');
+    p.id = 'product-description-text';
+    p.style.whiteSpace = 'pre-line';
+    p.style.lineHeight = '1.8';
+    p.textContent = this.currentProduct.description || '';
 
-    const featureCards = (p.features || []).slice(0, 3).map((feat, i) => {
-      const words = feat.split(' ');
-      const cardTitle = words.slice(0, 3).join(' ');
-      return `
-        <div class="feature-card">
-          <i class="bi ${icons[i] || 'bi-check-circle'}"></i>
-          <h5>${cardTitle}</h5>
-          <p>${feat}</p>
-        </div>`;
-    }).join('');
-
-    const featuresListHTML = (p.features || [])
-      .map(f => `<li>${f}</li>`)
-      .join('');
-
-    descContent.innerHTML = `
-      <h3>${p.title}</h3>
-      <p>${p.description}</p>
-      ${featuresListHTML ? `<h4>Características destacadas</h4><ul>${featuresListHTML}</ul>` : ''}
-      ${featureCards ? `<div class="feature-grid">${featureCards}</div>` : ''}
-    `;
+    descContent.innerHTML = '';
+    descContent.appendChild(p);
   }
 
   // ── Specifications tab — dynamic ───────────────────────────────────────────

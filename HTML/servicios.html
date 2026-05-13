@@ -365,12 +365,16 @@
         border-right: 1px solid var(--gray-200);
         position: sticky;
         top: 70px;
-        height: auto;
-        max-height: calc(100vh - 70px);
+        height: calc(100vh - 70px);
         display: flex;
         flex-direction: column;
         overflow: hidden;
         align-self: flex-start;
+      }
+
+      [data-theme="dark"] .filters-content,
+      [data-theme="dark"] .filter-section {
+        background: #0f172a !important;
       }
 
       /* Sidebar Header */
@@ -408,14 +412,16 @@
         letter-spacing: -0.3px;
       }
 
-      .btn-clear-filters {
+      /* btn-clear-filters con mayor especificidad que services.css */
+      .sidebar-header .btn-clear-filters {
         background: var(--gray-100);
         border: none;
         color: var(--gray-700);
-        font-size: 14px;
+        font-size: 16px;
         cursor: pointer;
-        width: 28px;
-        height: 28px;
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
         border-radius: var(--radius-full);
         display: flex;
         align-items: center;
@@ -423,21 +429,24 @@
         transition: all var(--transition-base);
       }
 
-      .btn-clear-filters:hover {
-        background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-yellow) 100%);
-        color: #ffffff;
+      .sidebar-header .btn-clear-filters:hover {
+        background: var(--primary-red);
+        color: #fff;
       }
 
       /* Dark mode: sidebar header */
       [data-theme="dark"] .sidebar-header {
-        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
         border-bottom-color: rgba(255,255,255,0.08);
       }
-      [data-theme="dark"] .btn-clear-filters {
-        background: #334155;
-        color: #e2e8f0;
+      [data-theme="dark"] .sidebar-title {
+        color: var(--gray-800);
       }
-      [data-theme="dark"] .btn-clear-filters:hover {
+      [data-theme="dark"] .sidebar-header .btn-clear-filters {
+        background: rgba(255,255,255,0.08);
+        color: var(--gray-700);
+      }
+      [data-theme="dark"] .sidebar-header .btn-clear-filters:hover {
         background: var(--primary-red);
         color: #fff;
       }
@@ -480,7 +489,7 @@
       }
 
       /* Sidebar Content with Scroll */
-      .filters-sidebar > div:last-child {
+      .filters-content {
         overflow-y: auto;
         flex: 1;
         min-height: 0;
@@ -488,26 +497,26 @@
         scrollbar-width: thin;
         scrollbar-color: var(--gray-300) transparent;
       }
-      .filters-sidebar > div:last-child::-webkit-scrollbar {
+      .filters-content::-webkit-scrollbar {
         width: 4px;
       }
-      .filters-sidebar > div:last-child::-webkit-scrollbar-track {
+      .filters-content::-webkit-scrollbar-track {
         background: transparent;
       }
-      .filters-sidebar > div:last-child::-webkit-scrollbar-thumb {
+      .filters-content::-webkit-scrollbar-thumb {
         background: var(--gray-300);
         border-radius: 10px;
       }
-      .filters-sidebar > div:last-child::-webkit-scrollbar-thumb:hover {
+      .filters-content::-webkit-scrollbar-thumb:hover {
         background: var(--gray-400);
       }
-      [data-theme="dark"] .filters-sidebar > div:last-child {
+      [data-theme="dark"] .filters-content {
         scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
       }
-      [data-theme="dark"] .filters-sidebar > div:last-child::-webkit-scrollbar-thumb {
+      [data-theme="dark"] .filters-content::-webkit-scrollbar-thumb {
         background: rgba(255, 255, 255, 0.15);
       }
-      [data-theme="dark"] .filters-sidebar > div:last-child::-webkit-scrollbar-thumb:hover {
+      [data-theme="dark"] .filters-content::-webkit-scrollbar-thumb:hover {
         background: rgba(255, 255, 255, 0.25);
       }
 
@@ -522,6 +531,11 @@
         border-bottom: none;
         margin-bottom: 0;
         padding-bottom: 0;
+      }
+
+      .filters-sidebar .filter-section:last-child {
+        border-bottom: 1px solid var(--gray-200);
+        padding-bottom: var(--spacing-5);
       }
 
       /* Collapsible Section Header */
@@ -568,15 +582,23 @@
         transform: rotate(180deg);
       }
 
+      .filter-section-header:focus,
+      .filter-section-header:focus-visible {
+        outline: none;
+        box-shadow: none;
+      }
+
       .filter-section-header:hover {
         background: rgba(214, 48, 49, 0.05);
         border-radius: var(--radius-md);
         padding-left: var(--spacing-2);
         padding-right: var(--spacing-2);
       }
+
       .filter-section-header:hover .filter-section-title {
         color: var(--primary-red);
       }
+
       .filter-section-header:hover .toggle-icon {
         color: var(--primary-red);
       }
@@ -608,7 +630,15 @@
       }
 
       .filter-option-modern:hover {
-        background: var(--gray-50);
+        background: rgba(214, 48, 49, 0.07);
+      }
+
+      .filter-option-modern:hover .option-text {
+        color: var(--primary-red);
+      }
+
+      .filter-option-modern:hover .category-icon {
+        color: var(--primary-red);
       }
 
       .filter-option-modern input[type="radio"]:checked + .option-content {
@@ -668,6 +698,7 @@
 
       .price-inputs-group {
         display: flex;
+        flex-direction: row !important;
         align-items: flex-end;
         gap: var(--spacing-3);
         margin-bottom: var(--spacing-3);
@@ -717,6 +748,18 @@
         outline: none;
         border-color: var(--primary-red);
         box-shadow: 0 0 0 4px rgba(214, 48, 49, 0.15);
+      }
+      [data-theme="dark"] .input-with-icon .price-input-modern {
+        background: #1e293b !important;
+        border-color: #334155 !important;
+        color: #e2e8f0 !important;
+      }
+      [data-theme="dark"] .input-with-icon .price-input-modern::placeholder {
+        color: #64748b !important;
+      }
+      [data-theme="dark"] .input-with-icon .price-input-modern:focus {
+        border-color: var(--primary-red) !important;
+        box-shadow: 0 0 0 4px rgba(214, 48, 49, 0.15) !important;
       }
 
       .price-divider {
@@ -815,7 +858,15 @@
       }
 
       .filter-checkbox-modern:hover {
-        background: var(--gray-50);
+        background: rgba(214, 48, 49, 0.07);
+      }
+
+      .filter-checkbox-modern:hover .checkbox-text {
+        color: var(--primary-red);
+      }
+
+      .filter-checkbox-modern:hover .checkbox-custom {
+        border-color: var(--primary-red);
       }
 
       .checkbox-custom {
@@ -876,7 +927,15 @@
       }
 
       .filter-rating-modern:hover {
-        background: var(--gray-50);
+        background: rgba(214, 48, 49, 0.07);
+      }
+
+      .filter-rating-modern:hover .rating-label {
+        color: var(--primary-red);
+      }
+
+      .filter-rating-modern:hover .star-filled {
+        color: var(--primary-yellow);
       }
 
       .filter-rating-modern input[type="radio"]:checked ~ .rating-content {
@@ -3546,6 +3605,7 @@
 
           card.addEventListener('click', (e) => {
             if (e.target.closest('.action-heart')) return;
+            window.location.href = `./servicio.html?id=${service.id}`;
           });
 
           return card;

@@ -147,6 +147,13 @@
             </a>
           </div>
 
+          <!-- Dark Mode Toggle -->
+          <div class="action-item d-none d-md-flex">
+            <button class="theme-toggle" id="themeToggle" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">
+              <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+            </button>
+          </div>
+
           <!-- Notifications -->
           <div class="action-item dropdown">
             <button class="action-btn" id="notificationBtn" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" title="Notificaciones">
@@ -288,16 +295,23 @@
     </nav>
 
     <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb" class="breadcrumb-nav">
-      <div class="container">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="../index.html">Inicio</a></li>
-          <li class="breadcrumb-item"><a href="#">Electrónicos</a></li>
-          <li class="breadcrumb-item"><a href="#">Smartphones</a></li>
-          <li class="breadcrumb-item active">iPhone 15 Pro Max</li>
-        </ol>
+    <section class="page-header-new">
+      <div class="container-fluid px-4">
+        <nav class="breadcrumb-nav" data-aos="fade-down">
+          <ol class="breadcrumb-list">
+            <li class="breadcrumb-item">
+              <a href="../index.html"><i class="bi bi-house-door-fill"></i> Inicio</a>
+            </li>
+            <li class="breadcrumb-separator"><i class="bi bi-chevron-right"></i></li>
+            <li class="breadcrumb-item" id="bcCategory"><a href="#">Electrónicos</a></li>
+            <li class="breadcrumb-separator"><i class="bi bi-chevron-right"></i></li>
+            <li class="breadcrumb-item" id="bcSubcategory"><a href="#">Smartphones</a></li>
+            <li class="breadcrumb-separator"><i class="bi bi-chevron-right"></i></li>
+            <li class="breadcrumb-item active" id="bcProductTitle">iPhone 15 Pro Max</li>
+          </ol>
+        </nav>
       </div>
-    </nav>
+    </section>
 
     <!-- Main Content -->
     <main class="main-content">
@@ -791,12 +805,8 @@
 
     </main>
 
-    <!-- ===== CHAT FLOTANTE ===== -->
-    <div class="chat-float-widget" id="chatFloatWidget">
-      <button class="chat-float-btn" id="chatFloatBtn" title="Chatear con el vendedor">
-        <img class="chat-float-logo" src="../IMG/LOGO.png" alt="Dale Deal" />
-        <span class="chat-float-badge" id="chatFloatBadge">1</span>
-      </button>
+    <!-- Chat flotante eliminado -->
+    <div class="chat-float-widget" id="chatFloatWidget" style="display:none;">
       <div class="chat-float-panel" id="chatFloatPanel">
         <div class="chat-list-view" id="chatListView" style="display:none;">
           <div class="chat-list-header">
