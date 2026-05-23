@@ -1,0 +1,65 @@
+name: CI
+
+# Frontend es HTML/CSS/JS vanilla sin build. No tenemos tests todavía
+# (el #5 del roadmap), pero al menos:
+#   - Validamos sintaxis JS con node -c en todos los archivos
+#   - Detectamos console.log o debugger sueltos en JS (no en HTML inline)
+#   - Verificamos que los HTML principales no tengan errores brutos
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Lint estático
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Verificar sintaxis JS
+        run: |
+          fail=0
+          for f in $(find JS -name '*.js'); do
+            if ! node -c "$f"; then
+              echo "::error file=$f::syntax error"
+              fail=1
+            fi
+          done
+          exit $fail
+
+      - name: Detectar debugger statements
+        run: |
+          if grep -rEn "^\s*debugger\b" JS/; then
+            echo "::error::debugger statement encontrado en código JS"
+            exit 1
+          fi
+          echo "OK: sin debugger"
+
+      - name: Verificar HTML básico (parseable)
+        # Verifica que cada página principal tenga <!DOCTYPE> y </html>.
+        # Excluye HTML/components/ porque son fragmentos parciales (header,
+        # footer) que se inyectan vía component-loader.js y no necesitan
+        # doctype propio. Si querés validación HTML estricta: html-validate.
+        run: |
+          fail=0
+          for f in $(find HTML index.html -name '*.html' -maxdepth 2 -not -path '*components*'); do
+            if ! grep -qi '<!doctype html>' "$f"; then
+              echo "::error file=$f::falta <!DOCTYPE html>"
+              fail=1
+            fi
+            if ! grep -q '</html>' "$f"; then
+              echo "::error file=$f::falta </html> de cierre"
+              fail=1
+            fi
+          done
+          exit $fail
