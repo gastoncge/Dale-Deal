@@ -2871,11 +2871,12 @@
           <div class="modal-body">
             <!-- Favorites content will be loaded dynamically -->
             <div id="favoritesContent">
-              <div class="favorites-empty text-center py-5" id="favoritesEmpty">
-                <i class="bi bi-heart display-1 text-muted mb-3"></i>
-                <h4 class="text-muted">Todavía no tenés favoritos</h4>
-                <p class="text-muted">Agregá productos o servicios a tus favoritos para verlos acá</p>
-                <button class="btn btn-primary" data-bs-dismiss="modal" id="exploreProductsBtn">
+              <!-- Usa el componente .empty-state global para consistencia visual. -->
+              <div class="empty-state" id="favoritesEmpty">
+                <div class="empty-state-icon"><i class="bi bi-heart"></i></div>
+                <h3 class="empty-state-title">Todavía no tenés favoritos</h3>
+                <p class="empty-state-text">Agregá productos o servicios a tus favoritos para verlos acá.</p>
+                <button class="empty-state-cta btn btn-primary" data-bs-dismiss="modal" id="exploreProductsBtn">
                   <i class="bi bi-tools me-2"></i>Explorar servicios
                 </button>
               </div>
