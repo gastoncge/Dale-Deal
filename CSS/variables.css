@@ -3,15 +3,20 @@
    ===================================================== */
 
 /* Inter (body/UI) + Space Grotesk (display/headings) desde Google Fonts.
- * --font-family las lista como primera opción, pero hasta este @import
- * NINGÚN HTML salvo index.html las cargaba — el browser caía al fallback
- * de sistema. Ahora la marca tiene tipografía propia consistente en las
- * 25 páginas sin tocar HTMLs individuales.
  *
- * display=swap evita FOIT: la página renderea con la fallback y reemplaza
- * cuando llegan las fuentes. Trade-off: ~30ms más lento que <link preconnect>
- * pero no bloquea el primer paint. */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+ * IMPORTANTE: las fuentes ya NO se cargan acá por @import. Antes lo
+ * hacíamos pero el @import dentro de un CSS file es la peor forma de
+ * cargar fuentes — el browser descubre la URL recién después de bajar
+ * y parsear este archivo, encadenando: variables.css → fonts CSS →
+ * fonts woff2. Lighthouse marcaba ~1s de render-blocking por esto.
+ *
+ * Ahora cada HTML principal (index, productos, servicios, login, etc.)
+ * incluye en el <head> un <link rel="stylesheet" media="print"
+ * onload="this.media='all'"> que descarga en paralelo sin bloquear.
+ * Si una página NO incluye ese link, las fuentes caen al fallback del
+ * sistema (--font-family abajo lo define). Es un trade-off aceptable
+ * para páginas legacy poco visitadas.
+ */
 
 :root {
   /* ===== COLORES DE MARCA ===== */
