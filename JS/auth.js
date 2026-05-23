@@ -655,22 +655,46 @@ class AuthManager {
   setButtonLoading(button, isLoading) {
     if (!button) return;
 
+    // Patrón 1: el botón tiene <span class="btn-text"> y
+    // <span class="btn-loading d-none"> declarados en el HTML (auth forms
+    // de Dale Deal). Toggle de la clase d-none entre ambos spans, sin
+    // tocar innerHTML — preserva el ícono y el spinner pre-renderizados.
+    const btnText    = button.querySelector('.btn-text');
+    const btnLoading = button.querySelector('.btn-loading');
+
+    if (btnText && btnLoading) {
+      if (isLoading) {
+        button.disabled = true;
+        button.classList.add('btn-loading');  // CSS global: cursor wait + opacity
+        btnText.classList.add('d-none');
+        btnLoading.classList.remove('d-none');
+      } else {
+        button.disabled = false;
+        button.classList.remove('btn-loading');
+        btnText.classList.remove('d-none');
+        btnLoading.classList.add('d-none');
+      }
+      return;
+    }
+
+    // Patrón 2: fallback para botones simples (sin spans pre-renderizados).
+    // Guardamos el HTML original en data-original y restauramos al terminar.
     if (isLoading) {
+      if (!button.dataset.originalHtml) {
+        button.dataset.originalHtml = button.innerHTML;
+      }
       button.disabled = true;
+      button.classList.add('btn-loading');
       button.innerHTML = `
-        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
         Procesando...
       `;
     } else {
       button.disabled = false;
-      // Restaurar texto original
-      const isLoginForm = button.closest("#loginForm");
-      const isSignupForm = button.closest("#signupForm");
-
-      if (isLoginForm) {
-        button.innerHTML = "Iniciar Sesión";
-      } else if (isSignupForm) {
-        button.innerHTML = "Crear Cuenta";
+      button.classList.remove('btn-loading');
+      if (button.dataset.originalHtml) {
+        button.innerHTML = button.dataset.originalHtml;
+        delete button.dataset.originalHtml;
       }
     }
   }
