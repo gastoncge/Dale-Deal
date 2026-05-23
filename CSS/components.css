@@ -34,6 +34,84 @@
   border-radius: 3px;
 }
 
+/* ===== INPUTS / FORMS GLOBALES =====
+ * Para contacto, publicar, reportar-problema, perfil, etc. — todas las
+ * páginas no-auth que usan .form-control de Bootstrap sin más estilos.
+ * Las páginas de auth ya tienen su propio .auth-form-floating .form-control
+ * con styling premium (cssselector ganador por specificity).
+ *
+ * Variables: --primary-red para focus ring, hover sutil que invita a
+ * interactuar, transición de 0.18s (rápida sin ser brusca). */
+.form-control,
+.form-select,
+.form-control[type="text"],
+.form-control[type="email"],
+.form-control[type="password"],
+.form-control[type="tel"],
+.form-control[type="url"],
+.form-control[type="search"],
+.form-control[type="number"],
+textarea.form-control {
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 11px 14px;
+  font-size: var(--font-size-base);
+  background: var(--white);
+  color: var(--gray-800);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  box-shadow: none;
+}
+
+.form-control:hover:not(:focus):not(.is-invalid),
+.form-select:hover:not(:focus):not(.is-invalid) {
+  border-color: var(--gray-300);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--primary-red);
+  box-shadow: 0 0 0 3px var(--primary-red-light);
+  outline: none;
+  background: var(--white);
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+  background-image: none;  /* Bootstrap pone un ícono ❌ feo por default */
+  padding-right: 14px;
+}
+
+.form-control.is-valid,
+.form-select.is-valid {
+  border-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+  background-image: none;
+  padding-right: 14px;
+}
+
+.form-control::placeholder {
+  color: var(--gray-400);
+  opacity: 1;  /* Firefox lo pone más translúcido por default */
+}
+
+.form-control:disabled,
+.form-control[readonly] {
+  background: var(--gray-50);
+  color: var(--gray-500);
+  cursor: not-allowed;
+}
+
+/* Label asociado a un form-control: tipografía consistente, peso medio */
+.form-label {
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  color: var(--gray-700);
+  margin-bottom: 6px;
+  letter-spacing: -0.005em;
+}
+
 /* ===== CLASES DE UTILIDAD PARA BOTONES ===== */
 
 /* Efecto hover unificado para botones principales
