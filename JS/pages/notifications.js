@@ -191,7 +191,7 @@ class NotificationsCenterManager {
           id: 12,
           type: 'system',
           title: 'Nueva función disponible',
-          message: 'Ahora puedes guardar tus productos favoritos y crear listas de deseos personalizadas.',
+          message: 'Ahora podés guardar tus productos favoritos y crear listas de deseos personalizadas.',
           time: 'Hace 1 semana',
           timestamp: Date.now() - 175 * 60 * 60 * 1000,
           read: true,
