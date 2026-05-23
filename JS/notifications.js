@@ -473,18 +473,19 @@ class NotificationManager {
 
   // Estado vacío
   getEmptyState() {
+    // Voseo argentino: "tenés" en lugar de "tienes". Una sola frase corta —
+    // el filtro activo ya es visible en los chips, no hace falta repetirlo.
     const messages = {
-      all: 'No tienes notificaciones',
-      unread: 'No tienes notificaciones sin leer',
-      orders: 'No tienes notificaciones de pedidos',
-      offers: 'No tienes notificaciones de ofertas'
+      all:    'No tenés notificaciones nuevas',
+      unread: 'No tenés notificaciones sin leer',
+      orders: 'No tenés notificaciones de pedidos',
+      offers: 'No tenés notificaciones de ofertas'
     };
 
     return `
       <div class="notifications-empty">
         <i class="bi bi-bell-slash"></i>
-        <h5>${messages[this.currentFilter]}</h5>
-        <p>Te notificaremos cuando tengas nuevas actualizaciones</p>
+        <p>${messages[this.currentFilter] || messages.all}</p>
       </div>
     `;
   }
