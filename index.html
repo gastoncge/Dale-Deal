@@ -28,6 +28,15 @@
     <!-- Favicon -->
     <link rel="shortcut icon" href="./IMG/LOGO.png" type="image/x-icon" />
 
+    <!-- Preconnect a CDNs externos: avisa al browser que vamos a abrir
+         conexiones a estos hosts, así inicia el handshake (DNS + TCP + TLS)
+         en paralelo mientras parsea el HTML. Ahorra ~100-300ms en first
+         load. Aplicable a CDNs que efectivamente cargamos abajo. -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="preconnect" href="https://unpkg.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
     <!-- Bootstrap CSS -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous"
@@ -43,9 +52,9 @@
     <!-- AOS (Animate On Scroll) -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" integrity="sha384-/rJKQnzOkEo+daG0jMjU1IwwY9unxt1NBw3Ef2fmOJ3PW/TfAg2KXVoWwMZQZtw9" crossorigin="anonymous" rel="stylesheet" />
 
-    <!-- Google Fonts: Space Grotesk (display) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Google Fonts: Space Grotesk (display). NOTA: variables.css también
+         hace @import de Inter + Space Grotesk, este link es complementario
+         para que el browser arranque a descargar antes del primer @import. -->
     <link
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap"
       rel="stylesheet"
@@ -106,8 +115,17 @@
                     </div>
                     <div class="col-lg-6">
                       <div class="hero-image" data-aos="fade-left">
-                        <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop" 
-                             alt="Dale Deal Marketplace" class="img-fluid rounded-4">
+                        <!-- fetchpriority=high + decoding=async para LCP:
+                             la primera imagen del hero suele ser el LCP
+                             (Largest Contentful Paint). Pedirle al browser
+                             que la baje con prioridad alta y la decodifique
+                             en background mejora el LCP en 200-500ms. -->
+                        <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop"
+                             alt="Dale Deal Marketplace"
+                             class="img-fluid rounded-4"
+                             fetchpriority="high"
+                             decoding="async"
+                             width="600" height="400">
                       </div>
                     </div>
                   </div>
@@ -147,8 +165,14 @@
                     </div>
                     <div class="col-lg-6">
                       <div class="hero-image" data-aos="fade-left">
-                        <img src="https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=600&h=400&fit=crop" 
-                             alt="Ofertas del día" class="img-fluid rounded-4">
+                        <!-- Slides 2-4 del carousel: NO son LCP, son visible
+                             solo al avanzar el carousel. lazy + async para
+                             que no compitan con el slide 1 por bandwidth. -->
+                        <img src="https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=600&h=400&fit=crop"
+                             alt="Ofertas del día"
+                             class="img-fluid rounded-4"
+                             loading="lazy" decoding="async"
+                             width="600" height="400">
                       </div>
                     </div>
                   </div>
@@ -192,8 +216,11 @@
                     </div>
                     <div class="col-lg-6">
                       <div class="hero-image" data-aos="fade-left">
-                        <img src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=400&fit=crop" 
-                             alt="iPhone 15 Pro Max" class="img-fluid rounded-4">
+                        <img src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=400&fit=crop"
+                             alt="iPhone 15 Pro Max"
+                             class="img-fluid rounded-4"
+                             loading="lazy" decoding="async"
+                             width="600" height="400">
                       </div>
                     </div>
                   </div>
@@ -237,8 +264,11 @@
                     </div>
                     <div class="col-lg-6">
                       <div class="hero-image" data-aos="fade-left">
-                        <img src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=600&h=400&fit=crop" 
-                             alt="Instalación Técnica" class="img-fluid rounded-4">
+                        <img src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=600&h=400&fit=crop"
+                             alt="Instalación Técnica"
+                             class="img-fluid rounded-4"
+                             loading="lazy" decoding="async"
+                             width="600" height="400">
                       </div>
                     </div>
                   </div>
