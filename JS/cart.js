@@ -175,14 +175,22 @@ class CartManager {
     }
 
     if (this.items.length === 0) {
+      // Detectar si estamos en HTML/* (path relativo a productos.html)
+      // o en root (index.html). Sin esto el CTA navega a 404 desde root.
+      const productosHref = window.location.pathname.includes('/HTML/')
+        ? './productos.html'
+        : './HTML/productos.html';
       cartDropdownBody.innerHTML = `
-        <div class="cart-empty-dropdown">
-          <i class="bi bi-cart-x"></i>
-          <h6>Tu carrito está vacío</h6>
-          <p>¡Descubre productos increíbles!</p>
+        <div class="empty-state" style="padding: var(--spacing-8) var(--spacing-4);">
+          <div class="empty-state-icon"><i class="bi bi-cart-x"></i></div>
+          <h6 class="empty-state-title" style="font-size: var(--font-size-base);">Tu carrito está vacío</h6>
+          <p class="empty-state-text" style="font-size: var(--font-size-sm); margin-bottom: var(--spacing-4);">Agregá productos para empezar.</p>
+          <a class="empty-state-cta btn btn-primary btn-sm" href="${productosHref}">
+            <i class="bi bi-bag me-2"></i>Explorar productos
+          </a>
         </div>
       `;
-      
+
       // Ocultar footer del carrito cuando está vacío
       const cartFooter = document.querySelector('.cart-footer');
       if (cartFooter) {

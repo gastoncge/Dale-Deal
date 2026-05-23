@@ -246,6 +246,21 @@ class AuthManager {
   }
 
   navigateToHome() {
+    // Si llegamos al login con ?redirect=<path> (típicamente porque api.js
+    // nos redirigió por session expired), después del login exitoso volvemos
+    // a esa ruta en vez de mandar al home. Mejor UX: el user no se pierde
+    // el contexto donde estaba (carrito, página de producto, etc.).
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get('redirect');
+      // Validación: solo paths internos (empiezan con /) para evitar open
+      // redirect a sitios externos vía ?redirect=https://evil.com
+      if (redirect && redirect.startsWith('/') && !redirect.startsWith('//')) {
+        window.location.href = redirect;
+        return;
+      }
+    } catch (_) { /* ignore parse errors */ }
+
     const currentPath = window.location.pathname;
     if (currentPath.includes("/HTML/")) {
       window.location.href = "../index.html";
