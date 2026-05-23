@@ -912,9 +912,24 @@
   }
 }
 
+/* Loading state: agregar .btn-loading desde JS cuando un botón submit dispara
+ * un fetch. Bloquea clicks, dim sutil, cursor wait. El JS de cada page puede
+ * adicionalmente reemplazar el texto interno por un spinner si quiere. */
 .btn-loading {
   pointer-events: none;
   opacity: 0.7;
+  cursor: wait !important;
+}
+
+/* Disabled state: cualquier botón disabled (auth con form inválido, "Comprar"
+ * sin login, etc.). Mismo treatment que loading pero sin cursor wait. */
+.btn:disabled,
+.btn[disabled] {
+  pointer-events: none;
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 /* ===== TARJETAS DE PRODUCTO ===== */
@@ -4811,10 +4826,20 @@
 }
 .search-wrapper:focus-within { box-shadow: none !important; }
 
-/* Botones primarios: animación de presión */
+/* Active state: feedback visual al click en CUALQUIER botón. Antes solo
+ * lo tenía btn-primary; los outline y secondary no daban feedback y se
+ * sentían "muertos". 0.97 scale + transition rápida da la sensación de
+ * presión sin distraer. */
+.btn:active,
 .btn-primary:active,
+.btn-secondary:active,
+.btn-outline-primary:active,
+.btn-outline-secondary:active,
+.btn-outline-light:active,
+.btn-outline-danger:active,
 .btn-primary-hover-effect:active {
   transform: scale(0.97) !important;
+  transition-duration: 0.05s !important;
 }
 
 
