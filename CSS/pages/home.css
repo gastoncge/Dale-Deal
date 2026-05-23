@@ -122,14 +122,20 @@
   padding: var(--spacing-2) var(--spacing-4);
   background: rgba(255, 255, 255, 0.95);
   color: #374151;
-  font-size: var(--font-size-sm);
-  font-weight: 600;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  /* Antes: uppercase + letter-spacing 0.1em — se sentía "1995 web banner".
+   * Ahora: letter-spacing más fino (más editorial, menos publicitario). */
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   border-radius: var(--radius-3xl);
   margin-bottom: var(--spacing-4);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  /* backdrop-filter para que el badge se sienta "glass" sobre el gradient
+   * del hero. Soporte ~95% (Safari 9+, Chrome 76+, FF 103+). */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .offer-badge {
@@ -171,20 +177,27 @@
 }
 
 .hero-title {
+  /* Usa la font de display (Space Grotesk → Inter fallback) — más personality
+   * que la sans-serif base. Tight letter-spacing -0.025em da el look "tech
+   * startup" moderno (Linear, Vercel, Stripe). */
+  font-family: var(--font-display);
   font-size: clamp(var(--font-size-3xl), 5vw, var(--font-size-5xl));
-  font-weight: 800;
+  font-weight: 700;
   margin-bottom: var(--spacing-6);
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  letter-spacing: -0.02em;
+  /* Shadow más sutil (0.2 era muy heavy, hacía el título "rebotar" del fondo). */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  letter-spacing: -0.025em;
   line-height: 1.1;
 }
 
 .hero-subtitle {
   font-size: var(--font-size-xl);
-  color: rgba(255, 255, 255, 0.9);
+  /* 0.95 en vez de 0.9 — antes se veía un poco "gris" sobre el rojo. */
+  color: rgba(255, 255, 255, 0.95);
   margin-bottom: var(--spacing-8);
   font-weight: 400;
   line-height: 1.6;
+  max-width: 540px;
 }
 
 .hero-actions {
