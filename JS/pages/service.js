@@ -769,15 +769,29 @@ class ServicePage {
     else if (service.priceType === 'per_m2') priceText += '/m²';
     else if (service.priceType === 'per_room') priceText += '/amb';
 
-    // Badges overlay
+    // Badges overlay — escape de b.text, b.color y badge porque son input
+    // del prestador (vienen de la API y se renderizan en innerHTML).
+    const esc = (s) => (window.DaleDeal?.utils?.escapeHtml ? DaleDeal.utils.escapeHtml(s) : String(s ?? ''));
+    // Para b.color, además de escapar, validamos que sea un color CSS razonable
+    // (hex, nombre, hsl/rgb/rgba) para evitar CSS injection del estilo:
+    //   background:red; } html { background:url('...
+    const safeColor = (c) => {
+      if (typeof c !== 'string') return '#999';
+      const trimmed = c.trim();
+      // Whitelist permisivo pero seguro: hex, palabra, o función css
+      if (/^(#[0-9a-f]{3,8}|[a-z]+|(rgb|rgba|hsl|hsla)\([0-9.,%\s]+\))$/i.test(trimmed)) {
+        return trimmed;
+      }
+      return '#999';
+    };
     const customBadges = (service.badges || []).filter(b => typeof b === 'object' && b.text);
     const legacyBadges = (service.badges || []).filter(b => typeof b === 'string');
     const allBadgesInner = [
-      ...customBadges.map(b => `<span class="badge-custom" style="background:${b.color}">${b.text}</span>`),
+      ...customBadges.map(b => `<span class="badge-custom" style="background:${safeColor(b.color)}">${esc(b.text)}</span>`),
       ...legacyBadges.map(badge => {
         const cls = service.emergency || badge.includes('Premium') || badge.includes('Emergencia')
           ? 'badge-emergency' : 'badge-featured';
-        return `<span class="${cls}">${badge}</span>`;
+        return `<span class="${cls}">${esc(badge)}</span>`;
       }),
     ].join('');
     const badgesHTML = allBadgesInner ? `<div class="service-badges">${allBadgesInner}</div>` : '';

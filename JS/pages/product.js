@@ -465,13 +465,22 @@ class ProductPage {
 
     if (subtitle) subtitle.textContent = `Otros productos de ${this.currentProduct.seller_name || 'este vendedor'}`;
 
-    grid.innerHTML = others.map(prod => `
-      <div class="product-card-mini" onclick="location.href='producto.html?id=${prod.id}'" style="cursor:pointer;">
-        <img src="${prod.images?.main || prod.image || ''}" alt="${prod.title}" loading="lazy" style="width:100%;height:140px;object-fit:cover;border-radius:8px;">
-        <p style="margin:8px 0 4px;font-size:13px;font-weight:600;">${prod.title}</p>
-        <p style="color:var(--primary-red);font-weight:700;">$${(prod.price || prod.basePrice || 0).toLocaleString('es-AR')}</p>
-      </div>
-    `).join('');
+    // Escape de title (input usuario) + cast de id a número para evitar
+    // injection en el onclick. Mejor sería event delegation con data-id,
+    // pero acá voy por el fix mínimo.
+    const esc = (s) => (window.DaleDeal?.utils?.escapeHtml ? DaleDeal.utils.escapeHtml(s) : String(s ?? ''));
+    grid.innerHTML = others.map(prod => {
+      const pid = Number(prod.id) || 0;
+      const titleSafe = esc(prod.title);
+      const imgSrc    = String(prod.images?.main || prod.image || '').replace(/['"<>]/g, '');
+      return `
+        <div class="product-card-mini" onclick="location.href='producto.html?id=${pid}'" style="cursor:pointer;">
+          <img src="${imgSrc}" alt="${titleSafe}" loading="lazy" style="width:100%;height:140px;object-fit:cover;border-radius:8px;">
+          <p style="margin:8px 0 4px;font-size:13px;font-weight:600;">${titleSafe}</p>
+          <p style="color:var(--primary-red);font-weight:700;">$${(prod.price || prod.basePrice || 0).toLocaleString('es-AR')}</p>
+        </div>
+      `;
+    }).join('');
 
     section.style.display = '';
   }
@@ -502,6 +511,7 @@ class ProductPage {
 
     const storageKeys = Object.keys(this.currentProduct.storage);
     container.innerHTML = '';
+    const esc = (s) => (window.DaleDeal?.utils?.escapeHtml ? DaleDeal.utils.escapeHtml(s) : String(s ?? ''));
     storageKeys.forEach((key, i) => {
       const s = this.currentProduct.storage[key];
       const div = document.createElement('div');
@@ -512,7 +522,10 @@ class ProductPage {
       const priceText = s.price === 0
         ? 'Base'
         : s.price > 0 ? `+${this.formatPrice(s.price)}` : this.formatPrice(s.price);
-      div.innerHTML = `${key}<span class="extra-cost">${priceText}</span>`;
+      // 'key' viene de Object.keys(producto.storage) → string controlado por
+      // el vendedor en la DB. Escapar antes de innerHTML evita XSS si alguien
+      // pone una key tipo <img onerror=...>.
+      div.innerHTML = `${esc(key)}<span class="extra-cost">${priceText}</span>`;
       container.appendChild(div);
     });
     // selectedStorage already set in loadProductData
@@ -1102,7 +1115,14 @@ class ProductPage {
       return html;
     };
 
-    const escape = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    // Escape de los 5 chars HTML, no solo &<>. Necesario porque algunos lugares
+    // (ej. alt="${escape(name)}") usan el escape en atributos, donde " y ' rompen.
+    // Delegamos al helper global de utils.js cuando está disponible.
+    const escape = (s) => (
+      window.DaleDeal?.utils?.escapeHtml
+        ? DaleDeal.utils.escapeHtml(String(s ?? ''))
+        : String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;')
+    );
     const fmtDate = (d) => {
       if (!d) return '';
       const date = new Date(d);
@@ -1377,26 +1397,33 @@ class ProductPage {
 
   // ── Shared card renderer (similar & recent) ────────────────────────────────
   renderProductCard(product, isRecent = false) {
+    // Escape de title/description (input vendedor). product.id casteado a
+    // número porque va a data-id (atributo) y al onclick implícito.
+    const esc = (s) => (window.DaleDeal?.utils?.escapeHtml ? DaleDeal.utils.escapeHtml(s) : String(s ?? ''));
+    const titleSafe = esc(product.title);
+    const pid = Number(product.id) || 0;
+    const imgSrc = String(product.images?.main || '').replace(/['"<>]/g, '');
     const desc = product.description
       ? (product.description.length > 80 ? product.description.substring(0, 80) + '…' : product.description)
       : 'Producto de alta calidad.';
+    const descSafe = esc(desc);
     return `
       <div class="col-12 col-md-6 col-lg-3 mb-4 d-flex">
         <div class="product-card ${isRecent ? 'recent-product-card' : 'similar-product-card'} w-100"
-             data-id="${product.id}" data-clickable="true">
+             data-id="${pid}" data-clickable="true">
           <div class="product-image-container">
-            <img src="${product.images.main}" alt="${product.title}" class="product-image" loading="lazy" decoding="async" />
-            ${product.discount ? `<div class="product-badges"><span class="badge-offer">-${product.discount}%</span></div>` : ''}
+            <img src="${imgSrc}" alt="${titleSafe}" class="product-image" loading="lazy" decoding="async" />
+            ${product.discount ? `<div class="product-badges"><span class="badge-offer">-${Number(product.discount) || 0}%</span></div>` : ''}
             ${isRecent ? `<div class="recently-viewed-badge"><i class="bi bi-clock-history"></i></div>` : ''}
             <div class="product-actions">
-              <button class="action-heart" title="Agregar a favoritos" data-product-id="${product.id}">
+              <button class="action-heart" title="Agregar a favoritos" data-product-id="${pid}">
                 <i class="bi bi-heart"></i>
               </button>
             </div>
           </div>
           <div class="product-info">
-            <h3 class="product-title">${product.title}</h3>
-            <p class="product-description">${desc}</p>
+            <h3 class="product-title">${titleSafe}</h3>
+            <p class="product-description">${descSafe}</p>
             <div class="product-meta-group">
               <div class="product-rating">
                 <div class="stars">${this.renderProductStars(product.rating)}</div>
