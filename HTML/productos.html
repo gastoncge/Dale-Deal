@@ -3038,7 +3038,12 @@
 
         async init() {
           try {
-            // Show loading state
+            // Loading state inicial (spinner viejo, ya funcionaba).
+            // NOTA: las skeletons cards EXISTEN (renderSkeletonCards +
+            // createSkeletonCard) pero no se usan acá porque ProductFilters
+            // tiene su propio sistema de render que las machaca. Para usarlas
+            // bien hay que refactor de cómo se coordinan ProductsCatalog y
+            // ProductFilters — pendiente.
             this.showLoading(true);
 
             // Fetch products from API
@@ -3047,7 +3052,6 @@
             // Transform API data to match expected format
             this.products = this.transformProductsData(productsData);
 
-            // Hide loading and render products
             this.showLoading(false);
             this.createProductCards();
             this.updateResultsCount();
@@ -3164,7 +3168,9 @@
         }
 
         renderSkeletonCards() {
+          // Helper disponible pero no usado en el flow normal — ver nota en init().
           const grid = document.getElementById('productsGrid');
+          if (!grid) return;
           grid.innerHTML = '';
 
           // Render 9 skeleton cards

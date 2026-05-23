@@ -2965,6 +2965,9 @@
 
         async init() {
           try {
+            // Loading state inicial (spinner viejo). Las skeletons (CSS+JS)
+            // existen pero no las activamos: ServicesCatalog y ProductFilters
+            // se machacan mutuamente. Pendiente refactor de coordinación.
             this.showLoadingState();
 
             // Intentar cargar desde la API real
@@ -3410,11 +3413,10 @@
         }
 
         renderSkeletonCards() {
+          // Helper disponible pero no usado en el flow normal — ver nota en init().
           const grid = document.getElementById('servicesGrid');
           if (!grid) return;
-          grid.style.display = 'grid';
           grid.innerHTML = '';
-
           for (let i = 0; i < 9; i++) {
             grid.appendChild(this.createSkeletonCard(i));
           }
