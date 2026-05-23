@@ -4659,8 +4659,15 @@ textarea.form-control {
   background: #1e293b;
   border-color: rgba(255,255,255,0.08);
   color: var(--gray-800);
+  /* Shadow invertida para dark: la negra default no se ve sobre fondo dark.
+   * Usamos una con color casi-negro (#000) más opaco — da depth. */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
 }
-[data-theme="dark"] .product-card:hover { border-color: rgba(255,255,255,0.15); }
+[data-theme="dark"] .product-card:hover {
+  border-color: rgba(255,255,255,0.18);
+  /* Shadow más intensa en dark para que el lift se note. */
+  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.5), 0 4px 8px -4px rgba(0, 0, 0, 0.3);
+}
 [data-theme="dark"] .carousel-control {
   background: rgba(255,255,255,0.25);
   color: #fff !important;
