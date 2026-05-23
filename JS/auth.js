@@ -321,17 +321,24 @@ class AuthManager {
   updateProfileElements() {
     if (!this.isAuthenticated()) return;
 
-    const profileName = document.querySelector(".profile-name");
-    const profileImage = document.querySelector(".profile-image");
+    const name = this.currentUser.name || 'Usuario';
+    // Fallback de avatar a ui-avatars.com con iniciales — si el usuario no
+    // subió avatar propio (typical), generamos uno consistente con la marca
+    // (background rojo, iniciales blancas). Nunca queda src vacío/roto.
+    const avatarUrl = this.currentUser.avatar
+      || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=d63031&color=fff&size=80&font-size=0.5&bold=true`;
 
-    if (profileName) {
-      profileName.textContent = this.currentUser.name;
-    }
+    // Actualiza TODOS los .profile-name del DOM (desktop dropdown trigger +
+    // cualquier otro que aparezca). Antes usaba querySelector singular y solo
+    // tocaba el primero.
+    document.querySelectorAll(".profile-name").forEach(el => {
+      el.textContent = name;
+    });
 
-    if (profileImage) {
-      profileImage.src = this.currentUser.avatar;
-      profileImage.alt = `Avatar de ${this.currentUser.name}`;
-    }
+    document.querySelectorAll(".profile-image").forEach(img => {
+      img.src = avatarUrl;
+      img.alt = `Avatar de ${name}`;
+    });
   }
 
   // ===== EVENTOS GLOBALES =====
