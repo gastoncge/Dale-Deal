@@ -1609,7 +1609,14 @@
         if (!body) return;
         const convs = mensajesState.conversations || [];
         if (convs.length === 0) {
-          body.innerHTML = '<div class="mensajes-list-empty"><i class="bi bi-chat-dots"></i><p>Aún no tenés conversaciones.</p><p style="font-size:11px;color:var(--gray-400);margin-top:8px;">Cuando compres un producto o contrates un servicio se creará una conversación automáticamente.</p></div>';
+          // Componente .empty-state global (CSS/components.css) para
+          // consistencia con cart/favoritos/sin-resultados/etc.
+          body.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon"><i class="bi bi-chat-dots"></i></div>
+              <h3 class="empty-state-title">Aún no tenés conversaciones</h3>
+              <p class="empty-state-text">Cuando compres un producto o contrates un servicio se va a crear una conversación automáticamente.</p>
+            </div>`;
           return;
         }
         const search = (document.getElementById('mensajesSearchInput')?.value || '').toLowerCase().trim();
@@ -1800,7 +1807,15 @@
         if (!window.DaleDeal || !window.DaleDeal.api || !window.DaleDeal.api.messages) {
           console.warn('[mensajes] API no disponible');
           const body = document.getElementById('mensajesListBody');
-          if (body) body.innerHTML = '<div class="mensajes-list-empty"><i class="bi bi-exclamation-circle"></i><p>Iniciá sesión para ver tus mensajes.</p></div>';
+          if (body) body.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon"><i class="bi bi-person-lock"></i></div>
+              <h3 class="empty-state-title">Iniciá sesión</h3>
+              <p class="empty-state-text">Necesitás estar logueado para ver tus mensajes.</p>
+              <a href="./login.html?redirect=${encodeURIComponent('/HTML/notificaciones.html#mensajes')}" class="empty-state-cta btn btn-primary">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar sesión
+              </a>
+            </div>`;
           return;
         }
         // Auto-abrir conversación si viene ?conv=ID en la URL
