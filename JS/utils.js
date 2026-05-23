@@ -441,6 +441,23 @@ DaleDeal.utils.init = () => {
 
   DaleDeal.utils.createToastContainer();
 
+  // Flash messages — leemos sessionStorage por si la página anterior dejó
+  // un mensaje (ej. api.js redirige a login con "Tu sesión expiró"). Los
+  // mostramos UNA vez como toast y limpiamos para que no se repitan.
+  try {
+    const flashRaw = sessionStorage.getItem('daledeal_flash');
+    if (flashRaw) {
+      sessionStorage.removeItem('daledeal_flash');
+      const flash = JSON.parse(flashRaw);
+      if (flash && flash.message) {
+        // setTimeout para asegurar que el toast container esté listo
+        setTimeout(() => {
+          DaleDeal.utils.showNotification(flash.message, flash.type || 'info', flash.duration || 5000);
+        }, 200);
+      }
+    }
+  } catch (_) { /* ignore */ }
+
   DaleDeal.log("Utils inicializados");
 };
 

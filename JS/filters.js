@@ -273,19 +273,32 @@ class ProductFilters {
     // usan event delegation en el document, por lo que funcionarán automáticamente
   }
 
-  // Mostrar mensaje sin resultados
+  // Mostrar mensaje sin resultados — usa el componente .empty-state global
+  // (definido en components.css) para consistencia visual con el resto de
+  // empty states de la app (cart, favoritos, etc.). is-search le da el
+  // tinte gris neutro apropiado para "no hay resultados de búsqueda".
+  // El CTA "Limpiar filtros" recupera al user del estado vacío.
   showNoResults() {
     const container = document.getElementById('productsGrid');
-    const noResultsHTML = `
-      <div class="no-results" id="noResults">
-        <div class="no-results-content">
-          <i class="bi bi-search"></i>
-          <h3>No encontramos productos</h3>
-          <p>Intenta con otros términos de búsqueda o categorías</p>
-        </div>
+    container.innerHTML = `
+      <div class="empty-state is-search" id="noResults" style="grid-column: 1 / -1;">
+        <div class="empty-state-icon"><i class="bi bi-search"></i></div>
+        <h3 class="empty-state-title">No encontramos productos</h3>
+        <p class="empty-state-text">Probá con otros términos de búsqueda o cambiá los filtros.</p>
+        <button type="button" class="empty-state-cta btn btn-primary" id="clearAllFiltersFromEmpty">
+          <i class="bi bi-arrow-clockwise me-2"></i>Limpiar filtros
+        </button>
       </div>
     `;
-    container.innerHTML = noResultsHTML;
+    // Cablear el botón de "Limpiar filtros" para reusar el flujo existente
+    const clearBtn = document.getElementById('clearAllFiltersFromEmpty');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        const existingClearBtn = document.getElementById('clearAllFilters');
+        if (existingClearBtn) existingClearBtn.click();
+        else if (typeof this.clearAllFilters === 'function') this.clearAllFilters();
+      });
+    }
   }
 
   // Ocultar mensaje sin resultados

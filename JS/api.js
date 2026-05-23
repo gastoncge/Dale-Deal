@@ -73,12 +73,35 @@ async function apiFetch(path, options = {}) {
     const err = new Error(friendlyError(res.status, errBody?.error));
     err.status = res.status;
     err.body   = errBody;
-    // Auto-logout si el token expiró
+    // Auto-logout si el token expiró + flash + redirect a login.
+    // Antes solo limpiaba el token y dejaba al usuario en el aire (la página
+    // seguía rota porque su UI era para usuario loggeado). Ahora le avisamos
+    // y lo mandamos a login con un return path para que vuelva donde estaba.
     if (res.status === 401 && token) {
       try {
         localStorage.removeItem('daledeal_token');
         localStorage.removeItem('daledealer_user');
+        // Flash message para mostrar después del redirect
+        sessionStorage.setItem('daledeal_flash', JSON.stringify({
+          type: 'warning',
+          message: 'Tu sesión expiró. Iniciá sesión de nuevo para continuar.'
+        }));
       } catch (_) {}
+      // Redirigir si no estamos ya en login/signup (evita loop) y no es un
+      // request en background (ej. el polling de notificaciones — si redirige
+      // por cada poll cuando token caducó, el user no puede ni ver el aviso).
+      const path = window.location.pathname;
+      const onAuthPage = /\/(login|signup|recuperar-contrasena)\.html$/.test(path);
+      const isBackground = options._background === true;
+      if (!onAuthPage && !isBackground) {
+        const ret = encodeURIComponent(path + window.location.search);
+        const loginUrl = path.includes('/HTML/')
+          ? `./login.html?redirect=${ret}`
+          : `./HTML/login.html?redirect=${ret}`;
+        // Pequeño defer para que el throw se propague y el caller pueda
+        // limpiar antes de la navegación.
+        setTimeout(() => { window.location.href = loginUrl; }, 100);
+      }
     }
     throw err;
   }
