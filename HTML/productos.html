@@ -3344,6 +3344,12 @@
         }
 
         createProductCard(product, index) {
+          // Escape de datos del usuario (title, description) antes de inyectar
+          // en HTML. Defense-in-depth: aunque el backend ya sanitiza, evita
+          // XSS si la data llega de otra fuente (cache, demo, API mockeada).
+          const esc = (s) => (window.DaleDeal?.utils?.escapeHtml ? DaleDeal.utils.escapeHtml(s) : String(s ?? ''));
+          const titleSafe = esc(product.title);
+
           const card = document.createElement('div');
           let cardClasses = 'product-card';
 
@@ -3392,7 +3398,7 @@
               ${images.map((img, idx) => `
                 <img
                   src="${img}"
-                  alt="${product.title} - Vista ${idx + 1}"
+                  alt="${titleSafe} - Vista ${idx + 1}"
                   class="product-image ${idx === 0 ? 'active' : ''}"
                 />
               `).join('')}
@@ -3415,7 +3421,7 @@
           ` : `
             <img
               src="${images[0]}"
-              alt="${product.title}"
+              alt="${titleSafe}"
               class="product-image"
             />
           `;
@@ -3446,8 +3452,8 @@
               </div>
             </div>
             <div class="product-info">
-              <h3 class="product-title">${product.title}</h3>
-              <p class="product-description">${shortDescription}</p>
+              <h3 class="product-title">${titleSafe}</h3>
+              <p class="product-description">${esc(shortDescription)}</p>
 
               <div class="product-meta-group">
                 <div class="product-rating">

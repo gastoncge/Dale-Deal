@@ -3530,6 +3530,12 @@
         }
 
         createServiceCard(service, index) {
+          // Escape de data del usuario (title, description, location, badges)
+          // antes de inyectar como HTML. Defense-in-depth contra XSS.
+          const esc = (s) => (window.DaleDeal?.utils?.escapeHtml ? DaleDeal.utils.escapeHtml(s) : String(s ?? ''));
+          const titleSafe    = esc(service.title);
+          const locationSafe = esc(service.location);
+
           const card = document.createElement('div');
           card.className = 'product-card';
           card.setAttribute('data-id', service.id);
@@ -3563,7 +3569,7 @@
             return 'badge-featured';
           };
           const badgeSpans = (service.badges || []).map(badge =>
-            `<span class="${getBadgeClass(badge)}">${badge}</span>`
+            `<span class="${getBadgeClass(badge)}">${esc(badge)}</span>`
           ).join('');
           const badgesHTML = badgeSpans ? `<div class="service-badges">${badgeSpans}</div>` : '';
 
@@ -3574,7 +3580,7 @@
 
           card.innerHTML = `
             <div class="product-image-container">
-              <img src="${service.image}" alt="${service.title}" class="product-image active" loading="lazy" />
+              <img src="${service.image}" alt="${titleSafe}" class="product-image active" loading="lazy" />
               ${badgesHTML}
               <div class="product-actions">
                 <button class="action-heart" title="Agregar a favoritos" data-product-id="${service.id}">
@@ -3583,8 +3589,8 @@
               </div>
             </div>
             <div class="product-info">
-              <h3 class="product-title">${service.title}</h3>
-              <p class="product-description">${shortDesc}</p>
+              <h3 class="product-title">${titleSafe}</h3>
+              <p class="product-description">${esc(shortDesc)}</p>
               <div class="product-meta-group">
                 <div class="product-rating">
                   <div class="stars">${starsHTML}</div>
@@ -3592,7 +3598,7 @@
                 </div>
                 <div class="product-location">
                   <i class="bi bi-geo-alt-fill"></i>
-                  <span>${service.location}</span>
+                  <span>${locationSafe}</span>
                 </div>
               </div>
               <div class="product-pricing-wrapper">
