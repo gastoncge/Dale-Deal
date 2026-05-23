@@ -351,10 +351,35 @@ body {
   min-height: 100%;
   font-family: var(--font-family);
   font-size: var(--font-size-base);
-  line-height: 1.5;
+  /* line-height 1.6 (era 1.5): un poquito más aire entre líneas mejora
+   * mucho la legibilidad de párrafos largos. Regla de oro tipográfica. */
+  line-height: 1.6;
   color: var(--gray-800);
   background: var(--white);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* text-rendering: optimizeLegibility activa ligaduras y kerning más
+   * cuidado (Inter las tiene). Pequeño hit de performance, vale la pena. */
+  text-rendering: optimizeLegibility;
   overflow-x: clip; /* Prevenir scroll horizontal sin forzar overflow-y a auto */
+}
+
+/* ===== HEADINGS GLOBALES ===== */
+/* Tracking ajustado por tamaño — la regla es: cuanto más grande la fuente,
+ * más tight el tracking. Replica el behavior de Stripe/Linear.
+ *
+ * IMPORTANTE: NO seteo color acá. Algunos headings viven sobre fondos
+ * coloreados (hero blanco sobre rojo) y heredan el color del padre.
+ * Setear color: gray-900 global rompería esos casos. Cada contexto decide. */
+h1, h2, h3, .h1, .h2, .h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.022em;
+}
+h4, h5, h6, .h4, .h5, .h6 {
+  font-family: var(--font-family);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
 }
