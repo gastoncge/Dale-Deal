@@ -1,0 +1,13 @@
+{
+  "name": "dale-deal-frontend",
+  "version": "1.0.0",
+  "description": "Marketplace de productos y servicios. Frontend HTML/CSS/JS vanilla con build via esbuild para minificación de producción.",
+  "private": true,
+  "scripts": {
+    "build": "node build.js",
+    "build:watch": "node build.js --watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0"
+  }
+}

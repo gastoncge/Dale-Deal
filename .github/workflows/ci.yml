@@ -63,3 +63,23 @@ jobs:
             fi
           done
           exit $fail
+
+      - name: Instalar dependencias build
+        run: npm ci
+
+      - name: Build de producción (esbuild minify)
+        # Corre el build; si algún JS o CSS tiene syntax error que esbuild
+        # no puede minificar, el build cae (catch interno escribe un warn
+        # pero el archivo queda sin minificar — lo permitimos en CI pero
+        # exigimos que esbuild no tire excepciones graves).
+        run: npm run build
+
+      - name: Verificar tamaño dist/
+        # Sanity check: el dist debería ser MENOR que la raíz. Si esbuild
+        # falló en todos los archivos y solo los copió, el dist sería igual.
+        run: |
+          DIST_SIZE=$(du -s dist | cut -f1)
+          ROOT_SIZE=$(du -s JS CSS | awk '{s+=$1} END {print s}')
+          echo "JS+CSS originales: $ROOT_SIZE KB · dist completo: $DIST_SIZE KB"
+          # No assertion estricta — el build copia HTMLs e IMG que están en
+          # el dist pero no en el cálculo de "ROOT_SIZE". Es solo log.
