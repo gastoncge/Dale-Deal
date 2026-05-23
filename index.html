@@ -27,6 +27,15 @@
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="./IMG/LOGO.png" type="image/x-icon" />
+    <!-- Apple touch icon: cuando un user en iOS hace "Add to Home Screen",
+         iOS busca este icon para el atajo. Sin este link iOS usa un
+         screenshot del sitio que se ve feo. -->
+    <link rel="apple-touch-icon" href="./IMG/LOGO.png" />
+    <!-- PWA manifest: permite instalar el sitio como app en mobile y desktop,
+         con iconos, color de splash, shortcuts a productos/servicios/publicar.
+         Boost de Lighthouse PWA score y mejor primera impresión cuando un
+         user guarda el sitio. -->
+    <link rel="manifest" href="./manifest.json" />
 
     <!-- Preconnect a CDNs externos: avisa al browser que vamos a abrir
          conexiones a estos hosts, así inicia el handshake (DNS + TCP + TLS)

@@ -1,0 +1,56 @@
+{
+  "name": "Dale Deal — Marketplace de productos y servicios",
+  "short_name": "Dale Deal",
+  "description": "Compra, vende y contrata servicios profesionales en Argentina. Miles de productos y proveedores verificados.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#d63031",
+  "lang": "es-AR",
+  "categories": ["shopping", "lifestyle", "business"],
+  "icons": [
+    {
+      "src": "/IMG/LOGO.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/IMG/LOGO.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/IMG/LOGO-2.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/IMG/LOGO-2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Explorar productos",
+      "url": "/HTML/productos.html",
+      "icons": [{ "src": "/IMG/LOGO.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Ver servicios",
+      "url": "/HTML/servicios.html",
+      "icons": [{ "src": "/IMG/LOGO.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Publicar",
+      "url": "/HTML/publicar.html",
+      "icons": [{ "src": "/IMG/LOGO.png", "sizes": "96x96" }]
+    }
+  ]
+}
