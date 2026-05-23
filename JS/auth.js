@@ -270,19 +270,28 @@ class AuthManager {
   }
 
   updateNavbar() {
-    const loginLink = document.getElementById("loginLink");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const profileDropdown = document.querySelector(".profile-dropdown");
+    // Espejado entre desktop (dropdown del avatar) y mobile (menú hamburguesa).
+    // Antes solo manejaba los del desktop: usuario mobile loggeado seguía
+    // viendo "Iniciar sesión" en el menú hamburguesa.
+    const loginLink         = document.getElementById("loginLink");
+    const logoutBtn         = document.getElementById("logoutBtn");
+    const loginLinkMobile   = document.getElementById("loginLinkMobile");
+    const logoutBtnMobile   = document.getElementById("logoutBtnMobile");
+    const profileDropdown   = document.querySelector(".profile-dropdown");
 
     if (this.isAuthenticated()) {
       // Usuario autenticado
-      if (loginLink) loginLink.style.display = "none";
-      if (logoutBtn) logoutBtn.style.display = "block";
+      if (loginLink)       loginLink.style.display       = "none";
+      if (logoutBtn)       logoutBtn.style.display       = "block";
+      if (loginLinkMobile) loginLinkMobile.style.display = "none";
+      if (logoutBtnMobile) logoutBtnMobile.style.display = "flex";
       if (profileDropdown) profileDropdown.style.display = "block";
     } else {
       // Usuario no autenticado
-      if (loginLink) loginLink.style.display = "block";
-      if (logoutBtn) logoutBtn.style.display = "none";
+      if (loginLink)       loginLink.style.display       = "block";
+      if (logoutBtn)       logoutBtn.style.display       = "none";
+      if (loginLinkMobile) loginLinkMobile.style.display = "flex";
+      if (logoutBtnMobile) logoutBtnMobile.style.display = "none";
       if (profileDropdown) profileDropdown.style.display = "none";
     }
 
@@ -312,9 +321,9 @@ class AuthManager {
 
   // ===== EVENTOS GLOBALES =====
   bindGlobalEvents() {
-    // Logout button
+    // Logout button (desktop dropdown + mobile menu)
     document.addEventListener("click", (e) => {
-      if (e.target.matches("#logoutBtn, #logoutBtn *")) {
+      if (e.target.matches("#logoutBtn, #logoutBtn *, #logoutBtnMobile, #logoutBtnMobile *")) {
         e.preventDefault();
         this.logout();
       }
@@ -328,9 +337,9 @@ class AuthManager {
       }
     });
 
-    // Login link
+    // Login link (desktop dropdown + mobile menu)
     document.addEventListener("click", (e) => {
-      if (e.target.matches("#loginLink, #loginLink *")) {
+      if (e.target.matches("#loginLink, #loginLink *, #loginLinkMobile, #loginLinkMobile *")) {
         e.preventDefault();
         this.navigateToLogin();
       }

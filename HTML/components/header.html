@@ -103,48 +103,14 @@
             <button class="filter-chip" data-filter="offers">Ofertas</button>
           </div>
 
-          <!-- Cuerpo de notificaciones -->
+          <!-- Cuerpo de notificaciones — se rellena dinámicamente desde el backend.
+               Antes había 3 mockups hardcodeados (Pedido #12345, etc.) que se le
+               mostraban a CUALQUIER visitante anónimo. Ahora arranca con un estado
+               vacío y JS/notifications.js lo puebla cuando hay sesión + datos reales. -->
           <div class="notifications-body" id="notificationsDropdownBody">
-            <div class="notification-item unread" data-id="1" data-type="orders">
-              <div class="notification-icon bg-success">
-                <i class="bi bi-check-circle text-white"></i>
-              </div>
-              <div class="notification-content">
-                <h6>Pedido confirmado</h6>
-                <p>Tu pedido #12345 ha sido confirmado</p>
-                <small>Hace 2 horas</small>
-              </div>
-              <button class="notification-close" data-action="dismiss" aria-label="Descartar notificación">
-                <i class="bi bi-x"></i>
-              </button>
-            </div>
-
-            <div class="notification-item unread" data-id="2" data-type="orders">
-              <div class="notification-icon bg-info">
-                <i class="bi bi-truck text-white"></i>
-              </div>
-              <div class="notification-content">
-                <h6>Envío en camino</h6>
-                <p>Tu pedido #12340 está siendo preparado</p>
-                <small>Hace 1 día</small>
-              </div>
-              <button class="notification-close" data-action="dismiss" aria-label="Descartar notificación">
-                <i class="bi bi-x"></i>
-              </button>
-            </div>
-
-            <div class="notification-item unread" data-id="3" data-type="offers">
-              <div class="notification-icon bg-warning">
-                <i class="bi bi-star text-white"></i>
-              </div>
-              <div class="notification-content">
-                <h6>Nueva oferta disponible</h6>
-                <p>20% de descuento en electrónicos</p>
-                <small>Hace 2 días</small>
-              </div>
-              <button class="notification-close" data-action="dismiss" aria-label="Descartar notificación">
-                <i class="bi bi-x"></i>
-              </button>
+            <div class="notifications-empty">
+              <i class="bi bi-bell-slash"></i>
+              <p>No tenés notificaciones nuevas</p>
             </div>
           </div>
 
@@ -211,9 +177,10 @@
           title="Mi cuenta"
         >
           <img
-            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
-            alt="Perfil"
+            src="https://ui-avatars.com/api/?name=U&background=d63031&color=fff&size=80&font-size=0.5&bold=true"
+            alt="Mi perfil"
             class="profile-image"
+            id="profileAvatar"
           />
           <span class="profile-name">Usuario</span>
         </button>
@@ -248,25 +215,43 @@
     </div>
   </div>
 
-  <!-- Mobile navigation collapse (visible < 768px cuando hamburguesa está abierta) -->
+  <!-- Mobile navigation collapse (visible < 768px cuando hamburguesa está abierta).
+       Incluye TODAS las acciones del nav desktop para evitar inconsistencia: el
+       usuario mobile debe poder hacer todo lo que hace el desktop. -->
   <div class="collapse" id="navMobileLinks">
     <div class="nav-mobile-menu">
       <a href="./productos.html" class="nav-mobile-link">
-        <i class="bi bi-bag"></i>
+        <i class="bi bi-bag" aria-hidden="true"></i>
         Productos
       </a>
       <a href="./servicios.html" class="nav-mobile-link">
-        <i class="bi bi-tools"></i>
+        <i class="bi bi-tools" aria-hidden="true"></i>
         Servicios
       </a>
       <a href="./publicar.html" class="nav-mobile-link" style="color: var(--primary-red); font-weight: 600;">
-        <i class="bi bi-plus-circle-fill"></i>
+        <i class="bi bi-plus-circle-fill" aria-hidden="true"></i>
         Publicar
       </a>
-      <button class="nav-mobile-link" id="themeToggleMobile" style="background:none;border:none;width:100%;text-align:left;cursor:pointer;">
-        <i class="bi bi-moon-stars-fill" id="themeIconMobile"></i>
+      <a href="./notificaciones.html#mi-perfil" class="nav-mobile-link" id="profileLinkMobile">
+        <i class="bi bi-person" aria-hidden="true"></i>
+        Mi Perfil
+      </a>
+      <a href="./notificaciones.html#favoritos" class="nav-mobile-link">
+        <i class="bi bi-heart" aria-hidden="true"></i>
+        Favoritos
+      </a>
+      <button class="nav-mobile-link" id="themeToggleMobile" type="button" style="background:none;border:none;width:100%;text-align:left;cursor:pointer;">
+        <i class="bi bi-moon-stars-fill" id="themeIconMobile" aria-hidden="true"></i>
         Cambiar tema
       </button>
+      <a href="./login.html" class="nav-mobile-link" id="loginLinkMobile">
+        <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
+        Iniciar Sesión
+      </a>
+      <a href="#" class="nav-mobile-link text-danger" id="logoutBtnMobile" style="display:none;">
+        <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+        Cerrar Sesión
+      </a>
     </div>
   </div>
 </nav>
