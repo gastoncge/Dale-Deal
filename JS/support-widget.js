@@ -15,10 +15,15 @@
   'use strict';
 
   const STORAGE_KEY         = 'dd_support_widget_state';
-  const AUTO_OPEN_DELAY_MS  = 3000;   // esperar 3s después del load
+  const AUTO_OPEN_DELAY_MS  = 3000;   // esperar 3s después del load (cuando AUTO_OPEN_ENABLED=true)
   const AUTO_CLOSE_DELAY_MS = 20000;  // si el usuario no interactúa, se cierra solo
   const REMIND_AFTER_DAYS   = 7;
-  const DEBUG               = true;   // logs a consola
+  // Auto-abrir el tooltip a los 3s de cargar la página se sentía "amateur" —
+  // tapaba contenido en cada primera visita sin que el usuario lo pidiera.
+  // Plataformas pro (Stripe, Linear, Notion) NUNCA interrumpen así.
+  // El botón flotante sigue visible y clickeable, solo no se abre solo.
+  const AUTO_OPEN_ENABLED   = false;
+  const DEBUG               = false;  // logs en prod desactivados
   const log = (...a) => DEBUG && console.log('[dd-support]', ...a);
 
   const isHtmlSubdir = window.location.pathname.includes('/HTML/');
@@ -44,6 +49,7 @@
   }
 
   function shouldAutoOpen() {
+    if (!AUTO_OPEN_ENABLED) return false;
     const s = getState();
     if (s.hasOpenedEver) return false;
     if (s.dismissedAt) {
@@ -86,9 +92,13 @@
     .dd-support-pulse::after { content:''; position:absolute; inset:-6px; border-radius:50%; border:2px solid rgba(229,62,62,0.5); animation: dd-pulse 1.8s ease-out infinite; pointer-events:none; }
     @keyframes dd-pulse { 0% { transform: scale(1); opacity: .8; } 100% { transform: scale(1.4); opacity: 0; } }
 
-    .dd-support-tooltip { position: absolute; bottom: 72px; right: 0; background: #fff; color: #1f2937; border-radius: 14px; padding: 14px 44px 14px 16px; box-shadow: 0 12px 30px rgba(0,0,0,0.15); max-width: 280px; font-size: 14px; font-weight: 500; opacity: 0; transform: translateY(8px); pointer-events: none; transition: all .25s ease; }
+    /* visibility: hidden además de opacity 0 — defense-in-depth: algunas reglas
+     * globales (lazy fade-in, AOS, etc.) pueden re-aplicar opacity:1 sin querer.
+     * visibility no se ve afectada por esas reglas, así que el tooltip queda
+     * oculto hasta que se le agrega explícitamente la clase .show. */
+    .dd-support-tooltip { position: absolute; bottom: 72px; right: 0; background: #fff; color: #1f2937; border-radius: 14px; padding: 14px 44px 14px 16px; box-shadow: 0 12px 30px rgba(0,0,0,0.15); max-width: 280px; font-size: 14px; font-weight: 500; opacity: 0; visibility: hidden; transform: translateY(8px); pointer-events: none; transition: opacity .25s ease, transform .25s ease, visibility .25s; }
     .dd-support-tooltip::after { content: ''; position: absolute; bottom: -6px; right: 22px; width: 12px; height: 12px; background: #fff; transform: rotate(45deg); box-shadow: 3px 3px 6px rgba(0,0,0,0.04); }
-    .dd-support-tooltip.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .dd-support-tooltip.show { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; }
     .dd-support-tooltip-x { position: absolute; top: 6px; right: 8px; background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 14px; padding: 4px; line-height: 1; border-radius: 50%; width: 22px; height: 22px; display:flex; align-items:center; justify-content:center; }
     .dd-support-tooltip-x:hover { color: #e53e3e; background: #fef2f2; }
 

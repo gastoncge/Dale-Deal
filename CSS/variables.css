@@ -2,6 +2,15 @@
    DALE DEAL - Variables Globales Unificadas
    ===================================================== */
 
+/* Cargamos Inter desde Google Fonts. La variable --font-family ya la lista
+ * como primera opción, pero hasta ahora ningún HTML la cargaba realmente,
+ * así que el browser caía al fallback de sistema. Con este @import (más
+ * display=swap para que la página renderee con la fallback y reemplace
+ * cuando llegue Inter), la marca tiene tipografía propia consistente sin
+ * tocar 25 HTMLs. Trade-off: ~30ms más lento que <link rel=preconnect>,
+ * pero con display=swap no bloquea el primer paint. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 :root {
   /* ===== COLORES DE MARCA ===== */
   --primary-red: #d63031;
