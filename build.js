@@ -138,6 +138,91 @@ async function minifyCSS() {
   console.log(`✓ CSS: ${files.length} archivos · ${formatBytes(origTotal)} → ${formatBytes(minTotal)} (-${pct}%)`);
 }
 
+// Genera dist/CSS/core.css concatenando los 3 CSS que carga TODA página
+// (variables + components + responsive) en una sola request. Los pages/X.css
+// específicos siguen separados porque cada página carga uno distinto y no
+// vale inflar el bundle. Reduce 4 requests → 2 en el waterfall del head.
+async function bundleCoreCss() {
+  const order = ['CSS/variables.css', 'CSS/components.css', 'CSS/responsive.css'];
+  const chunks = [];
+  for (const rel of order) {
+    const f = path.join(ROOT, rel);
+    if (!fs.existsSync(f)) {
+      console.error(`✗ Falta ${rel} para el bundle de core`);
+      return;
+    }
+    chunks.push(`/* ${rel} */\n${fs.readFileSync(f, 'utf8')}\n`);
+  }
+  const combined = chunks.join('\n');
+  let bundled;
+  try {
+    const result = await esbuild.transform(combined, { loader: 'css', minify: true });
+    bundled = result.code;
+  } catch (err) {
+    console.error('✗ Error bundling core.css:', err.message);
+    bundled = combined;
+  }
+  const out = path.join(DIST, 'CSS', 'core.css');
+  ensureDir(path.dirname(out));
+  fs.writeFileSync(out, bundled);
+  console.log(`✓ CSS bundle: core.css (variables+components+responsive) → ${formatBytes(bundled.length)}`);
+}
+
+// Reescribe los <link> de los 3 CSS internos a un único <link> a core.css
+// en TODOS los HTMLs de dist/. Solo afecta dist/, los archivos source quedan
+// intactos para que el dev local siga funcionando sin build.
+function rewriteHtmlLinksToBundle() {
+  const htmls = [];
+  // HTMLs en raíz
+  for (const entry of fs.readdirSync(DIST, { withFileTypes: true })) {
+    if (entry.isFile() && entry.name.endsWith('.html')) {
+      htmls.push(path.join(DIST, entry.name));
+    }
+  }
+  // HTMLs en dist/HTML/
+  const htmlDir = path.join(DIST, 'HTML');
+  if (fs.existsSync(htmlDir)) {
+    for (const entry of fs.readdirSync(htmlDir, { withFileTypes: true })) {
+      if (entry.isFile() && entry.name.endsWith('.html')) {
+        htmls.push(path.join(htmlDir, entry.name));
+      }
+    }
+  }
+
+  // Patrones a matchear (con cualquier path relativo: ./CSS/ o ../CSS/)
+  // El bundle reemplaza los 3 — el primer match define dónde queda el bundle,
+  // los otros 2 se borran.
+  let rewritten = 0;
+  for (const fp of htmls) {
+    let content = fs.readFileSync(fp, 'utf8');
+    const orig = content;
+
+    // Detectar prefijo (./CSS/ desde raíz, ../CSS/ desde HTML/)
+    const fromRoot = path.relative(DIST, fp).indexOf(path.sep) === -1;
+    const cssPrefix = fromRoot ? './CSS' : '../CSS';
+
+    const reVariables  = new RegExp(`\\s*<link\\s+rel="stylesheet"\\s+href="${cssPrefix.replace('.','\\.')}/variables\\.css"\\s*/?>\\s*`, 'g');
+    const reComponents = new RegExp(`\\s*<link\\s+rel="stylesheet"\\s+href="${cssPrefix.replace('.','\\.')}/components\\.css"\\s*/?>\\s*`, 'g');
+    const reResponsive = new RegExp(`\\s*<link\\s+rel="stylesheet"\\s+href="${cssPrefix.replace('.','\\.')}/responsive\\.css"\\s*/?>\\s*`, 'g');
+
+    // ¿Tiene los 3? Si no, skipear (algunas páginas internas no usan todos)
+    if (!reVariables.test(content) || !reComponents.test(content) || !reResponsive.test(content)) continue;
+    // Resetear lastIndex porque .test() los mueve
+    reVariables.lastIndex = 0; reComponents.lastIndex = 0; reResponsive.lastIndex = 0;
+
+    // Reemplazar el primero (variables) por el bundle; borrar los otros 2.
+    content = content.replace(reVariables, `\n    <link rel="stylesheet" href="${cssPrefix}/core.css" />\n    `);
+    content = content.replace(reComponents, '');
+    content = content.replace(reResponsive, '');
+
+    if (content !== orig) {
+      fs.writeFileSync(fp, content);
+      rewritten++;
+    }
+  }
+  console.log(`✓ HTMLs reescritos para usar core.css: ${rewritten}`);
+}
+
 function copyHTMLsAndAssets() {
   // HTMLs: copia HTML/ y los .html de la raíz tal cual
   copyTree(path.join(ROOT, 'HTML'), path.join(DIST, 'HTML'));
@@ -167,7 +252,9 @@ async function build() {
 
   await minifyJS();
   await minifyCSS();
+  await bundleCoreCss();          // genera dist/CSS/core.css
   copyHTMLsAndAssets();
+  rewriteHtmlLinksToBundle();     // reemplaza 3 links → 1 link a core.css en dist/
 
   console.log(`✓ Build completo en ${Date.now() - start}ms — output: dist/`);
 }
