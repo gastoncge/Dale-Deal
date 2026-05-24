@@ -168,6 +168,54 @@ async function bundleCoreCss() {
   console.log(`✓ CSS bundle: core.css (variables+components+responsive) → ${formatBytes(bundled.length)}`);
 }
 
+// Envuelve TODAS las imágenes <img src="https://images.unsplash.com/..."> de los
+// HTMLs de dist/ en un <picture> con sources para AVIF y WebP. Unsplash sirve
+// el formato pedido via ?fm=avif|webp. El browser elige el mejor que soporte:
+// AVIF (Chrome/Edge/Safari recientes, -50% bytes), WebP (todo lo demás, -30%),
+// o fallback al JPG original. Sin esto cada visita baja ~30-50% más bytes.
+//
+// Idempotencia: skipea <img> que ya están dentro de <picture> chequeando que
+// los 30 chars previos no contengan "<source". Las imágenes con loading="lazy"
+// se mantienen tal cual (el lazy aplica al <img> dentro del <picture>).
+function wrapUnsplashImagesWithPicture(dir) {
+  const htmls = [];
+  const walk = (d) => {
+    for (const entry of fs.readdirSync(d, { withFileTypes: true })) {
+      const p = path.join(d, entry.name);
+      if (entry.isDirectory()) walk(p);
+      else if (entry.name.endsWith('.html')) htmls.push(p);
+    }
+  };
+  walk(dir);
+
+  // Matchea <img ... src="https://images.unsplash.com/..." ... /> (self-closing o no)
+  const imgRe = /<img\b[^>]*\bsrc="(https:\/\/images\.unsplash\.com\/[^"]+)"[^>]*\/?>/g;
+
+  let wrapped = 0;
+  for (const fp of htmls) {
+    let content = fs.readFileSync(fp, 'utf8');
+    const orig = content;
+
+    content = content.replace(imgRe, (match, src, offset) => {
+      // Skipear si ya está dentro de <picture> (los 60 chars previos contienen <source o <picture)
+      const before = content.substring(Math.max(0, offset - 60), offset);
+      if (before.includes('<source') || before.includes('<picture')) return match;
+
+      // Construir URLs avif y webp añadiendo &fm=avif|webp al query string.
+      // Las URLs de Unsplash siempre tienen ? (vienen con w=&h=&fit=crop).
+      const avifUrl = src.includes('?') ? `${src}&fm=avif` : `${src}?fm=avif`;
+      const webpUrl = src.includes('?') ? `${src}&fm=webp` : `${src}?fm=webp`;
+      return `<picture><source srcset="${avifUrl}" type="image/avif"><source srcset="${webpUrl}" type="image/webp">${match}</picture>`;
+    });
+
+    if (content !== orig) {
+      fs.writeFileSync(fp, content);
+      wrapped++;
+    }
+  }
+  console.log(`✓ Imágenes Unsplash wrapped en <picture>: ${wrapped} archivos`);
+}
+
 // Reescribe los <link> de los 3 CSS internos a un único <link> a core.css
 // en TODOS los HTMLs de dist/. Solo afecta dist/, los archivos source quedan
 // intactos para que el dev local siga funcionando sin build.
@@ -255,6 +303,7 @@ async function build() {
   await bundleCoreCss();          // genera dist/CSS/core.css
   copyHTMLsAndAssets();
   rewriteHtmlLinksToBundle();     // reemplaza 3 links → 1 link a core.css en dist/
+  wrapUnsplashImagesWithPicture(DIST); // <img Unsplash> → <picture> con avif/webp
 
   console.log(`✓ Build completo en ${Date.now() - start}ms — output: dist/`);
 }
