@@ -170,6 +170,46 @@ async function bundleCoreCss() {
   console.log(`✓ CSS bundle: core.css (variables+components+responsive) → ${formatBytes(bundled.length)}`);
 }
 
+// Inlinea el contenido de core.css dentro del <head> de index.html (la home).
+// Trade-off pensado: la home gana ~25KB en el HTML (gzipped) a cambio de
+// eliminar 1 request render-blocking (1.35s en lighthouse local sin gzip).
+// El otro HTML link a core.css se borra para no cargarlo dos veces.
+//
+// Solo aplica a index.html porque es la página que mide Lighthouse y la que
+// tiene mayor probabilidad de ser primera visita (cache cold). Las páginas
+// internas mantienen el <link rel="stylesheet" href="./CSS/core.css"/> para
+// aprovechar cache del browser entre navegaciones.
+function inlineCriticalCssInHome() {
+  const indexFp  = path.join(DIST, 'index.html');
+  const coreFp   = path.join(DIST, 'CSS', 'core.css');
+  if (!fs.existsSync(indexFp) || !fs.existsSync(coreFp)) {
+    console.error('✗ No encontré dist/index.html o dist/CSS/core.css');
+    return;
+  }
+  const coreCss = fs.readFileSync(coreFp, 'utf8');
+  let html = fs.readFileSync(indexFp, 'utf8');
+  // Si por error se corre dos veces, no inlinear de nuevo
+  if (html.includes('<style data-bundle="core.css">')) {
+    console.log('= index.html ya tiene core.css inline (skip)');
+    return;
+  }
+  // Las URLs relativas dentro del CSS (../IMG/fonts/...) están escritas
+  // asumiendo que el CSS está en /CSS/. Al inlinear en index.html (que vive
+  // en raíz), las URLs ../IMG/fonts/X se resolverían a /IMG/fonts/X — mal,
+  // porque debería ser ./IMG/fonts/X. Fix: reemplazar ../IMG/ → ./IMG/
+  const coreFixed = coreCss.replace(/\.\.\/IMG\//g, './IMG/');
+
+  // Reemplazar el <link> a core.css por <style>...</style>
+  const linkRe = /<link\s+rel="stylesheet"\s+href="\.\/CSS\/core\.css"\s*\/?>/;
+  if (!linkRe.test(html)) {
+    console.log('= index.html no tiene <link> a core.css (skip inline)');
+    return;
+  }
+  html = html.replace(linkRe, `<style data-bundle="core.css">${coreFixed}</style>`);
+  fs.writeFileSync(indexFp, html);
+  console.log(`✓ core.css inlined en index.html (${formatBytes(coreFixed.length)})`);
+}
+
 // Envuelve TODAS las imágenes <img src="https://images.unsplash.com/..."> de los
 // HTMLs de dist/ en un <picture> con sources para AVIF y WebP. Unsplash sirve
 // el formato pedido via ?fm=avif|webp. El browser elige el mejor que soporte:
@@ -305,6 +345,9 @@ async function build() {
   await bundleCoreCss();          // genera dist/CSS/core.css
   copyHTMLsAndAssets();
   rewriteHtmlLinksToBundle();     // reemplaza 3 links → 1 link a core.css en dist/
+  // NOTA: inlineCriticalCssInHome() probado y deshabilitado — en local sin gzip
+  // hace el HTML 3x más grande y empeora FCP. En producción con gzip+HTTP/2
+  // sería ganancia (1 request menos). Reactivar si se valida en deploy real.
   wrapUnsplashImagesWithPicture(DIST); // <img Unsplash> → <picture> con avif/webp
 
   console.log(`✓ Build completo en ${Date.now() - start}ms — output: dist/`);
