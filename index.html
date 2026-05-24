@@ -43,10 +43,7 @@
          load. Aplicable a CDNs que efectivamente cargamos abajo. -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link rel="preconnect" href="https://unpkg.com" crossorigin />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <!-- Bootstrap CSS — sí es render-blocking porque define el grid/layout.
+<!-- Bootstrap CSS — sí es render-blocking porque define el grid/layout.
          No se puede async sin causar FOUC visible. -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous"
@@ -72,15 +69,7 @@
       media="print" onload="this.media='all'; this.onload=null;"
     />
     <noscript><link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" integrity="sha384-/rJKQnzOkEo+daG0jMjU1IwwY9unxt1NBw3Ef2fmOJ3PW/TfAg2KXVoWwMZQZtw9" crossorigin="anonymous" /></noscript>
-
-    <!-- Google Fonts — Inter (body) + Space Grotesk (display) en UN solo
-         request (antes había dos: uno acá y otro vía @import en variables.css
-         que encadenaba la descarga). Mantenemos blocking porque async
-         causaba CLS=1 (el texto reflowea cuando llegan las fuentes).
-         Con preconnect arriba el blocking real es ~200-300ms en producción. -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" />
-
-    <!-- Custom CSS -->
+<!-- Custom CSS -->
     <link rel="stylesheet" href="./CSS/variables.css" />
     <link rel="stylesheet" href="./CSS/components.css" />
     <link rel="stylesheet" href="./CSS/pages/home.css" />
@@ -350,7 +339,6 @@
           <div class="section-header text-center mb-5">
             <h2 class="section-title">Servicios <span class="accent">destacados</span></h2>
           </div>
-
 
           <div class="services-grid" id="servicesGrid">
             <!-- Servicio 1 - Instalación Técnica -->

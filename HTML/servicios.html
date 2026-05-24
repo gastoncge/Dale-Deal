@@ -23,19 +23,7 @@
     <!-- Preconnect a CDNs externos: warmea conexiones DNS+TCP+TLS en paralelo al parse del HTML, ahorra 100-300ms. -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link rel="preconnect" href="https://unpkg.com" crossorigin />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Google Fonts: Inter (body) + Space Grotesk (display) consolidados
-         en una sola request, non-blocking. Antes el @import en variables.css
-         encadenaba la descarga y bloqueaba render. -->
-    <!-- Google Fonts blocking — necesario para evitar CLS. Con preconnect
-         arriba el blocking time es ~200-300ms en producción (vs 1s+ del
-         @import en CSS). Async causaba reflow del texto cuando llegaban
-         las fuentes, penalizando Cumulative Layout Shift. -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" />
-
-
-    <!-- Bootstrap CSS -->
+<!-- Bootstrap CSS -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous"
       rel="stylesheet"
@@ -3560,7 +3548,6 @@
             `<span class="${getBadgeClass(badge)}">${esc(badge)}</span>`
           ).join('');
           const badgesHTML = badgeSpans ? `<div class="service-badges">${badgeSpans}</div>` : '';
-
 
           const shortDesc = service.description
             ? (service.description.length > 80 ? service.description.substring(0, 80) + '...' : service.description)

@@ -143,7 +143,9 @@ async function minifyCSS() {
 // específicos siguen separados porque cada página carga uno distinto y no
 // vale inflar el bundle. Reduce 4 requests → 2 en el waterfall del head.
 async function bundleCoreCss() {
-  const order = ['CSS/variables.css', 'CSS/components.css', 'CSS/responsive.css'];
+  // fonts.css va PRIMERO para que los @font-face existan antes de que
+  // cualquier regla los referencie en --font-family.
+  const order = ['CSS/fonts.css', 'CSS/variables.css', 'CSS/components.css', 'CSS/responsive.css'];
   const chunks = [];
   for (const rel of order) {
     const f = path.join(ROOT, rel);
