@@ -1206,15 +1206,21 @@ textarea.form-control {
 .indicator,
 .carousel-indicators .indicator,
 .carousel-indicators button {
-  width: 8px !important;
-  height: 8px !important;
-  border-radius: 50% !important;
+  /* WCAG 2.5.5 pide mínimo 24x24px de touch target. El visual del
+   * indicator sigue siendo 8x8 (el dot rojo) gracias a background-clip:
+   * content-box + padding de 8px que rodea el dot con área transparente
+   * pero clickeable. Total real: 24x24px. */
+  width: 24px !important;
+  height: 24px !important;
+  padding: 8px !important;
+  box-sizing: border-box !important;
   background: rgba(255, 255, 255, 0.6) !important;
+  background-clip: content-box !important;
+  border-radius: 50% !important;
   cursor: pointer !important;
   transition: all 0.3s ease !important;
   border: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
+  margin: 0 4px !important; /* sin esto, el padding-area de un indicator pisa al vecino */
   flex-shrink: 0 !important;
   opacity: 1 !important;
 }

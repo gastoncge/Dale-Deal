@@ -92,10 +92,10 @@
       <section class="hero-carousel-section">
         <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
           <div class="carousel-indicators">
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="3"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" aria-label="Ir al slide 1" class="active"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Ir al slide 2"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Ir al slide 3"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="3" aria-label="Ir al slide 4"></button>
           </div>
           
           <div class="carousel-inner">
@@ -286,13 +286,16 @@
             </div>
           </div>
 
-          <!-- Controles del carrusel -->
-          <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
+          <!-- Controles del carrusel.
+               aria-label en el button (no solo el visually-hidden span)
+               porque axe-core no siempre detecta el span como accessible
+               name cuando el button tiene icon spans. -->
+          <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev" aria-label="Slide anterior">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Anterior</span>
           </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon"></span>
+          <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next" aria-label="Slide siguiente">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Siguiente</span>
           </button>
         </div>
@@ -992,7 +995,7 @@
             <!-- Mi Centro + Plataforma -->
             <div class="col-lg-4 col-md-12 mb-4">
               <div class="footer-section">
-                <h5 class="footer-title">Mi Centro</h5>
+                <h3 class="footer-title">Mi Centro</h3>
                 <div class="row">
                   <div class="col-6">
                     <ul class="footer-links">
@@ -1020,7 +1023,7 @@
             <!-- Categories -->
             <div class="col-lg-2 col-md-6 mb-4">
               <div class="footer-section">
-                <h5 class="footer-title">Categorías</h5>
+                <h3 class="footer-title">Categorías</h3>
                 <ul class="footer-links">
                   <li><a href="./HTML/productos.html">Productos</a></li>
                   <li><a href="./HTML/servicios.html">Servicios</a></li>
@@ -1031,7 +1034,7 @@
             <!-- Contact & Download -->
             <div class="col-lg-2 col-md-6 mb-4">
               <div class="footer-section">
-                <h5 class="footer-title">Contacto</h5>
+                <h3 class="footer-title">Contacto</h3>
                 <div class="footer-contact">
                   <div class="contact-item">
                     <i class="bi bi-telephone"></i>
@@ -1068,10 +1071,10 @@
           <div class="footer-newsletter">
             <div class="row align-items-center">
               <div class="col-md-6">
-                <h5 class="newsletter-title">
+                <h3 class="newsletter-title">
                   <i class="bi bi-bell me-2"></i>
                   Mantente actualizado
-                </h5>
+                </h3>
                 <p class="newsletter-subtitle">Recibe las mejores ofertas y novedades de Dale Deal</p>
               </div>
               <div class="col-md-6">
@@ -1084,8 +1087,8 @@
                       id="footerNewsletterEmail"
                       required
                     >
-                    <button class="btn btn-primary newsletter-btn" type="submit">
-                      <i class="bi bi-arrow-right"></i>
+                    <button class="btn btn-primary newsletter-btn" type="submit" aria-label="Suscribirme al newsletter">
+                      <i class="bi bi-arrow-right" aria-hidden="true"></i>
                     </button>
                   </div>
                 </form>

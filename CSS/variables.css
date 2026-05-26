@@ -19,6 +19,16 @@
  */
 
 :root {
+  /* ===== OVERRIDE de Bootstrap primary → rojo de marca =====
+   * Sin esto, .text-primary y los links heredan el azul default
+   * de Bootstrap (#0d6efd). El rojo de marca sobre blanco da
+   * contraste 5.5:1, cumple WCAG AA con margen. */
+  --bs-primary: #d63031;
+  --bs-primary-rgb: 214, 48, 49;
+  --bs-link-color: #d63031;
+  --bs-link-color-rgb: 214, 48, 49;
+  --bs-link-hover-color: #c0392b;
+
   /* ===== COLORES DE MARCA ===== */
   --primary-red: #d63031;
   --primary-red-hover: #c0392b;
@@ -387,4 +397,39 @@ h4, h5, h6, .h4, .h5, .h6 {
   font-weight: 600;
   line-height: 1.3;
   letter-spacing: -0.01em;
+}
+
+/* ============================================================
+ * BOOTSTRAP COMPONENT OVERRIDES — variables hardcodeadas
+ * ============================================================
+ * Bootstrap 5.3 define las variables de cada componente DENTRO
+ * de la regla del componente, hardcodeando #0d6efd en lugar de
+ * usar var(--bs-primary). Por eso el override de :root no alcanza
+ * para .btn-outline-primary, .btn-primary, etc. Hay que pisar las
+ * variables específicas del componente.
+ *
+ * También arregla contraste: #0d6efd sobre #f8fafc (--gray-50)
+ * da 4.3:1 (NO pasa WCAG AA 4.5:1). #d63031 da 5.5:1 (PASA).
+ */
+.btn-outline-primary {
+  --bs-btn-color: #d63031;
+  --bs-btn-border-color: #d63031;
+  --bs-btn-hover-bg: #d63031;
+  --bs-btn-hover-border-color: #d63031;
+  --bs-btn-active-bg: #d63031;
+  --bs-btn-active-border-color: #d63031;
+  --bs-btn-disabled-color: #d63031;
+  --bs-btn-disabled-border-color: #d63031;
+  --bs-btn-focus-shadow-rgb: 214, 48, 49;
+}
+.btn-primary {
+  --bs-btn-bg: #d63031;
+  --bs-btn-border-color: #d63031;
+  --bs-btn-hover-bg: #c0392b;
+  --bs-btn-hover-border-color: #c0392b;
+  --bs-btn-active-bg: #b91c1c;
+  --bs-btn-active-border-color: #b91c1c;
+  --bs-btn-disabled-bg: #d63031;
+  --bs-btn-disabled-border-color: #d63031;
+  --bs-btn-focus-shadow-rgb: 214, 48, 49;
 }

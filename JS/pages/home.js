@@ -108,11 +108,11 @@ function renderProductCard(product) {
         `).join('')}
 
         <!-- Controles de navegación -->
-        <button class="carousel-control carousel-prev" data-direction="prev">
-          <i class="bi bi-chevron-left"></i>
+        <button class="carousel-control carousel-prev" data-direction="prev" aria-label="Categoría anterior">
+          <i class="bi bi-chevron-left" aria-hidden="true"></i>
         </button>
-        <button class="carousel-control carousel-next" data-direction="next">
-          <i class="bi bi-chevron-right"></i>
+        <button class="carousel-control carousel-next" data-direction="next" aria-label="Categoría siguiente">
+          <i class="bi bi-chevron-right" aria-hidden="true"></i>
         </button>
 
         <!-- Indicadores -->

@@ -278,13 +278,20 @@
 }
 
 #heroCarousel .carousel-indicators button {
-  width: 12px !important;
-  height: 12px !important;
+  /* WCAG 2.5.5 estricto: el TARGET clickeable debe ser >=24x24 incluyendo
+   * lo VISIBLE (no solo el área que acepta click). Así que hacemos el dot
+   * realmente 16x16 (era 8x8) con 4px de padding visible (transparencia
+   * sobre el slide) llegando a 24x24 totales. Un poco más grande pero
+   * compliance total. */
+  width: 24px !important;
+  height: 24px !important;
+  padding: 4px !important;
+  box-sizing: border-box !important;
   border-radius: 50% !important;
   border: none !important;
   background: rgba(255, 255, 255, 0.45) !important;
-  margin: 0 !important;
-  padding: 0 !important;
+  background-clip: content-box !important;
+  margin: 0 2px !important;
   transition: all var(--transition-base) !important;
   flex-shrink: 0 !important;
   box-shadow: none !important;
@@ -527,8 +534,11 @@
   }
 
   #heroCarousel .carousel-indicators button {
-    width: 10px !important;
-    height: 10px !important;
+    /* Mobile: mantener WCAG 2.5.5 (24x24 target). El visual del dot
+     * es 14x14 (era 10x10) gracias a padding 5px + background-clip. */
+    width: 24px !important;
+    height: 24px !important;
+    padding: 5px !important;
   }
 }
 
