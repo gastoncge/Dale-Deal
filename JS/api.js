@@ -17,8 +17,9 @@ function getApiUrl() {
   if (host === 'localhost' || host === '127.0.0.1' || host === '') {
     return 'http://localhost:3000';
   }
-  // ⬇⬇⬇  EDITAR cuando deployes el backend ⬇⬇⬇
-  return 'https://daledeal-backend.up.railway.app';
+  // Backend en Railway (producción).
+  // Cambiar a https://api.daledeal.com.ar cuando configures el CNAME en Cloudflare.
+  return 'https://daledeal-backend-production.up.railway.app';
 }
 const API_URL = null; // legacy — no usar directamente
 
