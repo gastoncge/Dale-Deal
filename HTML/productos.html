@@ -2971,12 +2971,13 @@
     </style>
 
     <script>
-      // Initialize AOS
-      AOS.init({
-        duration: 800,
-        easing: "ease-out-cubic",
-        once: true,
-        offset: 50,
+      // Esperar a que AOS esté cargado (defer scripts no garantizan que el
+      // script externo termine antes que este inline). DOMContentLoaded sí
+      // espera por todos los defer.
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.AOS) {
+          AOS.init({ duration: 800, easing: "ease-out-cubic", once: true, offset: 50 });
+        }
       });
 
       // Newsletter form handler

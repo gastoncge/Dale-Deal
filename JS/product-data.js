@@ -417,6 +417,22 @@ async function syncProductsFromAPI() {
     });
     window.PRODUCTS_DATA = PRODUCTS_DATA;
     DaleDeal.log(`✅ product-data.js sincronizado: ${products.length} productos de la API`);
+
+    // Actualizar UI: el contador "Cargando productos..." del header se quedaba
+    // pegado porque syncProductsFromAPI no avisaba a la página. Trigger
+    // re-render si está disponible algún loader/filtro que conoce los nuevos.
+    if (window.ProductsPageLoader?.loadProducts) {
+      try { await window.ProductsPageLoader.loadProducts(); } catch (_) {}
+    }
+    if (window.productFilters?.renderProducts) {
+      try { window.productFilters.renderProducts(); } catch (_) {}
+    }
+    // Update directo del contador como red de seguridad (si nadie más lo hizo).
+    const resultsCount = document.getElementById('resultsCount');
+    if (resultsCount && resultsCount.textContent.includes('Cargando')) {
+      const n = products.length;
+      resultsCount.textContent = `${n} producto${n !== 1 ? 's' : ''} encontrado${n !== 1 ? 's' : ''}`;
+    }
   } catch (err) {
     DaleDeal.warn('No se pudo sincronizar con la API, usando datos locales como fallback.', err.message);
   }
