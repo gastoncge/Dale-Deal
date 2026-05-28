@@ -1423,15 +1423,19 @@
     <script src="../JS/component-loader.js" defer></script>
     <script src="../JS/support-widget.js" defer></script>
     <script>
-      AOS.init({ duration: 400, once: true });
-      // Activar tab según parámetro URL (?tab=producto o ?tab=servicio)
-      (function() {
+      // Esperar DOMContentLoaded porque AOS está cargado con `defer` y no
+      // existe aún en el momento que se parsea este script inline.
+      document.addEventListener('DOMContentLoaded', function() {
+        if (typeof AOS !== 'undefined') {
+          AOS.init({ duration: 400, once: true });
+        }
+        // Activar tab según parámetro URL (?tab=producto o ?tab=servicio)
         const tab = new URLSearchParams(window.location.search).get('tab');
         if (tab) {
           const btn = document.getElementById('tab-' + tab);
           if (btn) btn.click();
         }
-      })();
+      });
     </script>
   </body>
 </html>

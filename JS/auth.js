@@ -770,9 +770,10 @@ class AuthManager {
         e.target.matches(".auth-social-btn.google, .auth-social-btn.google *")
       ) {
         e.preventDefault();
-        this.showNotification("Login con Google no disponible en demo", "info");
+        this.handleGoogleLogin();
       }
 
+      // Facebook sigue stub — no hay app aprobada todavía
       if (
         e.target.matches(
           ".auth-social-btn.facebook, .auth-social-btn.facebook *"
@@ -780,11 +781,101 @@ class AuthManager {
       ) {
         e.preventDefault();
         this.showNotification(
-          "Login con Facebook no disponible en demo",
+          "Login con Facebook próximamente",
           "info"
         );
       }
     });
+  }
+
+  // Inicia el flujo de Google Sign-In con popup.
+  // Requisitos:
+  //   1. <script src="https://accounts.google.com/gsi/client"> cargado en el HTML
+  //   2. DaleDeal.CONFIG.GOOGLE_CLIENT_ID seteado al Client ID de Google Cloud
+  //   3. Backend con POST /auth/google que verifica el ID token y devuelve JWT
+  handleGoogleLogin() {
+    const clientId = window.DaleDeal?.CONFIG?.GOOGLE_CLIENT_ID;
+
+    // Sin client ID → mostrar mensaje honesto en vez de fallar feo
+    if (!clientId) {
+      this.showNotification(
+        "Login con Google próximamente — falta configuración del servidor",
+        "info"
+      );
+      return;
+    }
+
+    // Esperar a que la librería de Google esté lista (load async)
+    if (!window.google?.accounts?.id) {
+      this.showNotification("Cargando Google… intentá de nuevo en unos segundos", "info");
+      return;
+    }
+
+    try {
+      window.google.accounts.id.initialize({
+        client_id: clientId,
+        callback: (response) => this.handleGoogleCredential(response),
+        ux_mode: "popup",
+      });
+      window.google.accounts.id.prompt();
+    } catch (err) {
+      console.error("[auth] Google init falló:", err);
+      this.showNotification("No se pudo iniciar sesión con Google", "error");
+    }
+  }
+
+  // Callback que recibe el ID token de Google y lo manda al backend.
+  // El backend lo verifica con google-auth-library, crea el user si no existe,
+  // y devuelve nuestro JWT + user data (mismo shape que /auth/login).
+  async handleGoogleCredential(response) {
+    if (!response?.credential) {
+      this.showNotification("Google no devolvió credenciales", "error");
+      return;
+    }
+
+    try {
+      const base = window.DaleDeal?.CONFIG?.API_BASE_URL || "";
+      const res = await fetch(`${base}/auth/google`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credential: response.credential }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data?.error || "Error al autenticar con Google");
+      }
+
+      // Mismo flow que login()/register() — guardar token y user en localStorage
+      localStorage.setItem('daledeal_token', data.token);
+
+      const user = {
+        id: data.user.id,
+        email: data.user.email,
+        name: data.user.name,
+        avatar: data.user.avatar_url || this.generateAvatarUrl(),
+        phone: data.user.phone,
+        location: data.user.location,
+        loginTime: new Date().toISOString(),
+        provider: 'google',
+      };
+
+      this.currentUser = user;
+      localStorage.setItem(this.storageKey, JSON.stringify(user));
+
+      this.updateUI();
+      this.showNotification("¡Bienvenido! Redirigiendo...", "success");
+
+      // Redirigir a home (mismo flow que login normal)
+      setTimeout(() => {
+        const inHtmlFolder = window.location.pathname.includes('/HTML/');
+        window.location.href = inHtmlFolder ? '../index.html' : './index.html';
+      }, 1000);
+    } catch (err) {
+      console.error("[auth] Google callback falló:", err);
+      this.showNotification(err.message || "No se pudo completar el login con Google", "error");
+    }
   }
 }
 
@@ -800,13 +891,17 @@ function initializeAuth() {
   // puedan llamar a updateUI() después de inyectar el header.
   window.authManager = authManager;
 
-  // Setup específico según la página
+  // Setup específico según la página.
+  // Cloudflare Pages sirve URLs limpias (sin .html), así que matcheamos
+  // ambas variantes: /HTML/login y /HTML/login.html
   const currentPage = window.location.pathname;
+  const isLogin = /\/login(\.html)?$/.test(currentPage);
+  const isSignup = /\/signup(\.html)?$/.test(currentPage);
 
-  if (currentPage.includes("login.html")) {
+  if (isLogin) {
     authManager.setupLoginForm();
     authManager.setupSocialLogin();
-  } else if (currentPage.includes("signup.html")) {
+  } else if (isSignup) {
     authManager.setupSignupForm();
     authManager.setupSocialLogin();
   }

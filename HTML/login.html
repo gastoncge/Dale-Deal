@@ -40,6 +40,10 @@
     <link rel="stylesheet" href="../CSS/components.css" />
     <link rel="stylesheet" href="../CSS/pages/auth.css" />
     <link rel="stylesheet" href="../CSS/responsive.css" />
+
+    <!-- Google Identity Services (One Tap + popup flow para Sign in with Google).
+         Async para no bloquear el render; auth.js detecta cuando está cargada. -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
   </head>
 
   <body>

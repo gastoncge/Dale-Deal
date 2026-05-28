@@ -628,8 +628,9 @@ class FavoritesManager {
   }
 
   // Ir al inicio
+  // Cloudflare strippea .html, así que matcheamos producto y producto.html
   goToHome() {
-    if (window.location.pathname.includes('producto.html')) {
+    if (/\/producto(\.html)?$/.test(window.location.pathname)) {
       window.location.href = '../index.html';
     } else {
       // Ya estamos en el inicio, solo cerrar el modal y hacer scroll a productos

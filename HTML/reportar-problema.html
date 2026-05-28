@@ -218,7 +218,7 @@
     <script defer src="../JS/dropdown-fix.js"></script>
     <script src="../JS/component-loader.js" defer></script>
     <script>
-      AOS.init({ duration: 800, once: true, offset: 100 });
+      if (typeof AOS !== 'undefined') AOS.init({ duration: 800, once: true, offset: 100 });
 
       // Selectores de tipo / gravedad — guardamos el seleccionado en data
       let selectedType = null;

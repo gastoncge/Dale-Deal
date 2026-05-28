@@ -15,6 +15,12 @@ window.DaleDeal = {
   CONFIG: {
     DEBUG: __IS_LOCAL,
     API_BASE_URL: __IS_LOCAL ? "http://localhost:3000" : "https://daledeal-backend-production.up.railway.app",
+    // Google OAuth Client ID (Web).
+    // Setear acá el ID público que sale de Google Cloud Console → OAuth 2.0
+    // (Authorized JS origins: http://localhost:8080 + https://daledeal.com.ar).
+    // Si queda vacío, los botones "Google" muestran "Próximamente" en vez de
+    // intentar abrir el popup y fallar feo.
+    GOOGLE_CLIENT_ID: "",
     PRODUCTS_PER_PAGE: 12,
     SEARCH_DELAY: 300,
     ANIMATION_DURATION: 300,

@@ -1056,8 +1056,8 @@
     </style>
 
     <script>
-      // Inicializar AOS
-      AOS.init({ duration: 800, once: true, offset: 100 });
+      // Inicializar AOS — guardar con typeof porque AOS está con `defer`
+      if (typeof AOS !== 'undefined') AOS.init({ duration: 800, once: true, offset: 100 });
 
       // ===== NAVEGACIÓN DE SECCIONES =====
       const allSections = ['notifications','mi-perfil','mensajes','mis-compras','favoritos','centro-ayuda','contacto','reportar-problema','estado-servicio','seguridad'];

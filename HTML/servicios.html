@@ -2900,8 +2900,8 @@
     </script>
 
     <script>
-      // Initialize AOS
-      AOS.init({
+      // Initialize AOS — guard porque AOS está cargado con `defer`
+      if (typeof AOS !== 'undefined') AOS.init({
         duration: 800,
         easing: "ease-out-cubic",
         once: true,

@@ -40,6 +40,10 @@
     <link rel="stylesheet" href="../CSS/components.css" />
     <link rel="stylesheet" href="../CSS/pages/auth.css" />
     <link rel="stylesheet" href="../CSS/responsive.css" />
+
+    <!-- Google Identity Services (One Tap + popup flow para Sign in with Google).
+         Async para no bloquear el render; auth.js detecta cuando está cargada. -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
   </head>
 
   <body>
@@ -371,7 +375,10 @@
     <script defer src="../JS/sentry.js"></script>
     <script defer src="../JS/api.js"></script>
     <script defer src="../JS/auth.js"></script>
-    <script defer src="../JS/pages/signup.js"></script>
+    <!-- signup.js NO existe — toda la lógica del formulario vive en auth.js
+         (setupSignupForm). Antes este <script> tiraba 404 → Cloudflare devolvía
+         el HTML del SPA fallback → el parser lo leía como JS y rompía con
+         "SyntaxError: Unexpected token '<'". -->
     <script src="../JS/component-loader.js" defer></script>
     <script>
       // Abrir modal empresa si el hash es #empresa
