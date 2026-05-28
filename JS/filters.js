@@ -940,6 +940,12 @@ style.textContent = `
 document.head.appendChild(style);
 
 // CSS adicional para filtros avanzados
+// IMPORTANTE: TODOS los selectores acá adentro deben estar scopeados con
+// .advanced-filters o .filter-modal. Antes se filtraban globalmente y
+// rompían layouts de otros componentes — el caso más visible: .section-header
+// arrancaba con display:flex y empujaba el h2 "Productos destacados" a la
+// izquierda del container en lugar de centrarlo (test-center quedaba sin
+// efecto porque flex le da ancho intrínseco al hijo block).
 const advancedFiltersStyle = document.createElement('style');
 advancedFiltersStyle.textContent = `
   .advanced-filters {
@@ -948,40 +954,40 @@ advancedFiltersStyle.textContent = `
     gap: var(--spacing-6);
   }
 
-  .filter-section {
+  .advanced-filters .filter-section {
     background: var(--gray-50);
     border-radius: var(--radius-xl);
     padding: var(--spacing-5);
     border: 1px solid var(--gray-200);
   }
 
-  .section-header {
+  .advanced-filters .section-header {
     display: flex;
     align-items: center;
     margin-bottom: var(--spacing-4);
   }
 
-  .section-header h5 {
+  .advanced-filters .section-header h5 {
     font-size: var(--font-size-lg);
     font-weight: 600;
     color: var(--gray-900);
     margin: 0;
   }
 
-  .section-header i {
+  .advanced-filters .section-header i {
     color: var(--primary-red);
     font-size: var(--font-size-lg);
   }
 
-  .filter-group {
+  .advanced-filters .filter-group {
     margin-bottom: var(--spacing-4);
   }
 
-  .filter-group:last-child {
+  .advanced-filters .filter-group:last-child {
     margin-bottom: 0;
   }
 
-  .filter-group label {
+  .advanced-filters .filter-group label {
     display: block;
     font-size: var(--font-size-sm);
     font-weight: 600;
@@ -989,17 +995,17 @@ advancedFiltersStyle.textContent = `
     margin-bottom: var(--spacing-2);
   }
 
-  .location-search-container {
+  .advanced-filters .location-search-container {
     display: flex;
     gap: var(--spacing-2);
     align-items: center;
   }
 
-  .location-search-container input {
+  .advanced-filters .location-search-container input {
     flex: 1;
   }
 
-  .location-suggestions {
+  .advanced-filters .location-suggestions {
     position: relative;
     background: var(--white);
     border: 1px solid var(--gray-200);
@@ -1011,11 +1017,11 @@ advancedFiltersStyle.textContent = `
     display: none;
   }
 
-  .location-suggestions.active {
+  .advanced-filters .location-suggestions.active {
     display: block;
   }
 
-  .location-suggestion {
+  .advanced-filters .location-suggestion {
     display: flex;
     align-items: center;
     padding: var(--spacing-3);
@@ -1024,37 +1030,38 @@ advancedFiltersStyle.textContent = `
     transition: all var(--transition-fast);
   }
 
-  .location-suggestion:last-child {
+  .advanced-filters .location-suggestion:last-child {
     border-bottom: none;
   }
 
-  .location-suggestion:hover {
+  .advanced-filters .location-suggestion:hover {
     background: var(--gray-50);
     color: var(--primary-red);
   }
 
-  .location-suggestion i {
+  .advanced-filters .location-suggestion i {
     color: var(--gray-400);
   }
 
-  .location-suggestion:hover i {
+  .advanced-filters .location-suggestion:hover i {
     color: var(--primary-red);
   }
 
-  .no-suggestions {
+  .advanced-filters .no-suggestions {
     padding: var(--spacing-4);
     text-align: center;
     color: var(--gray-500);
     font-style: italic;
   }
 
-  .delivery-options, .feature-options {
+  .advanced-filters .delivery-options,
+  .advanced-filters .feature-options {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-3);
   }
 
-  .option-checkbox {
+  .advanced-filters .option-checkbox {
     display: flex;
     align-items: center;
     cursor: pointer;
@@ -1065,7 +1072,7 @@ advancedFiltersStyle.textContent = `
     transition: color var(--transition-fast), background var(--transition-fast);
   }
 
-  .option-checkbox input[type="checkbox"] {
+  .advanced-filters .option-checkbox input[type="checkbox"] {
     position: absolute;
     opacity: 0;
     cursor: pointer;
@@ -1073,7 +1080,7 @@ advancedFiltersStyle.textContent = `
     width: 0;
   }
 
-  .checkmark {
+  .advanced-filters .checkmark {
     position: absolute;
     left: 0;
     top: 50%;
@@ -1086,22 +1093,22 @@ advancedFiltersStyle.textContent = `
     transition: all var(--transition-fast);
   }
 
-  .option-checkbox:hover {
+  .advanced-filters .option-checkbox:hover {
     color: var(--primary-red);
     background: rgba(214, 48, 49, 0.07);
     border-radius: var(--radius-md);
   }
 
-  .option-checkbox:hover .checkmark {
+  .advanced-filters .option-checkbox:hover .checkmark {
     border-color: var(--primary-red);
   }
 
-  .option-checkbox input:checked ~ .checkmark {
+  .advanced-filters .option-checkbox input:checked ~ .checkmark {
     background: var(--primary-red);
     border-color: var(--primary-red);
   }
 
-  .checkmark:after {
+  .advanced-filters .checkmark:after {
     content: "";
     position: absolute;
     display: none;
@@ -1114,40 +1121,40 @@ advancedFiltersStyle.textContent = `
     transform: rotate(45deg);
   }
 
-  .option-checkbox input:checked ~ .checkmark:after {
+  .advanced-filters .option-checkbox input:checked ~ .checkmark:after {
     display: block;
   }
 
-  .price-range-container {
+  .advanced-filters .price-range-container {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-4);
   }
 
-  .price-inputs {
+  .advanced-filters .price-inputs {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--spacing-4);
   }
 
-  .price-input-group {
+  .advanced-filters .price-input-group {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-1);
   }
 
-  .price-input-group label {
+  .advanced-filters .price-input-group label {
     font-size: var(--font-size-xs);
     color: var(--gray-600);
     margin-bottom: 0;
   }
 
-  .price-range-sliders {
+  .advanced-filters .price-range-sliders {
     position: relative;
     height: 24px;
   }
 
-  .price-range-sliders input[type="range"] {
+  .advanced-filters .price-range-sliders input[type="range"] {
     position: absolute;
     width: 100%;
     height: 6px;
@@ -1156,7 +1163,7 @@ advancedFiltersStyle.textContent = `
     pointer-events: none;
   }
 
-  .price-range-sliders input[type="range"]::-webkit-slider-thumb {
+  .advanced-filters .price-range-sliders input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     height: 20px;
     width: 20px;
@@ -1168,7 +1175,7 @@ advancedFiltersStyle.textContent = `
     box-shadow: var(--shadow-md);
   }
 
-  .price-range-sliders input[type="range"]::-moz-range-thumb {
+  .advanced-filters .price-range-sliders input[type="range"]::-moz-range-thumb {
     height: 20px;
     width: 20px;
     border-radius: 50%;
@@ -1179,7 +1186,7 @@ advancedFiltersStyle.textContent = `
     box-shadow: var(--shadow-md);
   }
 
-  .price-labels {
+  .advanced-filters .price-labels {
     display: flex;
     justify-content: space-between;
     font-size: var(--font-size-sm);
@@ -1187,13 +1194,13 @@ advancedFiltersStyle.textContent = `
     font-weight: 600;
   }
 
-  .rating-filter {
+  .advanced-filters .rating-filter {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-2);
   }
 
-  .rating-option {
+  .advanced-filters .rating-option {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1207,37 +1214,37 @@ advancedFiltersStyle.textContent = `
     color: var(--gray-700);
   }
 
-  .rating-option:hover {
+  .advanced-filters .rating-option:hover {
     border-color: var(--primary-red);
     background: rgba(214, 48, 49, 0.12);
     color: var(--primary-red);
   }
 
-  .rating-option.active {
+  .advanced-filters .rating-option.active {
     border-color: var(--primary-red);
     background: var(--primary-red);
     color: #ffffff;
   }
 
-  .rating-option .stars {
+  .advanced-filters .rating-option .stars {
     display: flex;
     gap: 2px;
   }
 
-  .rating-option .stars i {
+  .advanced-filters .rating-option .stars i {
     font-size: var(--font-size-sm);
     color: var(--primary-yellow);
   }
 
-  .rating-option:hover .stars i {
+  .advanced-filters .rating-option:hover .stars i {
     color: var(--primary-yellow);
   }
 
-  .rating-option.active .stars i {
+  .advanced-filters .rating-option.active .stars i {
     color: #ffffff;
   }
 
-  .filter-actions {
+  .advanced-filters .filter-actions {
     display: flex;
     justify-content: space-between;
     gap: var(--spacing-3);
@@ -1246,7 +1253,7 @@ advancedFiltersStyle.textContent = `
     margin-top: var(--spacing-2);
   }
 
-  .btn-clear-filters {
+  .advanced-filters .btn-clear-filters {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1257,7 +1264,7 @@ advancedFiltersStyle.textContent = `
     min-width: 120px;
   }
 
-  .btn-apply-filters {
+  .advanced-filters .btn-apply-filters {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1267,6 +1274,7 @@ advancedFiltersStyle.textContent = `
     flex: 1;
   }
 
+  /* Estos sí son selectores legítimos del modal (clases propias) */
   .filter-modal-content {
     max-width: 600px;
     max-height: 85vh;
@@ -1276,7 +1284,7 @@ advancedFiltersStyle.textContent = `
     max-height: 70vh;
   }
 
-  .spin {
+  .advanced-filters .spin {
     animation: spin 1s linear infinite;
   }
 
@@ -1286,19 +1294,19 @@ advancedFiltersStyle.textContent = `
   }
 
   @media (max-width: 768px) {
-    .price-inputs {
+    .advanced-filters .price-inputs {
       grid-template-columns: 1fr;
     }
 
-    .filter-actions {
+    .advanced-filters .filter-actions {
       grid-template-columns: 1fr;
     }
 
-    .location-search-container {
+    .advanced-filters .location-search-container {
       flex-direction: column;
     }
 
-    .location-search-container button {
+    .advanced-filters .location-search-container button {
       align-self: stretch;
     }
   }
