@@ -1,0 +1,13 @@
+name = "dale-deal"
+compatibility_date = "2025-05-27"
+
+# Custom domains — Cloudflare auto-crea el DNS record y mapea SSL.
+# IMPORTANTE: 'routes' debe ir ANTES de cualquier [tabla] (regla TOML).
+routes = [
+  { pattern = "daledeal.com.ar", custom_domain = true },
+  { pattern = "www.daledeal.com.ar", custom_domain = true }
+]
+
+[assets]
+directory = "./dist"
+not_found_handling = "single-page-application"
