@@ -278,23 +278,26 @@
 }
 
 #heroCarousel .carousel-indicators button {
-  /* WCAG 2.5.5 estricto: el TARGET clickeable debe ser >=24x24 incluyendo
-   * lo VISIBLE (no solo el área que acepta click). Así que hacemos el dot
-   * realmente 16x16 (era 8x8) con 4px de padding visible (transparencia
-   * sobre el slide) llegando a 24x24 totales. Un poco más grande pero
-   * compliance total. */
+  /* WCAG 2.5.5 compliance total:
+   * - Touch target 24x24 (mínimo WCAG)
+   * - Background translúcido en TODO el área (no solo el dot) → Lighthouse
+   *   ahora cuenta los 24x24 como "área visible clickeable", no solo los
+   *   16x16 internos. Antes con background-clip: content-box fallaba el
+   *   check porque medía el área coloreada del dot, no el button completo.
+   * - Inner dot (visual focal) lo damos con box-shadow inset blanco más
+   *   denso, así se ve como dot 16x16 dentro de un halo translúcido.
+   */
   width: 24px !important;
   height: 24px !important;
-  padding: 4px !important;
+  padding: 0 !important;
   box-sizing: border-box !important;
   border-radius: 50% !important;
   border: none !important;
-  background: rgba(255, 255, 255, 0.45) !important;
-  background-clip: content-box !important;
-  margin: 0 2px !important;
+  background: rgba(255, 255, 255, 0.25) !important;
+  box-shadow: inset 0 0 0 4px transparent, inset 0 0 0 8px rgba(255, 255, 255, 0.55) !important;
+  margin: 0 4px !important;
   transition: all var(--transition-base) !important;
   flex-shrink: 0 !important;
-  box-shadow: none !important;
 }
 
 #heroCarousel .carousel-indicators button.active {
@@ -534,11 +537,11 @@
   }
 
   #heroCarousel .carousel-indicators button {
-    /* Mobile: mantener WCAG 2.5.5 (24x24 target). El visual del dot
-     * es 14x14 (era 10x10) gracias a padding 5px + background-clip. */
+    /* Mobile: mismo 24x24 que desktop (no se puede ir más chico sin
+     * romper WCAG 2.5.5). Mantenemos el background translúcido. */
     width: 24px !important;
     height: 24px !important;
-    padding: 5px !important;
+    padding: 0 !important;
   }
 }
 
