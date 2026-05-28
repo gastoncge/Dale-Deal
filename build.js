@@ -210,6 +210,65 @@ function inlineCriticalCssInHome() {
   console.log(`✓ core.css inlined en index.html (${formatBytes(coreFixed.length)})`);
 }
 
+// Inyecta el navbar (HTML/components/header.html) directamente en cada HTML
+// reemplazando el div#navbar-placeholder. Antes el navbar se cargaba via
+// fetch async en runtime → flash visible de ~200ms al entrar a cada página
+// (la navbar aparecía vacía y después se llenaba).
+//
+// Con esto el HTML inicial ya tiene la navbar completa → cero flash.
+// El JS de component-loader.js sigue funcionando como fallback y para
+// reaplicar los path fixes / authManager.updateUI() después de hidratar.
+//
+// Footer NO se inyecta porque está al final de la página, no es above-the-fold
+// y el flash es invisible (se ve solo al hacer scroll).
+function inlineNavbarInHtmls() {
+  const headerSrc = path.join(ROOT, 'HTML', 'components', 'header.html');
+  if (!fs.existsSync(headerSrc)) {
+    console.log('= header.html no existe, skipeo inline navbar');
+    return;
+  }
+  let headerHtml = fs.readFileSync(headerSrc, 'utf8');
+
+  const htmls = [];
+  const walk = (d) => {
+    for (const entry of fs.readdirSync(d, { withFileTypes: true })) {
+      const p = path.join(d, entry.name);
+      if (entry.isDirectory()) walk(p);
+      else if (entry.name.endsWith('.html')) htmls.push(p);
+    }
+  };
+  walk(DIST);
+
+  let injected = 0;
+  for (const fp of htmls) {
+    let content = fs.readFileSync(fp, 'utf8');
+    // Buscar el placeholder vacío (puede tener cualquier whitespace adentro)
+    const placeholderRe = /<div\s+id="navbar-placeholder"\s*>\s*<\/div>/;
+    if (!placeholderRe.test(content)) continue;
+
+    // Fix paths del header según ubicación del HTML.
+    // Si el HTML está en raíz (index.html), header debe usar ./HTML/...
+    // Si está en HTML/, debe usar ./
+    const fromRoot = path.relative(DIST, fp).indexOf(path.sep) === -1;
+    let headerFixed = headerHtml;
+    if (!fromRoot) {
+      // HTMLs en HTML/ — los links del header son ./X.html, pero desde HTML/
+      // ya estamos en la carpeta correcta. component-loader.js hacía un
+      // string-replace runtime para esto. Acá hacemos lo mismo build-time.
+      // El header.html original asume root (links a ./HTML/foo.html), así
+      // que desde HTML/ tenemos que cambiar ./HTML/ → ./
+      headerFixed = headerFixed.replace(/href="\.\/HTML\//g, 'href="./');
+      headerFixed = headerFixed.replace(/src="\.\/IMG\//g, 'src="../IMG/');
+      // El logo del header usa ./IMG/LOGO-2.png que ahora debe ser ../IMG/
+    }
+
+    content = content.replace(placeholderRe, headerFixed);
+    fs.writeFileSync(fp, content);
+    injected++;
+  }
+  console.log(`✓ Navbar inyectada en ${injected} HTMLs (sin flash de hidratación)`);
+}
+
 // Envuelve TODAS las imágenes <img src="https://images.unsplash.com/..."> de los
 // HTMLs de dist/ en un <picture> con sources para AVIF y WebP. Unsplash sirve
 // el formato pedido via ?fm=avif|webp. El browser elige el mejor que soporte:
@@ -345,6 +404,7 @@ async function build() {
   await bundleCoreCss();          // genera dist/CSS/core.css
   copyHTMLsAndAssets();
   rewriteHtmlLinksToBundle();     // reemplaza 3 links → 1 link a core.css en dist/
+  inlineNavbarInHtmls();          // inyecta navbar en cada HTML (sin flash)
   // NOTA: inlineCriticalCssInHome() probado y deshabilitado — en local sin gzip
   // hace el HTML 3x más grande y empeora FCP. En producción con gzip+HTTP/2
   // sería ganancia (1 request menos). Reactivar si se valida en deploy real.
