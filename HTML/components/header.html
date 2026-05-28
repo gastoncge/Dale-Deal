@@ -14,9 +14,13 @@
       <span class="brand-text">DALE DEAL</span>
     </a>
 
-    <!-- Hamburger (visible < 768px) -->
+    <!-- Hamburger (visible < 768px, oculto en desktop con d-md-none).
+         Sin d-md-none el button se mostraba al medio del navbar en desktop
+         y rompía el grid layout, empujando los .navbar-actions a una
+         segunda fila — bug que era ocultado antes por el flash de
+         component-loader.js (donde el navbar tardaba en renderear). -->
     <button
-      class="navbar-menu-toggle"
+      class="navbar-menu-toggle d-md-none"
       type="button"
       data-bs-toggle="collapse"
       data-bs-target="#navMobileLinks"

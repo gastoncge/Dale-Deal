@@ -224,6 +224,13 @@ async function loadProducts() {
     // Reinicializar event listeners después de cargar productos
     initializeProductListeners();
 
+    // Notificar a otros sistemas (ej: filters.js) que los productos
+    // están renderizados y disponibles en el DOM. Sirve para que filtros
+    // pasivos puedan re-escanear cards sin pisar lo que acabamos de pintar.
+    document.dispatchEvent(new CustomEvent('products:loaded', {
+      detail: { count: products.length, source: 'api' }
+    }));
+
     DaleDeal.log(`✓ ${products.length} productos cargados en el home`);
 
   } catch (error) {
@@ -265,6 +272,9 @@ async function loadProducts() {
     }
 
     initializeProductListeners();
+    document.dispatchEvent(new CustomEvent('products:loaded', {
+      detail: { count: Math.min(fallbackProducts.length, 6), source: 'fallback' }
+    }));
     DaleDeal.log(`✓ ${Math.min(fallbackProducts.length, 6)} productos locales cargados como fallback`);
   }
 }

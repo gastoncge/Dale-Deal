@@ -17,6 +17,25 @@ class ProductFilters {
   init() {
     this.loadProducts();
     this.bindEvents();
+
+    // Bailout: si no hay product-cards en el DOM al cargar, asumimos que
+    // un loader API (HomePageLoader / ProductsPageLoader) está manejando
+    // el grid. Si renderizáramos acá, mostraríamos "No encontramos productos"
+    // tapando los productos que el loader trae async desde la API.
+    //
+    // Antes filters.js corría siempre y peleaba con los loaders, ganando
+    // a veces y dejando al user con el empty state aunque hubiera 20 productos.
+    if (this.products.length === 0 &&
+        (window.HomePageLoader || window.ProductsPageLoader)) {
+      DaleDeal.log('ProductFilters: delegando al loader API (no DOM cards aún)');
+      // Listener pasivo: si el loader dispara products:loaded, re-cargamos
+      // por si después el user activa filtros que necesiten la lista.
+      document.addEventListener('products:loaded', () => {
+        this.loadProducts();
+      });
+      return;
+    }
+
     this.renderProducts();
   }
 

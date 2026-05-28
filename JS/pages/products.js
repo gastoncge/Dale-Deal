@@ -215,6 +215,12 @@ class ProductsPageLoader {
         window.HomePageLoader.initializeProductListeners();
       }
 
+      // Notificar que los productos están en el DOM (filters.js usa esto
+      // para no pisar el grid con un empty state durante el primer paint).
+      document.dispatchEvent(new CustomEvent('products:loaded', {
+        detail: { count: this.filteredProducts.length, source: 'products-page' }
+      }));
+
       // Scroll suave al top de productos
       const productsSection = document.querySelector('.products-section');
       if (productsSection) {
@@ -275,14 +281,21 @@ class ProductsPageLoader {
 }
 
 // Inicializar cuando el DOM esté listo
+// Cloudflare Pages a veces sirve productos.html como /HTML/productos (sin .html),
+// así que matcheamos también la versión sin extensión.
+function isProductosPage() {
+  const p = window.location.pathname;
+  return p.includes('productos.html') || /\/productos\/?$/.test(p);
+}
+
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    if (window.DaleDeal?.api && window.location.pathname.includes('productos.html')) {
+    if (window.DaleDeal?.api && isProductosPage()) {
       window.productsPageLoader = new ProductsPageLoader();
     }
   });
 } else {
-  if (window.DaleDeal?.api && window.location.pathname.includes('productos.html')) {
+  if (window.DaleDeal?.api && isProductosPage()) {
     window.productsPageLoader = new ProductsPageLoader();
   }
 }
