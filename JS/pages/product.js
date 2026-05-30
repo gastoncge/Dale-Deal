@@ -158,11 +158,31 @@ class ProductPage {
     if (titleEl) titleEl.textContent = p.title;
 
     // Breadcrumb
+    // Si subcategory está vacío o es solo un slug de category (ej: category
+    // "Electrónica" + subcategory "electronica"), ocultamos el nivel de
+    // subcategoría para no mostrar duplicados en la UI.
     const bcCat = document.querySelector('#bcCategory a');
+    const bcSubItem = document.getElementById('bcSubcategory');
     const bcSub = document.querySelector('#bcSubcategory a');
+    const bcSubSep = bcSubItem?.previousElementSibling;
     const bcActive = document.getElementById('bcProductTitle');
     if (bcCat) bcCat.textContent = p.category;
-    if (bcSub) bcSub.textContent = p.subcategory;
+
+    // Normaliza para comparar sin tildes: "Electrónica" === "electronica"
+    const normalize = (s) => (s || '').toString().toLowerCase()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const subIsRedundant = !p.subcategory ||
+      normalize(p.subcategory) === normalize(p.category);
+
+    if (subIsRedundant) {
+      if (bcSubItem) bcSubItem.style.display = 'none';
+      if (bcSubSep && bcSubSep.classList.contains('breadcrumb-separator')) {
+        bcSubSep.style.display = 'none';
+      }
+    } else if (bcSub) {
+      bcSub.textContent = p.subcategory;
+    }
+
     if (bcActive) bcActive.textContent = p.title;
 
     // SEO — dynamic title + meta tags + Open Graph + Twitter + JSON-LD

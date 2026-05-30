@@ -1,5 +1,9 @@
 name = "dale-deal"
 compatibility_date = "2025-05-27"
+# account_id fijo para que `wrangler deploy` no necesite permiso de listar
+# todos los accounts del user (los tokens scoped a un solo Worker fallan
+# ese check). Sacado del dashboard CF.
+account_id = "b453287b1595aee108969bc617ecf4a0"
 
 # Custom domains — Cloudflare auto-crea el DNS record y mapea SSL.
 # IMPORTANTE: 'routes' debe ir ANTES de cualquier [tabla] (regla TOML).
