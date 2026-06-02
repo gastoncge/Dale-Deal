@@ -28,6 +28,14 @@ const esbuild = require('esbuild');
 
 const ROOT = __dirname;
 const DIST = path.join(ROOT, 'dist');
+
+// Cloudflare Web Analytics beacon token. Si está vacío, el build no inyecta
+// el snippet — útil para dev local. Sacalo del dashboard de Cloudflare
+// (Analytics → Web Analytics → tu sitio → JavaScript snippet → copiar el
+// valor dentro de data-cf-beacon).
+//
+// También se puede sobreescribir con env var: CF_BEACON_TOKEN=xxx npm run build
+const CF_BEACON_TOKEN = process.env.CF_BEACON_TOKEN || '';
 const WATCH = process.argv.includes('--watch');
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -281,6 +289,39 @@ function inlineNavbarInHtmls() {
   console.log(`✓ Navbar inyectada en ${injected} HTMLs (sin flash de hidratación)`);
 }
 
+// Inyecta el snippet de Cloudflare Web Analytics antes del </body> en cada HTML.
+// Idempotente: skipea si ya está el script (por el data-cf-beacon attribute).
+// No-op si CF_BEACON_TOKEN está vacío (dev local o pre-config).
+function injectCloudflareWebAnalytics() {
+  if (!CF_BEACON_TOKEN) {
+    console.log('= CF_BEACON_TOKEN vacío, skipeo inyección de Web Analytics');
+    return;
+  }
+
+  const snippet = `  <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token":"${CF_BEACON_TOKEN}"}'></script>\n`;
+
+  const htmls = [];
+  const walk = (d) => {
+    for (const entry of fs.readdirSync(d, { withFileTypes: true })) {
+      const p = path.join(d, entry.name);
+      if (entry.isDirectory()) walk(p);
+      else if (entry.name.endsWith('.html')) htmls.push(p);
+    }
+  };
+  walk(DIST);
+
+  let injected = 0;
+  for (const fp of htmls) {
+    let content = fs.readFileSync(fp, 'utf8');
+    if (content.includes('data-cf-beacon=')) continue; // ya inyectado
+    if (!content.includes('</body>')) continue; // HTML mal formado
+    content = content.replace('</body>', snippet + '</body>');
+    fs.writeFileSync(fp, content);
+    injected++;
+  }
+  console.log(`✓ CF Web Analytics inyectado en ${injected} HTMLs`);
+}
+
 // Envuelve TODAS las imágenes <img src="https://images.unsplash.com/..."> de los
 // HTMLs de dist/ en un <picture> con sources para AVIF y WebP. Unsplash sirve
 // el formato pedido via ?fm=avif|webp. El browser elige el mejor que soporte:
@@ -421,6 +462,7 @@ async function build() {
   // hace el HTML 3x más grande y empeora FCP. En producción con gzip+HTTP/2
   // sería ganancia (1 request menos). Reactivar si se valida en deploy real.
   wrapUnsplashImagesWithPicture(DIST); // <img Unsplash> → <picture> con avif/webp
+  injectCloudflareWebAnalytics();  // CF beacon antes de </body> (si hay token)
 
   console.log(`✓ Build completo en ${Date.now() - start}ms — output: dist/`);
 }
