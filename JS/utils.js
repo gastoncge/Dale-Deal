@@ -20,7 +20,7 @@ window.DaleDeal = {
     // (Authorized JS origins: http://localhost:8080 + https://daledeal.com.ar).
     // Si queda vacío, los botones "Google" muestran "Próximamente" en vez de
     // intentar abrir el popup y fallar feo.
-    GOOGLE_CLIENT_ID: "",
+    GOOGLE_CLIENT_ID: "627566643982-7e7qp5su0vlsr7f70e2b0r2oiduittod.apps.googleusercontent.com",
     PRODUCTS_PER_PAGE: 12,
     SEARCH_DELAY: 300,
     ANIMATION_DURATION: 300,
