@@ -375,6 +375,12 @@ if (typeof window !== 'undefined') {
       window.location.href = './HTML/productos.html';
     });
 
+    // Botón ver todos los servicios (faltaba handler — el botón existía
+    // en index.html pero no hacía nada al click)
+    document.getElementById('viewAllServicesBtn')?.addEventListener('click', () => {
+      window.location.href = './HTML/servicios.html';
+    });
+
     // Newsletter forms
     const handleNewsletterSubmit = function(e) {
       e.preventDefault();
