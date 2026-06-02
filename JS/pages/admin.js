@@ -428,7 +428,7 @@
             <tr>
               <th>ID</th><th>Producto</th><th>Comprador</th><th>Vendedor</th>
               <th>Total</th><th>Comisión</th><th>Pago</th><th>Estado</th>
-              <th>Envío</th><th>Fecha</th>
+              <th>Envío</th><th>Fecha</th><th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -439,6 +439,7 @@
       ${paginatorHTML('orders', res)}
     `;
     bindPagination('orders', loadOrders);
+    bindOrderActions();
   }
 
   function orderRow(o) {
@@ -456,6 +457,19 @@
       cancelled:  'admin-pill-danger',
     }[o.status] || 'admin-pill-muted';
 
+    // Solo se pueden reembolsar órdenes pagadas
+    const canRefund = o.payment_status === 'paid';
+    const actionsHTML = canRefund
+      ? `<button class="btn btn-sm btn-outline-danger refund-btn"
+                 data-order-id="${o.id}"
+                 data-total="${o.total_price}"
+                 data-currency="${o.currency || 'ARS'}"
+                 data-product="${esc(o.product_title || '—')}"
+                 data-buyer="${esc(o.buyer_email || '')}">
+           <i class="bi bi-arrow-counterclockwise"></i> Reembolsar
+         </button>`
+      : `<small class="text-muted">—</small>`;
+
     return `
       <tr>
         <td>#${o.id}</td>
@@ -468,8 +482,59 @@
         <td><span class="admin-pill ${stClass}">${o.status}</span></td>
         <td>${o.shipping_method ? `<small>${o.shipping_method}</small>` : '—'}</td>
         <td>${formatDate(o.created_at)}</td>
+        <td>${actionsHTML}</td>
       </tr>
     `;
+  }
+
+  // Bindea click en botones "Reembolsar" → confirm con motivo opcional → POST
+  function bindOrderActions() {
+    document.querySelectorAll('.refund-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const orderId  = btn.dataset.orderId;
+        const total    = parseFloat(btn.dataset.total);
+        const currency = btn.dataset.currency;
+        const product  = btn.dataset.product;
+        const buyer    = btn.dataset.buyer;
+
+        // Confirmación con prompt para motivo (UX mínimo viable;
+        // si querés, después esto se hace modal Bootstrap).
+        const totalFmt = money(total, currency);
+        const reason = window.prompt(
+          `¿Reembolsar la orden #${orderId} por ${totalFmt}?\n\n` +
+          `Producto: ${product}\nComprador: ${buyer}\n\n` +
+          `Escribí un motivo (opcional) o cancelá:`,
+          ''
+        );
+
+        // null = cancelado, string vacío = ok sin motivo
+        if (reason === null) return;
+
+        // Doble confirmación porque es destructivo + irreversible
+        if (!window.confirm(`Confirmá el reembolso TOTAL de ${totalFmt} en la orden #${orderId}.\n\nEsta acción es IRREVERSIBLE y el dinero se va a devolver al comprador.`)) {
+          return;
+        }
+
+        const originalHTML = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Procesando…';
+
+        try {
+          const res = await window.DaleDeal.api.apiFetch(`/admin/orders/${orderId}/refund`, {
+            method: 'POST',
+            body: JSON.stringify({ reason: reason || undefined }),
+            headers: { 'Content-Type': 'application/json' },
+          });
+          alert(`✅ Reembolso procesado.\n\nMP refund id: ${res.refund_id || '—'}\n\nEl dinero se acreditará al comprador en 1-5 días hábiles. Le mandamos un email.`);
+          loadOrders(); // refresca la tabla
+        } catch (err) {
+          console.error('[refund] error:', err);
+          alert('❌ No se pudo procesar el reembolso.\n\n' + (err.message || err.details || 'Revisá los logs del servidor.'));
+          btn.disabled = false;
+          btn.innerHTML = originalHTML;
+        }
+      });
+    });
   }
 
   // ── RESEÑAS ──────────────────────────────────────────────────────────────

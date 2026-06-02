@@ -2414,7 +2414,7 @@
               </li>
               <li><hr class="dropdown-divider" /></li>
               <li>
-                <a class="dropdown-item" href="./notificaciones.html#mi-perfil">
+                <a class="dropdown-item" href="./mi-cuenta.html">
                   <i class="bi bi-person me-2"></i>Mi Perfil
                 </a>
               </li>
@@ -3558,6 +3558,17 @@
             ? (service.description.length > 80 ? service.description.substring(0, 80) + '...' : service.description)
             : '';
 
+          // Reseñas: si no hay reviews, "Sin reseñas aún" (matchea estilo cards productos)
+          const reviewCount = service.reviewCount || 0;
+          const reviewsHTML = reviewCount > 0
+            ? `<span class="reviews-count">(${reviewCount.toLocaleString('es-AR')})</span>`
+            : `<span class="reviews-count text-muted">Sin reseñas aún</span>`;
+
+          // WhatsApp share — los servicios también son shareables
+          const shareUrl = `${window.location.origin}/HTML/servicio.html?id=${service.id}`;
+          const shareText = encodeURIComponent(`Mirá este servicio en Dale Deal: ${service.title} — ${shareUrl}`);
+          const whatsappHref = `https://wa.me/?text=${shareText}`;
+
           card.innerHTML = `
             <div class="product-image-container">
               <img src="${service.image}" alt="${titleSafe}" class="product-image active" loading="lazy" />
@@ -3566,6 +3577,15 @@
                 <button class="action-heart" title="Agregar a favoritos" data-product-id="${service.id}">
                   <i class="bi bi-heart"></i>
                 </button>
+                <a href="${whatsappHref}"
+                   class="action-share"
+                   title="Compartir por WhatsApp"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   onclick="event.stopPropagation()"
+                   aria-label="Compartir ${titleSafe} por WhatsApp">
+                  <i class="bi bi-whatsapp"></i>
+                </a>
               </div>
             </div>
             <div class="product-info">
@@ -3574,7 +3594,7 @@
               <div class="product-meta-group">
                 <div class="product-rating">
                   <div class="stars">${starsHTML}</div>
-                  <span class="reviews-count">(${(service.reviewCount || 0).toLocaleString('es-AR')})</span>
+                  ${reviewsHTML}
                 </div>
                 <div class="product-location">
                   <i class="bi bi-geo-alt-fill"></i>

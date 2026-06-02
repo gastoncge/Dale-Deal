@@ -103,46 +103,55 @@
               <p class="text-muted mb-0">Te responderemos en menos de 24 horas hábiles.</p>
             </div>
 
-            <form id="contactForm">
+            <!-- Error banner — se muestra si POST /contact falla -->
+            <div class="alert alert-danger d-none" id="errorBanner" role="alert" style="border-radius:12px;margin-bottom:16px;">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>
+              <span id="errorBannerMsg">Ocurrió un error. Probá de nuevo en unos minutos.</span>
+            </div>
+
+            <form id="contactForm" novalidate>
+              <input type="hidden" id="contactTipo" name="tipo" value="">
               <div class="row g-4">
                 <div class="col-md-6">
-                  <label class="form-label">Nombre <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" placeholder="Tu nombre" required>
+                  <label for="contactNombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="contactNombre" name="nombre" placeholder="Tu nombre" required maxlength="100">
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label">Apellido <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" placeholder="Tu apellido" required>
+                  <label for="contactApellido" class="form-label">Apellido <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="contactApellido" name="apellido" placeholder="Tu apellido" required maxlength="100">
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label">Email <span class="text-danger">*</span></label>
-                  <input type="email" class="form-control" placeholder="tu@email.com" required>
+                  <label for="contactEmail" class="form-label">Email <span class="text-danger">*</span></label>
+                  <input type="email" class="form-control" id="contactEmail" name="email" placeholder="tu@email.com" required maxlength="150">
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label">Teléfono</label>
-                  <input type="tel" class="form-control" placeholder="+54 11 1234-5678">
+                  <label for="contactTelefono" class="form-label">Teléfono</label>
+                  <input type="tel" class="form-control" id="contactTelefono" name="telefono" placeholder="+54 11 1234-5678" maxlength="50">
                 </div>
                 <div class="col-12">
-                  <label class="form-label">Asunto <span class="text-danger">*</span></label>
-                  <select class="form-select" required>
+                  <label for="contactAsunto" class="form-label">Asunto <span class="text-danger">*</span></label>
+                  <select class="form-select" id="contactAsunto" name="asunto" required>
                     <option value="">Seleccioná un asunto</option>
                     <option>Consulta sobre un pedido</option>
                     <option>Problema con un pago</option>
                     <option>Devolución o reembolso</option>
                     <option>Problema técnico</option>
                     <option>Consulta sobre productos</option>
+                    <option>Consulta empresarial / B2B</option>
+                    <option>Publicidad en el sitio</option>
                     <option>Otro</option>
                   </select>
                 </div>
                 <div class="col-12">
-                  <label class="form-label">Número de pedido (opcional)</label>
-                  <input type="text" class="form-control" placeholder="Ej: #12345">
+                  <label for="contactPedido" class="form-label">Número de pedido (opcional)</label>
+                  <input type="text" class="form-control" id="contactPedido" name="pedidoId" placeholder="Ej: #12345" maxlength="50">
                 </div>
                 <div class="col-12">
-                  <label class="form-label">Mensaje <span class="text-danger">*</span></label>
-                  <textarea class="form-control" rows="5" placeholder="Describí tu consulta con el mayor detalle posible..." required></textarea>
+                  <label for="contactMensaje" class="form-label">Mensaje <span class="text-danger">*</span></label>
+                  <textarea class="form-control" id="contactMensaje" name="mensaje" rows="5" placeholder="Describí tu consulta con el mayor detalle posible..." required minlength="10" maxlength="4000"></textarea>
                 </div>
                 <div class="col-12">
-                  <button type="submit" class="btn btn-primary btn-lg w-100">
+                  <button type="submit" id="contactSubmitBtn" class="btn btn-primary btn-lg w-100">
                     <i class="bi bi-send me-2"></i>Enviar mensaje
                   </button>
                 </div>
@@ -216,11 +225,82 @@
       // página entera se veía vacía/negra.
       document.addEventListener('DOMContentLoaded', function() {
         if (typeof AOS !== 'undefined') AOS.init({ duration: 800, once: true, offset: 100 });
-        document.getElementById('contactForm')?.addEventListener('submit', function(e) {
+
+        // Soporte ?tipo=empresa — pre-selecciona el option y marca tipo oculto
+        // (el link "¿Sos una empresa?" en signup.html viene acá con este query)
+        const urlParams = new URLSearchParams(window.location.search);
+        const tipo = (urlParams.get('tipo') || '').toLowerCase();
+        if (tipo === 'empresa') {
+          const tipoInput = document.getElementById('contactTipo');
+          const asunto    = document.getElementById('contactAsunto');
+          if (tipoInput) tipoInput.value = 'empresa';
+          if (asunto) {
+            const opt = Array.from(asunto.options).find(o => o.text.toLowerCase().includes('empresarial'));
+            if (opt) asunto.value = opt.value || opt.text;
+          }
+        }
+
+        const form = document.getElementById('contactForm');
+        const btn  = document.getElementById('contactSubmitBtn');
+        const successBanner = document.getElementById('successBanner');
+        const errorBanner   = document.getElementById('errorBanner');
+        const errorMsg      = document.getElementById('errorBannerMsg');
+
+        // URL del API — apunta a api.daledeal.com.ar en prod o a window.DaleDeal.API_BASE_URL
+        // si está disponible (lo setea utils.js para entornos dev/staging).
+        const API_BASE = (window.DaleDeal?.CONFIG?.API_BASE_URL || 'https://daledeal-backend-production.up.railway.app').replace(/\/$/, '');
+
+        form?.addEventListener('submit', async function(e) {
           e.preventDefault();
-          document.getElementById('successBanner')?.classList.add('show');
-          this.reset();
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          errorBanner?.classList.add('d-none');
+
+          if (!form.checkValidity()) {
+            form.classList.add('was-validated');
+            return;
+          }
+
+          const payload = {
+            nombre:   document.getElementById('contactNombre').value.trim(),
+            apellido: document.getElementById('contactApellido').value.trim(),
+            email:    document.getElementById('contactEmail').value.trim(),
+            telefono: document.getElementById('contactTelefono').value.trim(),
+            asunto:   document.getElementById('contactAsunto').value,
+            pedidoId: document.getElementById('contactPedido').value.trim(),
+            mensaje:  document.getElementById('contactMensaje').value.trim(),
+            tipo:     document.getElementById('contactTipo').value,
+          };
+
+          const originalBtnHTML = btn.innerHTML;
+          btn.disabled = true;
+          btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Enviando…';
+
+          try {
+            const res = await fetch(`${API_BASE}/contact`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+            });
+            const data = await res.json().catch(() => ({}));
+
+            if (!res.ok || data.ok === false) {
+              const msg = data.error || data.message || 'No pudimos enviar tu mensaje. Probá de nuevo.';
+              errorMsg.textContent = msg;
+              errorBanner?.classList.remove('d-none');
+              return;
+            }
+
+            successBanner?.classList.add('show');
+            form.reset();
+            form.classList.remove('was-validated');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } catch (err) {
+            console.error('[contacto] Error de red:', err);
+            errorMsg.textContent = 'No pudimos conectar con el servidor. Revisá tu conexión e intentá de nuevo.';
+            errorBanner?.classList.remove('d-none');
+          } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalBtnHTML;
+          }
         });
       });
     </script>

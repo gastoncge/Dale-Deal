@@ -137,6 +137,25 @@ function renderProductCard(product) {
   // Renderizar precio
   const priceHTML = `<span class="product-current-price">${window.DaleDeal.utils.formatCurrency(product.price)}</span>`;
 
+  // Cuotas sin interés — solo mostrar si la cuota mensual >= $1.000 (evita "12 cuotas de $42")
+  // 12 cuotas sin interés es el estándar de MercadoPago para vendedores en Argentina.
+  const installments = 12;
+  const monthlyAmount = product.price / installments;
+  const installmentsHTML = monthlyAmount >= 1000
+    ? `<div class="product-installments"><i class="bi bi-credit-card"></i> ${installments} cuotas sin interés de ${window.DaleDeal.utils.formatCurrency(Math.round(monthlyAmount))}</div>`
+    : '';
+
+  // Reseñas: si no hay reviews, mostrar "Sin reseñas aún" en lugar de "(0)"
+  const reviewCount = product.reviewCount || 0;
+  const reviewsHTML = reviewCount > 0
+    ? `<span class="reviews-count">(${reviewCount.toLocaleString('es-AR')})</span>`
+    : `<span class="reviews-count text-muted">Sin reseñas aún</span>`;
+
+  // WhatsApp share — el link contiene URL del producto + título
+  const shareUrl = `${window.location.origin}/HTML/producto.html?id=${product.id}`;
+  const shareText = encodeURIComponent(`Mirá esto en Dale Deal: ${product.title} — ${shareUrl}`);
+  const whatsappHref = `https://wa.me/?text=${shareText}`;
+
   // Renderizar descripción corta (primeras 80 caracteres)
   const shortDescription = product.description
     ? (product.description.length > 80
@@ -153,6 +172,15 @@ function renderProductCard(product) {
           <button class="action-heart" title="Agregar a favoritos" data-product-id="${product.id}">
             <i class="bi bi-heart"></i>
           </button>
+          <a href="${whatsappHref}"
+             class="action-share"
+             title="Compartir por WhatsApp"
+             target="_blank"
+             rel="noopener noreferrer"
+             onclick="event.stopPropagation()"
+             aria-label="Compartir ${product.title} por WhatsApp">
+            <i class="bi bi-whatsapp"></i>
+          </a>
         </div>
       </div>
       <div class="product-info">
@@ -162,7 +190,7 @@ function renderProductCard(product) {
         <div class="product-meta-group">
           <div class="product-rating">
             <div class="stars">${renderStars(product.rating || 0)}</div>
-            <span class="reviews-count">(${(product.reviewCount || 0).toLocaleString('es-AR')})</span>
+            ${reviewsHTML}
           </div>
           <div class="product-location">
             <i class="bi bi-geo-alt-fill"></i>
@@ -173,6 +201,7 @@ function renderProductCard(product) {
         <div class="product-pricing-wrapper">
           <div class="product-pricing">
             ${priceHTML}
+            ${installmentsHTML}
           </div>
         </div>
       </div>
