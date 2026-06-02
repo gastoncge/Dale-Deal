@@ -483,6 +483,14 @@
             </a>
           </div>
 
+          <!-- Dark Mode Toggle (faltaba en este navbar hardcodeado, los
+               otros HTMLs lo tenían vía components/header.html) -->
+          <div class="action-item">
+            <button class="theme-toggle" id="themeToggle" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">
+              <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+            </button>
+          </div>
+
           <!-- Notifications -->
           <div class="action-item dropdown">
             <button class="action-btn" id="notificationBtn" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" title="Notificaciones">

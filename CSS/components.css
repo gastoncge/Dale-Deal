@@ -5374,3 +5374,79 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
 [data-theme="dark"] [class*="bg-primary"]:not(.bi):not(i) {
   color: #ffffff !important;
 }
+
+/* =====================================================
+   PAGE HEADER + BREADCRUMB (shared)
+   Antes solo vivía en pages/product.css, pages/services.css y
+   pages/notifications.css — las páginas legales/info (terminos,
+   privacidad, cookies, centro-ayuda) cargan solo core.css y por
+   eso el breadcrumb se renderizaba como <ol> numerado (sin estilo)
+   en lugar de chips horizontales con separador.
+   ===================================================== */
+.page-header-new {
+  background: var(--white);
+  padding: var(--spacing-4) 0;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+[data-theme="dark"] .page-header-new,
+[data-theme="dark"] .page-header-new .container-fluid {
+  background: #0f172a !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.page-header-new .breadcrumb-nav {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.breadcrumb-list {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  list-style: none;
+  margin: 0;
+  padding: var(--spacing-3) 0;
+  flex-wrap: wrap;
+}
+
+.breadcrumb-list .breadcrumb-item a {
+  color: var(--gray-600);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.breadcrumb-list .breadcrumb-item a:hover {
+  color: var(--primary-red);
+}
+
+.breadcrumb-list .breadcrumb-item.active {
+  color: var(--gray-800);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+[data-theme="dark"] .breadcrumb-list .breadcrumb-item a {
+  color: var(--gray-400);
+}
+
+[data-theme="dark"] .breadcrumb-list .breadcrumb-item a:hover {
+  color: var(--primary-red-light);
+}
+
+[data-theme="dark"] .breadcrumb-list .breadcrumb-item.active {
+  color: var(--gray-200);
+}
+
+.breadcrumb-separator {
+  color: var(--gray-400);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+}
