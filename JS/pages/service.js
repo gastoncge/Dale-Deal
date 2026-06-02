@@ -12,8 +12,8 @@ class ServicePage {
     this.init();
   }
 
-  init() {
-    this.loadServiceData();
+  async init() {
+    await this.loadServiceData();
     if (!this.currentService) return;
     this.setupImageGallery();
     // setupChat() está obsoleto: la mensajería real la maneja JS/chat.js
@@ -28,21 +28,55 @@ class ServicePage {
   }
 
   // ── Cargar datos del servicio por ID (URL param o localStorage) ────────────
-  loadServiceData() {
+  //
+  // Lookup order:
+  //   1. URL `?id=X` → si está → intentar resolver vía:
+  //      a. Backend API (fetchServiceById) — para servicios reales del prod DB
+  //      b. servicesData local (mock IDs como 'installation-tech') — fallback
+  //   2. localStorage `selectedServiceId` (memoria del último que abriste)
+  //   3. NO hacer fallback a servicesData[0] — antes esto causaba que
+  //      cualquier servicio inexistente llevara al electricista (installation-tech),
+  //      el primer item de la data mock. Ahora redirige a /servicios.html.
+  async loadServiceData() {
     const params = new URLSearchParams(window.location.search);
     const paramId = params.get('id');
     const storedId = localStorage.getItem('selectedServiceId');
-    const serviceId = paramId || storedId || (typeof servicesData !== 'undefined' ? servicesData[0]?.id : null);
+    const serviceId = paramId || storedId;
 
     if (paramId) localStorage.setItem('selectedServiceId', paramId);
 
-    const service = typeof servicesData !== 'undefined'
-      ? servicesData.find(s => s.id === serviceId) || servicesData[0]
-      : null;
+    let service = null;
+
+    if (serviceId != null && serviceId !== '') {
+      // 1.a — Intentar API si el id es numérico (los del backend lo son).
+      //       Los IDs mock como 'installation-tech' son strings con guiones,
+      //       no pasan el chequeo de número y van directo a fallback local.
+      const looksLikeBackendId = /^\d+$/.test(String(serviceId));
+      if (looksLikeBackendId && window.DaleDeal?.api?.fetchServiceById) {
+        try {
+          service = await window.DaleDeal.api.fetchServiceById(serviceId);
+        } catch (err) {
+          // Backend devolvió 404 o se cayó la red — caemos al lookup local
+          console.warn('[service] fetchServiceById falló, intentando data local:', err?.message);
+        }
+      }
+
+      // 1.b — Fallback a data local (servicesData). Sin coerción `==` para
+      //       evitar matches accidentales (1 == '1' true pero queremos exacto).
+      if (!service && typeof servicesData !== 'undefined') {
+        service = servicesData.find(s => String(s.id) === String(serviceId));
+      }
+    }
 
     if (!service) {
       if (window.DaleDeal?.utils?.showNotification) {
         window.DaleDeal.utils.showNotification('Servicio no encontrado. Redirigiendo…', 'error');
+      } else {
+        // utils.js puede no estar cargado todavía — mostrar algo igual
+        const main = document.querySelector('main');
+        if (main) {
+          main.innerHTML = '<div style="text-align:center;padding:80px 24px;"><h2>Servicio no encontrado</h2><p>Te llevamos al listado en un segundo…</p></div>';
+        }
       }
       setTimeout(() => { window.location.href = './servicios.html'; }, 2000);
       return;
