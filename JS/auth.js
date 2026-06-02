@@ -765,15 +765,15 @@ class AuthManager {
 
   // ===== SOCIAL LOGIN =====
   setupSocialLogin() {
-    document.addEventListener("click", (e) => {
-      if (
-        e.target.matches(".auth-social-btn.google, .auth-social-btn.google *")
-      ) {
-        e.preventDefault();
-        this.handleGoogleLogin();
-      }
+    // Google: renderizar el botón oficial OVERLAY-eado sobre nuestro custom button.
+    // Antes intentábamos google.accounts.id.prompt() (One Tap) pero falla silencioso
+    // cuando el browser bloquea cookies de terceros — el click no abría nada.
+    // El renderButton oficial garantiza popup confiable y cumple la política de
+    // branding de Google.
+    this.setupGoogleButtonOverlay();
 
-      // Facebook sigue stub — no hay app aprobada todavía
+    // Facebook sigue stub — no hay app aprobada todavía
+    document.addEventListener("click", (e) => {
       if (
         e.target.matches(
           ".auth-social-btn.facebook, .auth-social-btn.facebook *"
@@ -788,40 +788,85 @@ class AuthManager {
     });
   }
 
-  // Inicia el flujo de Google Sign-In con popup.
-  // Requisitos:
-  //   1. <script src="https://accounts.google.com/gsi/client"> cargado en el HTML
-  //   2. DaleDeal.CONFIG.GOOGLE_CLIENT_ID seteado al Client ID de Google Cloud
-  //   3. Backend con POST /auth/google que verifica el ID token y devuelve JWT
-  handleGoogleLogin() {
+  // Renderiza el botón oficial de Google encima del custom button.
+  // El custom queda visible para el styling consistente; el oficial es
+  // invisible pero clickeable, capturando el click real del usuario y
+  // abriendo el popup confiable de Google. La verificación pasa por
+  // handleGoogleCredential.
+  setupGoogleButtonOverlay() {
     const clientId = window.DaleDeal?.CONFIG?.GOOGLE_CLIENT_ID;
 
-    // Sin client ID → mostrar mensaje honesto en vez de fallar feo
+    // Sin client ID — el botón custom queda como decorativo, listener al click
     if (!clientId) {
-      this.showNotification(
-        "Login con Google próximamente — falta configuración del servidor",
-        "info"
-      );
-      return;
-    }
-
-    // Esperar a que la librería de Google esté lista (load async)
-    if (!window.google?.accounts?.id) {
-      this.showNotification("Cargando Google… intentá de nuevo en unos segundos", "info");
-      return;
-    }
-
-    try {
-      window.google.accounts.id.initialize({
-        client_id: clientId,
-        callback: (response) => this.handleGoogleCredential(response),
-        ux_mode: "popup",
+      document.addEventListener("click", (e) => {
+        if (e.target.matches(".auth-social-btn.google, .auth-social-btn.google *")) {
+          e.preventDefault();
+          this.showNotification(
+            "Login con Google próximamente — falta configuración del servidor",
+            "info"
+          );
+        }
       });
-      window.google.accounts.id.prompt();
-    } catch (err) {
-      console.error("[auth] Google init falló:", err);
-      this.showNotification("No se pudo iniciar sesión con Google", "error");
+      return;
     }
+
+    // Esperar a que la librería de Google esté lista (cargada async/defer)
+    const waitForGIS = (cb, retries = 50) => {
+      if (window.google?.accounts?.id) return cb();
+      if (retries <= 0) {
+        console.error("[auth] GIS no cargó después de 5s");
+        return;
+      }
+      setTimeout(() => waitForGIS(cb, retries - 1), 100);
+    };
+
+    waitForGIS(() => {
+      try {
+        window.google.accounts.id.initialize({
+          client_id: clientId,
+          callback: (response) => this.handleGoogleCredential(response),
+          ux_mode: "popup",
+        });
+
+        // Para cada botón "Google" custom, renderizar el botón oficial
+        // como overlay invisible que captura el click.
+        document.querySelectorAll(".auth-social-btn.google").forEach((customBtn) => {
+          // Asegurar que el parent acepta absolute positioning
+          if (getComputedStyle(customBtn).position === "static") {
+            customBtn.style.position = "relative";
+          }
+
+          // Container overlay sobre el custom button
+          const overlay = document.createElement("div");
+          overlay.className = "g-signin-overlay";
+          overlay.style.cssText = [
+            "position:absolute",
+            "top:0",
+            "left:0",
+            "right:0",
+            "bottom:0",
+            "opacity:0.001",       // virtualmente invisible pero clickeable
+            "overflow:hidden",
+            "cursor:pointer",
+            "z-index:2",
+          ].join(";");
+          customBtn.appendChild(overlay);
+
+          const width = Math.round(customBtn.getBoundingClientRect().width) || 200;
+          window.google.accounts.id.renderButton(overlay, {
+            type: "standard",
+            theme: "outline",
+            size: "large",
+            text: "continue_with",
+            shape: "rectangular",
+            logo_alignment: "left",
+            width: width,
+          });
+        });
+      } catch (err) {
+        console.error("[auth] Google renderButton falló:", err);
+      }
+    });
   }
 
   // Callback que recibe el ID token de Google y lo manda al backend.
