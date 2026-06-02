@@ -2900,12 +2900,16 @@
     </script>
 
     <script>
-      // Initialize AOS — guard porque AOS está cargado con `defer`
-      if (typeof AOS !== 'undefined') AOS.init({
-        duration: 800,
-        easing: "ease-out-cubic",
-        once: true,
-        offset: 50,
+      // Initialize AOS dentro de DOMContentLoaded — los scripts `defer`
+      // (AOS incluido) se evalúan ENTRE </body> y este evento. Sin esto,
+      // AOS no está definido todavía y los [data-aos] quedan invisibles.
+      document.addEventListener('DOMContentLoaded', function() {
+        if (typeof AOS !== 'undefined') AOS.init({
+          duration: 800,
+          easing: "ease-out-cubic",
+          once: true,
+          offset: 50,
+        });
       });
 
       // =====================================================

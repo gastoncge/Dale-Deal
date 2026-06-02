@@ -1056,8 +1056,14 @@
     </style>
 
     <script>
-      // Inicializar AOS — guardar con typeof porque AOS está con `defer`
-      if (typeof AOS !== 'undefined') AOS.init({ duration: 800, once: true, offset: 100 });
+      // Inicializar AOS dentro de DOMContentLoaded porque los scripts
+      // `defer` se evalúan ENTRE el cierre de </body> y este evento. Si
+      // corre antes, AOS no está cargado y los elementos con [data-aos]
+      // quedan invisibles (opacity:0 por CSS de AOS, sin init que los
+      // saque).
+      document.addEventListener('DOMContentLoaded', function() {
+        if (typeof AOS !== 'undefined') AOS.init({ duration: 800, once: true, offset: 100 });
+      });
 
       // ===== NAVEGACIÓN DE SECCIONES =====
       const allSections = ['notifications','mi-perfil','mensajes','mis-compras','favoritos','centro-ayuda','contacto','reportar-problema','estado-servicio','seguridad'];
