@@ -246,20 +246,32 @@ function inlineNavbarInHtmls() {
     const placeholderRe = /<div\s+id="navbar-placeholder"\s*>\s*<\/div>/;
     if (!placeholderRe.test(content)) continue;
 
-    // Fix paths del header según ubicación del HTML.
-    // Si el HTML está en raíz (index.html), header debe usar ./HTML/...
-    // Si está en HTML/, debe usar ./
+    // Fix paths del header según ubicación del HTML donde se inyecta.
+    //
+    // El header.html original asume que está en /HTML/ (sus hrefs son
+    // `./productos.html`, `./servicios.html`, etc. — relativos a /HTML/).
+    //   - Cuando se inyecta en HTMLs de /HTML/ → no toca nada, hrefs OK.
+    //   - Cuando se inyecta en index.html (raíz) → hay que prefijar ./HTML/
+    //     a los hrefs locales, sino daledeal.com.ar/productos.html (no existe)
+    //     en lugar de daledeal.com.ar/HTML/productos.html.
+    //   - Y src="./IMG/LOGO-2.png" funciona desde raíz pero NO desde /HTML/
+    //     (tiene que ser ../IMG/).
+    //
+    // Bug previo: el rewrite estaba al revés (suponía que header asumía root).
+    // Síntoma: al click en "Productos" del navbar desde la home, URL quedaba
+    // /productos.html y Cloudflare servía index.html como SPA fallback.
     const fromRoot = path.relative(DIST, fp).indexOf(path.sep) === -1;
     let headerFixed = headerHtml;
-    if (!fromRoot) {
-      // HTMLs en HTML/ — los links del header son ./X.html, pero desde HTML/
-      // ya estamos en la carpeta correcta. component-loader.js hacía un
-      // string-replace runtime para esto. Acá hacemos lo mismo build-time.
-      // El header.html original asume root (links a ./HTML/foo.html), así
-      // que desde HTML/ tenemos que cambiar ./HTML/ → ./
-      headerFixed = headerFixed.replace(/href="\.\/HTML\//g, 'href="./');
+    if (fromRoot) {
+      // En raíz: hrefs ./X.html → ./HTML/X.html (excepto index.html que ya está OK)
+      headerFixed = headerFixed.replace(
+        /href="\.\/(?!index\.html|HTML\/|#)([^"]+\.html[^"]*)"/g,
+        'href="./HTML/$1"'
+      );
+      // src="./IMG/..." en raíz funciona tal cual, no se toca
+    } else {
+      // En /HTML/: src="./IMG/..." → "../IMG/..." (subir un nivel)
       headerFixed = headerFixed.replace(/src="\.\/IMG\//g, 'src="../IMG/');
-      // El logo del header usa ./IMG/LOGO-2.png que ahora debe ser ../IMG/
     }
 
     content = content.replace(placeholderRe, headerFixed);
