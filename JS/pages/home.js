@@ -387,17 +387,9 @@ if (typeof window !== 'undefined') {
       window.notificationManager?.renderNotifications();
     });
 
-    // Botón hero: agregar iPhone al carrito
-    document.getElementById('heroProductBtn')?.addEventListener('click', () => {
-      window.cartManager?.addItem({
-        id: 1,
-        title: 'iPhone 15 Pro Max 256GB',
-        price: 1299999,
-        priceText: '$1.299.999',
-        image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=400&fit=crop',
-        quantity: 1
-      });
-    });
+    // heroProductBtn obsoleto — antes agregaba un iPhone fake (id=1) al carrito
+    // que no existía en backend → fallaba el checkout. Reemplazamos el botón
+    // por links honestos a productos.html en el HTML del hero.
 
     // Botón ver todos los productos
     document.getElementById('viewAllProductsBtn')?.addEventListener('click', () => {
@@ -408,6 +400,24 @@ if (typeof window !== 'undefined') {
     // en index.html pero no hacía nada al click)
     document.getElementById('viewAllServicesBtn')?.addEventListener('click', () => {
       window.location.href = './HTML/servicios.html';
+    });
+
+    // Service cards estáticas del home — cada card tiene data-id con el slug
+    // del servicio (`installation-tech`, `tech-support`, etc.) que SÍ existe
+    // en servicesData (mock data local). El detalle de servicio busca primero
+    // en backend (si el id es numérico) y luego en local (el caso de estos).
+    //
+    // Antes: las cards no eran clickeables ni los botones "Reservar cita"
+    //        tenían handler. Click → nada pasaba.
+    // Ahora: todo el card es clickeable, excepto el corazón (favoritos).
+    document.querySelectorAll('.service-card[data-id]').forEach(card => {
+      const id = card.dataset.id;
+      if (!id) return;
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('.action-heart')) return; // no robar el click del corazón
+        window.location.href = `./HTML/servicio.html?id=${encodeURIComponent(id)}`;
+      });
     });
 
     // Newsletter forms

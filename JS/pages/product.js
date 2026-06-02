@@ -28,15 +28,33 @@ class ProductPage {
     });
   }
 
-  // ── ID resolution: URL param → localStorage → fallback 1 ──────────────────
+  // ── ID resolution: URL param → localStorage → redirect a listado ──────────
+  //
+  // Antes hacíamos `parseInt(paramId || storedId) || 1` que tenía 2 bugs:
+  //  - Si paramId era "abc" o vacío Y no había storedId → fallback a id=1
+  //    silencioso (el usuario veía el producto 1 sin saber por qué).
+  //  - Mismo bug del electricista en servicios: cualquier id roto → producto 1.
+  //
+  // Ahora: si no hay id válido → redirect a /productos.html (listado real).
   async loadProductDataAsync() {
     const params = new URLSearchParams(window.location.search);
     const paramId = params.get('id');
     const storedId = localStorage.getItem('selectedProductId');
-    const productId = parseInt(paramId || storedId) || 1;
+    const rawId = paramId || storedId;
+    const productId = parseInt(rawId, 10);
 
     if (paramId) {
       localStorage.setItem('selectedProductId', paramId);
+    }
+
+    // Sin id válido (vacío, NaN, 0) → no podemos cargar nada útil
+    if (!Number.isFinite(productId) || productId <= 0) {
+      DaleDeal.error('Product page abierto sin id válido:', rawId);
+      if (window.DaleDeal?.utils?.showNotification) {
+        DaleDeal.utils.showNotification('Producto inválido. Te llevamos al catálogo…', 'error');
+      }
+      setTimeout(() => { window.location.href = './productos.html'; }, 1500);
+      return false;
     }
 
     // 1. Intentar obtener desde la API real
@@ -54,11 +72,11 @@ class ProductPage {
       DaleDeal.error('Product not found:', productId);
       if (window.DaleDeal?.utils?.showNotification) {
         DaleDeal.utils.showNotification(
-          `Producto #${productId} no encontrado. Redirigiendo al inicio…`,
+          `Producto #${productId} no encontrado. Te llevamos al catálogo…`,
           'error'
         );
       }
-      setTimeout(() => { window.location.href = '../index.html'; }, 2000);
+      setTimeout(() => { window.location.href = './productos.html'; }, 2000);
       return false;
     }
 
@@ -489,18 +507,21 @@ class ProductPage {
     // injection en el onclick. Mejor sería event delegation con data-id,
     // pero acá voy por el fix mínimo.
     const esc = (s) => (window.DaleDeal?.utils?.escapeHtml ? DaleDeal.utils.escapeHtml(s) : String(s ?? ''));
-    grid.innerHTML = others.map(prod => {
-      const pid = Number(prod.id) || 0;
-      const titleSafe = esc(prod.title);
-      const imgSrc    = String(prod.images?.main || prod.image || '').replace(/['"<>]/g, '');
-      return `
-        <div class="product-card-mini" onclick="location.href='producto.html?id=${pid}'" style="cursor:pointer;">
-          <img src="${imgSrc}" alt="${titleSafe}" loading="lazy" style="width:100%;height:140px;object-fit:cover;border-radius:8px;">
-          <p style="margin:8px 0 4px;font-size:13px;font-weight:600;">${titleSafe}</p>
-          <p style="color:var(--primary-red);font-weight:700;">$${(prod.price || prod.basePrice || 0).toLocaleString('es-AR')}</p>
-        </div>
-      `;
-    }).join('');
+    // Filtramos items sin id válido — antes generábamos `?id=0` que rompía.
+    grid.innerHTML = others
+      .filter(prod => Number.isFinite(Number(prod.id)) && Number(prod.id) > 0)
+      .map(prod => {
+        const pid = Number(prod.id);
+        const titleSafe = esc(prod.title);
+        const imgSrc    = String(prod.images?.main || prod.image || '').replace(/['"<>]/g, '');
+        return `
+          <div class="product-card-mini" onclick="location.href='producto.html?id=${pid}'" style="cursor:pointer;">
+            <img src="${imgSrc}" alt="${titleSafe}" loading="lazy" style="width:100%;height:140px;object-fit:cover;border-radius:8px;">
+            <p style="margin:8px 0 4px;font-size:13px;font-weight:600;">${titleSafe}</p>
+            <p style="color:var(--primary-red);font-weight:700;">$${(prod.price || prod.basePrice || 0).toLocaleString('es-AR')}</p>
+          </div>
+        `;
+      }).join('');
 
     section.style.display = '';
   }
@@ -1421,7 +1442,12 @@ class ProductPage {
     // número porque va a data-id (atributo) y al onclick implícito.
     const esc = (s) => (window.DaleDeal?.utils?.escapeHtml ? DaleDeal.utils.escapeHtml(s) : String(s ?? ''));
     const titleSafe = esc(product.title);
-    const pid = Number(product.id) || 0;
+    // Si el id no es válido devolvemos cadena vacía — el caller filtra estos
+    // items en su renderRecentlyViewed/loadSimilarProducts. Antes pasábamos
+    // pid=0 y la card linkeaba a producto.html?id=0 (404 silencioso).
+    const pidNum = Number(product.id);
+    if (!Number.isFinite(pidNum) || pidNum <= 0) return '';
+    const pid = pidNum;
     const imgSrc = String(product.images?.main || '').replace(/['"<>]/g, '');
     const desc = product.description
       ? (product.description.length > 80 ? product.description.substring(0, 80) + '…' : product.description)

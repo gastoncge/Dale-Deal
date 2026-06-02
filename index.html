@@ -214,11 +214,15 @@
                           <span class="discount">-15%</span>
                         </div>
                         <div class="hero-actions">
-                          <button class="btn btn-primary btn-lg" id="heroProductBtn">
-                            <i class="bi bi-cart-plus me-2"></i>Agregar al carrito
-                          </button>
-                          <a href="HTML/producto.html?id=1" class="btn btn-outline-light btn-lg ms-2">
-                            <i class="bi bi-eye me-2"></i>Ver producto
+                          <!-- El botón "Agregar al carrito" agregaba un iPhone fake (id=1) al
+                               carrito que no existía en backend → fallaba al checkout. El "Ver
+                               producto" llevaba a producto.html?id=1 que también podía no existir.
+                               Reemplazado por links honestos al catálogo. -->
+                          <a href="HTML/productos.html?search=iphone" class="btn btn-primary btn-lg">
+                            <i class="bi bi-search me-2"></i>Ver productos similares
+                          </a>
+                          <a href="HTML/productos.html" class="btn btn-outline-light btn-lg ms-2">
+                            <i class="bi bi-grid me-2"></i>Explorar productos
                           </a>
                         </div>
                       </div>
@@ -265,8 +269,14 @@
                           </div>
                         </div>
                         <div class="hero-actions">
-                          <a href="HTML/servicio.html?id=installation-tech" class="btn btn-primary btn-lg" id="heroServiceBtn">
-                            <i class="bi bi-info-circle me-2"></i>Ver más información
+                          <!-- Antes linkeaba a servicio.html?id=installation-tech que es un
+                               mock fijo. Cambiado a listado de servicios de la categoría
+                               "instalación" — el usuario explora opciones reales del backend. -->
+                          <a href="HTML/servicios.html?category=instalacion" class="btn btn-primary btn-lg">
+                            <i class="bi bi-tools me-2"></i>Ver servicios de instalación
+                          </a>
+                          <a href="HTML/servicios.html" class="btn btn-outline-light btn-lg ms-2">
+                            <i class="bi bi-grid me-2"></i>Todos los servicios
                           </a>
                         </div>
                       </div>
