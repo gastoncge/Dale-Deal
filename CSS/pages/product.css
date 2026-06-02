@@ -1785,12 +1785,46 @@
   overflow: visible;
 }
 
+/* Layout grid para .product-card-mini dentro del custom-carousel.
+   El "carousel" original nunca terminó de cablearse (las flechas no
+   scrollean nada), y las cards quedaban en block → 100% width c/u
+   (cada producto ocupaba toda la fila). Switcheado a grid auto-fill
+   para que las cards tilen como 3-4 columnas según viewport. */
 .custom-carousel .carousel-inner {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
   overflow: hidden;
 }
 
 .custom-carousel {
   overflow: hidden;
+}
+
+/* Card mini del seller/similares — padding consistente para que no se
+   vea pegada al borde del carrusel. */
+.product-card-mini {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-card-mini:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+[data-theme="dark"] .product-card-mini {
+  background: var(--gray-800);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Las flechas prev/next del custom-carousel quedan ocultas porque ya
+   no hace falta scrollear (grid los muestra todos al mismo tiempo). */
+.similar-products-carousel-container .section-nav-btn {
+  display: none;
 }
 
 .carousel-track {
