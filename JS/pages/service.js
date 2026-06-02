@@ -137,20 +137,59 @@ class ServicePage {
       ],
     };
 
-    const provider = service.provider || providerDefaults[service.category] || providerDefaults['consultation'];
-    const gallery = service.gallery || galleryDefaults[service.category] || galleryDefaults['consultation'];
-    const thumbnails = gallery.map(img => img.replace('w=700&h=500', 'w=120&h=120'));
+    // Priorizar SIEMPRE los datos reales del backend (que llegan via
+    // transformService como service.provider y service.gallery). Solo si NO
+    // hay datos reales caemos al mock — y mapeamos category_slug del backend
+    // ('plomeria', 'electricidad'…) al key del mock ('repair', 'installation'…).
+    //
+    // Antes: el código pisaba SIEMPRE service.provider y service.gallery con
+    // el mock — la página de plomería se veía con datos del electricista.
+    const slugToMockCategory = {
+      'plomeria': 'repair',
+      'electricidad': 'installation',
+      'gasista': 'maintenance',
+      'peluqueria': 'consultation',
+      'limpieza': 'maintenance',
+      'pintura': 'installation',
+      'carpinteria': 'installation',
+      'mecanica': 'repair',
+      'informatica': 'consultation',
+      'otros-servicios': 'consultation',
+    };
+    const mockCatKey = slugToMockCategory[service.category]
+                       || (providerDefaults[service.category] ? service.category : 'consultation');
+
+    // Provider: priorizar real, sino mock por categoría
+    const realProvider = service.provider;
+    const mockProvider = providerDefaults[mockCatKey] || providerDefaults['consultation'];
+    const provider = realProvider ? {
+      name:         realProvider.name || mockProvider.name,
+      avatar:       realProvider.avatar || mockProvider.avatar,
+      // memberSince/responseTime/completedJobs no vienen del backend hoy,
+      // dejamos mock como placeholder hasta que se agreguen al endpoint.
+      memberSince:  realProvider.memberSince || mockProvider.memberSince,
+      responseTime: mockProvider.responseTime,
+      completedJobs: mockProvider.completedJobs,
+      verified:     realProvider.verified !== undefined ? realProvider.verified : true,
+      phone:        realProvider.phone,
+      location:     realProvider.location,
+    } : { ...mockProvider, verified: true };
+
+    // Galería: priorizar real (array del backend), sino mock por categoría
+    const realGallery = Array.isArray(service.gallery) && service.gallery.length > 0
+      ? service.gallery
+      : null;
+    const gallery = realGallery || galleryDefaults[mockCatKey] || galleryDefaults['consultation'];
+    const thumbnails = gallery.map(img => {
+      // El reemplazo de tamaño solo aplica a las URLs de Unsplash del mock
+      // (formato `?w=700&h=500`). Para imágenes reales con otro formato lo
+      // dejamos igual — sino quedaría sin reemplazo y la thumbnail es la full.
+      return img.replace('w=700&h=500', 'w=120&h=120');
+    });
 
     return {
       ...service,
-      provider: {
-        name: provider.name,
-        avatar: provider.avatar,
-        memberSince: provider.memberSince,
-        responseTime: provider.responseTime,
-        completedJobs: provider.completedJobs,
-        verified: true,
-      },
+      provider,
       images: {
         main: gallery[0],
         gallery,
@@ -772,6 +811,11 @@ class ServicePage {
     ).join('');
     grid.innerHTML = '';
     grid.appendChild(track);
+    // El padre `.custom-carousel .carousel-inner` define `display: grid` con
+    // minmax(220px, 1fr) en product.css. Eso comprimía el `.carousel-track`
+    // (flex container) a 220px y todas las cards salían como tiritas verticales
+    // angostas. Forzamos display:block para que el track ocupe todo el ancho.
+    grid.style.display = 'block';
 
     track.querySelectorAll('.product-card').forEach(card => {
       card.addEventListener('click', (e) => {

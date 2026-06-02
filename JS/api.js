@@ -170,6 +170,26 @@ function transformService(s) {
   const images = Array.isArray(s.images) ? s.images : [];
   const realRating = s.avg_rating != null ? parseFloat(s.avg_rating) : 0;
   const realCount  = s.review_count != null ? parseInt(s.review_count) : 0;
+
+  // Construimos el objeto `provider` con datos REALES del backend (antes este
+  // campo no existía → service.js caía a un provider mock "Valentina G." y la
+  // página de plomería mostraba al "electricista" mock).
+  const hasProvider = !!(s.provider_name || s.provider_avatar);
+  const provider = hasProvider ? {
+    id:           s.provider_id,
+    name:         s.provider_name,
+    avatar:       s.provider_avatar,
+    phone:        s.provider_phone,
+    location:     s.provider_location,
+    memberSince:  s.provider_since ? String(s.provider_since).slice(0, 4) : null,
+    verified:     true,
+  } : null;
+
+  // Galería REAL del backend — si el servicio tiene 1 sola imagen, no caemos
+  // a fotos mock que pertenecen a otra categoría (causaba que servicios de
+  // plomería se vieran con fotos de PCs/electricista).
+  const gallery = images.length > 0 ? images : null;
+
   return {
     id: s.id,
     title: s.title,
@@ -183,8 +203,10 @@ function transformService(s) {
     reviewCount: realCount,
     location: s.location || 'Argentina',
     image: images[0] || 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=400&h=300&fit=crop',
+    gallery,                          // ← array real o null (no más mock)
     badges: [],
-    provider_id: s.provider_id,
+    provider,                         // ← objeto real o null
+    provider_id: s.provider_id,       // campos planos para retrocompat
     provider_name: s.provider_name,
     featured: true,
   };
