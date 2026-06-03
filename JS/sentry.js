@@ -30,9 +30,15 @@
 
   // Cargar SDK de Sentry dinámicamente solo cuando hay DSN configurado.
   // Versión 8.x: bundle.tracing.min.js incluye Sentry + tracing en uno.
+  //
+  // Integrity hash regenerado el 2026-06-03 — el viejo estaba mal y el browser
+  // bloqueaba el script con "Failed to find a valid digest in the integrity attr".
+  // Verificar:
+  //   curl -sL https://browser.sentry-cdn.com/8.45.1/bundle.tracing.min.js \
+  //     | openssl dgst -sha384 -binary | openssl base64 -A
   const script = document.createElement('script');
   script.src = 'https://browser.sentry-cdn.com/8.45.1/bundle.tracing.min.js';
-  script.integrity = 'sha384-7Sdy7G1g3sgUR2cWihlMcuKDsRtkP8FBJVZIc+ITzAFAfWaXi3kf3+yWnAt8wnAW';
+  script.integrity = 'sha384-2GD26ZskBFEyyoAzs1kngurCDBcOcgXLhKfCK3W9FV6obvPhafTBTObTkN1ngHJN';
   script.crossOrigin = 'anonymous';
   script.async = true;
 
