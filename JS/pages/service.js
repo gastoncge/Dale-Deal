@@ -305,30 +305,47 @@ class ServicePage {
 
     const mainImage = document.getElementById('mainServiceImage');
     const thumbnailContainer = document.querySelector('.thumbnail-container');
+    const galleryNote = document.querySelector('.service-gallery .text-muted');
 
     if (mainImage) {
       mainImage.src = s.images.main;
       mainImage.alt = s.title;
     }
 
-    if (thumbnailContainer && s.images.thumbnails?.length) {
-      thumbnailContainer.innerHTML = '';
-      s.images.thumbnails.forEach((thumb, i) => {
-        const img = document.createElement('img');
-        img.src = thumb;
-        img.alt = `${s.title} – Trabajo ${i + 1}`;
-        img.className = `thumbnail ${i === 0 ? 'active' : ''}`;
-        img.dataset.full = s.images.gallery[i] || thumb;
+    if (!thumbnailContainer) return;
 
-        img.addEventListener('click', () => {
-          if (mainImage) mainImage.src = s.images.gallery[i] || thumb;
-          thumbnailContainer.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
-          img.classList.add('active');
-          this.currentImageIndex = i;
-        });
-        thumbnailContainer.appendChild(img);
-      });
+    const galleryArr = Array.isArray(s.images.gallery) ? s.images.gallery : [];
+    const thumbsArr  = Array.isArray(s.images.thumbnails) ? s.images.thumbnails : galleryArr;
+
+    // Si hay UNA SOLA imagen (o ninguna), ocultar el container de thumbnails
+    // y la nota "Fotos reales de trabajos realizados" — sino quedaba una
+    // única thumb huérfana debajo de la imagen principal. UX más limpia.
+    if (galleryArr.length < 2) {
+      thumbnailContainer.style.display = 'none';
+      if (galleryNote) galleryNote.style.display = 'none';
+      return;
     }
+
+    // Si hay 2+ imágenes, renderizar grid de thumbnails clickeables
+    thumbnailContainer.style.display = '';
+    if (galleryNote) galleryNote.style.display = '';
+    thumbnailContainer.innerHTML = '';
+
+    thumbsArr.forEach((thumb, i) => {
+      const img = document.createElement('img');
+      img.src = thumb;
+      img.alt = `${s.title} – Trabajo ${i + 1}`;
+      img.className = `thumbnail ${i === 0 ? 'active' : ''}`;
+      img.dataset.full = galleryArr[i] || thumb;
+
+      img.addEventListener('click', () => {
+        if (mainImage) mainImage.src = galleryArr[i] || thumb;
+        thumbnailContainer.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+        img.classList.add('active');
+        this.currentImageIndex = i;
+      });
+      thumbnailContainer.appendChild(img);
+    });
   }
 
   // ── Chat flotante ──────────────────────────────────────────────────────────
