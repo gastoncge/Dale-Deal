@@ -21,6 +21,11 @@ window.DaleDeal = {
     // Si queda vacío, los botones "Google" muestran "Próximamente" en vez de
     // intentar abrir el popup y fallar feo.
     GOOGLE_CLIENT_ID: "627566643982-7e7qp5su0vlsr7f70e2b0r2oiduittod.apps.googleusercontent.com",
+    // Sentry DSN del proyecto "dale-deal-frontend". Si está seteado,
+    // JS/sentry.js carga el SDK on-demand y empieza a capturar errores.
+    // Vacío = no se carga nada (cero overhead). Es público (frontend, viaja
+    // al browser de todos modos) — no es un secret crítico.
+    SENTRY_DSN: "https://aa8e919f29587da13ccc86bd30c47914@o4511501659668480.ingest.us.sentry.io/4511501694009344",
     PRODUCTS_PER_PAGE: 12,
     SEARCH_DELAY: 300,
     ANIMATION_DURATION: 300,
