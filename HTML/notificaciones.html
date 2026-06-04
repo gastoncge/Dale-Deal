@@ -123,7 +123,12 @@
                 <button class="filter-chip" data-filter="orders">Pedidos</button>
                 <button class="filter-chip" data-filter="offers">Ofertas</button>
               </div>
-              <!-- Empty por defecto — JS/notifications.js lo puebla con datos reales del backend cuando hay sesión -->
+    <script defer src="../JS/utils.js"></script>
+    <script defer src="../JS/api.js"></script>
+    <script defer src="../JS/auth.js"></script>
+    <script defer src="../JS/cart.js"></script>
+    <script defer src="../JS/ui.js"></script>
+    <script defer src="../JS/pages/notifications.js"></script>
               <div class="notifications-body" id="notificationsDropdownBody">
                 <div class="notifications-empty">
                   <i class="bi bi-bell-slash"></i>
@@ -853,20 +858,6 @@
     <script defer src="https://unpkg.com/aos@2.3.1/dist/aos.js" integrity="sha384-wziAfh6b/qT+3LrqebF9WeK4+J5sehS6FA10J1t3a866kJ/fvU5UwofWnQyzLtwu" crossorigin="anonymous"></script>
 
     <!-- Custom JS -->
-    <script defer src="../JS/theme.js"></script>
-    <script defer src="../JS/utils.js"></script>
-    <script defer src="../JS/sentry.js"></script>
-    <script defer src="../JS/api.js"></script>
-    <script defer src="../JS/api-messages.js"></script>
-    <script defer src="../JS/api-payments.js"></script>
-    <script defer src="../JS/auth.js"></script>
-    <script defer src="../JS/cart.js"></script>
-    <script defer src="../JS/notifications.js"></script>
-    <script defer src="../JS/dropdown-fix.js"></script>
-    <script defer src="../JS/component-loader.js"></script>
-    <script defer src="../JS/pages/notifications.js"></script>
-    <script src="../JS/chat.js" defer></script>
-    <script src="../JS/support-widget.js" defer></script>
 
     <style>
       /* ---- Section switcher ---- */
@@ -1337,7 +1328,7 @@
 
           // Actualizar localStorage del authManager con los datos nuevos
           try {
-            const stored = JSON.parse(localStorage.getItem('daledealer_user') || '{}');
+            const stored = JSON.parse(localStorage.getItem('daledeal:user') || '{}');
             const merged = {
               ...stored,
               name:     updated.name     || stored.name,
@@ -1345,7 +1336,7 @@
               location: updated.location || stored.location,
               avatar:   updated.avatar_url || stored.avatar,
             };
-            localStorage.setItem('daledealer_user', JSON.stringify(merged));
+            localStorage.setItem('daledeal:user', JSON.stringify(merged));
             if (window.authManager) window.authManager.currentUser = merged;
           } catch (_) {}
 
@@ -1531,7 +1522,7 @@
             const user = window.authManager.getCurrentUser();
             if (user && user.id) { mensajesState.currentUserId = user.id; return user.id; }
           }
-          const user = JSON.parse(localStorage.getItem('daledealer_user') || 'null');
+          const user = JSON.parse(localStorage.getItem('daledeal:user') || 'null');
           if (user && user.id) { mensajesState.currentUserId = user.id; return user.id; }
         } catch(e) {}
         return null;

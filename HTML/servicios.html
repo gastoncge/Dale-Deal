@@ -2353,7 +2353,12 @@
                 <button class="filter-chip" data-filter="orders">Pedidos</button>
                 <button class="filter-chip" data-filter="offers">Ofertas</button>
               </div>
-              <!-- Empty por defecto — JS/notifications.js lo puebla con datos reales del backend cuando hay sesión -->
+    <script defer src="../JS/utils.js"></script>
+    <script defer src="../JS/api.js"></script>
+    <script defer src="../JS/auth.js"></script>
+    <script defer src="../JS/catalog.js"></script>
+    <script defer src="../JS/cart.js"></script>
+    <script defer src="../JS/ui.js"></script>
               <div class="notifications-body" id="notificationsDropdownBody">
                 <div class="notifications-empty">
                   <i class="bi bi-bell-slash"></i>
@@ -2874,16 +2879,6 @@
     <script defer src="https://unpkg.com/aos@2.3.1/dist/aos.js" integrity="sha384-wziAfh6b/qT+3LrqebF9WeK4+J5sehS6FA10J1t3a866kJ/fvU5UwofWnQyzLtwu" crossorigin="anonymous"></script>
 
     <!-- Custom Scripts -->
-    <script defer src="../JS/theme.js"></script>
-    <script defer src="../JS/utils.js"></script>
-    <script defer src="../JS/sentry.js"></script>
-    <script defer src="../JS/auth.js"></script>
-    <script defer src="../JS/cart.js"></script>
-    <script defer src="../JS/favorites.js"></script>
-    <script defer src="../JS/notifications.js"></script>
-    <script defer src="../JS/dropdown-fix.js"></script>
-    <script defer src="../JS/services-data.js"></script>
-    <script src="../JS/component-loader.js" defer></script>
     <script>
       window.onFooterLoaded = function() {
         const list = document.getElementById('footerCategoriesList');
@@ -3739,10 +3734,5 @@
         })();
       });
     </script>
-    <script src="../JS/api.js" defer></script>
-    <script src="../JS/api-messages.js" defer></script>
-    <script src="../JS/api-payments.js" defer></script>
-    <script src="../JS/chat.js" defer></script>
-    <script src="../JS/support-widget.js" defer></script>
   </body>
 </html>

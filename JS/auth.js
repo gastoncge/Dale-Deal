@@ -11,8 +11,8 @@
 // (o viceversa). El updateUI() final reaplica la lógica completa.
 (function preventNavbarFlash() {
   try {
-    const hasToken = !!localStorage.getItem('daledeal_token')
-                  && !!localStorage.getItem('daledealer_user');
+    const hasToken = !!localStorage.getItem('daledeal:token')
+                  && !!localStorage.getItem('daledeal:user');
     const css = hasToken
       ? `#loginLink { display: none !important; }`
       : `.profile-dropdown, #logoutBtn { display: none !important; }
@@ -26,8 +26,8 @@
 
 class AuthManager {
   constructor() {
-    this.storageKey = "daledealer_user";
-    this.rememberedEmailKey = "daledealer_remembered_email";
+    this.storageKey = "daledeal:user";
+    this.rememberedEmailKey = "daledeal:remembered_email";
     this.currentUser = null;
     this.isInitialized = false;
 
@@ -50,7 +50,7 @@ class AuthManager {
   loadCurrentUser() {
     try {
       // Requiere que exista tanto el objeto usuario como el token JWT
-      const token = localStorage.getItem('daledeal_token');
+      const token = localStorage.getItem('daledeal:token');
       const userData = localStorage.getItem(this.storageKey);
       this.currentUser = (token && userData) ? JSON.parse(userData) : null;
     } catch (error) {
@@ -64,7 +64,7 @@ class AuthManager {
   }
 
   isAuthenticated() {
-    return this.currentUser !== null && !!localStorage.getItem('daledeal_token');
+    return this.currentUser !== null && !!localStorage.getItem('daledeal:token');
   }
 
   // ===== AUTENTICACIÓN (conectada al backend real) =====
@@ -79,7 +79,7 @@ class AuthManager {
       );
 
       // Guardar token JWT
-      localStorage.setItem('daledeal_token', data.token);
+      localStorage.setItem('daledeal:token', data.token);
 
       // Normalizar objeto de usuario
       const user = {
@@ -126,7 +126,7 @@ class AuthManager {
       );
 
       // Guardar token JWT
-      localStorage.setItem('daledeal_token', data.token);
+      localStorage.setItem('daledeal:token', data.token);
 
       // Normalizar objeto de usuario
       const user = {
@@ -155,7 +155,7 @@ class AuthManager {
   logout() {
     this.currentUser = null;
     localStorage.removeItem(this.storageKey);
-    localStorage.removeItem('daledeal_token');
+    localStorage.removeItem('daledeal:token');
     this.updateUI();
     this.showNotification("Sesión cerrada correctamente", "info");
 
@@ -893,7 +893,7 @@ class AuthManager {
       }
 
       // Mismo flow que login()/register() — guardar token y user en localStorage
-      localStorage.setItem('daledeal_token', data.token);
+      localStorage.setItem('daledeal:token', data.token);
 
       const user = {
         id: data.user.id,
@@ -994,9 +994,9 @@ document.addEventListener('submit', function(e) {
   // TODO: hacer un POST real cuando exista /newsletter en el backend.
   // Por ahora, persistimos local y mostramos confirmación.
   try {
-    const list = JSON.parse(localStorage.getItem('daledeal_newsletter_subs') || '[]');
+    const list = JSON.parse(localStorage.getItem('daledeal:newsletter:subs') || '[]');
     if (!list.includes(email)) list.push(email);
-    localStorage.setItem('daledeal_newsletter_subs', JSON.stringify(list));
+    localStorage.setItem('daledeal:newsletter:subs', JSON.stringify(list));
   } catch (_) {}
 
   setTimeout(() => {

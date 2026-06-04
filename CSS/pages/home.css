@@ -42,11 +42,11 @@
 }
 
 .hero-slide-offers .bi {
-  color: #fff !important;
+  color: #fff;
 }
 
 .hero-slide-offers .hero-badge .bi {
-  color: var(--primary-red) !important;
+  color: var(--primary-red);
 }
 
 .hero-slide-product {
@@ -60,11 +60,11 @@
 }
 
 .hero-slide-service .bi {
-  color: #fff !important;
+  color: #fff;
 }
 
 .hero-slide-service .hero-badge .bi {
-  color: var(--primary-red) !important;
+  color: var(--primary-red);
 }
 
 .hero-slide::before {
@@ -166,14 +166,14 @@
 [data-theme="dark"] .hero-slide .offer-badge,
 [data-theme="dark"] .hero-slide .product-badge,
 [data-theme="dark"] .hero-slide .service-badge {
-  color: #374151 !important;
+  color: #374151;
 }
 
 [data-theme="dark"] .hero-slide .hero-badge .bi,
 [data-theme="dark"] .hero-slide .offer-badge .bi,
 [data-theme="dark"] .hero-slide .product-badge .bi,
 [data-theme="dark"] .hero-slide .service-badge .bi {
-  color: #374151 !important;
+  color: #374151;
 }
 
 .hero-title {
@@ -262,19 +262,19 @@
 
 /* Controles del carrusel - HERO CAROUSEL CENTRADO */
 #heroCarousel .carousel-indicators {
-  position: absolute !important;
-  bottom: var(--spacing-6) !important;
-  left: 50% !important;
-  right: auto !important;
-  transform: translateX(-50%) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: var(--spacing-2) !important;
-  z-index: 3 !important;
-  width: auto !important;
-  margin: 0 !important;
-  padding: 0 !important;
+  position: absolute;
+  bottom: var(--spacing-6);
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  z-index: 3;
+  width: auto;
+  margin: 0;
+  padding: 0;
 }
 
 #heroCarousel .carousel-indicators button {
@@ -287,23 +287,23 @@
    * - Inner dot (visual focal) lo damos con box-shadow inset blanco más
    *   denso, así se ve como dot 16x16 dentro de un halo translúcido.
    */
-  width: 24px !important;
-  height: 24px !important;
-  padding: 0 !important;
-  box-sizing: border-box !important;
-  border-radius: 50% !important;
-  border: none !important;
-  background: rgba(255, 255, 255, 0.25) !important;
-  box-shadow: inset 0 0 0 4px transparent, inset 0 0 0 8px rgba(255, 255, 255, 0.55) !important;
-  margin: 0 4px !important;
-  transition: all var(--transition-base) !important;
-  flex-shrink: 0 !important;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: inset 0 0 0 4px transparent, inset 0 0 0 8px rgba(255, 255, 255, 0.55);
+  margin: 0 4px;
+  transition: all var(--transition-base);
+  flex-shrink: 0;
 }
 
 #heroCarousel .carousel-indicators button.active {
-  background: var(--primary-yellow) !important;
-  border: none !important;
-  box-shadow: none !important;
+  background: var(--primary-yellow);
+  border: none;
+  box-shadow: none;
 }
 
 .carousel-control-prev,
@@ -431,7 +431,7 @@
   }
 
   #heroCarousel .carousel-indicators {
-    bottom: var(--spacing-4) !important;
+    bottom: var(--spacing-4);
   }
 
   .carousel-control-prev,
@@ -512,36 +512,36 @@
   /* Reducir controles del carrusel en móviles (no ocultar — son necesarios) */
   .carousel-control-prev,
   .carousel-control-next {
-    width: 32px !important;
-    height: 32px !important;
-    min-width: 32px !important;
-    min-height: 32px !important;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
   }
 
   .carousel-control-prev {
-    left: var(--spacing-2) !important;
+    left: var(--spacing-2);
   }
 
   .carousel-control-next {
-    right: var(--spacing-2) !important;
+    right: var(--spacing-2);
   }
 
   .carousel-control-prev-icon,
   .carousel-control-next-icon {
-    width: 14px !important;
-    height: 14px !important;
+    width: 14px;
+    height: 14px;
   }
 
   #heroCarousel .carousel-indicators {
-    bottom: var(--spacing-3) !important;
+    bottom: var(--spacing-3);
   }
 
   #heroCarousel .carousel-indicators button {
     /* Mobile: mismo 24x24 que desktop (no se puede ir más chico sin
      * romper WCAG 2.5.5). Mantenemos el background translúcido. */
-    width: 24px !important;
-    height: 24px !important;
-    padding: 0 !important;
+    width: 24px;
+    height: 24px;
+    padding: 0;
   }
 }
 
@@ -725,8 +725,8 @@
 }
 
 .products-section .product-card:hover {
-  transform: none !important;
-  box-shadow: var(--shadow-lg) !important;
+  transform: none;
+  box-shadow: var(--shadow-lg);
 }
 
 .products-section .product-image-container {
@@ -841,7 +841,7 @@
   top: var(--spacing-3);
   left: var(--spacing-3);
   background: var(--primary-red);
-  color: #fff !important;
+  color: #fff;
   padding: var(--spacing-2) var(--spacing-3);
   border-radius: var(--radius-md);
   font-size: var(--font-size-xs);
@@ -870,6 +870,34 @@
   font-size: var(--font-size-base);
   color: var(--gray-500);
   text-decoration: line-through;
+}
+
+.products-section .product-installment {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--success, #16a34a);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.action-whatsapp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #25d366;
+  color: #fff;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  z-index: 10;
+}
+.action-whatsapp:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(37,211,102,0.4);
+  color: #fff;
 }
 
 .products-section .product-actions {
@@ -943,13 +971,13 @@
   overflow: hidden;
   min-height: 420px;
   cursor: pointer;
-  transition: box-shadow 0.3s ease !important;
+  transition: box-shadow 0.3s ease;
   box-shadow: var(--shadow-sm);
-  transform: none !important;
+  transform: none;
 }
 
 .services-section .service-card:hover {
-  box-shadow: var(--shadow-lg) !important;
+  box-shadow: var(--shadow-lg);
 }
 
 .services-section .service-image-container {
@@ -981,16 +1009,16 @@
 /* ===== CAROUSEL INDICATORS CENTRADO ===== */
 .carousel-indicators,
 .product-image-carousel .carousel-indicators {
-  position: absolute !important;
-  left: 50% !important;
-  right: auto !important;
-  transform: translateX(-50%) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  width: auto !important;
+  position: absolute;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  width: auto;
 }
 
 /* ===== RESPONSIVE PARA CARDS EN HOME ===== */
@@ -1291,7 +1319,7 @@
 }
 
 .services-section .section-header {
-  opacity: 1 !important;
-  visibility: visible !important;
-  transform: none !important;
+  opacity: 1;
+  visibility: visible;
+  transform: none;
 }

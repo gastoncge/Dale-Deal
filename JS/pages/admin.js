@@ -21,7 +21,7 @@
   document.addEventListener('DOMContentLoaded', init);
 
   async function init() {
-    if (!localStorage.getItem('daledeal_token')) {
+    if (!localStorage.getItem('daledeal:token')) {
       showDenied('No estás logueado. Iniciá sesión con una cuenta admin.');
       return;
     }

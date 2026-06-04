@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Verificar autenticación ──────────────────────────────────────────
   const authWarning = document.getElementById('authWarning');
-  const isLogged    = !!localStorage.getItem('daledeal_token');
+  const isLogged    = !!localStorage.getItem('daledeal:token');
 
   if (!isLogged && authWarning) {
     authWarning.style.display = 'flex';
@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Formulario de Producto ───────────────────────────────────────────
   document.getElementById('productForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (!localStorage.getItem('daledeal_token')) {
+    if (!localStorage.getItem('daledeal:token')) {
       showError('product-error', 'Necesitás iniciar sesión para publicar.');
       return;
     }
@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Formulario de Servicio ───────────────────────────────────────────
   document.getElementById('serviceForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (!localStorage.getItem('daledeal_token')) {
+    if (!localStorage.getItem('daledeal:token')) {
       showError('service-error', 'Necesitás iniciar sesión para publicar.');
       return;
     }

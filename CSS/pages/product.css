@@ -11,15 +11,15 @@
 
 [data-theme="dark"] .page-header-new,
 [data-theme="dark"] .page-header-new .container-fluid {
-  background: #0f172a !important;
-  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+  background: #0f172a;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
 .page-header-new .breadcrumb-nav {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
 }
 
 .breadcrumb-list {
@@ -521,25 +521,25 @@
 
 .btn-wishlist.active {
   background: var(--primary-red);
-  color: #ffffff !important;
+  color: #ffffff;
   border-color: var(--primary-red);
   box-shadow: var(--shadow-lg);
 }
 
 .btn-wishlist.active i {
-  color: #ffffff !important;
+  color: #ffffff;
 }
 
 .btn-wishlist.active:hover {
   background: var(--primary-red);
-  color: #ffffff !important;
+  color: #ffffff;
   border-color: var(--primary-red);
   transform: translateY(-3px);
   box-shadow: var(--shadow-xl);
 }
 
 .btn-wishlist.active:hover i {
-  color: #ffffff !important;
+  color: #ffffff;
 }
 
 /* ===== INFORMACIÓN DE ENVÍO ===== */
@@ -625,7 +625,7 @@
 
 .section-header {
   margin-bottom: var(--spacing-12);
-  text-align: center !important;
+  text-align: center;
 }
 
 .section-title {
@@ -654,19 +654,19 @@
   color: var(--gray-600);
   font-weight: 500;
   margin: 0;
-  text-align: center !important;
+  text-align: center;
 }
 
 /* Centrar todos los subtítulos de secciones */
 .similar-products-section .section-subtitle,
 .recently-viewed-section .section-subtitle,
 .product-details-section .section-subtitle {
-  text-align: center !important;
+  text-align: center;
 }
 
 /* Centrar específicamente el subtítulo de información detallada */
 .product-details-section .section-header .section-subtitle {
-  text-align: center !important;
+  text-align: center;
   display: block;
   width: 100%;
 }
@@ -1257,46 +1257,46 @@
 
 /* ===== BOTÓN LIMPIAR FILTROS ===== */
 #clearFilters {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: var(--spacing-2) !important;
-  padding: var(--spacing-2) var(--spacing-4) !important;
-  font-size: var(--font-size-sm) !important;
-  font-weight: 600 !important;
-  line-height: 1 !important;
-  background: transparent !important;
-  color: var(--gray-600) !important;
-  border: 1.5px solid var(--gray-300) !important;
-  border-radius: var(--radius-full) !important;
-  box-shadow: none !important;
-  transition: all 0.25s ease !important;
-  text-transform: none !important;
-  letter-spacing: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-4);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  line-height: 1;
+  background: transparent;
+  color: var(--gray-600);
+  border: 1.5px solid var(--gray-300);
+  border-radius: var(--radius-full);
+  box-shadow: none;
+  transition: all 0.25s ease;
+  text-transform: none;
+  letter-spacing: 0;
   cursor: pointer;
 }
 
 #clearFilters:hover {
-  background: rgba(229, 62, 62, 0.06) !important;
-  border-color: var(--primary-red) !important;
-  color: var(--primary-red) !important;
-  box-shadow: none !important;
-  transform: none !important;
+  background: rgba(229, 62, 62, 0.06);
+  border-color: var(--primary-red);
+  color: var(--primary-red);
+  box-shadow: none;
+  transform: none;
 }
 
 #clearFilters:active {
-  transform: scale(0.97) !important;
+  transform: scale(0.97);
 }
 
 #clearFilters i {
-  font-size: var(--font-size-sm) !important;
+  font-size: var(--font-size-sm);
   transition: transform 0.35s ease;
-  line-height: 1 !important;
+  line-height: 1;
 }
 
 #clearFilters:hover i {
   transform: rotate(180deg);
-  color: var(--primary-red) !important;
+  color: var(--primary-red);
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
@@ -1628,7 +1628,7 @@
 #sellerProductsCarousel .carousel-item .col-12,
 #sellerProductsCarousel .carousel-item .col-md-6,
 #sellerProductsCarousel .carousel-item .col-lg-3 {
-  display: flex !important;
+  display: flex;
   align-items: stretch;
 }
 
@@ -1671,12 +1671,12 @@
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-base);
   border: 1px solid var(--gray-200);
-  height: 100% !important;
+  height: 100%;
   min-height: 320px;
   max-height: 320px;
   display: flex;
   flex-direction: column;
-  width: 100% !important;
+  width: 100%;
 }
 
 .similar-product-card:hover {
@@ -1960,7 +1960,7 @@
 #recentlyViewedCarousel .carousel-item .col-12,
 #recentlyViewedCarousel .carousel-item .col-md-6,
 #recentlyViewedCarousel .carousel-item .col-lg-3 {
-  display: flex !important;
+  display: flex;
   align-items: stretch;
 }
 
@@ -1989,13 +1989,13 @@
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-base);
   border: 1px solid var(--gray-200);
-  height: 100% !important;
+  height: 100%;
   min-height: 320px;
   max-height: 320px;
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 100% !important;
+  width: 100%;
 }
 
 .recent-product-card:hover {

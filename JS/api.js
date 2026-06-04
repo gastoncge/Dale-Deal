@@ -28,7 +28,7 @@ const API_URL = null; // legacy — no usar directamente
 // =====================================================
 
 function getToken() {
-  return localStorage.getItem('daledeal_token');
+  return localStorage.getItem('daledeal:token');
 }
 
 /**
@@ -80,10 +80,10 @@ async function apiFetch(path, options = {}) {
     // y lo mandamos a login con un return path para que vuelva donde estaba.
     if (res.status === 401 && token) {
       try {
-        localStorage.removeItem('daledeal_token');
-        localStorage.removeItem('daledealer_user');
+        localStorage.removeItem('daledeal:token');
+        localStorage.removeItem('daledeal:user');
         // Flash message para mostrar después del redirect
-        sessionStorage.setItem('daledeal_flash', JSON.stringify({
+        sessionStorage.setItem('daledeal:flash', JSON.stringify({
           type: 'warning',
           message: 'Tu sesión expiró. Iniciá sesión de nuevo para continuar.'
         }));
@@ -407,3 +407,246 @@ if (typeof window !== 'undefined') {
     apiFetch,
   };
 }
+// =====================================================
+// DALE DEAL - Cliente de API para Mensajería
+// Extiende window.DaleDeal.api con los métodos de /messages
+// Requiere que api.js se haya cargado antes (para apiFetch).
+// =====================================================
+
+(function () {
+  'use strict';
+
+  if (typeof window === 'undefined') return;
+  if (!window.DaleDeal || !window.DaleDeal.api || !window.DaleDeal.api.apiFetch) {
+    console.warn('[api-messages] api.js no está cargado todavía — los métodos de mensajería no estarán disponibles');
+    return;
+  }
+
+  const apiFetch = window.DaleDeal.api.apiFetch;
+
+  // ============================================================
+  // CONVERSACIONES
+  // ============================================================
+
+  /**
+   * Lista las conversaciones del usuario.
+   * @returns {Promise<Array>} array de conversaciones con metadata
+   */
+  async function listConversations() {
+    const data = await apiFetch('/messages/conversations');
+    return data.data || [];
+  }
+
+  /**
+   * Inicia (o recupera) una conversación con el dueño de un item.
+   * @param {'product'|'service'} item_type
+   * @param {number} item_id
+   * @param {string} [initial_message]
+   */
+  async function startConversation(item_type, item_id, initial_message) {
+    return apiFetch('/messages/conversations', {
+      method: 'POST',
+      body:   JSON.stringify({ item_type, item_id, initial_message }),
+    });
+  }
+
+  /**
+   * Devuelve los mensajes de una conversación en orden cronológico.
+   * @param {number} conversationId
+   * @param {object} [opts]
+   * @param {string} [opts.before] — ISO date para paginar mensajes anteriores
+   * @param {number} [opts.limit]  — default 50, max 100
+   */
+  async function getMessages(conversationId, { before, limit } = {}) {
+    const qs = new URLSearchParams();
+    if (before) qs.append('before', before);
+    if (limit)  qs.append('limit',  limit);
+    const path = `/messages/conversations/${conversationId}/messages${qs.toString() ? '?' + qs.toString() : ''}`;
+    const data = await apiFetch(path);
+    return data.data || [];
+  }
+
+  /**
+   * Envía un mensaje en una conversación.
+   * @param {number} conversationId
+   * @param {string} body
+   * @returns {Promise<object>} mensaje creado
+   */
+  async function sendMessage(conversationId, body) {
+    const res = await apiFetch(`/messages/conversations/${conversationId}/messages`, {
+      method: 'POST',
+      body:   JSON.stringify({ body }),
+    });
+    return res.message;
+  }
+
+  /**
+   * Marca como leídos todos los mensajes recibidos en esta conversación.
+   * @param {number} conversationId
+   * @returns {Promise<number>} cantidad marcados
+   */
+  async function markConversationRead(conversationId) {
+    const res = await apiFetch(`/messages/conversations/${conversationId}/read`, {
+      method: 'POST',
+    });
+    return res.updated || 0;
+  }
+
+  /**
+   * Total de mensajes no leídos del usuario (para badge global).
+   */
+  async function getUnreadCount() {
+    try {
+      const res = await apiFetch('/messages/unread-count');
+      return res.unread || 0;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  // ============================================================
+  // Exportar
+  // ============================================================
+  window.DaleDeal.api.messages = {
+    listConversations,
+    startConversation,
+    getMessages,
+    sendMessage,
+    markConversationRead,
+    getUnreadCount,
+  };
+})();
+// =====================================================
+// DALE DEAL - Cliente de API de Pagos (Mercado Pago)
+// -----------------------------------------------------
+// Depende de window.DaleDeal.api.apiFetch (api.js).
+// =====================================================
+
+(function () {
+  'use strict';
+
+  function getApiFetch() {
+    const apiFetch = window.DaleDeal?.api?.apiFetch;
+    if (!apiFetch) {
+      throw new Error('API no disponible. ¿Cargaste api.js antes?');
+    }
+    return apiFetch;
+  }
+
+  // -------------------------------------------------------
+  // POST /payments/preference
+  // -------------------------------------------------------
+  // Crea (o recupera) la preferencia de MP para una orden.
+  // Devuelve: { ok, preference_id, init_point, sandbox_init_point,
+  //             total, commission, net_to_seller }
+  // -------------------------------------------------------
+  async function createPreference(orderId) {
+    if (!orderId) throw new Error('orderId es requerido');
+    return getApiFetch()('/payments/preference', {
+      method: 'POST',
+      body: JSON.stringify({ order_id: Number(orderId) }),
+    });
+  }
+
+  // -------------------------------------------------------
+  // GET /payments/:orderId/status
+  // -------------------------------------------------------
+  async function getStatus(orderId) {
+    if (!orderId) throw new Error('orderId es requerido');
+    return getApiFetch()(`/payments/${Number(orderId)}/status`);
+  }
+
+  // -------------------------------------------------------
+  // Helper: redirige al checkout de MP para una orden dada.
+  //
+  // En desarrollo (credenciales TEST) usa sandbox_init_point;
+  // en producción usa init_point.
+  //
+  // Guarda la orden actual en localStorage para poder
+  // recuperarla desde la página de retorno si hace falta.
+  // -------------------------------------------------------
+  async function redirectToCheckout(orderId, { preferSandbox = null } = {}) {
+    const pref = await createPreference(orderId);
+
+    if (!pref || !pref.ok) {
+      throw new Error('No se pudo crear la preferencia de pago.');
+    }
+
+    // Recordar la orden en curso (para pago-exitoso/fallido/pendiente)
+    try {
+      localStorage.setItem('daledeal:payment:order', String(orderId));
+    } catch (_) {}
+
+    // Si el backend nos dijo explícitamente si es sandbox, priorizamos eso.
+    // Si no, usamos preferSandbox si viene, o por default init_point.
+    const useSandbox = preferSandbox !== null
+      ? preferSandbox
+      : (pref.is_sandbox === true);
+
+    const url = useSandbox
+      ? (pref.sandbox_init_point || pref.init_point)
+      : (pref.init_point || pref.sandbox_init_point);
+
+    if (!url) {
+      throw new Error('Mercado Pago no devolvió un link de checkout.');
+    }
+
+    window.location.href = url;
+  }
+
+  // -------------------------------------------------------
+  // Helper: flujo completo desde una acción "Comprar ahora".
+  //   1) POST /orders con product_id + quantity
+  //   2) POST /payments/preference con la order_id devuelta
+  //   3) Redirige al checkout de MP
+  //
+  // Devuelve la Promise del redirect — no vuelve.
+  // -------------------------------------------------------
+  async function buyProductNow({
+    product_id,
+    quantity = 1,
+    shipping_method,        // 'delivery' | 'pickup' | undefined
+    shipping_address_obj,   // { recipient_name, phone, street, city, province, postal_code, notes }
+  }) {
+    if (!product_id) throw new Error('product_id es requerido');
+
+    const apiFetch = getApiFetch();
+
+    // 1) Crear orden (con datos de envío si aplica)
+    const orderBody = {
+      product_id: Number(product_id),
+      quantity:   Number(quantity) || 1,
+    };
+    if (shipping_method)      orderBody.shipping_method      = shipping_method;
+    if (shipping_address_obj) orderBody.shipping_address_obj = shipping_address_obj;
+
+    const orderRes = await apiFetch('/orders', {
+      method: 'POST',
+      body: JSON.stringify(orderBody),
+    });
+
+    const order = orderRes?.order || orderRes;
+    const orderId = order?.id;
+    if (!orderId) throw new Error('No se pudo crear la orden.');
+
+    // Guardar conversation_id por si volvemos después de pagar
+    try {
+      const convId = orderRes?.conversation?.id;
+      if (convId) localStorage.setItem('daledeal:payment:conv', String(convId));
+    } catch (_) {}
+
+    // 2) + 3) Crear preferencia y redirigir
+    await redirectToCheckout(orderId);
+  }
+
+  // -------------------------------------------------------
+  // Exportar
+  // -------------------------------------------------------
+  window.DaleDeal = window.DaleDeal || {};
+  window.DaleDeal.payments = {
+    createPreference,
+    getStatus,
+    redirectToCheckout,
+    buyProductNow,
+  };
+})();

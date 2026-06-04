@@ -217,15 +217,14 @@
       </a>
     </div>
 
-    <script defer src="../JS/theme.js"></script>
+    <script defer src="../JS/utils.js"></script>
     <script defer src="../JS/api.js"></script>
-    <script defer src="../JS/api-payments.js"></script>
     <script>
       (async function () {
         const params = new URLSearchParams(window.location.search);
         const orderId =
           params.get('order_id') ||
-          localStorage.getItem('dd_current_payment_order');
+          localStorage.getItem('daledeal:payment:order');
 
         // MP a veces pasa status_detail con info del rechazo
         const mpStatus   = params.get('status');         // 'rejected' | 'null' | ...
@@ -259,7 +258,7 @@
             alert('No pudimos identificar la orden. Revisá "Mis órdenes".');
             return;
           }
-          if (!localStorage.getItem('daledeal_token')) {
+          if (!localStorage.getItem('daledeal:token')) {
             window.location.href = './login.html';
             return;
           }

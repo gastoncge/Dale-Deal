@@ -116,7 +116,7 @@
           <!-- Cuerpo de notificaciones — se rellena dinámicamente desde el backend.
                Antes había 3 mockups hardcodeados (Pedido #12345, etc.) que se le
                mostraban a CUALQUIER visitante anónimo. Ahora arranca con un estado
-               vacío y JS/notifications.js lo puebla cuando hay sesión + datos reales. -->
+               vacío y ui.js lo puebla cuando hay sesión + datos reales. -->
           <div class="notifications-body" id="notificationsDropdownBody">
             <div class="notifications-empty">
               <i class="bi bi-bell-slash"></i>
@@ -205,6 +205,16 @@
             </a>
           </li>
           <li>
+            <a class="dropdown-item" href="./notificaciones.html#pedidos">
+              <i class="bi bi-bag me-2"></i>Mis Compras
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="./mis-ventas.html">
+              <i class="bi bi-shop me-2"></i>Mis Ventas
+            </a>
+          </li>
+          <li>
             <a class="dropdown-item" href="./notificaciones.html#favoritos" id="favoritesLink">
               <i class="bi bi-heart me-2"></i>Favoritos
             </a>
@@ -245,6 +255,14 @@
       <a href="./notificaciones.html#mi-perfil" class="nav-mobile-link" id="profileLinkMobile">
         <i class="bi bi-person" aria-hidden="true"></i>
         Mi Perfil
+      </a>
+      <a href="./notificaciones.html#pedidos" class="nav-mobile-link">
+        <i class="bi bi-bag" aria-hidden="true"></i>
+        Mis Compras
+      </a>
+      <a href="./mis-ventas.html" class="nav-mobile-link">
+        <i class="bi bi-shop" aria-hidden="true"></i>
+        Mis Ventas
       </a>
       <a href="./notificaciones.html#favoritos" class="nav-mobile-link">
         <i class="bi bi-heart" aria-hidden="true"></i>

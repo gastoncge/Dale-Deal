@@ -220,7 +220,7 @@
 
 /* Modal backdrop en dark mode */
 [data-theme="dark"] .modal-backdrop {
-  opacity: 0.8 !important;
+  opacity: 0.8;
 }
 
 /* Tabs activos en dark mode */
@@ -319,15 +319,15 @@
 }
 [data-theme="dark"] .table-light,
 [data-theme="dark"] thead.table-light {
-  background-color: var(--gray-100) !important;
+  background-color: var(--gray-100);
   color: var(--gray-700);
   border-color: var(--gray-200);
 }
 [data-theme="dark"] .table-light th,
 [data-theme="dark"] .table-light td {
-  background-color: var(--gray-100) !important;
-  color: var(--gray-700) !important;
-  border-color: var(--gray-200) !important;
+  background-color: var(--gray-100);
+  color: var(--gray-700);
+  border-color: var(--gray-200);
 }
 [data-theme="dark"] .table-bordered td,
 [data-theme="dark"] .table-bordered th {

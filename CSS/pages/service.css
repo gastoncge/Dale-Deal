@@ -160,9 +160,9 @@
   margin-bottom: var(--spacing-3);
   line-height: 1.2;
   letter-spacing: -0.02em;
-  display: block !important;
-  overflow: visible !important;
-  -webkit-line-clamp: unset !important;
+  display: block;
+  overflow: visible;
+  -webkit-line-clamp: unset;
 }
 
 .svc-meta {
@@ -427,7 +427,7 @@
 
 .btn-save-service.active {
   background: var(--primary-red);
-  color: #ffffff !important;
+  color: #ffffff;
   border-color: var(--primary-red);
 }
 
@@ -646,8 +646,8 @@
   border-radius: var(--radius-2xl);
   padding: var(--spacing-2) var(--spacing-4);
   transition: all var(--transition-base);
-  outline: none !important;
-  box-shadow: none !important;
+  outline: none;
+  box-shadow: none;
 }
 
 .chat-input-wrapper:focus,
@@ -655,20 +655,20 @@
 .chat-input-wrapper:focus-visible {
   border-color: var(--gray-300);
   background: var(--white);
-  outline: none !important;
-  box-shadow: none !important;
+  outline: none;
+  box-shadow: none;
 }
 
 .chat-input {
   flex: 1;
-  border: none !important;
+  border: none;
   background: transparent;
   font-size: var(--font-size-sm);
   color: var(--gray-800);
   font-family: var(--font-family);
   resize: none;
-  outline: none !important;
-  box-shadow: none !important;
+  outline: none;
+  box-shadow: none;
   max-height: 120px;
   min-height: 24px;
   line-height: 1.5;
@@ -750,7 +750,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  padding: var(--spacing-3) var(--spacing-4) !important;
+  padding: var(--spacing-3) var(--spacing-4);
   min-width: 56px;
 }
 
@@ -851,9 +851,9 @@
 /* ===== BURBUJAS ARCHIVO / IMAGEN ===== */
 .chat-bubble-image {
   padding: 4px;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .chat-img-preview {
@@ -943,12 +943,12 @@
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-base);
   border: 1px solid var(--gray-200);
-  height: 100% !important;
+  height: 100%;
   min-height: 320px;
   max-height: 340px;
   display: flex;
   flex-direction: column;
-  width: 100% !important;
+  width: 100%;
   cursor: pointer;
 }
 

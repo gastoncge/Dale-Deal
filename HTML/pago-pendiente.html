@@ -211,19 +211,18 @@
       <span>¿Dudas? Escribinos desde el widget de ayuda.</span>
     </div>
 
-    <script defer src="../JS/theme.js"></script>
+    <script defer src="../JS/utils.js"></script>
     <script defer src="../JS/api.js"></script>
-    <script defer src="../JS/api-payments.js"></script>
     <script>
       (async function () {
         const params = new URLSearchParams(window.location.search);
         const orderId =
           params.get('order_id') ||
-          localStorage.getItem('dd_current_payment_order');
+          localStorage.getItem('daledeal:payment:order');
 
         const statusEl = document.getElementById('paymentStatus');
 
-        if (!orderId || !localStorage.getItem('daledeal_token')) {
+        if (!orderId || !localStorage.getItem('daledeal:token')) {
           statusEl.innerHTML = '';
           return;
         }
@@ -261,7 +260,7 @@
         }
 
         // Limpiar la orden en curso del storage
-        localStorage.removeItem('dd_current_payment_order');
+        localStorage.removeItem('daledeal:payment:order');
       })();
     </script>
   </body>

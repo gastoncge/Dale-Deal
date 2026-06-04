@@ -32,11 +32,11 @@ class ProductPage {
   async loadProductDataAsync() {
     const params = new URLSearchParams(window.location.search);
     const paramId = params.get('id');
-    const storedId = localStorage.getItem('selectedProductId');
+    const storedId = localStorage.getItem('daledeal:product:selected');
     const productId = parseInt(paramId || storedId) || 1;
 
     if (paramId) {
-      localStorage.setItem('selectedProductId', paramId);
+      localStorage.setItem('daledeal:product:selected', paramId);
     }
 
     // 1. Intentar obtener desde la API real
@@ -764,7 +764,7 @@ class ProductPage {
     const button = document.querySelector('.btn-buy-now');
 
     // Chequear sesión antes de cualquier modal
-    if (!localStorage.getItem('daledeal_token')) {
+    if (!localStorage.getItem('daledeal:token')) {
       this.showNotification('Tenés que iniciar sesión para comprar.', 'warning');
       setTimeout(() => { window.location.href = './login.html'; }, 1500);
       return;
@@ -1478,7 +1478,7 @@ class ProductPage {
       const id = String(this.currentProduct.id);
       let recent = this.getRecentlyViewed().filter(x => x !== id);
       recent.unshift(id);
-      localStorage.setItem('daledeal_recently_viewed', JSON.stringify(recent.slice(0, 10)));
+      localStorage.setItem('daledeal:recently:viewed', JSON.stringify(recent.slice(0, 10)));
     } catch (err) {
       DaleDeal.error('Error guardando reciente:', err);
     }
@@ -1486,7 +1486,7 @@ class ProductPage {
 
   getRecentlyViewed() {
     try {
-      const raw = localStorage.getItem('daledeal_recently_viewed');
+      const raw = localStorage.getItem('daledeal:recently:viewed');
       return raw ? JSON.parse(raw) : [];
     } catch {
       return [];

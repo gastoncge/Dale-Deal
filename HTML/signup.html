@@ -370,16 +370,14 @@
 
     <!-- Scripts -->
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
-    <script defer src="../JS/theme.js"></script>
     <script defer src="../JS/utils.js"></script>
-    <script defer src="../JS/sentry.js"></script>
     <script defer src="../JS/api.js"></script>
     <script defer src="../JS/auth.js"></script>
+    <script defer src="../JS/ui.js"></script>
     <!-- signup.js NO existe — toda la lógica del formulario vive en auth.js
          (setupSignupForm). Antes este <script> tiraba 404 → Cloudflare devolvía
          el HTML del SPA fallback → el parser lo leía como JS y rompía con
          "SyntaxError: Unexpected token '<'". -->
-    <script src="../JS/component-loader.js" defer></script>
     <script>
       // Abrir modal empresa si el hash es #empresa
       if (window.location.hash === '#empresa') {

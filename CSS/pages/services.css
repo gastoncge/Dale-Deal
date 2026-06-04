@@ -50,7 +50,7 @@
 }
 
 .services-hero-title .text-primary {
-  color: var(--primary-red) !important;
+  color: var(--primary-red);
 }
 
 .services-hero-subtitle {

@@ -135,7 +135,11 @@ function renderProductCard(product) {
   }
 
   // Renderizar precio
-  const priceHTML = `<span class="product-current-price">${window.DaleDeal.utils.formatCurrency(product.price)}</span>`;
+  const cuota = Math.round(product.price / 3);
+  const priceHTML = `
+    <span class="product-current-price">${window.DaleDeal.utils.formatCurrency(product.price)}</span>
+    <span class="product-installment">3 cuotas de ${window.DaleDeal.utils.formatCurrency(cuota)} sin interés</span>
+  `;
 
   // Renderizar descripción corta (primeras 80 caracteres)
   const shortDescription = product.description
@@ -153,6 +157,11 @@ function renderProductCard(product) {
           <button class="action-heart" title="Agregar a favoritos" data-product-id="${product.id}">
             <i class="bi bi-heart"></i>
           </button>
+          <a class="action-whatsapp" title="Compartir por WhatsApp"
+             href="https://wa.me/?text=${encodeURIComponent(product.title + ' — ' + window.DaleDeal.utils.formatCurrency(product.price) + ' en Dale Deal: ' + window.location.origin + '/HTML/producto.html?id=' + product.id)}"
+             target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            <i class="bi bi-whatsapp"></i>
+          </a>
         </div>
       </div>
       <div class="product-info">
@@ -249,11 +258,12 @@ async function loadProducts() {
 
     if (!fallbackProducts.length) {
       productsGrid.innerHTML = `
-        <div class="col-12">
-          <div class="alert alert-warning" role="alert">
-            <i class="bi bi-exclamation-triangle me-2"></i>
-            No se pudo conectar con el servidor. Intentá de nuevo más tarde.
-          </div>
+        <div class="col-12 text-center py-5">
+          <i class="bi bi-wifi-off display-4 text-muted mb-3 d-block"></i>
+          <p class="text-muted mb-3">Los productos no pudieron cargarse en este momento.</p>
+          <button class="btn btn-outline-secondary btn-sm" onclick="window.HomePageLoader?.loadProducts()">
+            <i class="bi bi-arrow-clockwise me-1"></i>Reintentar
+          </button>
         </div>
       `;
       return;
@@ -358,16 +368,9 @@ if (typeof window !== 'undefined') {
       window.notificationManager?.renderNotifications();
     });
 
-    // Botón hero: agregar iPhone al carrito
+    // Botón hero: ir a productos
     document.getElementById('heroProductBtn')?.addEventListener('click', () => {
-      window.cartManager?.addItem({
-        id: 1,
-        title: 'iPhone 15 Pro Max 256GB',
-        price: 1299999,
-        priceText: '$1.299.999',
-        image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=400&fit=crop',
-        quantity: 1
-      });
+      window.location.href = './HTML/productos.html';
     });
 
     // Botón ver todos los productos

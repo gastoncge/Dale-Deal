@@ -10,7 +10,7 @@
   let activeOrderId   = null;
 
   document.addEventListener('DOMContentLoaded', async () => {
-    if (!localStorage.getItem('daledeal_token')) {
+    if (!localStorage.getItem('daledeal:token')) {
       window.location.href = './login.html?redirect=mis-ventas';
       return;
     }

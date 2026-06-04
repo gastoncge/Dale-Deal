@@ -224,10 +224,10 @@ textarea.form-control {
 }
 
 .favorite-card .card-img-top {
-  width: 100% !important;
-  height: 200px !important;
-  object-fit: cover !important;
-  object-position: center !important;
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  object-position: center;
 }
 
 .favorite-card .card-body {
@@ -282,16 +282,16 @@ textarea.form-control {
 }
 
 .action-heart.active {
-  background: var(--primary-red) !important;
-  color: #ffffff !important;
+  background: var(--primary-red);
+  color: #ffffff;
 }
 
 .action-heart.active i {
-  color: #ffffff !important;
+  color: #ffffff;
 }
 
 .btn-wishlist.active {
-  color: var(--primary-red) !important;
+  color: var(--primary-red);
 }
 
 /* Prevent card click when clicking heart */
@@ -335,7 +335,7 @@ textarea.form-control {
 
 /* Prevenir overflow horizontal del modal */
 .modal {
-  overflow-x: hidden !important;
+  overflow-x: hidden;
 }
 
 .modal-content {
@@ -349,20 +349,20 @@ textarea.form-control {
 
 /* ===== NAVBAR ===== */
 .navbar {
-  background: var(--gray-50) !important;
+  background: var(--gray-50);
   border-bottom: 1px solid var(--gray-200);
   box-shadow: var(--shadow-lg);
-  padding: var(--spacing-2) 0 !important; /* Reducido de spacing-4 */
-  min-height: 60px; /* Altura fija más compacta */
+  padding: var(--spacing-2) 0;
+  min-height: 60px;
   position: sticky;
   top: 0;
   z-index: 1050;
-  overflow: visible !important; /* Permitir que dropdowns se muestren fuera del navbar */
+  overflow: visible !important; /* needed: Bootstrap sets overflow:hidden on sticky navbars */
 }
 
 .navbar .container-fluid {
-  overflow: visible !important;
-  display: grid !important;
+  overflow: visible !important; /* needed: Bootstrap collapse hides overflow */
+  display: grid !important;     /* needed: overrides Bootstrap's flex on navbar-expand-lg */
   grid-template-columns: 1fr minmax(300px, 600px) 1fr;
   align-items: center;
 }
@@ -387,10 +387,10 @@ textarea.form-control {
   align-items: center;
   gap: var(--spacing-2);
   text-decoration: none;
-  color: var(--gray-900) !important;
+  color: var(--gray-900);
   font-weight: 700;
   font-size: var(--font-size-lg);
-  padding: 0 !important;
+  padding: 0;
 }
 
 .logo-navbar {
@@ -480,13 +480,13 @@ textarea.form-control {
 .navbar-actions {
   display: flex;
   align-items: center;
-  gap: var(--spacing-4); /* Reducido de spacing-6 */
-  overflow: visible !important;
+  gap: var(--spacing-4);
+  overflow: visible !important; /* needed: parent sets overflow:hidden */
 }
 
 .action-item {
   position: relative;
-  overflow: visible !important;
+  overflow: visible !important; /* needed: for dropdown badges to show outside */
 }
 
 .action-btn {
@@ -547,7 +547,7 @@ textarea.form-control {
   top: -6px;
   right: -6px;
   background: var(--primary-red);
-  color: #fff !important;
+  color: #fff;
   font-size: var(--font-size-2xs);
   font-weight: 700;
   padding: 0;
@@ -565,8 +565,8 @@ textarea.form-control {
 
 /* ===== PERFIL DE USUARIO ===== */
 .profile-btn {
-  padding: var(--spacing-2) var(--spacing-3) !important;
-  gap: var(--spacing-2) !important;
+  padding: var(--spacing-2) var(--spacing-3);
+  gap: var(--spacing-2);
 }
 
 .profile-btn:hover .profile-name {
@@ -600,7 +600,7 @@ textarea.form-control {
   padding: var(--spacing-2);
   margin-top: var(--spacing-2);
   min-width: 220px;
-  z-index: 9999 !important; /* Z-index sobre TODO - navbar, header, barra búsqueda */
+  z-index: 9999; /* Z-index sobre TODO - navbar, header, barra búsqueda */
   position: absolute;
   will-change: transform; /* Optimización de rendering */
   isolation: isolate; /* Crea nuevo contexto de apilamiento */
@@ -608,8 +608,8 @@ textarea.form-control {
 
 /* Forzar z-index cuando dropdown está visible (.show de Bootstrap) */
 .dropdown-menu.show {
-  z-index: 9999 !important; /* Sobre TODO absolutamente */
-  display: block !important;
+  z-index: 9999; /* Sobre TODO absolutamente */
+  display: block;
 }
 
 /* ========================================================================
@@ -998,7 +998,7 @@ textarea.form-control {
 
 .btn-primary i,
 .btn-primary .bi {
-  color: #fff !important;
+  color: #fff;
 }
 
 .btn-primary::before {
@@ -1073,7 +1073,7 @@ textarea.form-control {
 .btn-loading {
   pointer-events: none;
   opacity: 0.7;
-  cursor: wait !important;
+  cursor: wait;
 }
 
 /* Disabled state: cualquier botón disabled (auth con form inválido, "Comprar"
@@ -1083,8 +1083,8 @@ textarea.form-control {
   pointer-events: none;
   opacity: 0.55;
   cursor: not-allowed;
-  transform: none !important;
-  box-shadow: none !important;
+  transform: none;
+  box-shadow: none;
 }
 
 /* ===== TARJETAS DE PRODUCTO ===== */
@@ -1188,19 +1188,19 @@ textarea.form-control {
 
 /* Indicadores del carrusel - CENTRADO FORZADO */
 .carousel-indicators {
-  position: absolute !important;
-  bottom: 12px !important;
-  left: 50% !important;
-  right: auto !important;
-  transform: translateX(-50%) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 6px !important;
-  z-index: 10 !important;
-  width: auto !important;
-  margin: 0 !important;
-  padding: 0 !important;
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  z-index: 10;
+  width: auto;
+  margin: 0;
+  padding: 0;
 }
 
 .indicator,
@@ -1210,33 +1210,33 @@ textarea.form-control {
    * indicator sigue siendo 8x8 (el dot rojo) gracias a background-clip:
    * content-box + padding de 8px que rodea el dot con área transparente
    * pero clickeable. Total real: 24x24px. */
-  width: 24px !important;
-  height: 24px !important;
-  padding: 8px !important;
-  box-sizing: border-box !important;
-  background: rgba(255, 255, 255, 0.6) !important;
-  background-clip: content-box !important;
-  border-radius: 50% !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
-  border: none !important;
-  margin: 0 4px !important; /* sin esto, el padding-area de un indicator pisa al vecino */
-  flex-shrink: 0 !important;
-  opacity: 1 !important;
+  width: 24px;
+  height: 24px;
+  padding: 8px;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.6);
+  background-clip: content-box;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  margin: 0 4px; /* sin esto, el padding-area de un indicator pisa al vecino */
+  flex-shrink: 0;
+  opacity: 1;
 }
 
 .indicator.active,
 .carousel-indicators .indicator.active,
 .carousel-indicators button.active {
-  background: var(--primary-red) !important;
-  transform: scale(1.3) !important;
-  border-color: var(--primary-red) !important;
+  background: var(--primary-red);
+  transform: scale(1.3);
+  border-color: var(--primary-red);
 }
 
 .indicator:hover,
 .carousel-indicators .indicator:hover,
 .carousel-indicators button:hover {
-  background: rgba(255, 255, 255, 0.9) !important;
+  background: rgba(255, 255, 255, 0.9);
 }
 
 /* Carrusel de imágenes de productos */
@@ -1249,46 +1249,46 @@ textarea.form-control {
 
 /* Indicadores específicos para carrusel de productos */
 .product-image-carousel .carousel-indicators {
-  position: absolute !important;
-  bottom: 12px !important;
-  left: 50% !important;
-  right: auto !important;
-  transform: translateX(-50%) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 6px !important;
-  z-index: 10 !important;
-  width: auto !important;
-  margin: 0 !important;
-  padding: 0 !important;
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  z-index: 10;
+  width: auto;
+  margin: 0;
+  padding: 0;
 }
 
 .product-image-carousel .carousel-control {
-  z-index: 10 !important;
-  pointer-events: auto !important;
+  z-index: 10;
+  pointer-events: auto;
 }
 
 .product-image-carousel .carousel-indicators .indicator {
-  width: 8px !important;
-  height: 8px !important;
-  background: rgba(255, 255, 255, 0.6) !important;
-  border-radius: 50% !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
-  border: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  flex-shrink: 0 !important;
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  padding: 0;
+  margin: 0;
+  flex-shrink: 0;
 }
 
 .product-image-carousel .carousel-indicators .indicator.active {
-  background: var(--primary-red) !important;
-  transform: scale(1.3) !important;
+  background: var(--primary-red);
+  transform: scale(1.3);
 }
 
 .product-image-carousel .carousel-indicators .indicator:hover {
-  background: rgba(255, 255, 255, 0.9) !important;
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .product-badge {
@@ -1537,7 +1537,7 @@ textarea.form-control {
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-2xl);
   background: var(--white);
-  z-index: 9999 !important; /* Z-index sobre TODO */
+  z-index: 9999; /* Z-index sobre TODO */
 }
 
 .notifications-dropdown .notifications-header {
@@ -1580,16 +1580,16 @@ textarea.form-control {
 /* ===== TABLET: Panel Flotante (< 768px) ===== */
 @media (max-width: 768px) {
   .notifications-dropdown {
-    position: fixed !important;
-    top: 65px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 90% !important;
-    max-width: 400px !important;
-    max-height: 75vh !important;
-    margin: 0 !important;
-    z-index: 9999 !important;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    position: fixed;
+    top: 65px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 400px;
+    max-height: 75vh;
+    margin: 0;
+    z-index: 9999;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
   }
 
@@ -1608,35 +1608,35 @@ textarea.form-control {
   /* NOTIFICACIONES: Modal Completo con Backdrop */
   .notifications-dropdown {
     /* ROMPER EL FLUJO - Obligatorio para estar sobre barra de búsqueda */
-    position: fixed !important;
+    position: fixed;
 
     /* CENTRADO Y TAMAÑO - Estilo Modal */
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: 90vw !important;                  /* 90% del ancho de la ventana */
-    max-height: 80vh !important;
-    margin: 0 !important;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90vw;                  /* 90% del ancho de la ventana */
+    max-height: 80vh;
+    margin: 0;
 
     /* CAPAS - Z-Index NUCLEAR sobre TODO */
-    z-index: 10000 !important;               /* Nuclear - sobre navbar y search */
+    z-index: 10000;               /* Nuclear - sobre navbar y search */
 
     /* ESTÉTICA - Sombra de panel */
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
 
     /* Estilos visuales adicionales */
-    border-radius: var(--radius-3xl) !important;
-    border: none !important;
-    overflow: hidden !important;
+    border-radius: var(--radius-3xl);
+    border: none;
+    overflow: hidden;
 
     /* Reset posicionamiento */
-    right: auto !important;
-    bottom: auto !important;
+    right: auto;
+    bottom: auto;
   }
 
   .notifications-dropdown .notifications-body {
-    max-height: calc(80vh - 200px) !important;
-    overflow-y: auto !important;
+    max-height: calc(80vh - 200px);
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
 
@@ -1665,12 +1665,12 @@ textarea.form-control {
   border-radius: var(--radius-2xl);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   background: var(--white);
-  z-index: 10000 !important; /* Z-index sobre TODO */
-  position: fixed !important;
-  top: 70px !important;
-  right: 20px !important;
-  left: auto !important;
-  transform: none !important;
+  z-index: 10000; /* Z-index sobre TODO */
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  left: auto;
+  transform: none;
 }
 
 .cart-dropdown .cart-header {
@@ -1782,16 +1782,16 @@ textarea.form-control {
 /* ===== TABLET: Panel Flotante (< 768px) ===== */
 @media (max-width: 768px) {
   .cart-dropdown {
-    position: fixed !important;
-    top: 65px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 90% !important;
-    max-width: 400px !important;
-    max-height: 75vh !important;
-    margin: 0 !important;
-    z-index: 9999 !important;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    position: fixed;
+    top: 65px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 400px;
+    max-height: 75vh;
+    margin: 0;
+    z-index: 9999;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
   }
 
@@ -1807,35 +1807,35 @@ textarea.form-control {
   /* CARRITO: Modal Completo con Backdrop */
   .cart-dropdown {
     /* ROMPER EL FLUJO - Obligatorio para estar sobre barra de búsqueda */
-    position: fixed !important;
+    position: fixed;
 
     /* CENTRADO Y TAMAÑO - Estilo Modal */
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: 90vw !important;                  /* 90% del ancho de la ventana */
-    max-height: 80vh !important;
-    margin: 0 !important;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90vw;                  /* 90% del ancho de la ventana */
+    max-height: 80vh;
+    margin: 0;
 
     /* CAPAS - Z-Index NUCLEAR sobre TODO */
-    z-index: 10000 !important;               /* Nuclear - sobre navbar y search */
+    z-index: 10000;               /* Nuclear - sobre navbar y search */
 
     /* ESTÉTICA - Sombra de panel */
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
 
     /* Estilos visuales adicionales */
-    border-radius: var(--radius-3xl) !important;
-    border: none !important;
-    overflow: hidden !important;
+    border-radius: var(--radius-3xl);
+    border: none;
+    overflow: hidden;
 
     /* Reset posicionamiento */
-    right: auto !important;
-    bottom: auto !important;
+    right: auto;
+    bottom: auto;
   }
 
   .cart-dropdown .cart-body {
-    max-height: calc(80vh - 250px) !important;
-    overflow-y: auto !important;
+    max-height: calc(80vh - 250px);
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
 
@@ -2120,7 +2120,7 @@ textarea.form-control {
 
 @media (max-width: 768px) {
   .navbar {
-    padding: var(--spacing-2) 0 !important;
+    padding: var(--spacing-2) 0;
   }
 
   .search-container {
@@ -2207,7 +2207,7 @@ textarea.form-control {
 /* Badge de oferta */
 .badge-offer {
   background: var(--primary-red);
-  color: #fff !important;
+  color: #fff;
 }
 
 /* Badge de envío gratis */
@@ -2829,15 +2829,15 @@ textarea.form-control {
 
 /* Overlay del servicio - Completamente oculto (sin botón Ver más) */
 .service-overlay {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
+  display: none;
+  visibility: hidden;
+  opacity: 0;
 }
 
 .service-cta {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
+  display: none;
+  visibility: hidden;
+  opacity: 0;
 }
 
 /* Acciones del servicio (icono de favoritos) */
@@ -3232,7 +3232,7 @@ textarea.form-control {
 
 /* ===== FOOTER ===== */
 .footer {
-  background: #1e293b !important;
+  background: #1e293b;
   color: #ffffff;
   padding: var(--spacing-16) 0 0;
   margin-top: 0;
@@ -3700,7 +3700,7 @@ textarea.form-control {
 
   /* Ocultar separadores en móviles */
   .legal-links-group .text-muted {
-    display: none !important;
+    display: none;
   }
 
   .footer-bottom {
@@ -3754,7 +3754,7 @@ textarea.form-control {
 }
 
 .stat-number .bi {
-  color: #fff !important;
+  color: #fff;
 }
 
 .stat-label {
@@ -3828,15 +3828,15 @@ textarea.form-control {
 
 /* Botón limpiar filtros */
 .filter-clear-btn {
-  background: linear-gradient(135deg, #ff6b6b, #ee5a52) !important;
-  color: #ffffff !important;
-  border-color: transparent !important;
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  color: #ffffff;
+  border-color: transparent;
 }
 
 .filter-clear-btn:hover {
-  background: linear-gradient(135deg, #ee5a52, #dc3545) !important;
-  color: #ffffff !important;
-  border-color: transparent !important;
+  background: linear-gradient(135deg, #ee5a52, #dc3545);
+  color: #ffffff;
+  border-color: transparent;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(238, 90, 82, 0.3);
 }
@@ -4097,7 +4097,7 @@ textarea.form-control {
 
   /* Modal de Favoritos - Tablet */
   #favoritesModal .modal-dialog {
-    max-width: 95vw !important;
+    max-width: 95vw;
     margin: var(--spacing-4) auto;
   }
 
@@ -4137,7 +4137,7 @@ textarea.form-control {
 
   /* Dropdown de Notificaciones - Tablet */
   .notifications-body {
-    max-height: 60vh !important;
+    max-height: 60vh;
   }
 
   /* Secciones */
@@ -4232,16 +4232,16 @@ textarea.form-control {
 
   /* Dropdown de Perfil - Panel Flotante en Tablet */
   .dropdown-menu:not(.notifications-dropdown):not(.cart-dropdown) {
-    position: fixed !important;
-    top: 65px !important;
-    right: 5% !important;
-    left: auto !important;
-    transform: none !important;
-    width: 320px !important;
-    max-width: 90vw !important;
-    margin: 0 !important;
-    z-index: 9999 !important;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    position: fixed;
+    top: 65px;
+    right: 5%;
+    left: auto;
+    transform: none;
+    width: 320px;
+    max-width: 90vw;
+    margin: 0;
+    z-index: 9999;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   }
 }
 
@@ -4251,36 +4251,36 @@ textarea.form-control {
   /* PERFIL (Usuario): Modal Completo con Backdrop */
   .dropdown-menu:not(.notifications-dropdown):not(.cart-dropdown) {
     /* ROMPER EL FLUJO - Obligatorio para estar sobre barra de búsqueda */
-    position: fixed !important;
+    position: fixed;
 
     /* CENTRADO Y TAMAÑO - Estilo Modal */
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: 90vw !important;                  /* 90% del ancho de la ventana */
-    max-width: 380px !important;             /* Límite para perfil más pequeño */
-    max-height: 80vh !important;
-    margin: 0 !important;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90vw;                  /* 90% del ancho de la ventana */
+    max-width: 380px;             /* Límite para perfil más pequeño */
+    max-height: 80vh;
+    margin: 0;
 
     /* CAPAS - Z-Index NUCLEAR sobre TODO */
-    z-index: 10000 !important;               /* Nuclear - sobre navbar y search */
+    z-index: 10000;               /* Nuclear - sobre navbar y search */
 
     /* ESTÉTICA - Sombra de panel */
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
 
     /* Estilos visuales adicionales */
-    border-radius: var(--radius-3xl) !important;
-    border: none !important;
-    overflow-y: auto !important;
+    border-radius: var(--radius-3xl);
+    border: none;
+    overflow-y: auto;
 
     /* Reset posicionamiento */
-    right: auto !important;
-    bottom: auto !important;
+    right: auto;
+    bottom: auto;
   }
 
   /* Asegurar que todos los dropdowns usen el z-index correcto */
   .dropdown-menu.show {
-    z-index: 10000 !important;
+    z-index: 10000;
   }
 }
 
@@ -4401,12 +4401,12 @@ textarea.form-control {
   /* Modal y dropdowns */
   .modal-dialog {
     margin: var(--spacing-3);
-    max-width: calc(100vw - var(--spacing-6)) !important;
+    max-width: calc(100vw - var(--spacing-6));
   }
 
   #favoritesModal .modal-dialog {
     margin: var(--spacing-2);
-    max-width: calc(100vw - var(--spacing-4)) !important;
+    max-width: calc(100vw - var(--spacing-4));
   }
 
   .modal-header {
@@ -4430,11 +4430,11 @@ textarea.form-control {
   /* Mantener el centrado del bloque < 576px, solo ajustar el ancho */
   .cart-dropdown,
   .notifications-dropdown {
-    width: 92vw !important;
-    max-width: 360px !important;
-    left: 50% !important;
-    right: auto !important;
-    transform: translate(-50%, -50%) !important;
+    width: 92vw;
+    max-width: 360px;
+    left: 50%;
+    right: auto;
+    transform: translate(-50%, -50%);
   }
 
   /* Footer ajustes adicionales */
@@ -4476,7 +4476,7 @@ textarea.form-control {
   .modal-footer .d-flex {
     flex-direction: column;
     gap: var(--spacing-3);
-    align-items: stretch !important;
+    align-items: stretch;
   }
 
   .favorites-count {
@@ -4508,11 +4508,11 @@ textarea.form-control {
 
   /* Dropdown de Carrito - Footer optimizado */
   .cart-footer {
-    padding: var(--spacing-3) !important;
+    padding: var(--spacing-3);
   }
 
   .cart-total {
-    margin-bottom: var(--spacing-2) !important;
+    margin-bottom: var(--spacing-2);
     padding: var(--spacing-2);
     background: var(--gray-50);
     border-radius: var(--radius-lg);
@@ -4539,7 +4539,7 @@ textarea.form-control {
 
   /* Dropdown de Notificaciones - Optimizado */
   .notifications-dropdown {
-    padding: 0 !important;
+    padding: 0;
   }
 
   .notifications-header {
@@ -4562,11 +4562,11 @@ textarea.form-control {
   }
 
   .notifications-body {
-    max-height: 50vh !important;
+    max-height: 50vh;
   }
 
   .notification-item {
-    padding: var(--spacing-3) !important;
+    padding: var(--spacing-3);
   }
 
   .notification-item .notification-title {
@@ -4582,7 +4582,7 @@ textarea.form-control {
   }
 
   .notifications-footer {
-    padding: var(--spacing-3) !important;
+    padding: var(--spacing-3);
   }
 
   .notifications-footer .btn {
@@ -4592,12 +4592,12 @@ textarea.form-control {
 
   /* Cart Items - Optimizado */
   .cart-item {
-    padding: var(--spacing-3) !important;
+    padding: var(--spacing-3);
   }
 
   .cart-item-image {
-    width: 60px !important;
-    height: 60px !important;
+    width: 60px;
+    height: 60px;
   }
 
   .cart-item-details {
@@ -4618,8 +4618,8 @@ textarea.form-control {
   }
 
   .quantity-btn {
-    width: 28px !important;
-    height: 28px !important;
+    width: 28px;
+    height: 28px;
     font-size: var(--font-size-xs);
   }
 
@@ -4699,13 +4699,13 @@ textarea.form-control {
 
 /* Main content background */
 [data-theme="dark"] .main-content {
-  background: var(--gray-50) !important;
+  background: var(--gray-50);
 }
 
 /* Navbar */
 [data-theme="dark"] .navbar {
-  background: #1e293b !important;
-  border-bottom-color: transparent !important;
+  background: #1e293b;
+  border-bottom-color: transparent;
 }
 [data-theme="dark"] .search-input {
   background: #0f172a;
@@ -4724,7 +4724,7 @@ textarea.form-control {
 [data-theme="dark"] .action-btn { color: var(--gray-800); }
 [data-theme="dark"] .action-btn:hover { background: rgba(255,255,255,0.08); }
 [data-theme="dark"] .action-link { color: var(--gray-800); }
-[data-theme="dark"] .navbar-brand, [data-theme="dark"] .brand-text { color: var(--gray-900) !important; }
+[data-theme="dark"] .navbar-brand, [data-theme="dark"] .brand-text { color: var(--gray-900); }
 
 /* Dropdowns */
 [data-theme="dark"] .dropdown-menu {
@@ -4753,27 +4753,27 @@ textarea.form-control {
 }
 [data-theme="dark"] .carousel-control {
   background: rgba(255,255,255,0.25);
-  color: #fff !important;
+  color: #fff;
 }
 [data-theme="dark"] .carousel-control:hover {
   background: rgba(255,255,255,0.5);
 }
 [data-theme="dark"] .badge-offer,
-[data-theme="dark"] .badge-featured { color: #fff !important; box-shadow: none !important; }
+[data-theme="dark"] .badge-featured { color: #fff; box-shadow: none; }
 
 /* Footer */
 [data-theme="dark"] .footer {
-  background: #1e293b !important;
+  background: #1e293b;
   color: #cbd5e1;
   border-top: none;
 }
 [data-theme="dark"] .footer-newsletter {
-  border: none !important;
+  border: none;
   background: rgba(255, 255, 255, 0.04);
 }
 /* Dots visible on dark footer in both themes */
 .legal-links-group .text-muted {
-  color: rgba(255, 255, 255, 0.45) !important;
+  color: rgba(255, 255, 255, 0.45);
 }
 
 [data-theme="dark"] .footer-bottom {
@@ -4784,13 +4784,13 @@ textarea.form-control {
 [data-theme="dark"] .footer-links a:hover { color: #fff; }
 [data-theme="dark"] .footer-description { color: #94a3b8; }
 [data-theme="dark"] .footer-title,
-[data-theme="dark"] .footer-brand-text { color: #fff !important; }
+[data-theme="dark"] .footer-brand-text { color: #fff; }
 [data-theme="dark"] .copyright-year,
-[data-theme="dark"] .copyright-brand { color: #fff !important; }
-[data-theme="dark"] .copyright-text { color: rgba(255, 255, 255, 0.55) !important; }
+[data-theme="dark"] .copyright-brand { color: #fff; }
+[data-theme="dark"] .copyright-text { color: rgba(255, 255, 255, 0.55); }
 [data-theme="dark"] .footer-tagline,
-[data-theme="dark"] .legal-link { color: #94a3b8 !important; }
-[data-theme="dark"] .legal-link:hover { color: var(--primary-yellow) !important; }
+[data-theme="dark"] .legal-link { color: #94a3b8; }
+[data-theme="dark"] .legal-link:hover { color: var(--primary-yellow); }
 [data-theme="dark"] .footer-social a { color: #94a3b8; }
 [data-theme="dark"] .footer-social a:hover { color: #fff; }
 
@@ -4826,8 +4826,8 @@ textarea.form-control {
 /* Sections genéricas de fondo claro */
 [data-theme="dark"] .bg-light,
 [data-theme="dark"] .bg-white,
-[data-theme="dark"] section { background: var(--white) !important; }
-[data-theme="dark"] .section-alt { background: var(--gray-50) !important; }
+[data-theme="dark"] section { background: var(--white); }
+[data-theme="dark"] .section-alt { background: var(--gray-50); }
 
 /* Notificaciones & Cart dropdowns */
 [data-theme="dark"] .notifications-dropdown,
@@ -4850,7 +4850,7 @@ textarea.form-control {
   color: var(--gray-900);
 }
 [data-theme="dark"] p, [data-theme="dark"] span, [data-theme="dark"] li { color: var(--gray-700); }
-[data-theme="dark"] .text-muted { color: var(--gray-500) !important; }
+[data-theme="dark"] .text-muted { color: var(--gray-500); }
 
 /* Excluir hero slides de la regla global de color en dark mode */
 [data-theme="dark"] .hero-slide p,
@@ -4858,7 +4858,7 @@ textarea.form-control {
 [data-theme="dark"] .hero-slide li,
 [data-theme="dark"] .hero-subtitle,
 [data-theme="dark"] .stat-label,
-[data-theme="dark"] .stat-number { color: inherit !important; }
+[data-theme="dark"] .stat-number { color: inherit; }
 
 /* =====================================================
    BOTÓN VOLVER ARRIBA (BACK TO TOP)
@@ -4988,11 +4988,11 @@ textarea.form-control {
 /* Search bar: focus glow con color de marca — aplicado al INPUT (píldora),
    no al wrapper rectangular, para que el halo respete el border-radius. */
 .search-input:focus {
-  border-color: var(--primary-red) !important;
-  box-shadow: 0 0 0 3px var(--primary-red-light) !important;
+  border-color: var(--primary-red);
+  box-shadow: 0 0 0 3px var(--primary-red-light);
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
-.search-wrapper:focus-within { box-shadow: none !important; }
+.search-wrapper:focus-within { box-shadow: none; }
 
 /* Active state: feedback visual al click en CUALQUIER botón. Antes solo
  * lo tenía btn-primary; los outline y secondary no daban feedback y se
@@ -5006,8 +5006,8 @@ textarea.form-control {
 .btn-outline-light:active,
 .btn-outline-danger:active,
 .btn-primary-hover-effect:active {
-  transform: scale(0.97) !important;
-  transition-duration: 0.05s !important;
+  transform: scale(0.97);
+  transition-duration: 0.05s;
 }
 
 
@@ -5045,15 +5045,15 @@ img[loading="lazy"].loaded { opacity: 1; }
 .chat-float-widget { position: fixed; bottom: 28px; right: 48px; z-index: 9999; }
 
 #toast-container.bottom-0.end-0 {
-  bottom: 28px !important;
-  right: 128px !important;
-  padding: 0 !important;
+  bottom: 28px;
+  right: 128px;
+  padding: 0;
 }
 
 body:has(.chat-float-panel.chat-float-open) #toast-container.bottom-0.end-0,
 body:has(.chat-float-panel.chat-float-open) #notificationContainer {
-  right: auto !important;
-  left: 20px !important;
+  right: auto;
+  left: 20px;
 }
 
 .chat-float-btn {
@@ -5133,9 +5133,9 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
 [data-theme="dark"] .toast,
 [data-theme="dark"] .toast-body,
 [data-theme="dark"] .toast-header {
-  background-color: #1e293b !important;
-  color: var(--gray-800) !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
+  background-color: #1e293b;
+  color: var(--gray-800);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Tooltips de Bootstrap */
@@ -5291,22 +5291,22 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
 
 /* Badges en dark mode: texto siempre blanco */
 [data-theme="dark"] .badge.bg-light {
-  background: rgba(255, 255, 255, 0.12) !important;
-  color: #fff !important;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
 }
 [data-theme="dark"] .badge-new,
 [data-theme="dark"] .badge-premium,
 [data-theme="dark"] .badge-limited,
 [data-theme="dark"] .badge.bg-warning,
-[data-theme="dark"] .badge.bg-secondary { color: #fff !important; }
-[data-theme="dark"] .filter-count { color: #fff !important; }
+[data-theme="dark"] .badge.bg-secondary { color: #fff; }
+[data-theme="dark"] .filter-count { color: #fff; }
 
 /* Inputs con autofill (Chrome) — evita el amarillo sobre fondo oscuro */
 [data-theme="dark"] input:-webkit-autofill,
 [data-theme="dark"] input:-webkit-autofill:hover,
 [data-theme="dark"] input:-webkit-autofill:focus {
-  -webkit-text-fill-color: var(--gray-800) !important;
-  -webkit-box-shadow: 0 0 0 1000px #0f172a inset !important;
+  -webkit-text-fill-color: var(--gray-800);
+  -webkit-box-shadow: 0 0 0 1000px #0f172a inset;
   caret-color: var(--gray-800);
   transition: background-color 9999s ease-out 0s;
 }
@@ -5372,7 +5372,7 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
 [data-theme="dark"] .btn-load-more-reviews,
 [data-theme="dark"] .btn[class*="bg-gradient"],
 [data-theme="dark"] [class*="bg-primary"]:not(.bi):not(i) {
-  color: #ffffff !important;
+  color: #ffffff;
 }
 
 /* =====================================================
@@ -5391,15 +5391,15 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
 
 [data-theme="dark"] .page-header-new,
 [data-theme="dark"] .page-header-new .container-fluid {
-  background: #0f172a !important;
-  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+  background: #0f172a;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
 .page-header-new .breadcrumb-nav {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
 }
 
 .breadcrumb-list {

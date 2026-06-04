@@ -218,16 +218,15 @@
       </a>
     </div>
 
-    <script defer src="../JS/theme.js"></script>
+    <script defer src="../JS/utils.js"></script>
     <script defer src="../JS/api.js"></script>
-    <script defer src="../JS/api-payments.js"></script>
     <script>
       (async function () {
         const params = new URLSearchParams(window.location.search);
         const orderId =
           params.get('order_id') ||
           params.get('external_reference')?.match(/order-(\d+)/)?.[1] ||
-          localStorage.getItem('dd_current_payment_order');
+          localStorage.getItem('daledeal:payment:order');
 
         const mpPaymentId = params.get('payment_id');
         const mpStatus    = params.get('status'); // 'approved' por back_urls de MP
@@ -237,7 +236,7 @@
         const chatBtn  = document.getElementById('btnChat');
 
         // Si no hay sesión, redirigir a login
-        if (!localStorage.getItem('daledeal_token')) {
+        if (!localStorage.getItem('daledeal:token')) {
           statusEl.innerHTML = `
             <div class="pago-details">
               <p>Iniciá sesión para ver el detalle de tu orden.</p>
@@ -323,11 +322,11 @@
         }
 
         // Limpiar la orden "en curso"
-        localStorage.removeItem('dd_current_payment_order');
+        localStorage.removeItem('daledeal:payment:order');
 
         // ¿Órdenes pendientes (del carrito múltiple)?
         try {
-          const pending = JSON.parse(localStorage.getItem('dd_pending_orders') || '[]');
+          const pending = JSON.parse(localStorage.getItem('daledeal:orders:pending') || '[]');
           if (Array.isArray(pending) && pending.length > 0) {
             document.getElementById('pendingOrdersNote').style.display = 'block';
             document.getElementById('pendingOrdersCount').textContent = pending.length;
@@ -346,9 +345,9 @@
                   // Sacar esta orden de la lista de pendientes antes de redirigir
                   const rest = pending.filter((p) => p !== id);
                   if (rest.length > 0) {
-                    localStorage.setItem('dd_pending_orders', JSON.stringify(rest));
+                    localStorage.setItem('daledeal:orders:pending', JSON.stringify(rest));
                   } else {
-                    localStorage.removeItem('dd_pending_orders');
+                    localStorage.removeItem('daledeal:orders:pending');
                   }
                   await window.DaleDeal.payments.redirectToCheckout(id);
                 } catch (err) {
