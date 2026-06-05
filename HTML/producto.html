@@ -557,6 +557,8 @@
 
               <!-- Reviews Tab -->
               <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="tab-reviews" tabindex="0">
+                <!-- Form para crear review (montado por JS/reviews-form.js) -->
+                <div id="reviews-form-container"></div>
                 <div class="reviews-content">
                   <!-- Reviews Summary -->
                   <div class="reviews-summary">
@@ -834,6 +836,25 @@
     <script src="../JS/product-data.js" defer></script>
     <script src="../JS/product-carousel.js" defer></script>
     <script src="../JS/pages/product.js" defer></script>
+    <!-- Form de reviews: monta UI cuando product.js cargó y sabemos el id -->
+    <script src="../JS/reviews-form.js" defer></script>
+    <script defer>
+      // Esperar a que product.js cargue el producto antes de montar el form
+      // de review. window.__currentProductId lo setea product.js.
+      document.addEventListener('DOMContentLoaded', function tryMount(retries) {
+        retries = typeof retries === 'number' ? retries : 20;
+        const urlParam = new URLSearchParams(window.location.search).get('id');
+        const id = window.__currentProductId || urlParam;
+        if (id && window.DaleDealReviews) {
+          window.DaleDealReviews.mount('#reviews-form-container', {
+            itemType: 'product',
+            itemId: parseInt(id, 10),
+          });
+        } else if (retries > 0) {
+          setTimeout(() => tryMount(retries - 1), 300);
+        }
+      });
+    </script>
     <script src="../JS/dropdown-fix.js" defer></script>
     <script src="../JS/component-loader.js" defer></script>
 

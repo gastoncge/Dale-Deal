@@ -518,6 +518,8 @@
 
               <!-- ── Tab: Reseñas ── -->
               <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="tab-reviews" tabindex="0">
+                <!-- Form para crear review (montado por JS/reviews-form.js) -->
+                <div id="reviews-form-container"></div>
                 <div class="reviews-content">
                   <!-- Resumen de calificaciones -->
                   <div class="reviews-summary">
@@ -814,6 +816,28 @@
     <script src="../JS/favorites.js" defer></script>
     <script src="../JS/services-data.js" defer></script>
     <script src="../JS/pages/service.js" defer></script>
+    <!-- Form de reviews: monta UI cuando tenemos el id del servicio en la URL -->
+    <script src="../JS/reviews-form.js" defer></script>
+    <script defer>
+      document.addEventListener('DOMContentLoaded', function () {
+        const id = new URLSearchParams(window.location.search).get('id');
+        if (!id) return;
+        // Para servicios el backend NO requiere "verified purchase" (no hay
+        // delivered status equivalente), así que cualquier user logueado
+        // puede reseñar. El form mismo maneja el caso "no logueado".
+        const tryMount = (retries) => {
+          if (window.DaleDealReviews && window.DaleDeal?.api?.createReview) {
+            window.DaleDealReviews.mount('#reviews-form-container', {
+              itemType: 'service',
+              itemId: parseInt(id, 10),
+            });
+          } else if (retries > 0) {
+            setTimeout(() => tryMount(retries - 1), 300);
+          }
+        };
+        tryMount(20);
+      });
+    </script>
     <script src="../JS/dropdown-fix.js" defer></script>
     <script src="../JS/component-loader.js" defer></script>
 
