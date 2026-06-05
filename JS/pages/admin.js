@@ -160,6 +160,46 @@
       state.leads.page = 1;
       loadLeads();
     });
+
+    // Export CSV buttons (orders, leads, newsletter)
+    document.getElementById('exportOrdersCsv')?.addEventListener('click',     () => downloadCsv('/admin/orders.csv',     'orders'));
+    document.getElementById('exportLeadsCsv')?.addEventListener('click',      () => downloadCsv('/admin/leads.csv',      'leads'));
+    document.getElementById('exportNewsletterCsv')?.addEventListener('click', () => downloadCsv('/admin/newsletter.csv', 'newsletter'));
+  }
+
+  // Disparar download de CSV vía fetch (admin-only, requiere bearer token).
+  // No usamos <a href="..."> directo porque GET no soporta Authorization
+  // header sin un service worker custom — más simple fetch + Blob URL.
+  async function downloadCsv(endpoint, label) {
+    const token = localStorage.getItem('daledeal_token');
+    if (!token) { alert('No estás logueado'); return; }
+
+    try {
+      const apiBase = (window.DaleDeal?.CONFIG?.API_BASE_URL || '').replace(/\/$/, '');
+      const res = await fetch(apiBase + endpoint, {
+        headers: { 'Authorization': 'Bearer ' + token },
+      });
+      if (!res.ok) {
+        const txt = await res.text().catch(() => '');
+        alert(`Error al descargar ${label}: ${res.status} ${txt.slice(0, 200)}`);
+        return;
+      }
+      const blob = await res.blob();
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href = url;
+      // Tomamos el filename del Content-Disposition si vino
+      const cd = res.headers.get('Content-Disposition') || '';
+      const m  = cd.match(/filename="([^"]+)"/);
+      a.download = m ? m[1] : `${label}-${new Date().toISOString().slice(0,10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('[exportCsv]', err);
+      alert('Error al descargar el CSV');
+    }
   }
 
   // ── DASHBOARD ────────────────────────────────────────────────────────────

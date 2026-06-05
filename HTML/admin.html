@@ -349,7 +349,12 @@
 
         <!-- ÓRDENES -->
         <section class="admin-section" id="section-orders">
-          <div class="admin-section-header"><h1><i class="bi bi-cart-check me-2"></i>Órdenes</h1></div>
+          <div class="admin-section-header d-flex justify-content-between align-items-center">
+            <h1><i class="bi bi-cart-check me-2"></i>Órdenes</h1>
+            <button class="btn btn-sm btn-outline-secondary" id="exportOrdersCsv" type="button">
+              <i class="bi bi-download me-1"></i>Exportar CSV
+            </button>
+          </div>
           <div class="admin-toolbar">
             <select class="form-select" id="orders-status">
               <option value="">Todos los estados</option>
@@ -403,9 +408,19 @@
 
         <!-- LEADS B2B (vienen de contacto?tipo=empresa) -->
         <section class="admin-section" id="section-leads">
-          <div class="admin-section-header">
-            <h1><i class="bi bi-building me-2"></i>Leads B2B</h1>
-            <p class="text-muted mb-0">Empresas que contactaron desde el form. Cambiar status para seguir el funnel.</p>
+          <div class="admin-section-header d-flex justify-content-between align-items-start">
+            <div>
+              <h1><i class="bi bi-building me-2"></i>Leads B2B</h1>
+              <p class="text-muted mb-0">Empresas que contactaron desde el form. Cambiar status para seguir el funnel.</p>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-outline-secondary" id="exportLeadsCsv" type="button">
+                <i class="bi bi-download me-1"></i>Exportar leads
+              </button>
+              <button class="btn btn-sm btn-outline-secondary" id="exportNewsletterCsv" type="button">
+                <i class="bi bi-envelope-paper me-1"></i>Exportar newsletter
+              </button>
+            </div>
           </div>
           <div class="admin-toolbar">
             <select class="form-select" id="leads-status">

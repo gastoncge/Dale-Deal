@@ -420,22 +420,65 @@ if (typeof window !== 'undefined') {
       });
     });
 
-    // Newsletter forms
-    const handleNewsletterSubmit = function(e) {
+    // Newsletter forms — POST real al backend (antes era animación fake).
+    // Si el backend falla o está caído, mostramos error visible.
+    // Si funciona, transiciona el botón a check verde por 2 segundos.
+    const handleNewsletterSubmit = async function(e) {
       e.preventDefault();
-      const email = this.querySelector('input[type="email"]')?.value;
+      const input = this.querySelector('input[type="email"]');
+      const email = input?.value?.trim();
       if (!email) return;
+
       const btn = this.querySelector('.newsletter-btn');
       const originalHTML = btn.innerHTML;
-      btn.innerHTML = '<i class="bi bi-check-circle"></i>';
       btn.disabled = true;
-      btn.style.background = 'var(--success-600)';
-      setTimeout(() => {
-        btn.innerHTML = originalHTML;
-        btn.disabled = false;
-        btn.style.background = '';
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+      const apiBase = (window.DaleDeal?.CONFIG?.API_BASE_URL || 'https://daledeal-backend-production.up.railway.app').replace(/\/$/, '');
+
+      try {
+        const res = await fetch(`${apiBase}/newsletter/subscribe`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, source: 'footer' }),
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok || data.ok === false) {
+          // Error visible
+          btn.innerHTML = '<i class="bi bi-x-circle"></i>';
+          btn.style.background = 'var(--danger-600, #dc3545)';
+          input.setCustomValidity(data.error || 'Error al suscribirse');
+          input.reportValidity();
+          setTimeout(() => {
+            btn.innerHTML = originalHTML;
+            btn.disabled = false;
+            btn.style.background = '';
+            input.setCustomValidity('');
+          }, 3000);
+          return;
+        }
+
+        // Éxito
+        btn.innerHTML = '<i class="bi bi-check-circle"></i>';
+        btn.style.background = 'var(--success-600, #28a745)';
         this.reset();
-      }, 2000);
+        setTimeout(() => {
+          btn.innerHTML = originalHTML;
+          btn.disabled = false;
+          btn.style.background = '';
+        }, 2500);
+      } catch (err) {
+        // Error de red — backend caído o sin internet
+        console.error('[newsletter] Error:', err);
+        btn.innerHTML = '<i class="bi bi-x-circle"></i>';
+        btn.style.background = 'var(--danger-600, #dc3545)';
+        setTimeout(() => {
+          btn.innerHTML = originalHTML;
+          btn.disabled = false;
+          btn.style.background = '';
+        }, 3000);
+      }
     };
     document.getElementById('newsletterForm')?.addEventListener('submit', handleNewsletterSubmit);
     document.getElementById('footerNewsletterForm')?.addEventListener('submit', handleNewsletterSubmit);
