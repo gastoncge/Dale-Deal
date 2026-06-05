@@ -111,6 +111,14 @@
 
             <form id="contactForm" novalidate>
               <input type="hidden" id="contactTipo" name="tipo" value="">
+              <!-- Honeypot anti-spam: campo INVISIBLE para humanos pero los
+                   bots scrapers llenan TODOS los inputs ciegamente.
+                   Si llega con valor → bot, descartar silenciosamente.
+                   Posicionado off-screen con CSS porque display:none también
+                   lo skipean los bots más sofisticados. -->
+              <div style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+                <label>No completes esto si sos humano <input type="text" id="contactWebsite" name="website" tabindex="-1" autocomplete="off"></label>
+              </div>
               <div class="row g-4">
                 <div class="col-md-6">
                   <label for="contactNombre" class="form-label">Nombre <span class="text-danger">*</span></label>
@@ -268,6 +276,8 @@
             pedidoId: document.getElementById('contactPedido').value.trim(),
             mensaje:  document.getElementById('contactMensaje').value.trim(),
             tipo:     document.getElementById('contactTipo').value,
+            // Honeypot: si tiene valor es bot (ningún humano lo ve para llenarlo)
+            website:  document.getElementById('contactWebsite').value,
           };
 
           const originalBtnHTML = btn.innerHTML;

@@ -495,54 +495,140 @@
     `;
   }
 
-  // Bindea click en botones "Reembolsar" → confirm con motivo opcional → POST
+  // Bindea click en botones "Reembolsar" → abre modal Bootstrap → POST
+  // Antes usaba prompt() + confirm() nativos (UX feo). Ahora un modal con
+  // form: motivo + checkbox de confirmación + warning rojo claro.
   function bindOrderActions() {
     document.querySelectorAll('.refund-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const orderId  = btn.dataset.orderId;
-        const total    = parseFloat(btn.dataset.total);
-        const currency = btn.dataset.currency;
-        const product  = btn.dataset.product;
-        const buyer    = btn.dataset.buyer;
-
-        // Confirmación con prompt para motivo (UX mínimo viable;
-        // si querés, después esto se hace modal Bootstrap).
-        const totalFmt = money(total, currency);
-        const reason = window.prompt(
-          `¿Reembolsar la orden #${orderId} por ${totalFmt}?\n\n` +
-          `Producto: ${product}\nComprador: ${buyer}\n\n` +
-          `Escribí un motivo (opcional) o cancelá:`,
-          ''
-        );
-
-        // null = cancelado, string vacío = ok sin motivo
-        if (reason === null) return;
-
-        // Doble confirmación porque es destructivo + irreversible
-        if (!window.confirm(`Confirmá el reembolso TOTAL de ${totalFmt} en la orden #${orderId}.\n\nEsta acción es IRREVERSIBLE y el dinero se va a devolver al comprador.`)) {
-          return;
-        }
-
-        const originalHTML = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Procesando…';
-
-        try {
-          const res = await window.DaleDeal.api.apiFetch(`/admin/orders/${orderId}/refund`, {
-            method: 'POST',
-            body: JSON.stringify({ reason: reason || undefined }),
-            headers: { 'Content-Type': 'application/json' },
-          });
-          alert(`✅ Reembolso procesado.\n\nMP refund id: ${res.refund_id || '—'}\n\nEl dinero se acreditará al comprador en 1-5 días hábiles. Le mandamos un email.`);
-          loadOrders(); // refresca la tabla
-        } catch (err) {
-          console.error('[refund] error:', err);
-          alert('❌ No se pudo procesar el reembolso.\n\n' + (err.message || err.details || 'Revisá los logs del servidor.'));
-          btn.disabled = false;
-          btn.innerHTML = originalHTML;
-        }
-      });
+      btn.addEventListener('click', () => openRefundModal(btn));
     });
+  }
+
+  let refundModalInstance = null;
+  function openRefundModal(btn) {
+    const orderId  = btn.dataset.orderId;
+    const total    = parseFloat(btn.dataset.total);
+    const currency = btn.dataset.currency;
+    const product  = btn.dataset.product;
+    const buyer    = btn.dataset.buyer;
+    const totalFmt = money(total, currency);
+
+    // Crea el modal si no existe (singleton — un modal reutilizado entre clicks)
+    let modal = document.getElementById('refundModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'refundModal';
+      modal.className = 'modal fade';
+      modal.tabIndex = -1;
+      modal.setAttribute('aria-labelledby', 'refundModalLabel');
+      modal.setAttribute('aria-hidden', 'true');
+      modal.innerHTML = `
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="refundModalLabel">
+                <i class="bi bi-arrow-counterclockwise text-danger me-2"></i>Reembolsar orden
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+              <div class="alert alert-danger d-flex align-items-start gap-2" role="alert">
+                <i class="bi bi-exclamation-triangle-fill" style="font-size:20px;"></i>
+                <div>
+                  <strong>Acción irreversible.</strong>
+                  Vas a reembolsar <strong id="refundAmount">—</strong> en la orden
+                  <strong id="refundOrderId">#—</strong> al comprador.
+                  El dinero se acredita en 1-5 días hábiles.
+                </div>
+              </div>
+              <dl class="row small mb-3">
+                <dt class="col-sm-4 text-muted">Producto:</dt><dd class="col-sm-8" id="refundProduct">—</dd>
+                <dt class="col-sm-4 text-muted">Comprador:</dt><dd class="col-sm-8" id="refundBuyer">—</dd>
+              </dl>
+              <div class="mb-3">
+                <label for="refundReason" class="form-label">Motivo del reembolso <small class="text-muted">(opcional)</small></label>
+                <textarea id="refundReason" class="form-control" rows="3" maxlength="500"
+                          placeholder="Ej: Pedido del comprador, producto defectuoso, error en el envío…"></textarea>
+                <small class="text-muted">Se incluye en el email al comprador (visible para él) y queda en logs.</small>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="refundConfirmCheck">
+                <label class="form-check-label" for="refundConfirmCheck">
+                  Confirmo que entiendo que esta acción <strong>no se puede deshacer</strong>.
+                </label>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="button" class="btn btn-danger" id="refundConfirmBtn" disabled>
+                <i class="bi bi-arrow-counterclockwise me-1"></i>Reembolsar
+              </button>
+            </div>
+          </div>
+        </div>`;
+      document.body.appendChild(modal);
+
+      // Habilitar el botón solo cuando se chequea el checkbox
+      modal.querySelector('#refundConfirmCheck').addEventListener('change', e => {
+        modal.querySelector('#refundConfirmBtn').disabled = !e.target.checked;
+      });
+    }
+
+    // Rellenar datos del request actual
+    modal.querySelector('#refundAmount').textContent  = totalFmt;
+    modal.querySelector('#refundOrderId').textContent = '#' + orderId;
+    modal.querySelector('#refundProduct').textContent = product;
+    modal.querySelector('#refundBuyer').textContent   = buyer;
+    modal.querySelector('#refundReason').value        = '';
+    modal.querySelector('#refundConfirmCheck').checked = false;
+    modal.querySelector('#refundConfirmBtn').disabled = true;
+
+    // Re-bind del confirm (puede ser nuevo orderId cada vez)
+    const confirmBtn = modal.querySelector('#refundConfirmBtn');
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    newConfirmBtn.disabled = true;
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+    // El listener del checkbox se rompe al clonar — rebind también
+    modal.querySelector('#refundConfirmCheck').addEventListener('change', e => {
+      newConfirmBtn.disabled = !e.target.checked;
+    });
+
+    newConfirmBtn.addEventListener('click', async () => {
+      const reason = modal.querySelector('#refundReason').value.trim();
+      const originalHTML = newConfirmBtn.innerHTML;
+      newConfirmBtn.disabled = true;
+      newConfirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Procesando…';
+
+      try {
+        const res = await window.DaleDeal.api.apiFetch(`/admin/orders/${orderId}/refund`, {
+          method: 'POST',
+          body: JSON.stringify({ reason: reason || undefined }),
+          headers: { 'Content-Type': 'application/json' },
+        });
+        refundModalInstance.hide();
+        // Toast simple después de cerrar el modal (alert sigue siendo bloqueante
+        // pero es informativo, no destructivo)
+        setTimeout(() => {
+          alert(`✅ Reembolso procesado correctamente.\n\nMP refund id: ${res.refund_id || '—'}\nEl dinero se acreditará al comprador en 1-5 días hábiles. Le mandamos un email.`);
+        }, 300);
+        loadOrders();
+      } catch (err) {
+        console.error('[refund] error:', err);
+        newConfirmBtn.disabled = false;
+        newConfirmBtn.innerHTML = originalHTML;
+        const errAlert = modal.querySelector('.modal-body').querySelector('.alert-error-runtime');
+        if (errAlert) errAlert.remove();
+        const e = document.createElement('div');
+        e.className = 'alert alert-danger alert-error-runtime mt-3 mb-0';
+        e.textContent = '❌ ' + (err.message || err.details || 'No se pudo procesar el reembolso. Revisá los logs.');
+        modal.querySelector('.modal-body').appendChild(e);
+      }
+    });
+
+    // Abrir el modal con Bootstrap
+    refundModalInstance = bootstrap.Modal.getOrCreateInstance(modal);
+    refundModalInstance.show();
   }
 
   // ── RESEÑAS ──────────────────────────────────────────────────────────────

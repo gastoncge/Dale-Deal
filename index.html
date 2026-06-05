@@ -25,6 +25,61 @@
     <meta name="twitter:description" content="Descubrí miles de productos y servicios en Argentina." />
     <meta name="twitter:image" content="https://daledeal.com.ar/IMG/LOGO-2.png" />
 
+    <!-- Canonical -->
+    <link rel="canonical" href="https://daledeal.com.ar/" />
+
+    <!-- Structured Data: Organization + WebSite con search action
+         Esto habilita el "sitelinks search box" en Google y ayuda a que
+         aparezcamos como entidad reconocida. Verificable en:
+         https://search.google.com/test/rich-results -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://daledeal.com.ar/#organization",
+          "name": "Dale Deal",
+          "url": "https://daledeal.com.ar/",
+          "logo": "https://daledeal.com.ar/IMG/LOGO-2.png",
+          "description": "Marketplace argentino de productos y servicios. Compra, vende y contrata profesionales verificados.",
+          "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "AR",
+            "addressLocality": "Buenos Aires",
+            "addressRegion": "CABA"
+          },
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+54-9-11-3798-5881",
+            "contactType": "customer service",
+            "email": "contacto@daledeal.com",
+            "availableLanguage": ["Spanish"]
+          },
+          "sameAs": [
+            "https://www.instagram.com/daledeal.ar/"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://daledeal.com.ar/#website",
+          "url": "https://daledeal.com.ar/",
+          "name": "Dale Deal",
+          "publisher": { "@id": "https://daledeal.com.ar/#organization" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://daledeal.com.ar/HTML/productos.html?search={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          },
+          "inLanguage": "es-AR"
+        }
+      ]
+    }
+    </script>
+
     <!-- Favicon -->
     <link rel="shortcut icon" href="./IMG/LOGO.png" type="image/x-icon" />
     <!-- Apple touch icon: cuando un user en iOS hace "Add to Home Screen",
