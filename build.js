@@ -355,6 +355,17 @@ function wrapUnsplashImagesWithPicture(dir) {
       const before = content.substring(Math.max(0, offset - 60), offset);
       if (before.includes('<source') || before.includes('<picture')) return match;
 
+      // CRÍTICO: skipear imágenes que JS reemplaza dinámicamente. Cuando se
+      // hace `img.src = X`, el browser NO actualiza los <source srcset> del
+      // <picture> wrapper — sigue mostrando la versión AVIF/WebP vieja.
+      // Por eso JS/pages/service.js cambiaba el src pero el user seguía
+      // viendo la imagen hardcoded original (bug reportado por el dueño:
+      // "cualquier servicio muestra la foto del electricista").
+      // Lista de IDs que JS muta y NO deben wrapearse:
+      if (/\bid="(mainServiceImage|mainProductImage|productMainImg|heroProductImg)"/.test(match)) {
+        return match;
+      }
+
       // Construir URLs avif y webp añadiendo &fm=avif|webp al query string.
       // Las URLs de Unsplash siempre tienen ? (vienen con w=&h=&fit=crop).
       const avifUrl = src.includes('?') ? `${src}&fm=avif` : `${src}?fm=avif`;
