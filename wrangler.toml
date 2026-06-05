@@ -14,4 +14,9 @@ routes = [
 
 [assets]
 directory = "./dist"
-not_found_handling = "single-page-application"
+# 404-page: cuando una URL no matchea ningún asset, sirve dist/404.html
+# con status 404 (en lugar de "single-page-application" que servía
+# index.html con status 200 — el user veía la home pensando que estaba
+# en otra página y nos perdíamos analytics de URLs rotas).
+# dist/404.html lo genera build.js copiando HTML/404.html a la raíz del dist.
+not_found_handling = "404-page"

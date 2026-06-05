@@ -212,6 +212,59 @@ function renderProductCard(product) {
 /**
  * Carga y renderiza productos en el grid
  */
+/**
+ * Carga sección "Lo más visto esta semana".
+ * Usa el endpoint /products?sort=views&order=desc&limit=4 (que ya existe).
+ * Si falla o no hay items con views > 0, oculta la sección entera.
+ * Se renderiza ANTES de loadProducts() para que aparezca arriba.
+ */
+async function loadTrending() {
+  const section = document.getElementById('trendingSection');
+  const grid    = document.getElementById('trendingGrid');
+  if (!section || !grid) return;
+
+  try {
+    // 4 productos = 1 fila completa de 4 columnas en desktop
+    const apiBase = (window.DaleDeal?.CONFIG?.API_BASE_URL || 'https://daledeal-backend-production.up.railway.app').replace(/\/$/, '');
+    const res = await fetch(`${apiBase}/products?sort=views&order=desc&limit=4`);
+    const data = await res.json().catch(() => ({}));
+    const items = (data.data || []).filter(p => (p.views || 0) > 0);
+
+    if (items.length === 0) {
+      // No hay items con views — no mostramos la sección (default hidden)
+      return;
+    }
+
+    // Render con la misma función que usamos para destacados (consistencia visual)
+    grid.innerHTML = '';
+    const row = document.createElement('div');
+    row.className = 'products-row';
+    row.innerHTML = items.map(p => {
+      // El backend devuelve campos planos (images: [URL], views: N).
+      // renderProductCard espera el shape de api.js transformProduct →
+      // hacemos un mini-transform inline para no acoplar.
+      const product = {
+        id: p.id,
+        title: p.title,
+        description: p.description,
+        price: parseFloat(p.price) || 0,
+        images: { main: (p.images && p.images[0]) || '', gallery: p.images || [] },
+        rating: p.avg_rating || 0,
+        reviewCount: p.review_count || 0,
+        badges: [],
+      };
+      return renderProductCard(product);
+    }).join('');
+    grid.appendChild(row);
+    section.style.display = '';
+    initializeProductListeners();
+    DaleDeal.log(`✓ Trending cargado: ${items.length} items`);
+  } catch (err) {
+    DaleDeal.warn('No se pudo cargar trending:', err.message);
+    // Mantenemos section hidden — no es crítico, los destacados siguen mostrándose
+  }
+}
+
 async function loadProducts() {
   try {
     const productsGrid = document.getElementById('productsGrid');
@@ -219,6 +272,9 @@ async function loadProducts() {
       DaleDeal.warn('Products grid container not found');
       return;
     }
+
+    // Cargar trending en paralelo (no bloqueamos los destacados)
+    loadTrending();
 
     // Mostrar loading
     const loadingContainer = document.getElementById('loadingContainer');

@@ -446,6 +446,25 @@ function copyHTMLsAndAssets() {
     if (fs.existsSync(src)) copyFile(src, path.join(DIST, f));
   }
 
+  // 404.html en RAÍZ del dist — wrangler.toml usa `not_found_handling: 404-page`
+  // que requiere /404.html en root. Copiamos desde HTML/404.html (que es donde
+  // vive el source) y ajustamos las paths relativas para que funcionen desde
+  // la raíz en lugar de desde /HTML/.
+  const src404 = path.join(ROOT, 'HTML', '404.html');
+  if (fs.existsSync(src404)) {
+    let html404 = fs.readFileSync(src404, 'utf8');
+    // Reescribir paths ../X (relativos a /HTML/) → ./X (relativos a raíz)
+    // Aplica a IMG, CSS, JS, manifest.
+    html404 = html404
+      .replace(/href="\.\.\//g, 'href="./')
+      .replace(/src="\.\.\//g, 'src="./');
+    // Los links a otras páginas (./X.html) desde 404 que está en raíz necesitan
+    // ./HTML/X.html — mismo treatment que index.html.
+    html404 = html404.replace(/href="\.\/(?!HTML\/)([\w-]+\.html)"/g, 'href="./HTML/$1"');
+    fs.writeFileSync(path.join(DIST, '404.html'), html404);
+    console.log('✓ 404.html copiado a dist/ (paths re-escritas para raíz)');
+  }
+
   console.log('✓ HTMLs + assets copiados a dist/');
 }
 

@@ -367,13 +367,29 @@
       </section>
 
       <!-- Products Section -->
+      <!-- Trending: "Lo más visto" — usa el campo views de cada producto.
+           Se carga dinámicamente desde JS/pages/home.js (loadTrending).
+           Si no hay datos (red caída / 0 items con views > 0), la sección
+           queda hidden — no rompemos el layout. -->
+      <section class="products-section" id="trendingSection" style="display:none;">
+        <div class="container">
+          <div class="section-header text-center mb-4" data-aos="fade-up">
+            <h2 class="section-title">
+              <i class="bi bi-fire text-danger me-2"></i>Lo más visto esta semana
+            </h2>
+            <p class="text-muted">Lo que más están explorando los usuarios</p>
+          </div>
+          <div class="products-grid" id="trendingGrid"></div>
+        </div>
+      </section>
+
       <section class="products-section">
         <div class="container">
           <!-- Título de la sección -->
           <div class="section-header text-center mb-5" data-aos="fade-up">
             <h2 class="section-title">Productos <span class="accent">destacados</span></h2>
           </div>
-          
+
           <div class="products-grid" id="productsGrid">
             <!-- Los productos se cargan dinámicamente desde JS/pages/home.js -->
           </div>
