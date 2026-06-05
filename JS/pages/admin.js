@@ -16,6 +16,7 @@
     orders:   { page: 1, status: '', payment_status: '', loading: false },
     reviews:  { page: 1, loading: false },
     reports:  { page: 1, status: '', category: '', loading: false },
+    leads:    { page: 1, status: '', loading: false },
   };
 
   document.addEventListener('DOMContentLoaded', init);
@@ -91,6 +92,7 @@
       case 'orders':   if (!state.orders.loaded)   loadOrders();   break;
       case 'reviews':  if (!state.reviews.loaded)  loadReviews();  break;
       case 'reports':  if (!state.reports.loaded)  loadReports();  break;
+      case 'leads':    if (!state.leads.loaded)    loadLeads();    break;
     }
   }
 
@@ -151,6 +153,12 @@
       state.reports.category = e.target.value;
       state.reports.page = 1;
       loadReports();
+    });
+
+    document.getElementById('leads-status')?.addEventListener('change', e => {
+      state.leads.status = e.target.value;
+      state.leads.page = 1;
+      loadLeads();
     });
   }
 
@@ -753,6 +761,125 @@
         if (dir === 'prev' && state[scope].page > 1) state[scope].page--;
         if (dir === 'next') state[scope].page++;
         loader();
+      });
+    });
+  }
+
+  // ── LEADS B2B ────────────────────────────────────────────────────────────
+  // GET /admin/leads — leads que vienen del form de contacto con tipo=empresa.
+  // Requiere migration 010 corrida (sino el endpoint devuelve 503 con un
+  // mensaje claro y mostramos un "instructions card" al admin).
+  async function loadLeads() {
+    const c = document.getElementById('leads-content');
+    if (!c) return;
+    const params = new URLSearchParams({ page: state.leads.page, limit: 20 });
+    if (state.leads.status) params.set('status', state.leads.status);
+    try {
+      const res = await window.DaleDeal.api.apiFetch(`/admin/leads?${params}`);
+      state.leads.loaded = true;
+      renderLeads(res);
+    } catch (err) {
+      // 503 cuando la tabla no existe → mostrar instrucciones de migration
+      if (err?.message?.includes('migration')) {
+        c.innerHTML = `
+          <div class="admin-empty">
+            <i class="bi bi-database-exclamation text-warning" style="font-size:48px;"></i>
+            <p class="mt-3 fw-bold">Falta correr migration 010</p>
+            <p class="text-muted">La tabla <code>company_leads</code> todavía no existe en la DB.
+              Correr <code>db/migrations/010_company_leads.sql</code> desde Railway dashboard.</p>
+          </div>`;
+      } else {
+        c.innerHTML = errorHTML(err);
+      }
+    }
+  }
+
+  function renderLeads(res) {
+    const c = document.getElementById('leads-content');
+    if (!res.data || res.data.length === 0) {
+      c.innerHTML = emptyHTML('No hay leads B2B todavía. Cuando alguien escriba desde el form de contacto con "Soy una empresa", aparecen acá.');
+      return;
+    }
+    c.innerHTML = `
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Nombre</th><th>Email</th><th>Tel</th>
+              <th>Asunto</th><th>Mensaje</th><th>Status</th><th>Fecha</th><th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${res.data.map(l => leadRow(l)).join('')}
+          </tbody>
+        </table>
+      </div>
+      ${paginatorHTML('leads', res)}
+    `;
+    bindPagination('leads', loadLeads);
+    bindLeadActions();
+  }
+
+  function leadRow(l) {
+    const stClass = {
+      new:        'admin-pill-warning',
+      contacted:  'admin-pill-info',
+      qualified:  'admin-pill-info',
+      customer:   'admin-pill-success',
+      lost:       'admin-pill-muted',
+    }[l.status] || 'admin-pill-muted';
+
+    const stLabel = {
+      new: 'Nuevo', contacted: 'Contactado', qualified: 'Calificado',
+      customer: 'Cliente', lost: 'Perdido',
+    }[l.status] || l.status;
+
+    const mensajeCorto = l.mensaje
+      ? esc(l.mensaje.length > 80 ? l.mensaje.slice(0, 80) + '…' : l.mensaje)
+      : '—';
+
+    return `
+      <tr>
+        <td>#${l.id}</td>
+        <td><strong>${esc(l.nombre)} ${esc(l.apellido)}</strong></td>
+        <td><a href="mailto:${esc(l.email)}">${esc(l.email)}</a></td>
+        <td><small>${esc(l.telefono || '—')}</small></td>
+        <td><small>${esc(l.asunto || '—')}</small></td>
+        <td><small title="${esc(l.mensaje || '')}">${mensajeCorto}</small></td>
+        <td><span class="admin-pill ${stClass}">${stLabel}</span></td>
+        <td>${formatDate(l.created_at)}</td>
+        <td>
+          <select class="form-select form-select-sm lead-status-select"
+                  data-lead-id="${l.id}" style="width:auto;display:inline-block;">
+            <option value="" disabled selected>Cambiar…</option>
+            <option value="new">Nuevo</option>
+            <option value="contacted">Contactado</option>
+            <option value="qualified">Calificado</option>
+            <option value="customer">Cliente</option>
+            <option value="lost">Perdido</option>
+          </select>
+        </td>
+      </tr>
+    `;
+  }
+
+  function bindLeadActions() {
+    document.querySelectorAll('.lead-status-select').forEach(sel => {
+      sel.addEventListener('change', async () => {
+        const leadId = sel.dataset.leadId;
+        const newStatus = sel.value;
+        if (!newStatus) return;
+        try {
+          await window.DaleDeal.api.apiFetch(`/admin/leads/${leadId}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ status: newStatus }),
+            headers: { 'Content-Type': 'application/json' },
+          });
+          loadLeads(); // refresca
+        } catch (err) {
+          alert('No se pudo actualizar el lead: ' + (err.message || err));
+          sel.value = ''; // reset
+        }
       });
     });
   }

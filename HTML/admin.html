@@ -250,6 +250,7 @@
           <a class="admin-nav-item" data-tab="orders"><i class="bi bi-cart-check"></i> Órdenes</a>
           <a class="admin-nav-item" data-tab="reviews"><i class="bi bi-star"></i> Reseñas</a>
           <a class="admin-nav-item" data-tab="reports"><i class="bi bi-flag"></i> Reportes <span id="reports-badge" class="admin-pill admin-pill-danger" style="display:none;font-size:.65rem;padding:1px 6px;">0</span></a>
+          <a class="admin-nav-item" data-tab="leads"><i class="bi bi-building"></i> Leads B2B</a>
           <a class="admin-nav-item" href="../index.html" style="margin-top:1.5rem;color:var(--gray-500);">
             <i class="bi bi-arrow-left"></i> Volver al sitio
           </a>
@@ -398,6 +399,25 @@
             </select>
           </div>
           <div id="reports-content"></div>
+        </section>
+
+        <!-- LEADS B2B (vienen de contacto?tipo=empresa) -->
+        <section class="admin-section" id="section-leads">
+          <div class="admin-section-header">
+            <h1><i class="bi bi-building me-2"></i>Leads B2B</h1>
+            <p class="text-muted mb-0">Empresas que contactaron desde el form. Cambiar status para seguir el funnel.</p>
+          </div>
+          <div class="admin-toolbar">
+            <select class="form-select" id="leads-status">
+              <option value="">Todos los estados</option>
+              <option value="new">Nuevos</option>
+              <option value="contacted">Contactados</option>
+              <option value="qualified">Calificados</option>
+              <option value="customer">Clientes</option>
+              <option value="lost">Perdidos</option>
+            </select>
+          </div>
+          <div id="leads-content"></div>
         </section>
 
       </main>

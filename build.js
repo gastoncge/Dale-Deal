@@ -449,6 +449,41 @@ function copyHTMLsAndAssets() {
   console.log('✓ HTMLs + assets copiados a dist/');
 }
 
+// Cache-busting: agrega ?v=<build-hash> a TODOS los <script src> y <link href>
+// de archivos JS/CSS locales en los HTMLs del dist. El hash cambia en cada
+// build → el browser nunca sirve un asset viejo cacheado cuando deployamos.
+//
+// Antes: el user reportó "todavía veo la foto del electricista" porque su
+// browser tenía el bundle viejo cacheado aunque deploy ya estaba listo. Esto
+// previene ese bug para SIEMPRE — al cambiar el src, el browser refetch.
+//
+// Solo toca rutas LOCALES (que arrancan con ./, ../, /, JS/, CSS/, dist/).
+// Skip a CDNs externos (cdn.jsdelivr.net, unpkg.com, etc.) y a URLs que ya
+// tienen query string.
+function appendCacheBust(hash) {
+  const htmls = listFiles(DIST, '.html');
+  let count = 0;
+  for (const fp of htmls) {
+    let html = fs.readFileSync(fp, 'utf8');
+    const before = html;
+    // src="..." con .js
+    html = html.replace(
+      /(<script[^>]*\bsrc=["'])(\.{0,2}\/[^"'?]+\.js)(["'])/g,
+      `$1$2?v=${hash}$3`
+    );
+    // href="..." con .css
+    html = html.replace(
+      /(<link[^>]*\bhref=["'])(\.{0,2}\/[^"'?]+\.css)(["'])/g,
+      `$1$2?v=${hash}$3`
+    );
+    if (html !== before) {
+      fs.writeFileSync(fp, html);
+      count++;
+    }
+  }
+  console.log(`✓ Cache-busting ?v=${hash} agregado a ${count} HTMLs (forza refetch en deploy)`);
+}
+
 async function build() {
   const start = Date.now();
   // Limpiar dist/ entero para builds reproducibles
@@ -466,6 +501,14 @@ async function build() {
   // sería ganancia (1 request menos). Reactivar si se valida en deploy real.
   wrapUnsplashImagesWithPicture(DIST); // <img Unsplash> → <picture> con avif/webp
   injectCloudflareWebAnalytics();  // CF beacon antes de </body> (si hay token)
+
+  // Cache-busting va al FINAL, después de todas las modificaciones a HTMLs.
+  // Hash basado en commit SHA (si está en CI) o timestamp de build (local).
+  // 7 chars es suficiente entropía y queda visualmente limpio en el src.
+  const buildHash = (process.env.GITHUB_SHA
+    ? process.env.GITHUB_SHA.slice(0, 7)
+    : Date.now().toString(36)).toLowerCase();
+  appendCacheBust(buildHash);
 
   console.log(`✓ Build completo en ${Date.now() - start}ms — output: dist/`);
 }
