@@ -263,12 +263,15 @@
             <!-- ── Galería del Servicio (IZQUIERDA) ── -->
             <div class="col-md-6">
               <div class="service-gallery">
-                <!-- Imagen Principal -->
+                <!-- Imagen Principal — placeholder gris hasta que JS cargue la real desde el backend.
+                     El src vacío + skeleton CSS evita el flash de la imagen vieja.
+                     setupImageGallery() en service.js setea el src real + remueve la clase
+                     `is-loading` para fade-in suave. -->
                 <div class="main-image-container">
                   <img
-                    src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=700&h=500&fit=crop"
-                    alt="Trabajo del servicio"
-                    class="main-product-image"
+                    src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 700 500'%3E%3Crect width='700' height='500' fill='%23f0f0f0'/%3E%3C/svg%3E"
+                    alt="Cargando..."
+                    class="main-product-image is-loading"
                     id="mainServiceImage"
                     fetchpriority="high"
                     width="700" height="500"

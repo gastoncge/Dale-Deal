@@ -649,6 +649,14 @@ class ProductPage {
     const thumbnailContainer = document.querySelector('.thumbnail-container');
 
     if (mainImage && this.currentProduct.images.main) {
+      // Remover skeleton shimmer cuando la imagen real terminó de descargar
+      // (evita el flash de la imagen placeholder antes de la del backend).
+      mainImage.addEventListener('load', () => {
+        mainImage.classList.remove('is-loading');
+      }, { once: true });
+      mainImage.addEventListener('error', () => {
+        mainImage.classList.remove('is-loading');
+      }, { once: true });
       mainImage.src = this.currentProduct.images.main;
       mainImage.alt = this.currentProduct.title;
     }

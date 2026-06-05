@@ -308,6 +308,16 @@ class ServicePage {
     const galleryNote = document.querySelector('.service-gallery .text-muted');
 
     if (mainImage) {
+      // Remover skeleton shimmer cuando la imagen REAL termina de descargar.
+      // Esto evita el "flash" de la imagen placeholder antes de la del backend.
+      mainImage.addEventListener('load', () => {
+        mainImage.classList.remove('is-loading');
+      }, { once: true });
+      mainImage.addEventListener('error', () => {
+        // Si la imagen falla (404, red), igual sacamos el skeleton — el alt
+        // se ve como fallback. Mejor eso que skeleton forever.
+        mainImage.classList.remove('is-loading');
+      }, { once: true });
       mainImage.src = s.images.main;
       mainImage.alt = s.title;
     }

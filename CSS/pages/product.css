@@ -101,12 +101,33 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform var(--transition-slow);
+  transition: transform var(--transition-slow), opacity .25s ease-out;
   cursor: zoom-in;
 }
 
 .main-product-image:hover {
   transform: scale(1.05);
+}
+
+/* Skeleton mientras el JS carga la imagen real del backend.
+   El src del HTML es un placeholder SVG gris uniforme. Cuando service.js
+   o product.js setean mainImage.src = URL_real + remueve `is-loading`,
+   el shimmer desaparece con un fade suave. */
+.main-product-image.is-loading {
+  background:
+    linear-gradient(90deg,
+      rgba(0,0,0,0.04) 0%,
+      rgba(0,0,0,0.08) 50%,
+      rgba(0,0,0,0.04) 100%
+    );
+  background-size: 200% 100%;
+  animation: imgSkeletonShimmer 1.4s ease-in-out infinite;
+  cursor: default;
+}
+
+@keyframes imgSkeletonShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 .thumbnail-container {

@@ -290,12 +290,14 @@
             <!-- Product Gallery -->
             <div class="col-md-6">
               <div class="product-gallery">
-                <!-- Main Image -->
+                <!-- Main Image — placeholder gris hasta que JS cargue la real desde el backend.
+                     Evita el flash de la imagen vieja (FOUC). product.js setea src + remueve
+                     la clase `is-loading` para fade-in suave. -->
                 <div class="main-image-container">
                   <img
-                    src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=600&fit=crop"
-                    alt="iPhone 15 Pro Max"
-                    class="main-product-image"
+                    src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 600'%3E%3Crect width='600' height='600' fill='%23f0f0f0'/%3E%3C/svg%3E"
+                    alt="Cargando..."
+                    class="main-product-image is-loading"
                     id="mainProductImage"
                     fetchpriority="high"
                     width="600" height="600"
