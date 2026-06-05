@@ -334,8 +334,11 @@ textarea.form-control {
 .product-installments {
   margin-top: 4px;
   font-size: 12px;
-  color: #2e8b57; /* verde institucional MP */
-  font-weight: 500;
+  /* Verde oscurecido a #15803d para cumplir WCAG AA (4.6:1 sobre blanco).
+     El #2e8b57 anterior daba 3.6:1 y Lighthouse lo marcaba como contraste
+     insuficiente. */
+  color: #15803d;
+  font-weight: 600;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -1289,6 +1292,20 @@ textarea.form-control {
 .carousel-indicators .indicator:hover,
 .carousel-indicators button:hover {
   background: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* En mobile, agrandar el ÁREA TÁCTIL de los dots del hero a 44px de alto
+   (Lighthouse touch-targets) sin agrandar el dot visual: el padding extra
+   queda transparente (background-clip: content-box) pero sigue siendo
+   clickeable. Así el dedo tiene blanco cómodo sin dots gigantes. */
+@media (max-width: 767px) {
+  .carousel-indicators button,
+  .carousel-indicators .indicator {
+    width: 44px !important;
+    height: 44px !important;
+    padding: 18px !important;  /* (44-8)/2 = 18 → dot visual sigue 8px */
+    margin: 0 2px !important;
+  }
 }
 
 /* Carrusel de imágenes de productos */
