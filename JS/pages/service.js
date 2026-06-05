@@ -45,6 +45,18 @@ class ServicePage {
 
     if (paramId) localStorage.setItem('selectedServiceId', paramId);
 
+    // INSTANT IMAGE: si venimos de una card que guardó su imagen en
+    // sessionStorage, la mostramos YA como placeholder mientras el backend
+    // responde. Cero "gris" de carga — el user ve la misma foto que clickeó.
+    try {
+      const previewImg = sessionStorage.getItem('dd_preview_img_service_' + serviceId);
+      const mainImg = document.getElementById('mainServiceImage');
+      if (previewImg && mainImg) {
+        mainImg.addEventListener('load', () => mainImg.classList.remove('is-loading'), { once: true });
+        mainImg.src = previewImg;
+      }
+    } catch (_) {}
+
     let service = null;
 
     if (serviceId != null && serviceId !== '') {

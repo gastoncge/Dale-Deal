@@ -47,6 +47,17 @@ class ProductPage {
       localStorage.setItem('selectedProductId', paramId);
     }
 
+    // INSTANT IMAGE: mostrar la imagen de la card (guardada al clickear)
+    // como placeholder inmediato. Evita el "gris" de carga.
+    try {
+      const previewImg = sessionStorage.getItem('dd_preview_img_product_' + rawId);
+      const mainImg = document.querySelector('.main-product-image');
+      if (previewImg && mainImg) {
+        mainImg.addEventListener('load', () => mainImg.classList.remove('is-loading'), { once: true });
+        mainImg.src = previewImg;
+      }
+    } catch (_) {}
+
     // Sin id válido (vacío, NaN, 0) → no podemos cargar nada útil
     if (!Number.isFinite(productId) || productId <= 0) {
       DaleDeal.error('Product page abierto sin id válido:', rawId);

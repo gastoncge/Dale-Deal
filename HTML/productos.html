@@ -3485,6 +3485,11 @@
             if (e.target.closest('.action-heart')) {
               return;
             }
+            // Guardar imagen de la card para mostrarla instantánea en el detalle
+            try {
+              const img = product.images ? product.images[0] : product.image;
+              if (img) sessionStorage.setItem('dd_preview_img_product_' + product.id, img);
+            } catch (_) {}
             window.location.href = `./producto.html?id=${product.id}`;
           });
 

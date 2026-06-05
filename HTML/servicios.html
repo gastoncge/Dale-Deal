@@ -3628,6 +3628,14 @@
 
           card.addEventListener('click', (e) => {
             if (e.target.closest('.action-heart')) return;
+            // Guardar la imagen de la card (ya cargada en pantalla) para que
+            // la página de detalle la muestre INSTANTÁNEAMENTE como placeholder
+            // mientras el backend responde. Evita el "gris" de carga.
+            try {
+              if (service.image) {
+                sessionStorage.setItem('dd_preview_img_service_' + service.id, service.image);
+              }
+            } catch (_) {}
             window.location.href = `./servicio.html?id=${service.id}`;
           });
 
