@@ -5,9 +5,16 @@
   "private": true,
   "scripts": {
     "build": "node build.js",
-    "build:watch": "node build.js --watch"
+    "build:watch": "node build.js --watch",
+    "test:e2e": "npm run build && playwright test",
+    "test:e2e:ui": "npm run build && playwright test --ui",
+    "test:e2e:desktop": "npm run build && playwright test --project=chromium-desktop"
   },
   "devDependencies": {
-    "esbuild": "^0.24.0"
+    "@playwright/test": "^1.60.0",
+    "esbuild": "^0.28.0"
+  },
+  "dependencies": {
+    "@sentry/node": "^10.56.0"
   }
 }

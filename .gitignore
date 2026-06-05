@@ -4,3 +4,8 @@ node_modules/
 dist/
 .env
 .vscode/settings.json
+
+# Playwright E2E
+test-results/
+playwright-report/
+.playwright/
