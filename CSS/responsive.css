@@ -1229,3 +1229,54 @@ svg,
 :focus:not(:focus-visible) {
   outline: none;
 }
+
+/* ===== TAP TARGETS MOBILE (a11y / usabilidad táctil) =====
+ * Apple HIG y Material recomiendan mínimo 44x44px para elementos tocables.
+ * En la auditoría mobile detectamos inputs a 35px y botones a 26px — chicos
+ * para el dedo, causan mis-taps. Esto sube el mínimo SOLO en mobile sin
+ * afectar el diseño desktop. */
+@media (max-width: 767px) {
+  /* Inputs de formulario: altura cómoda + font-size 16px para que iOS NO
+     haga zoom automático al enfocar (iOS zoomea si el input es <16px). */
+  input.form-control,
+  select.form-select,
+  textarea.form-control,
+  .newsletter-input,
+  .search-input {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  /* Botones principales y links-botón: alto mínimo táctil */
+  .btn,
+  button.btn,
+  a.btn,
+  .action-heart,
+  .action-share,
+  .nav-mobile-link {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Checkboxes/radios: agrandar el área tocable sin agrandar el control
+     visual (el label asociado extiende el target). */
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-width: 20px;
+    min-height: 20px;
+  }
+  .form-check {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Iconos clickeables del navbar (campana, carrito, perfil) */
+  .action-btn,
+  .nav-icon-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
