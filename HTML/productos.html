@@ -3553,6 +3553,23 @@
           }, 500);
         }
 
+        // Search from URL params (?search=iphone)
+        // Esto cierra el flow del SearchAction que declaramos en JSON-LD del
+        // home (Google ofrece "buscar en Dale Deal" → trae al user acá con
+        // ?search=lo-que-buscó). También sirve para deep linking desde el
+        // hero ("Ver productos similares" → ?search=iphone).
+        const searchParam = urlParams.get('search');
+        if (searchParam && searchInput) {
+          searchInput.value = searchParam;
+          setTimeout(() => {
+            // Trigger input event para que el handler de arriba corra
+            searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+            // Scroll a los resultados (porque la URL tenía el search → el user
+            // quiere ver los resultados, no la sidebar de filtros)
+            document.getElementById('productsGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 500);
+        }
+
         // ===== SIDEBAR TOGGLE FOR MOBILE =====
         const toggleFiltersBtn = document.getElementById('toggleFilters');
         const filtersSidebar = document.getElementById('filtersSidebar');

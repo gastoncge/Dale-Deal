@@ -3712,6 +3712,20 @@
           }, 200);
         }
 
+        // Search from URL params (?search=plomero) — usado para deep linking
+        // desde el hero del home y para resultados de búsqueda externos.
+        const searchParam = urlParams.get('search');
+        if (searchParam) {
+          setTimeout(() => {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+              searchInput.value = searchParam;
+              searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+              document.getElementById('servicesGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }, 500);
+        }
+
         // ── Buscador de categoría "Otros" ──────────────────────────
         (function() {
           const searchPanel = document.getElementById('otrosCategorySearch');
