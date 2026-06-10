@@ -121,21 +121,27 @@ class SearchManager {
       resultsCount.textContent = `${this.searchResults.length} producto${this.searchResults.length !== 1 ? 's' : ''} encontrado${this.searchResults.length !== 1 ? 's' : ''}`;
     }
 
-    // Si no hay resultados → sugerir buscar en servicios
+    // Si no hay resultados → no dejar un callejón sin salida: dar caminos
     if (this.searchResults.length === 0) {
-      const query = encodeURIComponent(this.searchInput?.value || '');
+      const raw = this.searchInput?.value || '';
+      const query = encodeURIComponent(raw);
+      const safe = window.DaleDeal?.utils?.escapeHtml ? window.DaleDeal.utils.escapeHtml(raw) : '';
+      const contactHref = `./contacto.html?asunto=${encodeURIComponent('Busco: ' + raw)}`;
       productsGrid.innerHTML = `
         <div class="col-12">
           <div class="no-results-container text-center py-5">
             <i class="bi bi-search display-1 text-muted mb-3"></i>
-            <h4 class="text-muted">No se encontraron productos</h4>
-            <p class="text-muted">Probá con otros términos o buscá entre los servicios profesionales.</p>
+            <h4 class="text-muted">No encontramos resultados para "${safe}"</h4>
+            <p class="text-muted">Revisá la ortografía o probá con palabras más generales. También podés:</p>
             <div class="d-flex gap-2 justify-content-center flex-wrap mt-3">
               <button class="btn btn-outline-secondary" onclick="window.searchManager.clearSearchResults()">
-                <i class="bi bi-arrow-left me-2"></i>Ver todos los productos
+                <i class="bi bi-grid me-2"></i>Ver todos los productos
               </button>
-              <a class="btn btn-primary" href="./servicios.html?q=${query}">
+              <a class="btn btn-outline-secondary" href="./servicios.html?q=${query}">
                 <i class="bi bi-tools me-2"></i>Buscar en servicios
+              </a>
+              <a class="btn btn-primary" href="${contactHref}">
+                <i class="bi bi-chat-heart me-2"></i>Contanos qué buscás
               </a>
             </div>
           </div>

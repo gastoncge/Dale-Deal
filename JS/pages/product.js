@@ -259,12 +259,26 @@ class ProductPage {
     // Installments
     const installmentsEl = document.querySelector('.installments');
     if (installmentsEl) {
-      installmentsEl.innerHTML = `Hasta <strong>12 cuotas sin interés</strong> de ${this.formatPrice(p.basePrice / 12)}`;
+      const inst = window.DaleDeal.utils.formatInstallments(p.basePrice);
+      installmentsEl.innerHTML = inst.show
+        ? `Hasta <strong>${inst.count} cuotas sin interés</strong> de ${inst.monthlyFormatted}`
+        : '';
     }
 
-    // Stock
+    // Stock — con urgencia honesta si quedan pocas (1-5), solo con stock real
     const stockInfo = document.querySelector('.stock-info');
-    if (stockInfo) stockInfo.textContent = `Stock disponible: ${p.stock} unidades`;
+    if (stockInfo) {
+      if (p.stock > 0 && p.stock <= 5) {
+        stockInfo.innerHTML = `<span class="stock-low"><i class="bi bi-fire"></i> ${p.stock === 1 ? '¡Última unidad disponible!' : `¡Solo quedan ${p.stock}!`}</span>`;
+      } else if (p.stock > 0) {
+        stockInfo.textContent = `Stock disponible: ${p.stock} unidades`;
+      } else {
+        stockInfo.textContent = 'Sin stock';
+      }
+    }
+
+    // Guardar en "vistos recientemente" (localStorage, para el carrusel del home)
+    window.DDRecentlyViewed?.track({ id: p.id, type: 'product', title: p.title, price: p.basePrice, image: p.images?.main });
 
     // Quantity max
     const qtyInput = document.getElementById('quantityInput');
@@ -759,7 +773,10 @@ class ProductPage {
     // Rebuild installments text to avoid stale DOM references
     const installmentsEl = document.querySelector('.installments');
     if (installmentsEl) {
-      installmentsEl.innerHTML = `Hasta <strong>12 cuotas sin interés</strong> de ${this.formatPrice(totalPrice / 12)}`;
+      const inst = window.DaleDeal.utils.formatInstallments(totalPrice);
+      installmentsEl.innerHTML = inst.show
+        ? `Hasta <strong>${inst.count} cuotas sin interés</strong> de ${inst.monthlyFormatted}`
+        : '';
     }
   }
 

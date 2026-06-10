@@ -220,6 +220,7 @@
                 <button type="button" class="btn btn-primary btn-sm w-100" id="proceedToCheckout">
                   <i class="bi bi-credit-card me-2"></i>Finalizar compra
                 </button>
+                <p class="cart-trust"><i class="bi bi-shield-lock-fill"></i> Pago protegido con Mercado Pago</p>
               </div>
             </div>
           </div>
@@ -448,6 +449,18 @@
                   <button class="btn-wishlist" aria-label="Agregar a favoritos">
                     <i class="bi bi-heart" aria-hidden="true"></i>
                   </button>
+                </div>
+
+                <!-- Trust bar — señal de seguridad debajo del botón de compra -->
+                <div class="trust-bar">
+                  <div class="trust-item">
+                    <i class="bi bi-shield-lock-fill" aria-hidden="true"></i>
+                    <span>Pago protegido con <strong>Mercado Pago</strong></span>
+                  </div>
+                  <div class="trust-item">
+                    <i class="bi bi-lock-fill" aria-hidden="true"></i>
+                    <span>Tus datos viajan encriptados</span>
+                  </div>
                 </div>
 
                 <!-- Payment Methods -->
@@ -827,6 +840,7 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" integrity="sha384-wziAfh6b/qT+3LrqebF9WeK4+J5sehS6FA10J1t3a866kJ/fvU5UwofWnQyzLtwu" crossorigin="anonymous" defer></script>
     <script defer src="../JS/theme.js"></script>
     <script src="../JS/utils.js" defer></script>
+    <script src="../JS/recently-viewed.js" defer></script>
     <script src="../JS/api.js" defer></script>
     <script src="../JS/api-messages.js" defer></script>
     <script src="../JS/api-payments.js" defer></script>

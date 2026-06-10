@@ -856,6 +856,25 @@ svg,
   }
 }
 
+/* CTA sticky en mobile: mantiene "Comprar"/"Contactar" siempre a mano al hacer
+   scroll. Usa position:sticky (no fixed) → no tapa el footer ni necesita
+   padding extra en el body. */
+@media (max-width: 767px) {
+  .purchase-actions,
+  .svc-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 30;
+    background: var(--white, #fff);
+    padding: 10px 0;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.06);
+  }
+  [data-theme="dark"] .purchase-actions,
+  [data-theme="dark"] .svc-actions {
+    background: #15151f;
+  }
+}
+
 @media (max-width: 575px) {
   .product-actions-row {
     flex-direction: column;

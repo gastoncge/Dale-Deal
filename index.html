@@ -383,6 +383,20 @@
         </div>
       </section>
 
+      <!-- Vistos recientemente — se llena desde localStorage (JS/recently-viewed.js).
+           Hidden por default; aparece solo si el usuario ya abrió alguna ficha. -->
+      <section class="products-section" id="recentlyViewedSection" style="display:none;">
+        <div class="container">
+          <div class="section-header text-center mb-4" data-aos="fade-up">
+            <h2 class="section-title">
+              <i class="bi bi-clock-history me-2"></i>Vistos recientemente
+            </h2>
+            <p class="text-muted">Seguí donde dejaste</p>
+          </div>
+          <div class="products-grid" id="recentlyViewedGrid"></div>
+        </div>
+      </section>
+
       <section class="products-section">
         <div class="container">
           <!-- Título de la sección -->
@@ -1284,6 +1298,7 @@
     <script defer src="./JS/product-data.js"></script>
     <script defer src="./JS/search.js"></script>
     <script defer src="./JS/pages/home.js"></script>
+    <script defer src="./JS/recently-viewed.js"></script>
 
     <!-- AOS.init dentro de DOMContentLoaded porque los inline NO esperan
          a defer; sin esto AOS no está cargado cuando esta línea evalúa.

@@ -250,6 +250,20 @@ class ServicePage {
     const completedJobsEl = document.getElementById('providerCompletedJobs');
     if (completedJobsEl) completedJobsEl.textContent = `${p.completedJobs || 0} trabajos`;
 
+    // WhatsApp directo al prestador (solo si tiene teléfono). Normalización AR best-effort.
+    const waBtn = document.getElementById('svcWhatsapp');
+    if (waBtn) {
+      const digits = (p.phone || '').replace(/\D/g, '');
+      if (digits.length >= 8) {
+        const intl = digits.startsWith('54') ? digits : `549${digits.replace(/^0/, '')}`;
+        const txt = encodeURIComponent(`Hola${p.name ? ' ' + p.name : ''}, te contacto desde Dale Deal por el servicio "${s.title}".`);
+        waBtn.href = `https://wa.me/${intl}?text=${txt}`;
+        waBtn.classList.remove('d-none');
+      } else {
+        waBtn.classList.add('d-none');
+      }
+    }
+
     // Service title + meta
     const titleEl = document.querySelector('.svc-title');
     if (titleEl) titleEl.textContent = s.title;
@@ -289,8 +303,14 @@ class ServicePage {
 
     const installmentsEl = document.querySelector('.service-installments');
     if (installmentsEl) {
-      installmentsEl.innerHTML = `Hasta <strong>6 cuotas sin interés</strong> de ${this._formatPrice(s.price / 6)}`;
+      const inst = window.DaleDeal.utils.formatInstallments(s.price);
+      installmentsEl.innerHTML = inst.show
+        ? `Hasta <strong>${inst.count} cuotas sin interés</strong> de ${inst.monthlyFormatted}`
+        : '';
     }
+
+    // Guardar en "vistos recientemente" (localStorage, para el carrusel del home)
+    window.DDRecentlyViewed?.track({ id: s.id, type: 'service', title: s.title, price: s.price, image: s.images?.main });
 
     // Description tab
     const descEl = document.querySelector('.service-description-text');

@@ -137,12 +137,16 @@ function renderProductCard(product) {
   // Renderizar precio
   const priceHTML = `<span class="product-current-price">${window.DaleDeal.utils.formatCurrency(product.price)}</span>`;
 
-  // Cuotas sin interés — solo mostrar si la cuota mensual >= $1.000 (evita "12 cuotas de $42")
-  // 12 cuotas sin interés es el estándar de MercadoPago para vendedores en Argentina.
-  const installments = 12;
-  const monthlyAmount = product.price / installments;
-  const installmentsHTML = monthlyAmount >= 1000
-    ? `<div class="product-installments"><i class="bi bi-credit-card"></i> ${installments} cuotas sin interés de ${window.DaleDeal.utils.formatCurrency(Math.round(monthlyAmount))}</div>`
+  // Cuotas sin interés — helper único en utils.js (elige el mejor plan y evita "12 cuotas de $42")
+  const inst = window.DaleDeal.utils.formatInstallments(product.price);
+  const installmentsHTML = inst.show
+    ? `<div class="product-installments"><i class="bi bi-credit-card"></i> ${inst.count} cuotas sin interés de ${inst.monthlyFormatted}</div>`
+    : '';
+
+  // Stock bajo / urgencia honesta — solo con stock real entre 1 y 5 (sin inventar urgencia)
+  const lowStock = product.stock > 0 && product.stock <= 5;
+  const stockHTML = lowStock
+    ? `<div class="product-stock-low"><i class="bi bi-fire"></i> ${product.stock === 1 ? '¡Última unidad!' : `¡Quedan ${product.stock}!`}</div>`
     : '';
 
   // Reseñas: si no hay reviews, mostrar "Sin reseñas aún" en lugar de "(0)"
@@ -202,6 +206,7 @@ function renderProductCard(product) {
           <div class="product-pricing">
             ${priceHTML}
             ${installmentsHTML}
+            ${stockHTML}
           </div>
         </div>
       </div>
