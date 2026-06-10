@@ -7,3 +7,12 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=()
   Content-Security-Policy: default-src 'self' https: data: blob: 'unsafe-inline' 'unsafe-eval'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'
+
+# HTML: revalidar siempre (los JS/CSS llevan ?v=hash, se pueden cachear largo;
+# el HTML no, o un deploy nuevo no se ve hasta que expire la caché de borde).
+https://daledeal.com.ar/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+/
+  Cache-Control: public, max-age=0, must-revalidate
