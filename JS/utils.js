@@ -249,7 +249,7 @@ DaleDeal.utils.showToast = (message, type, config) => {
       <div class="d-flex">
         <div class="toast-body">
           <i class="bi bi-${icon} me-2"></i>
-          ${message}
+          ${DaleDeal.utils.escapeHtml(String(message ?? ''))}
         </div>
         <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
       </div>
@@ -295,7 +295,7 @@ DaleDeal.utils.showAlert = (message, type, config) => {
     <div class="d-flex align-items-center">
       <i class="bi bi-${icon} me-2"></i>
       <div class="flex-grow-1">
-        <div>${message}</div>
+        <div>${DaleDeal.utils.escapeHtml(String(message ?? ''))}</div>
       </div>
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
     </div>

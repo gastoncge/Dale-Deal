@@ -46,7 +46,7 @@
     return `
       <a class="product-card rv-card" href="${href}" data-clickable="true">
         <div class="product-image-container">
-          <img src="${img}" alt="${u.escapeHtml(item.title)}" class="product-image" loading="lazy" />
+          <img src="${u.escapeHtml(String(img))}" alt="${u.escapeHtml(item.title)}" class="product-image" loading="lazy" />
         </div>
         <div class="product-info">
           <h3 class="product-title">${u.escapeHtml(item.title)}</h3>

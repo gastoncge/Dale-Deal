@@ -1,0 +1,9 @@
+# Security headers para Cloudflare Workers (static assets).
+# Workers aplica este archivo si está en dist/ (build.js lo copia).
+# Docs: https://developers.cloudflare.com/workers/static-assets/headers/
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Content-Security-Policy: default-src 'self' https: data: blob: 'unsafe-inline' 'unsafe-eval'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'

@@ -280,10 +280,11 @@ class ServicePage {
     // Badges/tags
     const tagsContainer = document.querySelector('.service-tags');
     if (tagsContainer && s.badges?.length) {
+      const esc = (v) => window.DaleDeal.utils.escapeHtml(String(v ?? ''));
       tagsContainer.innerHTML = s.badges
         .map(b => {
           const label = typeof b === 'object' ? b.text : b;
-          return `<span class="service-tag"><i class="bi bi-check-circle-fill me-1"></i>${label}</span>`;
+          return `<span class="service-tag"><i class="bi bi-check-circle-fill me-1"></i>${esc(label)}</span>`;
         })
         .join('');
     }
@@ -291,7 +292,7 @@ class ServicePage {
     // Availability
     const availEl = document.getElementById('serviceAvailability');
     if (availEl) {
-      availEl.innerHTML = `<span class="availability-dot available"></span> Disponible esta semana · Responde en ${p.responseTime || '< 1h'}`;
+      availEl.innerHTML = `<span class="availability-dot available"></span> Disponible esta semana · Responde en ${window.DaleDeal.utils.escapeHtml(p.responseTime || '< 1h')}`;
     }
 
     // Price
@@ -315,10 +316,15 @@ class ServicePage {
     // Description tab
     const descEl = document.querySelector('.service-description-text');
     if (descEl) {
-      const isHTML = /<[a-z][\s\S]*>/i.test(s.description || '');
-      descEl.innerHTML = isHTML
-        ? s.description
-        : `<p style="white-space:pre-line;line-height:1.8;color:var(--gray-700)">${s.description || ''}</p>`;
+      // Sanitizar SIEMPRE: la descripción viene del editor Quill del prestador (HTML no confiable).
+      // DOMPurify preserva el formato seguro y elimina <script>/onerror/etc. Fallback: escapar.
+      const raw = s.description || '';
+      if (window.DOMPurify) {
+        descEl.innerHTML = window.DOMPurify.sanitize(raw, { USE_PROFILES: { html: true } });
+      } else {
+        const escDesc = window.DaleDeal.utils.escapeHtml(raw);
+        descEl.innerHTML = `<p style="white-space:pre-line;line-height:1.8;color:var(--gray-700)">${escDesc}</p>`;
+      }
     }
 
     // Reviews summary

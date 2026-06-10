@@ -89,8 +89,11 @@ function renderProductCard(product) {
   const badges = (product.badges || []).filter(b =>
     BADGE_KEYWORDS.some(kw => b.toLowerCase().includes(kw))
   );
+  // Coacciona a string primero: escapeHtml() devuelve '' para no-strings (ej. id numérico),
+  // lo que vaciaría data-id y rompería navegación/favoritos.
+  const esc = (v) => window.DaleDeal.utils.escapeHtml(String(v ?? ''));
   const badgesHTML = badges.map(badge =>
-    `<span class="badge-offer">${badge}</span>`
+    `<span class="badge-offer">${esc(badge)}</span>`
   ).join('');
 
   // Renderizar imágenes
@@ -100,8 +103,8 @@ function renderProductCard(product) {
       <div class="product-image-carousel" data-current-image="0">
         ${product.images.gallery.map((img, index) => `
           <img
-            src="${img}"
-            alt="${product.title} - Vista ${index + 1}"
+            src="${esc(img)}"
+            alt="${esc(product.title)} - Vista ${index + 1}"
             class="product-image ${index === 0 ? 'active' : ''}"
             loading="lazy"
           />
@@ -126,8 +129,8 @@ function renderProductCard(product) {
   } else {
     imagesHTML = `
       <img
-        src="${product.images.main}"
-        alt="${product.title}"
+        src="${esc(product.images.main)}"
+        alt="${esc(product.title)}"
         class="product-image"
         loading="lazy"
       />
@@ -168,12 +171,12 @@ function renderProductCard(product) {
     : '';
 
   return `
-    <div class="product-card ${hasDiscount ? 'has-offer' : ''}" data-id="${product.id}" data-clickable="true">
+    <div class="product-card ${hasDiscount ? 'has-offer' : ''}" data-id="${esc(product.id)}" data-clickable="true">
       <div class="product-image-container">
         ${imagesHTML}
         ${badgesHTML}
         <div class="product-actions">
-          <button class="action-heart" title="Agregar a favoritos" data-product-id="${product.id}">
+          <button class="action-heart" title="Agregar a favoritos" data-product-id="${esc(product.id)}">
             <i class="bi bi-heart"></i>
           </button>
           <a href="${whatsappHref}"
@@ -182,14 +185,14 @@ function renderProductCard(product) {
              target="_blank"
              rel="noopener noreferrer"
              onclick="event.stopPropagation()"
-             aria-label="Compartir ${product.title} por WhatsApp">
+             aria-label="Compartir ${esc(product.title)} por WhatsApp">
             <i class="bi bi-whatsapp"></i>
           </a>
         </div>
       </div>
       <div class="product-info">
-        <h3 class="product-title">${product.title}</h3>
-        <p class="product-description">${shortDescription}</p>
+        <h3 class="product-title">${esc(product.title)}</h3>
+        <p class="product-description">${esc(shortDescription)}</p>
 
         <div class="product-meta-group">
           <div class="product-rating">
