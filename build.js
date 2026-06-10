@@ -452,7 +452,7 @@ function copyHTMLsAndAssets() {
   // manifest.json (PWA): SI FALTA, Cloudflare devuelve index.html como SPA
   // fallback y el browser tira "Manifest: Syntax error" al parsearlo como JSON.
   // Antes faltaba en esta lista — 5 HTMLs con <link rel="manifest"> rompían.
-  for (const f of ['robots.txt', 'sitemap.xml', 'sitemap-index.xml', 'products.json', 'manifest.json', '_headers']) {
+  for (const f of ['robots.txt', 'sitemap.xml', 'sitemap-index.xml', 'products.json', 'manifest.json', '_headers', '_redirects']) {
     const src = path.join(ROOT, f);
     if (fs.existsSync(src)) copyFile(src, path.join(DIST, f));
   }
