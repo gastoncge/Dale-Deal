@@ -98,7 +98,7 @@ async function apiFetch(path, options = {}) {
         const ret = encodeURIComponent(path + window.location.search);
         const loginUrl = path.includes('/HTML/')
           ? `./login.html?redirect=${ret}`
-          : `./HTML/login.html?redirect=${ret}`;
+          : `/login?redirect=${ret}`;
         // Pequeño defer para que el throw se propague y el caller pueda
         // limpiar antes de la navegación.
         setTimeout(() => { window.location.href = loginUrl; }, 100);

@@ -90,7 +90,7 @@ class ServicePage {
           main.innerHTML = '<div style="text-align:center;padding:80px 24px;"><h2>Servicio no encontrado</h2><p>Te llevamos al listado en un segundo…</p></div>';
         }
       }
-      setTimeout(() => { window.location.href = './servicios.html'; }, 2000);
+      setTimeout(() => { window.location.href = '/servicios'; }, 2000);
       return;
     }
 
@@ -754,7 +754,7 @@ class ServicePage {
 
     // Ver todos relacionados
     document.getElementById('viewAllRelatedBtn')?.addEventListener('click', () => {
-      window.location.href = `./servicios.html?category=${encodeURIComponent(this.currentService.category)}`;
+      window.location.href = `/servicios?category=${encodeURIComponent(this.currentService.category)}`;
     });
 
   }
@@ -886,7 +886,7 @@ class ServicePage {
       card.addEventListener('click', (e) => {
         if (e.target.closest('.action-heart')) return;
         const id = card.dataset.serviceId;
-        if (id) window.location.href = `servicio.html?id=${id}`;
+        if (id) window.location.href = `/servicio?id=${id}`;
       });
     });
 

@@ -29,13 +29,13 @@
   const isHtmlSubdir = window.location.pathname.includes('/HTML/');
   const contactUrl = isHtmlSubdir
     ? './notificaciones.html#contacto'
-    : './HTML/notificaciones.html#contacto';
+    : '/notificaciones#contacto';
   const reportUrl = isHtmlSubdir
     ? './notificaciones.html#reportar-problema'
-    : './HTML/notificaciones.html#reportar-problema';
+    : '/notificaciones#reportar-problema';
   const helpUrl = isHtmlSubdir
     ? './notificaciones.html#centro-ayuda'
-    : './HTML/notificaciones.html#centro-ayuda';
+    : '/notificaciones#centro-ayuda';
 
   // ── Estado persistente ────────────────────────────────────────────────────
   function getState() {

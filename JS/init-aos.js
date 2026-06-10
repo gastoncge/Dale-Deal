@@ -1,6 +1,6 @@
 // Shared AOS (Animate On Scroll) initialization
-// Included by: index.html, HTML/productos.html, HTML/servicios.html, HTML/producto.html, HTML/servicio.html
-// Note: HTML/publicar.html uses a different config (duration: 400) and initializes inline.
+// Included by: index.html, /productos, /servicios, HTML/producto.html, HTML/servicio.html
+// Note: /publicar uses a different config (duration: 400) and initializes inline.
 //
 // disable en viewports angostos — los elementos data-aos="fade-left"/"fade-right"
 // arrancan con translateX(100px) y opacity:0 hasta entrar al viewport. En

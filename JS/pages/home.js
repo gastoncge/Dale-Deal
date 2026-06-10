@@ -159,7 +159,7 @@ function renderProductCard(product) {
     : `<span class="reviews-count text-muted">Sin reseñas aún</span>`;
 
   // WhatsApp share — el link contiene URL del producto + título
-  const shareUrl = `${window.location.origin}/HTML/producto.html?id=${product.id}`;
+  const shareUrl = `${window.location.origin}/producto?id=${product.id}`;
   const shareText = encodeURIComponent(`Mirá esto en Dale Deal: ${product.title} — ${shareUrl}`);
   const whatsappHref = `https://wa.me/?text=${shareText}`;
 
@@ -457,13 +457,13 @@ if (typeof window !== 'undefined') {
 
     // Botón ver todos los productos
     document.getElementById('viewAllProductsBtn')?.addEventListener('click', () => {
-      window.location.href = './HTML/productos.html';
+      window.location.href = '/productos';
     });
 
     // Botón ver todos los servicios (faltaba handler — el botón existía
     // en index.html pero no hacía nada al click)
     document.getElementById('viewAllServicesBtn')?.addEventListener('click', () => {
-      window.location.href = './HTML/servicios.html';
+      window.location.href = '/servicios';
     });
 
     // Service cards estáticas del home — cada card tiene data-id con el slug
@@ -480,7 +480,7 @@ if (typeof window !== 'undefined') {
       card.style.cursor = 'pointer';
       card.addEventListener('click', (e) => {
         if (e.target.closest('.action-heart')) return; // no robar el click del corazón
-        window.location.href = `./HTML/servicio.html?id=${encodeURIComponent(id)}`;
+        window.location.href = `/servicio?id=${encodeURIComponent(id)}`;
       });
     });
 

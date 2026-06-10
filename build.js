@@ -514,6 +514,36 @@ function appendCacheBust(hash) {
   console.log(`✓ Cache-busting ?v=${hash} agregado a ${count} HTMLs (forza refetch en deploy)`);
 }
 
+// URLs limpias: reescribe los links de PÁGINAS (href/action que terminan en
+// .html) a su forma limpia sin /HTML/ ni .html (ej. ./HTML/servicios.html →
+// /servicios, ../index.html → /). Así la navegación va directo a la URL limpia
+// sin pasar por el redirect (sin "parpadeo"). NO toca assets (.css/.js/img),
+// externos, anclas ni mailto. El _redirects queda como red de seguridad.
+function cleanPageUrls() {
+  const htmls = listFiles(DIST, '.html');
+  let count = 0;
+  for (const fp of htmls) {
+    let html = fs.readFileSync(fp, 'utf8');
+    const before = html;
+    // 1) href/action relativos a páginas .html → /pagina (o / para index)
+    html = html.replace(/\b(href|action)=(["'])([^"']+?)\2/gi, (m, attr, q, url) => {
+      if (/^(https?:|mailto:|tel:|javascript:|#|data:)/i.test(url)) return m;
+      const mm = url.match(/(?:^|\/)([\w-]+)\.html(\?[^"']*|#[^"']*)?$/i);
+      if (!mm) return m;
+      const page = mm[1].toLowerCase();
+      const clean = page === 'index' ? '/' : '/' + page;
+      return `${attr}=${q}${clean}${mm[2] || ''}${q}`;
+    });
+    // 2) URLs absolutas del propio dominio (canonical, og:url) → sin /HTML/ ni .html
+    html = html.replace(
+      /(https?:\/\/(?:www\.)?daledeal\.com\.ar)\/HTML\/([\w-]+)\.html/gi,
+      (m, host, page) => `${host}/${page.toLowerCase() === 'index' ? '' : page.toLowerCase()}`
+    );
+    if (html !== before) { fs.writeFileSync(fp, html); count++; }
+  }
+  console.log(`✓ URLs limpias: links de páginas reescritos en ${count} HTMLs`);
+}
+
 async function build() {
   const start = Date.now();
   // Limpiar dist/ entero para builds reproducibles
@@ -538,6 +568,7 @@ async function build() {
   const buildHash = (process.env.GITHUB_SHA
     ? process.env.GITHUB_SHA.slice(0, 7)
     : Date.now().toString(36)).toLowerCase();
+  cleanPageUrls();                // links de páginas → URLs limpias (sin /HTML/ ni .html)
   appendCacheBust(buildHash);
 
   console.log(`✓ Build completo en ${Date.now() - start}ms — output: dist/`);

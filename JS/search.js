@@ -126,7 +126,7 @@ class SearchManager {
       const raw = this.searchInput?.value || '';
       const query = encodeURIComponent(raw);
       const safe = window.DaleDeal?.utils?.escapeHtml ? window.DaleDeal.utils.escapeHtml(raw) : '';
-      const contactHref = `./contacto.html?asunto=${encodeURIComponent('Busco: ' + raw)}`;
+      const contactHref = `/contacto?asunto=${encodeURIComponent('Busco: ' + raw)}`;
       productsGrid.innerHTML = `
         <div class="col-12">
           <div class="no-results-container text-center py-5">
@@ -137,7 +137,7 @@ class SearchManager {
               <button class="btn btn-outline-secondary" onclick="window.searchManager.clearSearchResults()">
                 <i class="bi bi-grid me-2"></i>Ver todos los productos
               </button>
-              <a class="btn btn-outline-secondary" href="./servicios.html?q=${query}">
+              <a class="btn btn-outline-secondary" href="/servicios?q=${query}">
                 <i class="bi bi-tools me-2"></i>Buscar en servicios
               </a>
               <a class="btn btn-primary" href="${contactHref}">
@@ -188,7 +188,7 @@ class SearchManager {
                    window.location.pathname.endsWith('/') ||
                    !window.location.pathname.includes('HTML/');
 
-    const productsUrl = isRoot ? './HTML/productos.html' : './productos.html';
+    const productsUrl = isRoot ? '/productos' : '/productos';
     window.location.href = `${productsUrl}?q=${encodeURIComponent(query)}`;
   }
 

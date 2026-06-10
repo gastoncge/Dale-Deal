@@ -405,7 +405,7 @@ class NotificationManager {
   // Ver todas las notificaciones
   viewAllNotifications() {
     const isInHtmlFolder = window.location.pathname.includes('/HTML/');
-    window.location.href = isInHtmlFolder ? './notificaciones.html' : './HTML/notificaciones.html';
+    window.location.href = isInHtmlFolder ? './notificaciones.html' : '/notificaciones';
   }
 
   // Renderizar notificaciones

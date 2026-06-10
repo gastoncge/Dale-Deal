@@ -64,7 +64,7 @@ class ProductPage {
       if (window.DaleDeal?.utils?.showNotification) {
         DaleDeal.utils.showNotification('Producto inválido. Te llevamos al catálogo…', 'error');
       }
-      setTimeout(() => { window.location.href = './productos.html'; }, 1500);
+      setTimeout(() => { window.location.href = '/productos'; }, 1500);
       return false;
     }
 
@@ -87,7 +87,7 @@ class ProductPage {
           'error'
         );
       }
-      setTimeout(() => { window.location.href = './productos.html'; }, 2000);
+      setTimeout(() => { window.location.href = '/productos'; }, 2000);
       return false;
     }
 
@@ -312,7 +312,7 @@ class ProductPage {
   // ── SEO: actualiza title, meta description, OG, Twitter, JSON-LD ─────────
   updateSEOMeta(p) {
     const SITE = 'https://daledeal.com.ar';
-    const url  = `${SITE}/HTML/producto.html?id=${p.id}`;
+    const url  = `${SITE}/producto?id=${p.id}`;
     const img  = p.images?.main || `${SITE}/IMG/LOGO-2.png`;
     const previewDesc = (p.description || '').length > 160
       ? (p.description || '').substring(0, 160) + '…'
@@ -540,7 +540,7 @@ class ProductPage {
         const titleSafe = esc(prod.title);
         const imgSrc    = String(prod.images?.main || prod.image || '').replace(/['"<>]/g, '');
         return `
-          <div class="product-card-mini" onclick="location.href='producto.html?id=${pid}'" style="cursor:pointer;">
+          <div class="product-card-mini" onclick="location.href='/producto?id=${pid}'" style="cursor:pointer;">
             <img src="${imgSrc}" alt="${titleSafe}" loading="lazy" style="width:100%;height:140px;object-fit:cover;border-radius:8px;">
             <p style="margin:8px 0 4px;font-size:13px;font-weight:600;">${titleSafe}</p>
             <p style="color:var(--primary-red);font-weight:700;">$${(prod.price || prod.basePrice || 0).toLocaleString('es-AR')}</p>
@@ -823,7 +823,7 @@ class ProductPage {
     // Chequear sesión antes de cualquier modal
     if (!localStorage.getItem('daledeal_token')) {
       this.showNotification('Tenés que iniciar sesión para comprar.', 'warning');
-      setTimeout(() => { window.location.href = './login.html'; }, 1500);
+      setTimeout(() => { window.location.href = '/login'; }, 1500);
       return;
     }
 
@@ -1559,7 +1559,7 @@ class ProductPage {
   goToCategory() {
     // Navigate to productos.html filtered by category
     window.location.href =
-      `./productos.html?category=${encodeURIComponent(this.currentProduct.category)}`;
+      `/productos?category=${encodeURIComponent(this.currentProduct.category)}`;
   }
 
   // ── Stars renderer ─────────────────────────────────────────────────────────

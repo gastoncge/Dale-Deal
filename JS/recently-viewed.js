@@ -30,14 +30,10 @@
     write(list);
   }
 
-  function basePath() {
-    return window.location.pathname.includes('/HTML/') ? './' : './HTML/';
-  }
-
   function cardHTML(item) {
     const u = window.DaleDeal.utils;
-    const page = item.type === 'service' ? 'servicio.html' : 'producto.html';
-    const href = `${basePath()}${page}?id=${encodeURIComponent(item.id)}`;
+    const page = item.type === 'service' ? 'servicio' : 'producto';
+    const href = `/${page}?id=${encodeURIComponent(item.id)}`;
     const img = item.image || u.PLACEHOLDER_IMG;
     const inst = u.formatInstallments(item.price);
     const instHTML = inst.show

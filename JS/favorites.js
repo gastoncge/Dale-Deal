@@ -132,7 +132,7 @@ class FavoritesManager {
         e.preventDefault();
         // fallback si el href es '#' (páginas no actualizadas)
         const path = window.location.pathname;
-        const base = path.includes('/HTML/') ? './notificaciones.html' : './HTML/notificaciones.html';
+        const base = path.includes('/HTML/') ? '/notificaciones' : '/notificaciones';
         window.location.href = base + '#favoritos';
       }
     });
@@ -454,7 +454,7 @@ class FavoritesManager {
     if (!modalEl) {
       // Redirigir a index con flag para auto-abrir
       const path = window.location.pathname;
-      const target = path.includes('/HTML/') ? '../index.html' : './index.html';
+      const target = path.includes('/HTML/') ? '/' : '/';
       window.location.href = `${target}?openFavorites=1`;
       return;
     }
@@ -625,9 +625,9 @@ class FavoritesManager {
     if (path.includes('producto.html')) {
       window.location.href = window.location.pathname + '?id=' + productId;
     } else if (path.includes('/HTML/')) {
-      window.location.href = './producto.html?id=' + productId;
+      window.location.href = '/producto?id=' + productId;
     } else {
-      window.location.href = './HTML/producto.html?id=' + productId;
+      window.location.href = '/producto?id=' + productId;
     }
   }
 
@@ -635,7 +635,7 @@ class FavoritesManager {
   // Cloudflare strippea .html, así que matcheamos producto y producto.html
   goToHome() {
     if (/\/producto(\.html)?$/.test(window.location.pathname)) {
-      window.location.href = '../index.html';
+      window.location.href = '/';
     } else {
       // Ya estamos en el inicio, solo cerrar el modal y hacer scroll a productos
       const modal = bootstrap.Modal.getInstance(document.getElementById('favoritesModal'));

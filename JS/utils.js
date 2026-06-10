@@ -517,8 +517,8 @@ window.goToProduct = function(productId) {
   if (path.includes('producto.html')) {
     window.location.href = window.location.pathname + '?id=' + productId;
   } else if (path.includes('/HTML/')) {
-    window.location.href = './producto.html?id=' + productId;
+    window.location.href = '/producto?id=' + productId;
   } else {
-    window.location.href = './HTML/producto.html?id=' + productId;
+    window.location.href = '/producto?id=' + productId;
   }
 };
