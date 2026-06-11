@@ -51,11 +51,22 @@ Redeploy del backend. Listo: **cobra plata real.**
 > El backend ya valida que en producción el token NO sea `TEST-` (avisa si te
 > equivocás). El frontend ya muestra "Pago protegido por Mercado Pago" + cuotas.
 
-### Importante: el flujo de PUBLICAR está en modo demo
-La página `publicar.html` hoy dice *"Versión demo. No se procesará ningún pago"* y
-tiene un botón **"Registrar interés (Demo)"**. Cuando MP esté activo hay que
-**des-gatear el publicar** para que los vendedores reales puedan cargar productos.
-👉 Esto es parte de "salir a producción de verdad" — coordinarlo con el dev.
+### Aclaración (corregida): publicar GRATIS ya funciona
+Investigado a fondo: el form de publicar postea de verdad al backend — un
+vendedor logueado **ya puede publicar** producto o servicio con el plan
+Estándar (gratis). Lo único "demo" es el **cobro de planes destacados**
+(Destacado/Pro), que correctamente espera a que MP esté activo.
+
+La fricción real era otra: las **fotos** había que pegarlas como URLs
+(Imgur/Drive) — un vendedor común abandona ahí. **Ya está resuelto en
+código**: subida directa de archivos (Worker en el dominio: `/api/upload`
+con login + `/img/` para servir, storage en Workers KV). Verificado E2E en
+local; pendiente de deploy con OK.
+
+Nota técnica: R2 no está habilitado en la cuenta de Cloudflare (pide
+activarlo en el dashboard). Por eso las fotos van a Workers KV (free: 1 GB,
+~1.000 fotos/día — sobra para validar). Si el volumen crece: activar R2 y
+migrar el binding; las URLs públicas no cambian.
 
 ---
 
