@@ -4,14 +4,17 @@
 > NO es código: son 3 acciones de panel/config + conseguir oferta y demanda reales.
 > Este doc cubre las 4 cosas que desbloquean el arranque.
 
-Estado al **10/06/2026**.
+Estado al **11/06/2026** — ✅ = resuelto ese día.
 
-| # | Bloqueador | Tipo | Quién | Tiempo |
-|---|-----------|------|-------|--------|
-| 1 | Mercado Pago no cobra | Decisión + config | **Dueño** | ~1 h |
-| 2 | Data demo en la página | Decisión + DB | Dueño + dev | ~30 min |
-| 3 | Analytics apagado | Config | Dev (falta token) | ~10 min |
-| 4 | Mails de soporte no llegan | Config (1 variable) | **Dueño/dev** | ~5 min |
+| # | Bloqueador | Estado |
+|---|-----------|--------|
+| 1 | Mercado Pago no cobra | ⏳ ÚNICO pendiente — decisión del dueño (~1 h) |
+| 2 | Data demo en la página | ✅ Avatares creíbles aplicados en prod (11/06) |
+| 3 | Analytics apagado | ✅ CF Web Analytics EN VIVO (token cableado al build) |
+| 4 | Mails de soporte no llegan | ✅ `CONTACT_INBOX=graciano.ponce@gmail.com` + todos los mensajes se guardan en `contact_messages` (migración 012 aplicada) |
+
+> 11/06 hubo además un incidente de Postgres (backend 503 ~2h47m) — resuelto,
+> ver `incidente-2026-06-11-postgres.md`. Datos intactos.
 
 ---
 
