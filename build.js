@@ -29,13 +29,12 @@ const esbuild = require('esbuild');
 const ROOT = __dirname;
 const DIST = path.join(ROOT, 'dist');
 
-// Cloudflare Web Analytics beacon token. Si está vacío, el build no inyecta
-// el snippet — útil para dev local. Sacalo del dashboard de Cloudflare
-// (Analytics → Web Analytics → tu sitio → JavaScript snippet → copiar el
-// valor dentro de data-cf-beacon).
-//
-// También se puede sobreescribir con env var: CF_BEACON_TOKEN=xxx npm run build
-const CF_BEACON_TOKEN = process.env.CF_BEACON_TOKEN || '';
+// Cloudflare Web Analytics beacon token (daledeal.com.ar). Es un token
+// PÚBLICO por diseño — viaja en el HTML de cada visitante — así que puede
+// vivir commiteado acá como default. Se puede anular con la env var
+// (CF_BEACON_TOKEN= npm run build → builds sin analytics, p.ej. dev local
+// usa otro path porque sirve los HTML sin pasar por el build).
+const CF_BEACON_TOKEN = process.env.CF_BEACON_TOKEN ?? '9d2b4a29f7184c14a28bf735cc70bac8';
 const WATCH = process.argv.includes('--watch');
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
