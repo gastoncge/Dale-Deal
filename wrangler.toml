@@ -1,4 +1,10 @@
 name = "dale-deal"
+# Worker script: maneja POST /api/upload y GET /img/* (fotos de publicar).
+# Lo que matchea un asset estático se sigue sirviendo directo desde dist/
+# SIN pasar por el script (run_worker_first=false por default) → _redirects,
+# _headers y URLs limpias no cambian. Solo las rutas sin asset (api/img/404)
+# llegan al script, que cae a env.ASSETS para conservar la página 404.
+main = "worker.js"
 compatibility_date = "2025-05-27"
 # account_id fijo para que `wrangler deploy` no necesite permiso de listar
 # todos los accounts del user (los tokens scoped a un solo Worker fallan
@@ -17,9 +23,17 @@ routes = [
 
 [assets]
 directory = "./dist"
+# Binding para que worker.js pueda devolver assets (la 404, p.ej.).
+binding = "ASSETS"
 # 404-page: cuando una URL no matchea ningún asset, sirve dist/404.html
 # con status 404 (en lugar de "single-page-application" que servía
 # index.html con status 200 — el user veía la home pensando que estaba
 # en otra página y nos perdíamos analytics de URLs rotas).
 # dist/404.html lo genera build.js copiando HTML/404.html a la raíz del dist.
 not_found_handling = "404-page"
+
+# Fotos subidas desde publicar (ver worker.js). KV porque R2 no está
+# habilitado en la cuenta; si se habilita, migrar objetos y cambiar binding.
+[[kv_namespaces]]
+binding = "IMAGES"
+id = "4b6ebaf8d3a14d26aeccd02fa4f03151"

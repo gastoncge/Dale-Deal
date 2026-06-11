@@ -204,6 +204,10 @@ async function submitProduct() {
   const title = document.getElementById('p-title').value.trim();
   const price = document.getElementById('p-price').value;
 
+  if (uploadsInFlight > 0) {
+    showError('product-error', 'Hay fotos subiéndose todavía — esperá unos segundos y volvé a intentar.');
+    return;
+  }
   if (!title || title.length < 3) {
     showError('product-error', 'El título debe tener al menos 3 caracteres.');
     return;
@@ -273,6 +277,7 @@ async function submitProduct() {
       b.classList.toggle('active', i === 0);
     });
     resetImageList('p-photo-area');
+    uploadedPhotos['p-photo-area'] = [];
     document.getElementById('p-photo-previews').innerHTML = '';
     document.getElementById('p-video-previews').innerHTML = '';
     // Limpiar editor Quill (el form.reset() no lo toca)
@@ -300,6 +305,10 @@ async function submitService() {
   const btn = document.getElementById('btn-publish-service');
   const title = document.getElementById('s-title').value.trim();
 
+  if (uploadsInFlight > 0) {
+    showError('service-error', 'Hay fotos subiéndose todavía — esperá unos segundos y volvé a intentar.');
+    return;
+  }
   if (!title || title.length < 3) {
     showError('service-error', 'El título debe tener al menos 3 caracteres.');
     return;
@@ -351,6 +360,7 @@ async function submitService() {
       b.classList.toggle('active', i === 0);
     });
     resetImageList('s-photo-area');
+    uploadedPhotos['s-photo-area'] = [];
     document.getElementById('s-photo-previews').innerHTML = '';
     document.getElementById('s-video-previews').innerHTML = '';
     if (sDescriptionEditor) sDescriptionEditor.setText('');
@@ -362,21 +372,100 @@ async function submitService() {
 }
 
 // =====================================================
-// HELPERS DE IMÁGENES
+// HELPERS DE IMÁGENES — upload real
 // =====================================================
 //
-// Estado: el upload directo de archivos a un storage propio (S3/Cloudinary)
-// está en roadmap. Mientras tanto:
-//   1) El usuario puede seleccionar archivos: se muestran en preview pero
-//      NO se envían al backend (el data URL es muy pesado para guardar).
-//   2) Como fallback, hidratamos cada selección a un campo de URL editable
-//      por debajo del file picker. Si pegan URLs públicas (Imgur, Drive,
-//      etc.) ESAS sí se mandan al backend.
-//
-// Esto evita el bug de "publico sin imágenes" mientras no haya upload real.
+// Al elegir archivos se suben de una a POST /api/upload (Worker del mismo
+// dominio, guarda en Workers KV y devuelve la URL /img/<key>). El form
+// publica esas URLs. Si una subida falla (sin conexión, sesión vencida,
+// server local sin Worker), se abre el bloque de URLs pegadas como fallback.
 
-function getProductImages() { return readImageUrlsFromExtra('p-photo-area'); }
-function getServiceImages() { return readImageUrlsFromExtra('s-photo-area'); }
+const MAX_PHOTOS = 10;
+const MAX_PHOTO_BYTES = 8 * 1024 * 1024; // espejo del límite del Worker
+
+// URLs ya subidas, por área de upload
+const uploadedPhotos = {
+  'p-photo-area': [],
+  's-photo-area': [],
+};
+let uploadsInFlight = 0;
+
+function getProductImages() {
+  return uploadedPhotos['p-photo-area']
+    .concat(readImageUrlsFromExtra('p-photo-area'))
+    .slice(0, MAX_PHOTOS);
+}
+function getServiceImages() {
+  return uploadedPhotos['s-photo-area']
+    .concat(readImageUrlsFromExtra('s-photo-area'))
+    .slice(0, MAX_PHOTOS);
+}
+
+/** Sube un archivo al Worker y devuelve la URL pública (/img/<key>). */
+async function uploadImageFile(file) {
+  const token = localStorage.getItem('daledeal_token');
+  const res = await fetch('/api/upload', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token || ''}`,
+      'Content-Type': file.type,
+    },
+    body: file,
+  });
+  let data = null;
+  try { data = await res.json(); } catch (_) { /* respuesta no-JSON (p.ej. 404 en dev local) */ }
+  if (!res.ok || !data?.ok || !data.url) {
+    throw new Error(data?.error || 'No se pudo subir la imagen.');
+  }
+  return data.url;
+}
+
+/** Crea la card de preview y sube el archivo; refleja el estado en la card. */
+function uploadOnePhoto(file, areaId, previews) {
+  if (file.size > MAX_PHOTO_BYTES) {
+    alert(`"${file.name}" supera los 8 MB y no se puede subir.`);
+    return;
+  }
+
+  const objUrl = URL.createObjectURL(file);
+  const card = document.createElement('div');
+  card.className = 'media-preview-item';
+  card.style.cssText = 'display:inline-block;margin:6px;position:relative;';
+  card.innerHTML = `
+    <img src="${objUrl}" alt="${escapeAttr(file.name)}" style="width:120px;height:120px;object-fit:cover;border-radius:8px;opacity:.5;" />
+    <span class="upload-state spinner-border spinner-border-sm" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--primary-red,#d63031);"></span>
+  `;
+  previews.appendChild(card);
+
+  uploadsInFlight++;
+  uploadImageFile(file)
+    .then((url) => {
+      uploadedPhotos[areaId].push(url);
+      card.dataset.url = url;
+      const img = card.querySelector('img');
+      if (img) img.style.opacity = '1';
+      card.querySelector('.upload-state')?.remove();
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.textContent = '×';
+      remove.setAttribute('aria-label', 'Quitar foto');
+      remove.style.cssText = 'position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:none;background:#d63031;color:#fff;font-weight:700;line-height:1;cursor:pointer;';
+      remove.addEventListener('click', () => {
+        uploadedPhotos[areaId] = uploadedPhotos[areaId].filter(u => u !== url);
+        card.remove();
+      });
+      card.appendChild(remove);
+    })
+    .catch((err) => {
+      card.remove();
+      // Fallback: dejar pegar URLs públicas a mano
+      ensureExtraUrlBlock(areaId);
+      alert(`No pudimos subir "${file.name}": ${err.message}\nComo alternativa, pegá una URL pública de la foto en el campo de abajo.`);
+    })
+    .finally(() => {
+      uploadsInFlight--;
+    });
+}
 
 function readImageUrlsFromExtra(areaId) {
   // Buscamos un sub-bloque de URLs adicionales que se inyecta on-demand.
@@ -398,14 +487,14 @@ function ensureExtraUrlBlock(areaId) {
   wrap.id = id;
   wrap.className = 'mt-3';
   wrap.innerHTML = `
-    <label class="form-label small mb-1">URLs de fotos hosteadas (opcional, se publican)</label>
+    <label class="form-label small mb-1">URLs de fotos (alternativa)</label>
     <div class="image-url-list">
       <div class="image-url-row d-flex gap-2 align-items-center mb-2">
         <input type="url" class="form-control form-control-sm" placeholder="https://..." />
         <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addImageUrlRow('${id}')">+</button>
       </div>
     </div>
-    <div class="form-text">El upload directo está en beta. Por ahora pegá URLs públicas de tus fotos (Imgur, Drive, etc.).</div>
+    <div class="form-text">Si la subida directa falla, pegá acá la URL pública de tu foto (Imgur, Drive, etc.) — también se publica.</div>
   `;
   area.parentElement.appendChild(wrap);
   return wrap;
@@ -442,38 +531,49 @@ function resetImageList(areaIdSuffix) {
 // =====================================================
 
 /**
- * Lee los archivos elegidos en un <input type="file">, los muestra
- * en preview y abre el bloque de URLs adicionales (donde el usuario
- * puede pegar las URLs reales para publicar). Limita 10 fotos / 1 video.
+ * Maneja la selección de archivos en un <input type="file">.
+ * Fotos: las SUBE de verdad (POST /api/upload) y acumula las URLs que
+ * después publica el form. Video: solo preview local (no se publica aún).
  */
 function handleMediaUpload(input, previewId, type) {
   const previews = document.getElementById(previewId);
   if (!previews) return;
-  previews.innerHTML = '';
   const files = Array.from(input.files || []);
-  const max = type === 'video' ? 1 : 10;
-  const limited = files.slice(0, max);
-  if (files.length > max) {
-    alert(type === 'video'
-      ? 'Solo podés subir 1 video.'
-      : `Solo podés subir hasta ${max} fotos.`);
+
+  // Video: preview local únicamente
+  if (type === 'video') {
+    previews.innerHTML = '';
+    if (files.length > 1) alert('Solo podés subir 1 video.');
+    const file = files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      const el = document.createElement('div');
+      el.className = 'media-preview-item';
+      el.style.cssText = 'display:inline-block;margin:6px;position:relative;';
+      el.innerHTML = `<video src="${url}" controls style="max-width:160px;max-height:120px;border-radius:8px;"></video>`;
+      previews.appendChild(el);
+    }
+    return;
   }
-  limited.forEach(file => {
-    const url = URL.createObjectURL(file);
-    const el = document.createElement('div');
-    el.className = 'media-preview-item';
-    el.style.cssText = 'display:inline-block;margin:6px;position:relative;';
-    el.innerHTML = type === 'video'
-      ? `<video src="${url}" controls style="max-width:160px;max-height:120px;border-radius:8px;"></video>`
-      : `<img src="${url}" alt="${escapeAttr(file.name)}" style="width:120px;height:120px;object-fit:cover;border-radius:8px;" />`;
-    previews.appendChild(el);
-  });
-  // Abrir el bloque de URLs adicionales si seleccionó algo (para que sepa
-  // que tiene que pegar las URLs)
-  if (limited.length > 0) {
-    const areaId = input.closest('.media-upload-area')?.id;
-    if (areaId) ensureExtraUrlBlock(areaId);
+
+  // Fotos: subida real
+  const areaId = input.closest('.media-upload-area')?.id;
+  if (!areaId || !uploadedPhotos[areaId]) return;
+
+  if (!localStorage.getItem('daledeal_token')) {
+    alert('Necesitás iniciar sesión para subir fotos.');
+    input.value = '';
+    return;
   }
+
+  const room = MAX_PHOTOS - uploadedPhotos[areaId].length;
+  const selected = files.filter(f => f.type && f.type.startsWith('image/'));
+  const limited = selected.slice(0, Math.max(0, room));
+  if (selected.length > limited.length) {
+    alert(`Podés subir hasta ${MAX_PHOTOS} fotos por publicación.`);
+  }
+  limited.forEach(file => uploadOnePhoto(file, areaId, previews));
+  input.value = ''; // permite volver a elegir los mismos archivos
 }
 window.handleMediaUpload = handleMediaUpload;
 
