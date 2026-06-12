@@ -659,9 +659,12 @@ svg,
 }
 
 @media (max-width: 575px) {
+  /* En mobile .products-row apila en columna → la card va a ancho completo.
+     (El calc(50%) anterior era de un layout viejo de 2 por fila y dejaba
+     cards de ~165px con la mitad derecha de la pantalla vacía.) */
   .products-row .product-card {
-    max-width: calc(50% - var(--spacing-2));
-    flex: 0 0 calc(50% - var(--spacing-2));
+    max-width: 100%;
+    flex: 0 0 auto;
   }
 }
 
@@ -872,6 +875,17 @@ svg,
   [data-theme="dark"] .purchase-actions,
   [data-theme="dark"] .svc-actions {
     background: #15151f;
+  }
+
+  /* En las fichas, el CTA sticky vive pegado abajo → subimos los botones
+     flotantes para que el "?" de soporte no tape "Agregar al carrito". */
+  body:has(.purchase-actions) #dd-support-widget,
+  body:has(.svc-actions) #dd-support-widget {
+    bottom: 150px;
+  }
+  body:has(.purchase-actions) #backToTop,
+  body:has(.svc-actions) #backToTop {
+    bottom: 218px;
   }
 }
 

@@ -3798,9 +3798,12 @@ textarea.form-control {
     gap: var(--spacing-3);
   }
 
-  .newsletter-input,
-  .newsletter-btn {
+  /* Prefijo .newsletter-form para ganarle a .input-group>.form-control de
+     Bootstrap (width:1%) — sin esto el input quedaba colapsado en mobile. */
+  .newsletter-form .newsletter-input,
+  .newsletter-form .newsletter-btn {
     width: 100%;
+    flex: 1 1 auto;
     border-radius: var(--radius-lg);
   }
 
@@ -5021,8 +5024,10 @@ textarea.form-control {
    ===================================================== */
 #backToTop {
   position: fixed;
-  bottom: var(--spacing-8);
-  right: var(--spacing-8);
+  /* Apilado ARRIBA del widget de soporte (#dd-support-widget: 56px en
+     bottom/right 16px) — antes compartían esquina y se superponían. */
+  bottom: 88px;
+  right: 20px;
   width: 48px;
   height: 48px;
   border-radius: var(--radius-full);
