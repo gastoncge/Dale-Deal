@@ -1,4 +1,11 @@
 <!DOCTYPE html>
+<!--
+  ============================================================================
+  BORRADOR — pendiente de revisión legal y de completar datos societarios.
+  No publicar como versión definitiva hasta que un asesor legal lo apruebe.
+  Los textos resaltados con la clase .tbc son datos a completar con la SAS.
+  ============================================================================
+-->
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -21,6 +28,8 @@
       .legal-card ul { padding-left: 1.25rem; }
       .legal-card ul li { margin-bottom: var(--spacing-2); }
       .legal-last-updated { font-size: var(--font-size-sm); color: var(--gray-400); }
+      /* .tbc = "to be completed": dato societario a llenar cuando exista la SAS */
+      .tbc { background: #fff3cd; color: #7a5b00; padding: 0 5px; border-radius: 3px; font-weight: 600; }
       [data-theme="dark"] .legal-card { border-color: var(--gray-200); }
       [data-theme="dark"] .legal-card h2 { border-bottom-color: rgba(255,255,255,0.08); color: var(--gray-800); }
     </style>
@@ -58,16 +67,29 @@
             <span>Este documento describe los términos que rigen el uso de Dale Deal. Te recomendamos que un asesor legal revise estos términos antes de operar de forma profesional o a gran escala.</span>
           </div>
 
-          <p class="legal-last-updated mb-4"><i class="bi bi-calendar3 me-1"></i>Última actualización: abril 2026</p>
+          <p class="legal-last-updated mb-4"><i class="bi bi-calendar3 me-1"></i>Última actualización: junio 2026</p>
 
           <div class="legal-card" data-aos="fade-up">
-            <h2><i class="bi bi-file-text"></i>1. Aceptación de los Términos</h2>
+            <h2><i class="bi bi-building"></i>1. Identificación de la Plataforma</h2>
+            <p>Dale Deal ("la Plataforma") es un sitio de comercio electrónico que conecta a usuarios compradores con vendedores y prestadores de servicios en la República Argentina.</p>
+            <ul>
+              <li><strong>Razón social:</strong> <span class="tbc">[COMPLETAR — razón social de la sociedad al inscribir la SAS]</span></li>
+              <li><strong>CUIT:</strong> <span class="tbc">[COMPLETAR — CUIT]</span></li>
+              <li><strong>Domicilio legal:</strong> <span class="tbc">[COMPLETAR — domicilio legal]</span></li>
+              <li><strong>Sitio web:</strong> daledeal.com.ar</li>
+              <li><strong>Correo de contacto:</strong> contacto@daledeal.com.ar</li>
+            </ul>
+            <p>Ante cualquier consulta o reclamo podés escribirnos a través del Centro de Ayuda. Asimismo, la Dirección Nacional de Defensa del Consumidor atiende al <strong>0800-666-1518</strong> y recibe denuncias en <a href="https://www.argentina.gob.ar/produccion/defensadelconsumidor/formulario" target="_blank" rel="noopener noreferrer">su formulario oficial</a>.</p>
+          </div>
+
+          <div class="legal-card" data-aos="fade-up" data-aos-delay="50">
+            <h2><i class="bi bi-file-text"></i>2. Aceptación de los Términos</h2>
             <p>Al acceder y utilizar Dale Deal ("la Plataforma"), aceptás íntegramente los presentes Términos y Condiciones. Si no estás de acuerdo con alguna de las disposiciones aquí establecidas, te pedimos que no utilices la Plataforma.</p>
             <p>Dale Deal se reserva el derecho de modificar estos términos en cualquier momento, notificando a los usuarios mediante aviso en la Plataforma o por correo electrónico. El uso continuado tras la notificación implica la aceptación de los términos modificados.</p>
           </div>
 
-          <div class="legal-card" data-aos="fade-up" data-aos-delay="50">
-            <h2><i class="bi bi-person-check"></i>2. Registro y Cuenta de Usuario</h2>
+          <div class="legal-card" data-aos="fade-up" data-aos-delay="100">
+            <h2><i class="bi bi-person-check"></i>3. Registro y Cuenta de Usuario</h2>
             <ul>
               <li>Para vender o comprar en la Plataforma es necesario registrarse y crear una cuenta. Sólo personas mayores de 18 años pueden operar.</li>
               <li>El usuario debe proveer información veraz y mantenerla actualizada (nombre, email, teléfono, ubicación).</li>
@@ -77,8 +99,8 @@
             </ul>
           </div>
 
-          <div class="legal-card" data-aos="fade-up" data-aos-delay="100">
-            <h2><i class="bi bi-cart3"></i>3. Compras, Pagos y Comisiones</h2>
+          <div class="legal-card" data-aos="fade-up" data-aos-delay="150">
+            <h2><i class="bi bi-cart3"></i>4. Compras, Pagos y Comisiones</h2>
             <ul>
               <li><strong>Rol de Dale Deal:</strong> actuamos como plataforma de intermediación entre compradores y vendedores. No somos vendedores ni propietarios de los productos publicados.</li>
               <li><strong>Procesamiento de pagos:</strong> los pagos se procesan a través de <strong>Mercado Pago</strong>. Al pagar, los datos de la tarjeta o medio de pago son enviados directamente a Mercado Pago bajo sus propias políticas — Dale Deal no almacena datos sensibles de pago.</li>
@@ -89,8 +111,8 @@
             </ul>
           </div>
 
-          <div class="legal-card" data-aos="fade-up" data-aos-delay="150">
-            <h2><i class="bi bi-shop"></i>4. Publicación de Productos y Servicios</h2>
+          <div class="legal-card" data-aos="fade-up" data-aos-delay="180">
+            <h2><i class="bi bi-shop"></i>5. Publicación de Productos y Servicios</h2>
             <ul>
               <li>Los publicadores son responsables de la veracidad y exactitud de toda la información provista (título, descripción, fotos, precio, stock, condiciones de envío).</li>
               <li>Queda <strong>prohibida</strong> la publicación de artículos ilegales, falsificados, robados, peligrosos, o que infrinjan derechos de propiedad intelectual de terceros.</li>
@@ -99,8 +121,20 @@
             </ul>
           </div>
 
-          <div class="legal-card" data-aos="fade-up" data-aos-delay="180">
-            <h2><i class="bi bi-truck"></i>5. Envíos y Entrega</h2>
+          <div class="legal-card" data-aos="fade-up" data-aos-delay="200">
+            <h2><i class="bi bi-tools"></i>6. Servicios Profesionales</h2>
+            <ul>
+              <li><strong>Rol de la Plataforma:</strong> en el caso de los servicios, Dale Deal conecta usuarios con prestadores independientes. Dale Deal <strong>no presta los servicios</strong> ni es empleador, socio ni representante de los prestadores.</li>
+              <li><strong>Responsabilidad del prestador:</strong> cada prestador es el único responsable de la ejecución, calidad, plazos y resultado de su servicio, así como de contar con las habilitaciones, matrículas y seguros que la ley exija para su actividad.</li>
+              <li><strong>Servicios regulados:</strong> los rubros que requieren matrícula (por ejemplo electricidad, gas, plomería) deben ser prestados por personal matriculado. Al publicar, el prestador declara contar con las habilitaciones legales correspondientes.</li>
+              <li><strong>Insignias de verificación:</strong> las insignias de "verificado" (identidad, CUIT o matrícula) indican que la Plataforma realizó determinados controles sobre los datos aportados, pero <strong>no constituyen una garantía ni un aval de Dale Deal</strong> sobre la calidad o el resultado del trabajo.</li>
+              <li><strong>Presupuestos y precios:</strong> el alcance, el presupuesto y las condiciones del servicio se acuerdan directamente entre el usuario y el prestador. Los precios "desde/hasta" publicados son orientativos.</li>
+              <li><strong>Reclamos:</strong> los reclamos por servicios pueden canalizarse a través del Centro de Ayuda; Dale Deal puede mediar entre las partes pero no garantiza un resultado específico.</li>
+            </ul>
+          </div>
+
+          <div class="legal-card" data-aos="fade-up" data-aos-delay="220">
+            <h2><i class="bi bi-truck"></i>7. Envíos y Entrega</h2>
             <ul>
               <li>El vendedor define al publicar las modalidades de entrega disponibles: envío a domicilio, retiro en persona, o ambas.</li>
               <li>El costo del envío lo determina el vendedor y se suma al total que paga el comprador en el checkout.</li>
@@ -110,8 +144,8 @@
             </ul>
           </div>
 
-          <div class="legal-card" data-aos="fade-up" data-aos-delay="200">
-            <h2><i class="bi bi-arrow-return-left"></i>6. Devoluciones y Reembolsos</h2>
+          <div class="legal-card" data-aos="fade-up" data-aos-delay="240">
+            <h2><i class="bi bi-arrow-return-left"></i>8. Devoluciones y Reembolsos</h2>
             <p>Conforme al artículo 34 de la <strong>Ley 24.240 de Defensa del Consumidor</strong>, los compradores tienen derecho a revocar la compra dentro de los 10 días corridos desde la recepción del producto, sin necesidad de invocar causa.</p>
             <p>Adicionalmente, podés solicitar reembolso si:</p>
             <ul>
@@ -122,8 +156,8 @@
             <p>Las solicitudes deben realizarse dentro de los 30 días posteriores a la recepción mediante el Centro de Ayuda. Si la disputa procede, Dale Deal puede retener o reversar el pago al vendedor a través de Mercado Pago.</p>
           </div>
 
-          <div class="legal-card" data-aos="fade-up" data-aos-delay="220">
-            <h2><i class="bi bi-star"></i>7. Reseñas y Comportamiento en la Comunidad</h2>
+          <div class="legal-card" data-aos="fade-up" data-aos-delay="260">
+            <h2><i class="bi bi-star"></i>9. Reseñas y Comportamiento en la Comunidad</h2>
             <ul>
               <li>Sólo los compradores que recibieron un producto pueden dejar reseñas sobre el mismo.</li>
               <li>Las reseñas deben ser honestas, basadas en la experiencia real y respetuosas. Está prohibido el contenido injurioso, ofensivo o que constituya competencia desleal.</li>
@@ -132,15 +166,24 @@
             </ul>
           </div>
 
-          <div class="legal-card" data-aos="fade-up" data-aos-delay="250">
-            <h2><i class="bi bi-shield-x"></i>8. Limitación de Responsabilidad</h2>
+          <div class="legal-card" data-aos="fade-up" data-aos-delay="280">
+            <h2><i class="bi bi-c-circle"></i>10. Propiedad Intelectual</h2>
+            <ul>
+              <li>La marca "Dale Deal", su logotipo, el diseño del sitio y el software que lo hace funcionar son propiedad de <span class="tbc">[COMPLETAR — razón social]</span> y se encuentran protegidos por la legislación vigente. Queda prohibida su reproducción o uso sin autorización previa y por escrito.</li>
+              <li><strong>Contenido del usuario:</strong> al publicar fotos, textos o videos, el usuario declara ser titular de los derechos sobre ese contenido (o contar con autorización para usarlo) y otorga a Dale Deal una licencia no exclusiva, gratuita y de alcance mundial para exhibirlo y promocionar la publicación dentro de la Plataforma y sus canales de difusión.</li>
+              <li>El usuario es el único responsable de no infringir derechos de terceros (marcas registradas, fotografías con derechos de autor, etc.) en el contenido que publica.</li>
+            </ul>
+          </div>
+
+          <div class="legal-card" data-aos="fade-up" data-aos-delay="300">
+            <h2><i class="bi bi-shield-x"></i>11. Limitación de Responsabilidad</h2>
             <p>Dale Deal pone a disposición la Plataforma "tal cual está", sin garantizar disponibilidad ininterrumpida ni que esté libre de errores. No será responsable por daños indirectos, incidentales, lucro cesante o consecuentes derivados del uso o la imposibilidad de uso de la Plataforma.</p>
             <p>La responsabilidad máxima de Dale Deal frente a un usuario por cualquier reclamo no excederá el monto pagado por éste en la transacción que dio origen al reclamo.</p>
             <p>Las disputas entre compradores y vendedores son responsabilidad de las partes; Dale Deal puede mediar pero no garantiza un resultado específico.</p>
           </div>
 
-          <div class="legal-card" data-aos="fade-up" data-aos-delay="280">
-            <h2><i class="bi bi-geo-alt"></i>9. Jurisdicción y Ley Aplicable</h2>
+          <div class="legal-card" data-aos="fade-up" data-aos-delay="320">
+            <h2><i class="bi bi-geo-alt"></i>12. Jurisdicción y Ley Aplicable</h2>
             <p>Estos Términos se rigen por las leyes de la República Argentina, en particular la Ley 24.240 de Defensa del Consumidor, la Ley 25.326 de Protección de Datos Personales, y la Ley 26.388 de Delitos Informáticos.</p>
             <p>Cualquier controversia que no pueda resolverse de forma amistosa se someterá a los Tribunales Ordinarios de la Ciudad Autónoma de Buenos Aires, sin perjuicio del derecho del consumidor de recurrir al Servicio de Conciliación Previa en Relaciones de Consumo (COPREC) cuando corresponda.</p>
           </div>
