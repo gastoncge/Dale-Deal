@@ -207,6 +207,28 @@
   margin-bottom: var(--spacing-8);
 }
 
+/* Botón secundario del hero ("Ver servicios"). El btn-outline-light de
+ * Bootstrap se perdía sobre el fondo naranja: le damos fondo translúcido
+ * "glass" + borde más marcado para que se lea bien. El selector por id gana
+ * por especificidad sobre .btn-outline-light (no hace falta !important). */
+#heroServicesBtn {
+  background-color: rgba(255, 255, 255, 0.10);
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  color: #fff;
+  border-radius: 50rem;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition: background-color var(--transition-base),
+    border-color var(--transition-base);
+}
+
+#heroServicesBtn:hover,
+#heroServicesBtn:focus-visible {
+  background-color: rgba(255, 255, 255, 0.22);
+  border-color: #fff;
+  color: #fff;
+}
+
 .hero-image img {
   border-radius: var(--radius-3xl);
   box-shadow: var(--shadow-2xl);
