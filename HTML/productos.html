@@ -8,7 +8,7 @@
     <!-- SEO Meta Tags -->
     <meta
       name="description"
-      content="Descubre miles de productos al mejor precio en Dale Deal. Electrónicos, hogar, moda y mucho más con envío rápido."
+      content="Descubrí miles de productos al mejor precio en Dale Deal. Electrónicos, hogar, moda y mucho más con envío rápido."
     />
     <meta
       name="keywords"
@@ -2986,6 +2986,42 @@
         font-size: var(--font-size-sm) !important;
       }
 
+      /* =====================================================================
+         FIX cascada mobile (va AL FINAL a propósito): la regla base
+         .filters-sidebar { position:sticky } está más arriba que el @media
+         de 992px, así que en el celu PISABA al drawer y el panel de filtros
+         quedaba fijo ocupando toda la pantalla (el usuario no veía productos).
+         Al re-declarar el drawer acá abajo, gana por orden de fuente — sin
+         !important. Mismo motivo para mostrar el botón "Filtros".
+         ===================================================================== */
+      @media (max-width: 991.98px) {
+        .filters-sidebar {
+          position: fixed;
+          top: 0;
+          left: -100%;
+          width: 85%;
+          max-width: 360px;
+          height: 100vh;
+          max-height: 100vh;
+          z-index: 1050;
+          transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 8px 0 24px rgba(0, 0, 0, 0.15);
+          border-right: none;
+        }
+        .filters-sidebar.active {
+          left: 0;
+        }
+        .btn-toggle-filters {
+          display: inline-flex;
+        }
+        /* El overlay base es display:none y el .active solo cambiaba opacity
+           (nunca se mostraba). display:block SOLO cuando está activo — así no
+           bloquea los toques del catálogo cuando el drawer está cerrado. */
+        .sidebar-overlay.active {
+          display: block;
+          opacity: 1;
+        }
+      }
     </style>
 
     <script>
