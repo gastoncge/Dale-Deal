@@ -313,8 +313,13 @@ function injectCloudflareWebAnalytics() {
   for (const fp of htmls) {
     let content = fs.readFileSync(fp, 'utf8');
     if (content.includes('data-cf-beacon=')) continue; // ya inyectado
-    if (!content.includes('</body>')) continue; // HTML mal formado
-    content = content.replace('</body>', snippet + '</body>');
+    // Inyectar antes del ÚLTIMO </body> (el real). Usar replace() con string
+    // pisa la PRIMERA aparición, y si hay un </body> literal en un comentario o
+    // string de JS, el beacon se mete ahí y su </script> corta el script inline
+    // → AOS no inicializa y la página queda en blanco.
+    const bodyClose = content.lastIndexOf('</body>');
+    if (bodyClose === -1) continue; // HTML mal formado
+    content = content.slice(0, bodyClose) + snippet + content.slice(bodyClose);
     fs.writeFileSync(fp, content);
     injected++;
   }

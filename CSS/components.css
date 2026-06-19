@@ -546,6 +546,9 @@ nav.navbar {
   height: 32px; /* Reducido de 40px */
   width: auto;
   filter: drop-shadow(var(--shadow-sm));
+  transform-origin: center;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter 0.3s ease;
 }
 
 .brand-text {
@@ -5208,10 +5211,29 @@ nav.navbar {
 }
 .filter-chip:active { transform: scale(0.95); }
 
-/* Logo navbar: sutil hover glow */
-.navbar-brand:hover .logo-navbar {
-  filter: drop-shadow(0 0 8px rgba(214,48,49,0.4));
-  transition: filter 0.3s ease;
+/* Logo navbar: crece con pop elástico + glow al hover. El logo ya es link a
+ * home (#homeLink). transform/filter solo → barato y el guard global de
+ * prefers-reduced-motion lo neutraliza. */
+.navbar-brand:hover .logo-navbar,
+.navbar-brand:focus-visible .logo-navbar {
+  transform: scale(1.14) rotate(-4deg);
+  filter: drop-shadow(0 0 10px rgba(214, 48, 49, 0.5));
+}
+
+.navbar-brand:active .logo-navbar {
+  transform: scale(1.05) rotate(0deg);
+}
+
+/* El texto "DALE DEAL" hace fluir su degradé de marca al hover. */
+.navbar-brand:hover .brand-text {
+  background-size: 200% auto;
+  animation: brandTextFlow 1.2s linear infinite;
+}
+
+@keyframes brandTextFlow {
+  to {
+    background-position: 200% center;
+  }
 }
 
 /* Action buttons del navbar: ring de foco accesible */
@@ -5302,7 +5324,7 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
 .chat-list-preview { font-size: var(--font-size-xs); color: var(--gray-500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .chat-list-empty small { font-size: 11px; color: var(--gray-500); max-width: 220px; line-height: 1.4; }
 .chat-list-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
-.chat-list-time { font-size: 10px; color: var(--gray-400); }
+.chat-list-time { font-size: 10px; color: var(--gray-500); }
 .chat-list-unread { width: 18px; height: 18px; border-radius: 50%; background: var(--primary-red); color: #ffffff; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 .chat-conversation-view { display: flex; flex-direction: column; }
 .chat-back-btn { background: rgba(255,255,255,0.2); border: none; color: #ffffff; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: background var(--transition-base); flex-shrink: 0; }

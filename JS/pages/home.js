@@ -111,10 +111,10 @@ function renderProductCard(product) {
         `).join('')}
 
         <!-- Controles de navegación -->
-        <button class="carousel-control carousel-prev" data-direction="prev" aria-label="Categoría anterior">
+        <button class="carousel-control carousel-prev" data-direction="prev" aria-label="Foto anterior">
           <i class="bi bi-chevron-left" aria-hidden="true"></i>
         </button>
-        <button class="carousel-control carousel-next" data-direction="next" aria-label="Categoría siguiente">
+        <button class="carousel-control carousel-next" data-direction="next" aria-label="Foto siguiente">
           <i class="bi bi-chevron-right" aria-hidden="true"></i>
         </button>
 

@@ -320,7 +320,7 @@ class NotificationManager {
   // Marcar notificaciones seleccionadas como leídas
   markSelectedAsRead() {
     if (this.selectedNotifications.size === 0) {
-      this.showToast('Selecciona al menos una notificación', 'warning');
+      this.showToast('Seleccioná al menos una notificación', 'warning');
       return;
     }
 

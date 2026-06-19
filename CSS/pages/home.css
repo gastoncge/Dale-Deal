@@ -216,10 +216,35 @@
   border: 2px solid rgba(255, 255, 255, 0.85);
   color: #fff;
   border-radius: 50rem;
+  position: relative;
+  overflow: hidden;
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
   transition: background-color var(--transition-base),
     border-color var(--transition-base);
+}
+
+/* Shine sweep en hover (mismo efecto que .btn-primary, para que combinen). */
+#heroServicesBtn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transition: left 0.5s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+#heroServicesBtn:hover::before {
+  left: 100%;
 }
 
 #heroServicesBtn:hover,
@@ -1323,4 +1348,149 @@
   opacity: 1 !important;
   visibility: visible !important;
   transform: none !important;
+}
+
+/* ===== CÓMO FUNCIONA (home) =====
+ * Mismo lenguaje visual que la sección "how it works" de services.css, pero
+ * en formato tarjeta y replicado acá porque el home no carga services.css. */
+.how-it-works-section {
+  padding: var(--spacing-16) 0;
+  background: linear-gradient(135deg, var(--gray-50), var(--white));
+}
+
+.how-it-works-section .section-subtitle {
+  font-size: var(--font-size-lg);
+  color: var(--gray-600);
+}
+
+.how-it-works-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--spacing-6);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.how-it-works-card {
+  position: relative;
+  text-align: center;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-2xl);
+  padding: var(--spacing-8) var(--spacing-6);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-base),
+    box-shadow var(--transition-base), border-color var(--transition-base);
+}
+
+.how-it-works-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--primary-red-light);
+}
+
+.how-step-number {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gradient-primary);
+  color: #fff;
+  border-radius: 50%;
+  font-weight: 800;
+  box-shadow: var(--shadow-md);
+}
+
+.how-step-icon {
+  width: 72px;
+  height: 72px;
+  margin: var(--spacing-4) auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: var(--primary-red);
+  background: var(--primary-yellow-light);
+  border-radius: 50%;
+}
+
+.how-step-title {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: var(--spacing-2);
+}
+
+.how-step-description {
+  color: var(--gray-600);
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+/* ===== A) Títulos con degradé animado =====
+ * El .accent de los títulos de sección fluye con el degradé de marca
+ * (naranja→rojo). Solo background-position se anima (barato para la GPU).
+ * El guard global de prefers-reduced-motion lo frena automáticamente. */
+.section-title .accent {
+  background: linear-gradient(
+    90deg,
+    var(--primary-yellow),
+    var(--primary-red),
+    var(--primary-yellow)
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: accentGradientFlow 6s linear infinite;
+}
+
+@keyframes accentGradientFlow {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* ===== B) Hover vivo en las cards "Cómo funciona" =====
+ * Ícono que hace un pop (escala + leve giro) y anillo pulsante en el número. */
+.how-step-icon {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background-color 0.35s ease, color 0.35s ease;
+}
+
+.how-it-works-card:hover .how-step-icon {
+  transform: scale(1.12) rotate(-6deg);
+  background: var(--primary-red-light);
+  color: var(--primary-red);
+}
+
+.how-step-number::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-yellow);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.how-it-works-card:hover .how-step-number::after {
+  animation: stepRingPulse 1.3s ease-out infinite;
+}
+
+@keyframes stepRingPulse {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
 }

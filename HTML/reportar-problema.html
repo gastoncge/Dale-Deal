@@ -218,8 +218,8 @@
     <script defer src="../JS/dropdown-fix.js"></script>
     <script src="../JS/component-loader.js" defer></script>
     <script>
-      // AOS dentro de DOMContentLoaded — los `defer` corren ENTRE </body>
-      // y este evento, sino [data-aos] elements quedan invisibles.
+      // AOS dentro de DOMContentLoaded — los `defer` corren entre el cierre
+      // del body y este evento, sino [data-aos] elements quedan invisibles.
       document.addEventListener('DOMContentLoaded', function() {
         if (typeof AOS !== 'undefined') AOS.init({ duration: 800, once: true, offset: 100 });
       });

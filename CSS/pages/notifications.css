@@ -272,7 +272,7 @@
 
 .results-count-container {
   font-size: 13px;
-  color: var(--gray-400);
+  color: var(--gray-500);
   font-weight: 500;
   background: var(--gray-100);
   padding: 6px 12px;
@@ -623,7 +623,7 @@
 .sidebar-section-label {
   font-size: 11px;
   font-weight: 700;
-  color: var(--gray-400);
+  color: var(--gray-500);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   padding: 0 var(--spacing-2) var(--spacing-2);
@@ -860,7 +860,7 @@
 [data-theme="dark"] .mensajes-list-item-name { color: #f1f5f9; }
 .mensajes-list-item-preview { font-size: var(--font-size-xs); color: var(--gray-500); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .mensajes-list-item-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
-.mensajes-list-item-time { font-size: 11px; color: var(--gray-400); }
+.mensajes-list-item-time { font-size: 11px; color: var(--gray-500); }
 .mensajes-list-item-unread { background: var(--primary-red); color: #ffffff; font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; border-radius: 9px; display: flex; align-items: center; justify-content: center; padding: 0 5px; }
 .mensajes-chat-panel { display: flex; flex-direction: column; background: var(--white); }
 [data-theme="dark"] .mensajes-chat-panel { background: #1e293b; }

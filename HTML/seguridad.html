@@ -129,11 +129,11 @@
               <form id="passwordForm">
                 <div class="row g-4">
                   <div class="col-12">
-                    <label class="form-label">Contraseña actual <span class="text-danger">*</span></label>
-                    <input type="password" class="form-control mt-1" placeholder="••••••••" required>
+                    <label class="form-label" for="currentPassword">Contraseña actual <span class="text-danger">*</span></label>
+                    <input type="password" class="form-control mt-1" id="currentPassword" placeholder="••••••••" required>
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label">Nueva contraseña <span class="text-danger">*</span></label>
+                    <label class="form-label" for="newPassword">Nueva contraseña <span class="text-danger">*</span></label>
                     <input type="password" class="form-control mt-1" id="newPassword" placeholder="Mínimo 8 caracteres" required>
                     <div class="password-strength mt-2">
                       <div class="password-strength-bar" id="strengthBar"></div>
@@ -141,8 +141,8 @@
                     <small class="text-muted" id="strengthText">Ingresá tu nueva contraseña</small>
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label">Confirmar contraseña <span class="text-danger">*</span></label>
-                    <input type="password" class="form-control mt-1" placeholder="Repetí la nueva contraseña" required>
+                    <label class="form-label" for="confirmPassword">Confirmar contraseña <span class="text-danger">*</span></label>
+                    <input type="password" class="form-control mt-1" id="confirmPassword" placeholder="Repetí la nueva contraseña" required>
                   </div>
                   <div class="col-12">
                     <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-2"></i>Actualizar contraseña</button>
@@ -215,7 +215,7 @@
                   <div class="session-device">iPhone 15 · Safari</div>
                   <div class="session-meta"><i class="bi bi-geo-alt me-1"></i>Buenos Aires, Argentina · Hace 2 horas</div>
                 </div>
-                <button class="btn btn-outline-danger btn-sm" onclick="this.closest('.session-item').remove()">Cerrar</button>
+                <button type="button" class="btn btn-outline-danger btn-sm js-close-session">Cerrar</button>
               </div>
               <div class="session-item">
                 <div class="session-device-icon">📱</div>
@@ -223,7 +223,7 @@
                   <div class="session-device">Android · Chrome Mobile</div>
                   <div class="session-meta"><i class="bi bi-geo-alt me-1"></i>Córdoba, Argentina · Hace 3 días</div>
                 </div>
-                <button class="btn btn-outline-danger btn-sm" onclick="this.closest('.session-item').remove()">Cerrar</button>
+                <button type="button" class="btn btn-outline-danger btn-sm js-close-session">Cerrar</button>
               </div>
               <div class="mt-4">
                 <button class="btn btn-outline-danger btn-sm"><i class="bi bi-box-arrow-right me-2"></i>Cerrar todas las otras sesiones</button>
@@ -246,7 +246,7 @@
                   <h6 class="fw-bold mb-1">Eliminar mi cuenta</h6>
                   <p class="text-muted small mb-0">Eliminás permanentemente tu cuenta y todos tus datos. Esta acción no puede deshacerse.</p>
                 </div>
-                <button class="btn btn-outline-danger" onclick="if(confirm('¿Estás seguro? Esta acción es irreversible.')) alert('Contactá a soporte para completar este proceso.')">
+                <button type="button" class="btn btn-outline-danger" id="deleteAccountBtn">
                   <i class="bi bi-trash me-2"></i>Eliminar cuenta
                 </button>
               </div>
@@ -269,8 +269,8 @@
     <script defer src="../JS/dropdown-fix.js"></script>
     <script src="../JS/component-loader.js" defer></script>
     <script>
-      // AOS dentro de DOMContentLoaded — los `defer` corren ENTRE </body>
-      // y este evento, sino [data-aos] elements quedan invisibles.
+      // AOS dentro de DOMContentLoaded — los `defer` corren entre el cierre
+      // del body y este evento, sino [data-aos] elements quedan invisibles.
       document.addEventListener('DOMContentLoaded', function() {
         if (typeof AOS !== 'undefined') AOS.init({ duration: 800, once: true, offset: 100 });
       });
@@ -304,6 +304,19 @@
         this.reset();
         document.getElementById('strengthBar').style.width = '0';
         document.getElementById('strengthText').textContent = 'Ingresá tu nueva contraseña';
+      });
+
+      // Cerrar sesión individual: saca la fila del DOM (demo, sin backend).
+      document.querySelectorAll('.js-close-session').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          this.closest('.session-item').remove();
+        });
+      });
+
+      document.getElementById('deleteAccountBtn')?.addEventListener('click', function() {
+        if (confirm('¿Estás seguro? Esta acción es irreversible.')) {
+          alert('Contactá a soporte para completar este proceso.');
+        }
       });
     </script>
   </body>
