@@ -565,6 +565,19 @@ svg,
   .hero-actions {
     justify-content: center;
   }
+
+  /* Imagen del hero en mobile: centrada explícita + más compacta (pedido del
+     equipo: "céntralo" + "achicá el carrusel"). Antes ocupaba ~400px de alto. */
+  .hero-image {
+    text-align: center;
+  }
+  .hero-image img,
+  .hero-image .img-fluid {
+    max-height: 240px;
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 /* ===== PRODUCT CARDS - RESPONSIVE GRID ===== */

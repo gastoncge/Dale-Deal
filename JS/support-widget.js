@@ -36,6 +36,11 @@
   const helpUrl = isHtmlSubdir
     ? './notificaciones.html#centro-ayuda'
     : '/notificaciones#centro-ayuda';
+  // Página dedicada para reportar bugs/errores (pedido del equipo: que sea
+  // visible, no solo enterrada en el footer).
+  const reportPageUrl = isHtmlSubdir
+    ? './reportar-problema.html'
+    : '/reportar-problema';
 
   // ── Estado persistente ────────────────────────────────────────────────────
   function getState() {
@@ -124,6 +129,8 @@
     .dd-support-cta-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(229,62,62,0.3); color: #fff; }
     .dd-support-cta-ghost { background: transparent; color: #6b7280; font-weight: 600; font-size: 12px; }
     .dd-support-cta-ghost:hover { color: #e53e3e; }
+    .dd-support-cta-report { background: #fef2f2; color: #e53e3e; border: 1px solid #fecaca; }
+    .dd-support-cta-report:hover { background: #fee2e2; color: #e53e3e; transform: translateY(-1px); }
 
     /* Dark mode */
     [data-theme="dark"] .dd-support-tooltip { background: #1e293b; color: #f1f5f9; }
@@ -187,6 +194,9 @@
         <div class="dd-support-footer">
           <a href="${contactUrl}" class="dd-support-cta dd-support-cta-primary">
             <i class="bi bi-chat-dots-fill"></i> Contactar soporte
+          </a>
+          <a href="${reportPageUrl}" class="dd-support-cta dd-support-cta-report">
+            <i class="bi bi-bug-fill"></i> Reportar un problema
           </a>
           <a href="${helpUrl}" class="dd-support-cta dd-support-cta-ghost">
             Ver centro de ayuda completo
