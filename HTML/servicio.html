@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Instalación Técnica Profesional - DALE DEAL</title>
+    <title>Servicio - DALE DEAL</title>
 
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Instalación técnica profesional en CABA. Técnicos certificados, calificación 4.9 estrellas, +127 servicios prestados. Satisfacción garantizada en Dale Deal." />
-    <meta name="keywords" content="instalación técnica, servicio profesional, técnico, CABA, dale deal" />
+    <meta name="description" content="Encontrá servicios profesionales en Dale Deal. Contratá con confianza y pagá de forma segura." />
+    <meta name="keywords" content="servicios, marketplace, contratar, profesionales, Argentina, Dale Deal" />
     <meta name="robots" content="index, follow" />
 
     <!-- Canonical -->
@@ -16,16 +16,16 @@
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Dale Deal" />
-    <meta property="og:title" content="Instalación Técnica Profesional — Dale Deal" />
-    <meta property="og:description" content="Servicio de instalación técnica profesional. Técnicos certificados, calificación 4.9 estrellas, +127 servicios prestados en CABA." />
+    <meta property="og:title" content="Servicio en Dale Deal" id="ogTitle" />
+    <meta property="og:description" content="Encontrá servicios profesionales en Dale Deal." id="ogDescription" />
     <meta property="og:url" content="https://daledeal.com.ar/HTML/servicio.html" />
     <meta property="og:image" content="https://daledeal.com.ar/IMG/LOGO.png" />
     <meta property="og:locale" content="es_AR" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Instalación Técnica Profesional — Dale Deal" />
-    <meta name="twitter:description" content="Técnicos certificados para instalación y configuración de dispositivos. 4.9 estrellas, disponible en CABA." />
+    <meta name="twitter:title" content="Servicio en Dale Deal" id="twTitle" />
+    <meta name="twitter:description" content="Encontrá servicios profesionales en Dale Deal." id="twDescription" />
     <meta name="twitter:image" content="https://daledeal.com.ar/IMG/LOGO.png" />
 
     <!-- Favicon -->
@@ -54,32 +54,13 @@
     <link rel="stylesheet" href="../CSS/pages/service.css" />
     <link rel="stylesheet" href="../CSS/responsive.css" />
 
-    <!-- Structured Data -->
-    <script type="application/ld+json">
+    <!-- JSON-LD: se actualiza con service.js cuando carga el servicio -->
+    <script type="application/ld+json" id="serviceSchema">
     {
       "@context": "https://schema.org",
       "@type": "Service",
-      "name": "Instalación Técnica Profesional",
-      "description": "Servicio de instalación técnica profesional. Técnicos certificados instalan y configuran dispositivos en CABA.",
-      "provider": {
-        "@type": "Person",
-        "name": "Alejandro R.",
-        "jobTitle": "Técnico instalador",
-        "areaServed": "Buenos Aires, Argentina"
-      },
-      "areaServed": { "@type": "City", "name": "Buenos Aires" },
-      "offers": {
-        "@type": "Offer",
-        "priceCurrency": "ARS",
-        "price": "15999",
-        "availability": "https://schema.org/InStock"
-      },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.9",
-        "reviewCount": "127",
-        "bestRating": "5"
-      }
+      "name": "Servicio en Dale Deal",
+      "description": "Encontrá servicios profesionales en Dale Deal."
     }
     </script>
   </head>
@@ -247,7 +228,7 @@
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="../index.html">Inicio</a></li>
           <li class="breadcrumb-item"><a href="./servicios.html">Servicios</a></li>
-          <li class="breadcrumb-item active" id="breadcrumbServiceName">Instalación Técnica Profesional</li>
+          <li class="breadcrumb-item active" id="breadcrumbServiceName">Cargando…</li>
         </ol>
       </div>
     </nav>
@@ -280,11 +261,7 @@
                 </div>
 
                 <!-- Miniaturas de trabajos realizados -->
-                <div class="thumbnail-container" role="group" aria-label="Fotos de trabajos realizados">
-                  <img src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=120&h=120&fit=crop" alt="Ver foto 1 de trabajos realizados" class="thumbnail active" data-full="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=700&h=500&fit=crop" role="button" tabindex="0" aria-pressed="true" loading="lazy" width="120" height="120" />
-                  <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=120&h=120&fit=crop" alt="Ver foto 2 de trabajos realizados" class="thumbnail" data-full="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&h=500&fit=crop" role="button" tabindex="0" aria-pressed="false" loading="lazy" width="120" height="120" />
-                  <img src="https://images.unsplash.com/photo-1609692814858-f7cd2f0afa4f?w=120&h=120&fit=crop" alt="Ver foto 3 de trabajos realizados" class="thumbnail" data-full="https://images.unsplash.com/photo-1609692814858-f7cd2f0afa4f?w=700&h=500&fit=crop" role="button" tabindex="0" aria-pressed="false" loading="lazy" width="120" height="120" />
-                  <img src="https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=120&h=120&fit=crop" alt="Ver foto 4 de trabajos realizados" class="thumbnail" data-full="https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=700&h=500&fit=crop" role="button" tabindex="0" aria-pressed="false" loading="lazy" width="120" height="120" />
+                <div class="thumbnail-container" role="group" aria-label="Fotos de trabajos realizados" style="display:none;">
                 </div>
 
                 <!-- Nota de galería -->
@@ -302,54 +279,54 @@
                 <div class="provider-card" data-aos="fade-left">
                   <img
                     id="providerAvatar"
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face"
+                    src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Crect width='80' height='80' fill='%23f0f0f0'/%3E%3C/svg%3E"
                     alt="Prestador"
                     class="provider-avatar"
                   />
                   <div class="provider-details">
                     <div class="provider-name-row">
-                      <span class="provider-name provider-name-text">Alejandro R.</span>
+                      <span class="provider-name provider-name-text">Cargando…</span>
                       <i class="bi bi-patch-check-fill provider-verified" title="Prestador verificado"></i>
                       <span class="provider-member-badge">Pro</span>
                     </div>
                     <div class="provider-stats" id="providerStats">
-                      <span class="stars" role="img" aria-label="4.9 de 5 estrellas">
-                        <i class="bi bi-star-fill" aria-hidden="true"></i><i class="bi bi-star-fill" aria-hidden="true"></i>
-                        <i class="bi bi-star-fill" aria-hidden="true"></i><i class="bi bi-star-fill" aria-hidden="true"></i>
-                        <i class="bi bi-star-half" aria-hidden="true"></i>
+                      <span class="stars" role="img" aria-label="Calificación">
+                        <i class="bi bi-star" aria-hidden="true"></i><i class="bi bi-star" aria-hidden="true"></i>
+                        <i class="bi bi-star" aria-hidden="true"></i><i class="bi bi-star" aria-hidden="true"></i>
+                        <i class="bi bi-star" aria-hidden="true"></i>
                       </span>
-                      <strong>4.9</strong> · 127 reseñas
+                      <strong>—</strong> · Sin reseñas aún
                     </div>
                     <div class="provider-response-time mb-1">
                       <i class="bi bi-clock-fill" aria-hidden="true"></i>
-                      <span id="providerResponseTime">Responde en &lt; 30 min</span>
+                      <span id="providerResponseTime">—</span>
                     </div>
                     <div class="provider-location">
                       <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
-                      <span id="providerLocation">CABA</span>
+                      <span id="providerLocation">—</span>
                       &nbsp;·&nbsp;
-                      <span id="providerMemberSince">Miembro desde 2021</span>
+                      <span id="providerMemberSince">—</span>
                       &nbsp;·&nbsp;
-                      <span id="providerCompletedJobs">312 trabajos</span>
+                      <span id="providerCompletedJobs">—</span>
                     </div>
                   </div>
                 </div>
 
                 <!-- Título del Servicio -->
                 <div class="service-header" data-aos="fade-left" data-aos-delay="100">
-                  <h1 class="svc-title">Instalación Técnica Profesional</h1>
+                  <h1 class="svc-title">Cargando servicio…</h1>
                   <div class="svc-meta">
                     <div class="service-rating">
-                      <div class="stars" role="img" aria-label="4.9 de 5 estrellas">
-                        <i class="bi bi-star-fill" aria-hidden="true"></i><i class="bi bi-star-fill" aria-hidden="true"></i>
-                        <i class="bi bi-star-fill" aria-hidden="true"></i><i class="bi bi-star-fill" aria-hidden="true"></i>
-                        <i class="bi bi-star-half" aria-hidden="true"></i>
+                      <div class="stars" role="img" aria-label="Calificación">
+                        <i class="bi bi-star" aria-hidden="true"></i><i class="bi bi-star" aria-hidden="true"></i>
+                        <i class="bi bi-star" aria-hidden="true"></i><i class="bi bi-star" aria-hidden="true"></i>
+                        <i class="bi bi-star" aria-hidden="true"></i>
                       </div>
-                      <span class="rating-text">4.9 (127 reseñas)</span>
+                      <span class="rating-text">Sin reseñas aún</span>
                     </div>
                     <div class="service-contracted">
                       <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
-                      <span>+127 servicios prestados</span>
+                      <span>—</span>
                     </div>
                   </div>
                 </div>
@@ -360,15 +337,13 @@
                 <!-- Sección de Precio -->
                 <div class="service-price-section" data-aos="fade-left" data-aos-delay="200">
                   <div class="service-price-row">
-                    <span class="service-current-price">$15.999</span>
-                    <span class="service-price-type">/ visita</span>
+                    <span class="service-current-price">—</span>
+                    <span class="service-price-type"></span>
                   </div>
                   <p class="service-price-note">
                     <i class="bi bi-info-circle me-1"></i>El precio final puede variar según el trabajo a realizar
                   </p>
-                  <div class="service-installments">
-                    Hasta <strong>6 cuotas sin interés</strong> de $2.666
-                  </div>
+                  <div class="service-installments"></div>
                 </div>
 
                 <!-- Acciones del Servicio -->
@@ -476,61 +451,9 @@
               <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="tab-description" tabindex="0">
                 <div class="description-content">
                   <div class="service-description-text">
-                    <p style="white-space: pre-line; line-height: 1.8; color: var(--gray-700);">
-                      Ofrecemos instalación y configuración profesional de todos tus dispositivos y sistemas tecnológicos del hogar u oficina. Nuestros técnicos certificados cuentan con más de 10 años de experiencia y garantizan un trabajo prolijo y seguro.
+                    <p style="white-space: pre-line; line-height: 1.8; color: var(--gray-500);">
+                      Cargando descripción…
                     </p>
-                  </div>
-
-                  <!-- Qué incluye -->
-                  <div class="mt-5">
-                    <h4 style="font-size:var(--font-size-xl);font-weight:700;color:var(--gray-900);margin-bottom:var(--spacing-4);">
-                      <i class="bi bi-check2-all me-2 text-danger" aria-hidden="true"></i>¿Qué incluye?
-                    </h4>
-                    <ul style="list-style:none;padding:0;">
-                      <li style="padding:var(--spacing-2) 0;color:var(--gray-700);padding-left:var(--spacing-6);position:relative;font-size:var(--font-size-base);">
-                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;" aria-hidden="true"></i>
-                        Visita de evaluación previa sin cargo
-                      </li>
-                      <li style="padding:var(--spacing-2) 0;color:var(--gray-700);padding-left:var(--spacing-6);position:relative;font-size:var(--font-size-base);">
-                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;" aria-hidden="true"></i>
-                        Instalación completa con materiales de primera calidad
-                      </li>
-                      <li style="padding:var(--spacing-2) 0;color:var(--gray-700);padding-left:var(--spacing-6);position:relative;font-size:var(--font-size-base);">
-                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;" aria-hidden="true"></i>
-                        Configuración y prueba del sistema instalado
-                      </li>
-                      <li style="padding:var(--spacing-2) 0;color:var(--gray-700);padding-left:var(--spacing-6);position:relative;font-size:var(--font-size-base);">
-                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;" aria-hidden="true"></i>
-                        Garantía de 1 año sobre la mano de obra
-                      </li>
-                      <li style="padding:var(--spacing-2) 0;color:var(--gray-700);padding-left:var(--spacing-6);position:relative;font-size:var(--font-size-base);">
-                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;" aria-hidden="true"></i>
-                        Soporte post-instalación sin costo adicional
-                      </li>
-                      <li style="padding:var(--spacing-2) 0;color:var(--gray-700);padding-left:var(--spacing-6);position:relative;font-size:var(--font-size-base);">
-                        <i class="bi bi-check-circle-fill text-danger" style="position:absolute;left:0;" aria-hidden="true"></i>
-                        Limpieza total del área de trabajo al finalizar
-                      </li>
-                    </ul>
-                  </div>
-
-                  <!-- Características destacadas -->
-                  <div class="feature-grid mt-5">
-                    <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
-                      <i class="bi bi-award-fill" aria-hidden="true"></i>
-                      <h5>Técnico Certificado</h5>
-                      <p>10+ años de experiencia con certificaciones oficiales</p>
-                    </div>
-                    <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
-                      <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
-                      <h5>A Domicilio</h5>
-                      <p>Nos trasladamos a tu hogar u oficina en toda el área</p>
-                    </div>
-                    <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
-                      <i class="bi bi-clock-fill" aria-hidden="true"></i>
-                      <h5>Respuesta Rápida</h5>
-                      <p>Confirmación en menos de 30 minutos y turno en 24-48 horas</p>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -539,128 +462,41 @@
               <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="tab-reviews" tabindex="0">
                 <!-- Form para crear review (montado por JS/reviews-form.js) -->
                 <div id="reviews-form-container"></div>
-                <div class="reviews-content">
-                  <!-- Resumen de calificaciones -->
-                  <div class="reviews-summary">
+                <div class="reviews-content" aria-busy="true" aria-live="polite" aria-label="Cargando reseñas">
+                  <div class="reviews-summary reviews-summary--loading">
                     <div class="rating-overview">
                       <div class="overall-rating">
-                        <span class="rating-number">4.9</span>
-                        <div class="rating-stars" role="img" aria-label="4.9 de 5 estrellas">
-                          <i class="bi bi-star-fill" aria-hidden="true"></i><i class="bi bi-star-fill" aria-hidden="true"></i>
-                          <i class="bi bi-star-fill" aria-hidden="true"></i><i class="bi bi-star-fill" aria-hidden="true"></i>
-                          <i class="bi bi-star-half" aria-hidden="true"></i>
-                        </div>
-                        <div class="rating-count">127 reseñas</div>
+                        <span class="rating-number skeleton sk-rating-num" aria-hidden="true"></span>
+                        <div class="rating-stars skeleton sk-rating-stars" aria-hidden="true"></div>
+                        <div class="rating-count skeleton sk-rating-count" aria-hidden="true"></div>
                       </div>
                       <div class="rating-breakdown">
-                        <div class="rating-bar">
-                          <span>5</span>
-                          <div class="progress"><div class="progress-bar" style="width: 82%"></div></div>
-                          <span>82%</span>
-                        </div>
-                        <div class="rating-bar">
-                          <span>4</span>
-                          <div class="progress"><div class="progress-bar" style="width: 12%"></div></div>
-                          <span>12%</span>
-                        </div>
-                        <div class="rating-bar">
-                          <span>3</span>
-                          <div class="progress"><div class="progress-bar" style="width: 4%"></div></div>
-                          <span>4%</span>
-                        </div>
-                        <div class="rating-bar">
-                          <span>2</span>
-                          <div class="progress"><div class="progress-bar" style="width: 1%"></div></div>
-                          <span>1%</span>
-                        </div>
-                        <div class="rating-bar">
-                          <span>1</span>
-                          <div class="progress"><div class="progress-bar" style="width: 1%"></div></div>
-                          <span>1%</span>
-                        </div>
+                        <div class="rating-bar"><span class="skeleton sk-bar-label" aria-hidden="true"></span><div class="progress"><div class="progress-bar skeleton" aria-hidden="true"></div></div><span class="skeleton sk-bar-pct" aria-hidden="true"></span></div>
+                        <div class="rating-bar"><span class="skeleton sk-bar-label" aria-hidden="true"></span><div class="progress"><div class="progress-bar skeleton" aria-hidden="true"></div></div><span class="skeleton sk-bar-pct" aria-hidden="true"></span></div>
+                        <div class="rating-bar"><span class="skeleton sk-bar-label" aria-hidden="true"></span><div class="progress"><div class="progress-bar skeleton" aria-hidden="true"></div></div><span class="skeleton sk-bar-pct" aria-hidden="true"></span></div>
+                        <div class="rating-bar"><span class="skeleton sk-bar-label" aria-hidden="true"></span><div class="progress"><div class="progress-bar skeleton" aria-hidden="true"></div></div><span class="skeleton sk-bar-pct" aria-hidden="true"></span></div>
+                        <div class="rating-bar"><span class="skeleton sk-bar-label" aria-hidden="true"></span><div class="progress"><div class="progress-bar skeleton" aria-hidden="true"></div></div><span class="skeleton sk-bar-pct" aria-hidden="true"></span></div>
                       </div>
                     </div>
                   </div>
-
-                  <!-- Reseña 1 -->
-                  <div class="review-item">
-                    <div class="review-header">
-                      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=48&h=48&fit=crop&crop=face" alt="Usuario" class="review-avatar" loading="lazy" width="48" height="48" />
-                      <div class="review-info">
-                        <h6>Martín S.</h6>
-                        <div class="review-meta">
-                          <div class="review-rating">
-                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                          </div>
-                          <span class="review-date">Hace 3 días</span>
-                        </div>
+                  <div class="reviews-list-skeleton" aria-hidden="true">
+                    <div class="review-skeleton-item">
+                      <div class="skeleton sk-avatar"></div>
+                      <div class="sk-lines">
+                        <div class="skeleton sk-line sk-line--short"></div>
+                        <div class="skeleton sk-line sk-line--medium"></div>
+                        <div class="skeleton sk-line"></div>
                       </div>
                     </div>
-                    <div class="review-content">
-                      <h6 class="review-title">Excelente trabajo, muy profesional</h6>
-                      <p class="review-text">
-                        Alejandro llegó puntual, trabajó de forma muy ordenada y explicó todo lo que iba haciendo.
-                        El resultado fue perfecto, quedé muy satisfecho con la instalación. Totalmente recomendable.
-                      </p>
-                    </div>
-                  </div>
-
-                  <!-- Reseña 2 -->
-                  <div class="review-item">
-                    <div class="review-header">
-                      <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=48&h=48&fit=crop&crop=face" alt="Usuario" class="review-avatar" loading="lazy" width="48" height="48" />
-                      <div class="review-info">
-                        <h6>Laura G.</h6>
-                        <div class="review-meta">
-                          <div class="review-rating">
-                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                          </div>
-                          <span class="review-date">Hace 1 semana</span>
-                        </div>
+                    <div class="review-skeleton-item">
+                      <div class="skeleton sk-avatar"></div>
+                      <div class="sk-lines">
+                        <div class="skeleton sk-line sk-line--short"></div>
+                        <div class="skeleton sk-line sk-line--medium"></div>
+                        <div class="skeleton sk-line"></div>
                       </div>
                     </div>
-                    <div class="review-content">
-                      <h6 class="review-title">Muy recomendable, rápido y limpio</h6>
-                      <p class="review-text">
-                        Contraté el servicio para instalar varios dispositivos en mi oficina. Todo quedó
-                        funcionando a la perfección. Lo mejor es que limpió todo al terminar, como si nunca
-                        hubiera pasado. Definitivamente lo volvería a contratar.
-                      </p>
-                    </div>
                   </div>
-
-                  <!-- Reseña 3 -->
-                  <div class="review-item">
-                    <div class="review-header">
-                      <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=48&h=48&fit=crop&crop=face" alt="Usuario" class="review-avatar" loading="lazy" width="48" height="48" />
-                      <div class="review-info">
-                        <h6>Roberto P.</h6>
-                        <div class="review-meta">
-                          <div class="review-rating">
-                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star"></i>
-                          </div>
-                          <span class="review-date">Hace 2 semanas</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="review-content">
-                      <h6 class="review-title">Buen servicio, precio justo</h6>
-                      <p class="review-text">
-                        El trabajo estuvo bien hecho. Tardó un poco más de lo estimado pero el resultado fue el
-                        esperado. El precio es muy razonable para la calidad del servicio brindado.
-                      </p>
-                    </div>
-                  </div>
-
-                  <button class="btn-load-more-reviews">
-                    <i class="bi bi-arrow-down-circle me-2"></i>Ver más reseñas
-                  </button>
                 </div>
               </div>
 
@@ -675,7 +511,7 @@
           <div class="section-header text-center mb-5">
             <h2 class="section-title">Más servicios del prestador</h2>
             <p class="section-subtitle">
-              Otros servicios que ofrece <strong class="provider-name-text">Alejandro R.</strong>
+              Otros servicios que ofrece <strong class="provider-name-text">el prestador</strong>
             </p>
           </div>
 
@@ -768,7 +604,7 @@
               class="chat-header-avatar"
             />
             <div class="chat-header-info">
-              <p class="chat-header-name" id="chatProviderName">Alejandro R.</p>
+              <p class="chat-header-name" id="chatProviderName">Prestador</p>
               <div class="chat-header-status">
                 <span class="chat-status-dot"></span>
                 En línea

@@ -25,6 +25,18 @@ class ServicePage {
     this._updateSaveButton();
     this.loadRelatedServices();
     this.loadProviderServices();
+    this.loadAndRenderReviews();
+  }
+
+  async loadAndRenderReviews() {
+    if (!this.currentService?.id || !window.DaleDealReviews?.loadList) return;
+    const s = this.currentService;
+    await window.DaleDealReviews.loadList({
+      itemType: 'service',
+      itemId: s.id,
+      fallbackAvg: s.rating || 0,
+      fallbackTotal: s.reviewCount || 0,
+    });
   }
 
   // ── Cargar datos del servicio por ID (URL param o localStorage) ────────────
@@ -326,14 +338,6 @@ class ServicePage {
         descEl.innerHTML = `<p style="white-space:pre-line;line-height:1.8;color:var(--gray-700)">${escDesc}</p>`;
       }
     }
-
-    // Reviews summary
-    const ratingNumEl = document.querySelector('.overall-rating .rating-number');
-    if (ratingNumEl) ratingNumEl.textContent = s.rating;
-    const reviewCountEl = document.querySelector('.overall-rating .rating-count');
-    if (reviewCountEl) reviewCountEl.textContent = `${s.reviewCount?.toLocaleString('es-AR') || 0} reseñas`;
-    const reviewStarsEl = document.querySelector('.overall-rating .rating-stars');
-    if (reviewStarsEl) reviewStarsEl.innerHTML = this._renderStars(s.rating);
   }
 
   // ── Galería de imágenes/videos ─────────────────────────────────────────────
