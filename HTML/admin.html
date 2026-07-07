@@ -250,6 +250,7 @@
           <a class="admin-nav-item" data-tab="orders"><i class="bi bi-cart-check"></i> Órdenes</a>
           <a class="admin-nav-item" data-tab="reviews"><i class="bi bi-star"></i> Reseñas</a>
           <a class="admin-nav-item" data-tab="reports"><i class="bi bi-flag"></i> Reportes <span id="reports-badge" class="admin-pill admin-pill-danger" style="display:none;font-size:.65rem;padding:1px 6px;">0</span></a>
+          <a class="admin-nav-item" data-tab="verifications"><i class="bi bi-patch-check"></i> Verificaciones <span id="verif-badge" class="admin-pill admin-pill-danger" style="display:none;font-size:.65rem;padding:1px 6px;">0</span></a>
           <a class="admin-nav-item" data-tab="leads"><i class="bi bi-building"></i> Leads B2B</a>
           <a class="admin-nav-item" href="../index.html" style="margin-top:1.5rem;color:var(--gray-500);">
             <i class="bi bi-arrow-left"></i> Volver al sitio
@@ -433,6 +434,22 @@
             </select>
           </div>
           <div id="leads-content"></div>
+        </section>
+
+        <!-- VERIFICACIONES DE PRESTADORES (cola de revisión manual) -->
+        <section class="admin-section" id="section-verifications">
+          <div class="admin-section-header">
+            <h1><i class="bi bi-patch-check me-2"></i>Verificaciones de prestadores</h1>
+            <p class="text-muted mb-0">Pedidos de insignia (identidad / profesional). Revisá por fuera (videollamada / matrícula) y aprobá o rechazá.</p>
+          </div>
+          <div class="admin-toolbar">
+            <select class="form-select" id="verif-status">
+              <option value="pending">Pendientes</option>
+              <option value="approved">Aprobadas</option>
+              <option value="rejected">Rechazadas</option>
+            </select>
+          </div>
+          <div id="verif-content"></div>
         </section>
 
       </main>
