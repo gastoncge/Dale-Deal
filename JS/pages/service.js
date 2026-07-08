@@ -194,10 +194,11 @@ class ServicePage {
       memberSince:  realProvider.memberSince || mockProvider.memberSince,
       responseTime: mockProvider.responseTime,
       completedJobs: mockProvider.completedJobs,
-      verified:     realProvider.verified !== undefined ? realProvider.verified : true,
+      verifiedIdentity:     !!realProvider.verifiedIdentity,
+      verifiedProfessional: !!realProvider.verifiedProfessional,
       phone:        realProvider.phone,
       location:     realProvider.location,
-    } : { ...mockProvider, verified: true };
+    } : { ...mockProvider, verifiedIdentity: false, verifiedProfessional: false };
 
     // Galería: priorizar real (array del backend), sino mock por categoría
     const realGallery = Array.isArray(service.gallery) && service.gallery.length > 0
@@ -242,6 +243,16 @@ class ServicePage {
     if (providerAvatar) { providerAvatar.src = p.avatar; providerAvatar.alt = p.name; }
 
     document.querySelectorAll('.provider-name-text').forEach(el => el.textContent = p.name);
+
+    // Insignias de verificación reales (identidad / profesional). Solo aparecen
+    // si el equipo aprobó la verificación del prestador (no inventamos confianza).
+    const badgesEl = document.getElementById('providerBadges');
+    if (badgesEl) {
+      let bhtml = '';
+      if (p.verifiedIdentity)     bhtml += '<span class="verif-badge verif-identity" title="Identidad verificada por Dale Deal"><i class="bi bi-patch-check-fill"></i> Identidad</span>';
+      if (p.verifiedProfessional) bhtml += '<span class="verif-badge verif-pro" title="Matrícula / credencial verificada"><i class="bi bi-mortarboard-fill"></i> Profesional</span>';
+      badgesEl.innerHTML = bhtml;
+    }
 
     const providerStatEl = document.getElementById('providerStats');
     if (providerStatEl) {

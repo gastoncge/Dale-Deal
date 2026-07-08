@@ -182,7 +182,11 @@ function transformService(s) {
     phone:        s.provider_phone,
     location:     s.provider_location,
     memberSince:  s.provider_since ? String(s.provider_since).slice(0, 4) : null,
-    verified:     true,
+    // Insignias reales del backend (migration 013). Solo true si el equipo
+    // aprobó la verificación; nunca inventamos confianza.
+    verifiedIdentity:     !!s.provider_verified_identity,
+    verifiedProfessional: !!s.provider_verified_professional,
+    verified:     !!(s.provider_verified_identity || s.provider_verified_professional),
   } : null;
 
   // Galería REAL del backend — si el servicio tiene 1 sola imagen, no caemos
