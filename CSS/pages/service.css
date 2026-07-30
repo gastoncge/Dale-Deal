@@ -106,14 +106,21 @@
   background: rgba(16, 185, 129, .14);
   color: #067a55;
 }
+.verif-badge.verif-bg {
+  background: rgba(139, 92, 246, .13);
+  color: #6d28d9;
+}
 @media (prefers-color-scheme: dark) {
   .verif-badge.verif-identity { background: rgba(29,155,240,.18); color: #6cc0ff; }
   .verif-badge.verif-pro      { background: rgba(16,185,129,.18); color: #4ade80; }
+  .verif-badge.verif-bg       { background: rgba(139,92,246,.20); color: #c4b5fd; }
 }
 :root[data-theme="dark"] .verif-badge.verif-identity { background: rgba(29,155,240,.18); color: #6cc0ff; }
 :root[data-theme="dark"] .verif-badge.verif-pro      { background: rgba(16,185,129,.18); color: #4ade80; }
+:root[data-theme="dark"] .verif-badge.verif-bg       { background: rgba(139,92,246,.20); color: #c4b5fd; }
 :root[data-theme="light"] .verif-badge.verif-identity { background: rgba(29,155,240,.12); color: #1069b0; }
 :root[data-theme="light"] .verif-badge.verif-pro      { background: rgba(16,185,129,.14); color: #067a55; }
+:root[data-theme="light"] .verif-badge.verif-bg       { background: rgba(139,92,246,.13); color: #6d28d9; }
 
 .provider-stats {
   display: flex;

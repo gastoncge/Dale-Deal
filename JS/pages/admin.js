@@ -923,8 +923,8 @@
   }
 
   function verifRow(v) {
-    const typeLabel = v.type === 'identity' ? 'Identidad' : v.type === 'professional' ? 'Profesional' : v.type;
-    const typeIcon  = v.type === 'identity' ? 'bi-person-badge' : 'bi-mortarboard';
+    const typeLabel = { identity: 'Identidad', professional: 'Profesional', background: 'Antecedentes' }[v.type] || v.type;
+    const typeIcon  = { identity: 'bi-person-badge', professional: 'bi-mortarboard', background: 'bi-shield-check' }[v.type] || 'bi-patch-check';
     const stClass = { pending: 'admin-pill-warning', approved: 'admin-pill-success', rejected: 'admin-pill-muted' }[v.status] || 'admin-pill-muted';
     const stLabel = { pending: 'Pendiente', approved: 'Aprobada', rejected: 'Rechazada' }[v.status] || v.status;
 

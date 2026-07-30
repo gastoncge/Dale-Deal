@@ -196,9 +196,10 @@ class ServicePage {
       completedJobs: mockProvider.completedJobs,
       verifiedIdentity:     !!realProvider.verifiedIdentity,
       verifiedProfessional: !!realProvider.verifiedProfessional,
+      verifiedBackground:   !!realProvider.verifiedBackground,
       phone:        realProvider.phone,
       location:     realProvider.location,
-    } : { ...mockProvider, verifiedIdentity: false, verifiedProfessional: false };
+    } : { ...mockProvider, verifiedIdentity: false, verifiedProfessional: false, verifiedBackground: false };
 
     // Galería: priorizar real (array del backend), sino mock por categoría
     const realGallery = Array.isArray(service.gallery) && service.gallery.length > 0
@@ -250,7 +251,8 @@ class ServicePage {
     if (badgesEl) {
       let bhtml = '';
       if (p.verifiedIdentity)     bhtml += '<span class="verif-badge verif-identity" title="Identidad verificada por Dale Deal"><i class="bi bi-patch-check-fill"></i> Identidad</span>';
-      if (p.verifiedProfessional) bhtml += '<span class="verif-badge verif-pro" title="Matrícula / credencial verificada"><i class="bi bi-mortarboard-fill"></i> Profesional</span>';
+      if (p.verifiedProfessional) bhtml += '<span class="verif-badge verif-pro" title="Matrícula o título verificado"><i class="bi bi-mortarboard-fill"></i> Profesional</span>';
+      if (p.verifiedBackground)   bhtml += '<span class="verif-badge verif-bg" title="Certificado de antecedentes penales validado contra la fuente oficial"><i class="bi bi-shield-check"></i> Antecedentes</span>';
       badgesEl.innerHTML = bhtml;
     }
 

@@ -487,7 +487,8 @@
 
         const TYPES = [
           { key: 'identity',     label: 'Identidad verificada',   icon: 'bi-person-badge', ask: '¿Cómo te contactamos para una videollamada corta de verificación? (ej: WhatsApp + horario)' },
-          { key: 'professional', label: 'Profesional verificado', icon: 'bi-mortarboard',   ask: 'Indicá tu número de matrícula y el colegio/ente que la emite (lo chequeamos en el registro público).' },
+          { key: 'professional', label: 'Profesional verificado', icon: 'bi-mortarboard',   ask: 'Indicá tu matrícula o título y el colegio/ente/universidad que lo emite (lo chequeamos en el registro público).' },
+          { key: 'background',   label: 'Antecedentes verificados', icon: 'bi-shield-check', ask: 'Sacá tu Certificado de Antecedentes Penales desde Mi Argentina (tarda minutos) y pasanos el código de verificación del certificado — lo validamos contra la fuente oficial, sin guardar el documento.' },
         ];
 
         async function load() {
@@ -503,14 +504,14 @@
 
         function render(data) {
           const reqs = data.requests || [];
-          body.innerHTML = TYPES.map((tp) => {
-            const verified = tp.key === 'identity' ? data.verified_identity : data.verified_professional;
+          body.innerHTML = TYPES.map((tp, i) => {
+            const verified = data['verified_' + tp.key];
             const pending  = reqs.find((r) => r.type === tp.key && r.status === 'pending');
             let right;
             if (verified)      right = '<span class="badge bg-success"><i class="bi bi-check-lg me-1"></i>Verificado</span>';
             else if (pending)  right = '<span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>En revisión</span>';
             else               right = `<button class="btn btn-sm btn-outline-primary" data-verif="${tp.key}">Solicitar</button>`;
-            return `<div class="d-flex align-items-center justify-content-between py-2 ${tp.key === 'identity' ? 'border-bottom' : ''}">
+            return `<div class="d-flex align-items-center justify-content-between py-2 ${i < TYPES.length - 1 ? 'border-bottom' : ''}">
                 <div><i class="bi ${tp.icon} me-2" style="color:var(--primary-red)"></i><strong>${esc(tp.label)}</strong></div>
                 <div>${right}</div>
               </div>`;
