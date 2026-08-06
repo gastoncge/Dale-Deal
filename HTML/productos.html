@@ -708,7 +708,7 @@
     <style>
       /* Fondo uniforme */
       html, body {
-        background: var(--white) !important;
+        background: var(--bg-body, var(--white)) !important;
       }
 
       /* La navbar usa la regla global de CSS/components.css —
@@ -716,7 +716,7 @@
 
       /* Main content sin bordes */
       .main-content {
-        background: var(--white) !important;
+        background: var(--bg-body, var(--white)) !important;
       }
       [data-theme="dark"] .main-content {
         background: var(--gray-50) !important;

@@ -171,6 +171,22 @@
   --fluid-2xl:  clamp(1.25rem,   4vw,   1.5rem);   /* 20→24px */
   --fluid-3xl:  clamp(1.5rem,    5vw,   1.875rem); /* 24→30px */
   --fluid-4xl:  clamp(1.75rem,   6vw,   2.25rem);  /* 28→36px */
+
+  /* ===== FERIA VIVA (rebrand prototipo 2026-07) ===== */
+  --crema: #fff4e8;
+  --crema-card: #fffdf9;
+  --tinta: #231f20;
+  --coral: #ff3d2e;
+  --sol: #ffd23f;
+  --verde: #1f9d55;
+  --azul-info: #2563eb;
+  --sombra-btn: 5px 5px 0 var(--tinta);
+  --sombra-card: 6px 6px 0 var(--tinta);
+  --sombra-caja: 7px 7px 0 var(--tinta);
+  --bg-body: var(--crema);
+  /* Alias: el rojo histórico ahora ES coral (esta redefinición gana por cascada) */
+  --primary-red: var(--coral);
+  --primary-red-hover: #e6321f;
 }
 
 /* =====================================================
@@ -178,6 +194,7 @@
    ===================================================== */
 [data-theme="dark"] {
   /* Fondos */
+  --bg-body:  #0f172a; /* Feria Viva: el crema es solo del tema claro */
   --white:    #0f172a;
   --gray-50:  #1e293b;
   --gray-100: #1e293b;
@@ -370,7 +387,7 @@ body {
    * mucho la legibilidad de párrafos largos. Regla de oro tipográfica. */
   line-height: 1.6;
   color: var(--gray-800);
-  background: var(--white);
+  background: var(--bg-body, var(--white));
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* text-rendering: optimizeLegibility activa ligaduras y kerning más

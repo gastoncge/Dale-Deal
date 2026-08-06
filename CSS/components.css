@@ -5662,3 +5662,99 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
   display: flex;
   align-items: center;
 }
+
+/* =====================================================
+   FERIA VIVA — botones y chips (rebrand prototipo 2026-07)
+   Al final del archivo a propósito: gana la cascada sin !important.
+   Dark mode: se neutraliza abajo (bordes/sombras solo en claro).
+   ===================================================== */
+.btn {
+  border-radius: 12px;
+  font-weight: 800;
+  transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease;
+}
+.btn-primary, .btn-danger {
+  background: var(--coral);
+  border: 3px solid var(--tinta);
+  color: #fff;
+  box-shadow: var(--sombra-btn);
+}
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active,
+.btn-danger:hover, .btn-danger:focus {
+  background: var(--coral);
+  border-color: var(--tinta);
+  color: #fff;
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 0 var(--tinta);
+}
+.btn-warning, .btn-publicar {
+  background: var(--sol);
+  border: 3px solid var(--tinta);
+  color: var(--tinta);
+  font-weight: 900;
+  box-shadow: var(--sombra-btn);
+}
+.btn-warning:hover, .btn-publicar:hover {
+  background: var(--sol);
+  color: var(--tinta);
+  border-color: var(--tinta);
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 0 var(--tinta);
+}
+.btn-outline-primary, .btn-outline-secondary {
+  background: #fff;
+  border: 3px solid var(--tinta);
+  color: var(--tinta);
+  font-weight: 700;
+  box-shadow: var(--sombra-btn);
+}
+.btn-outline-primary:hover, .btn-outline-primary:focus,
+.btn-outline-secondary:hover, .btn-outline-secondary:focus {
+  background: var(--crema-card);
+  color: var(--tinta);
+  border-color: var(--tinta);
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 0 var(--tinta);
+}
+/* Botones chicos: sombra proporcional */
+.btn-sm { box-shadow: 3px 3px 0 var(--tinta); border-width: 2px; }
+.btn-sm:hover { box-shadow: 2px 2px 0 var(--tinta); transform: translate(1px, 1px); }
+
+/* Chips (filtros / categorías) */
+.dd-chip, .filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: 2px solid var(--tinta);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--tinta);
+  box-shadow: 3px 3px 0 var(--tinta);
+  cursor: pointer;
+  text-decoration: none;
+}
+.dd-chip:hover, .filter-chip:hover { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--tinta); color: var(--tinta); }
+.dd-chip.active, .filter-chip.active { background: var(--sol); }
+
+/* Dark mode: sin neobrutalismo (v2) — bordes suaves, sin sombras duras */
+[data-theme="dark"] .btn-primary, [data-theme="dark"] .btn-danger,
+[data-theme="dark"] .btn-warning, [data-theme="dark"] .btn-publicar {
+  border-color: transparent;
+  box-shadow: none;
+}
+[data-theme="dark"] .btn-outline-primary, [data-theme="dark"] .btn-outline-secondary {
+  background: transparent;
+  border: 1px solid var(--gray-600);
+  color: var(--gray-100);
+  box-shadow: none;
+}
+[data-theme="dark"] .btn-sm { box-shadow: none; }
+[data-theme="dark"] .dd-chip, [data-theme="dark"] .filter-chip {
+  background: var(--gray-800);
+  border-color: var(--gray-600);
+  color: var(--gray-100);
+  box-shadow: none;
+}
