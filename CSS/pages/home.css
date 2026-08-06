@@ -1517,8 +1517,7 @@
 [data-theme="dark"] .hero-feria { background: var(--bg-body); }
 [data-theme="dark"] .hero-feria::before { opacity:.12; }
 [data-theme="dark"] .hero-feria::after { opacity:.07; }
-[data-theme="dark"] .hero-title { color: var(--gray-100); }
+[data-theme="dark"] .hero-title { color: var(--gray-800); } /* en dark la escala se invierte: gray-800 es CLARO */
 [data-theme="dark"] .hero-search { background: var(--gray-800); border-color: var(--gray-600); box-shadow:none; }
-[data-theme="dark"] .hero-search input { color: var(--gray-100); }
-[data-theme="dark"] .hero-tag { background: var(--gray-800); }
-[data-theme="dark"] .hero-sub, [data-theme="dark"] .hero-trust span { color: var(--gray-400); }
+[data-theme="dark"] .hero-search input { color: var(--gray-800); }
+[data-theme="dark"] .hero-sub, [data-theme="dark"] .hero-trust span { color: #94a3b8; }
