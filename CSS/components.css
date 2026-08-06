@@ -5758,3 +5758,33 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
   color: var(--gray-100);
   box-shadow: none;
 }
+
+/* ── Feria Viva: navbar + footer (T2) ── */
+.navbar, #mainNavbar {
+  background: var(--crema);
+  border-bottom: 3px solid var(--tinta);
+  box-shadow: none;
+}
+.navbar .brand-text { font-weight: 900; letter-spacing: -0.02em; color: var(--tinta); }
+.navbar .brand-text .brand-deal { color: var(--coral); }
+.navbar .search-wrapper {
+  border: 3px solid var(--tinta);
+  border-radius: 12px;
+  box-shadow: 4px 4px 0 var(--tinta);
+  background: #fff;
+}
+.navbar .search-input { background: transparent; }
+.footer {
+  background: var(--tinta);
+  color: var(--crema);
+  border-top: 3px solid var(--tinta);
+}
+.footer a { color: var(--sol); }
+.footer a:hover { color: #fff; }
+.footer .footer-brand-text { color: var(--crema); font-weight: 900; }
+[data-theme="dark"] .navbar, [data-theme="dark"] #mainNavbar {
+  background: var(--gray-900);
+  border-bottom: 1px solid var(--gray-700);
+}
+[data-theme="dark"] .navbar .search-wrapper { border: 1px solid var(--gray-600); box-shadow: none; background: var(--gray-800); }
+[data-theme="dark"] .footer { background: var(--gray-900); border-top: 1px solid var(--gray-700); }
