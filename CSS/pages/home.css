@@ -1,145 +1,11 @@
-/* =====================================================
-   DALE DEAL - Página Principal (Home)
-   ===================================================== */
 
-/* ===== CARRUSEL HERO ===== */
-.hero-carousel-section {
-  position: relative;
-  overflow: hidden;
-}
-
-.hero-slide {
-  min-height: auto;
-  height: auto;
-  display: flex;
-  align-items: center;
-  position: relative;
-  padding: var(--spacing-8) 0;
-}
 
 /* Carrusel más compacto (pedido del equipo: "achicá el carrusel").
    Antes: 600px@768 / 700px@1024 con padding spacing-16/20 — ocupaba toda
    la pantalla. Ahora ~30% más bajo, deja ver el contenido de abajo antes. */
 @media (min-width: 768px) {
-  .hero-slide {
-    min-height: 420px;
-    padding: var(--spacing-10) 0;
-  }
 }
 
-@media (min-width: 1024px) {
-  .hero-slide {
-    min-height: 480px;
-    padding: var(--spacing-12) 0;
-  }
-}
-
-.hero-slide-main {
-  background: var(--gradient-primary);
-  color: #fff;
-}
-
-.hero-slide-offers {
-  background: linear-gradient(135deg, var(--primary-red), var(--primary-red-dark));
-  color: #fff;
-}
-
-.hero-slide-offers .bi {
-  color: #fff !important;
-}
-
-.hero-slide-offers .hero-badge .bi {
-  color: var(--primary-red) !important;
-}
-
-.hero-slide-product {
-  background: linear-gradient(135deg, var(--primary-yellow), var(--primary-yellow-hover));
-  color: #fff;
-}
-
-.hero-slide-service {
-  background: linear-gradient(135deg, var(--primary-red-hover), var(--primary-red));
-  color: #fff;
-}
-
-.hero-slide-service .bi {
-  color: #fff !important;
-}
-
-.hero-slide-service .hero-badge .bi {
-  color: var(--primary-red) !important;
-}
-
-.hero-slide::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(
-      circle at 20% 80%,
-      rgba(255, 255, 255, 0.1) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 80% 20%,
-      rgba(255, 255, 255, 0.1) 0%,
-      transparent 50%
-    );
-  pointer-events: none;
-}
-
-.hero-content {
-  position: relative;
-  z-index: 2;
-}
-
-.hero-slide-product .hero-content {
-  position: relative;
-}
-
-.hero-slide-product .hero-title,
-.hero-slide-product .hero-subtitle,
-.hero-slide-product .product-features .feature {
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.hero-slide-product .hero-price .current-price {
-  color: #fff;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.hero-slide-product .hero-price .original-price {
-  color: rgba(255, 255, 255, 0.8);
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.hero-slide-product .hero-price .discount {
-  background: var(--primary-red);
-  color: #fff;
-}
-
-.hero-badge {
-  display: inline-block;
-  padding: var(--spacing-2) var(--spacing-4);
-  background: rgba(255, 255, 255, 0.95);
-  color: #374151;
-  font-size: var(--font-size-xs);
-  font-weight: 700;
-  /* Antes: uppercase + letter-spacing 0.1em — se sentía "1995 web banner".
-   * Ahora: letter-spacing más fino (más editorial, menos publicitario). */
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  border-radius: var(--radius-3xl);
-  margin-bottom: var(--spacing-4);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  /* backdrop-filter para que el badge se sienta "glass" sobre el gradient
-   * del hero. Soporte ~95% (Safari 9+, Chrome 76+, FF 103+). */
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
 
 .offer-badge {
   background: rgba(255, 255, 255, 0.95);
@@ -163,20 +29,6 @@
   background: rgba(255, 255, 255, 0.95);
   color: #374151;
   border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-[data-theme="dark"] .hero-slide .hero-badge,
-[data-theme="dark"] .hero-slide .offer-badge,
-[data-theme="dark"] .hero-slide .product-badge,
-[data-theme="dark"] .hero-slide .service-badge {
-  color: #374151 !important;
-}
-
-[data-theme="dark"] .hero-slide .hero-badge .bi,
-[data-theme="dark"] .hero-slide .offer-badge .bi,
-[data-theme="dark"] .hero-slide .product-badge .bi,
-[data-theme="dark"] .hero-slide .service-badge .bi {
-  color: #374151 !important;
 }
 
 .hero-title {
@@ -257,17 +109,6 @@
   color: #fff;
 }
 
-.hero-image img {
-  border-radius: var(--radius-3xl);
-  box-shadow: var(--shadow-2xl);
-  transform: perspective(1000px) rotateY(-5deg);
-  transition: transform var(--transition-base);
-}
-
-.hero-image:hover img {
-  transform: perspective(1000px) rotateY(0deg) scale(1.02);
-}
-
 /* Stats y features - Estilos comunes movidos a components.css */
 
 .product-features {
@@ -310,52 +151,6 @@
   font-weight: 600;
 }
 
-/* Controles del carrusel - HERO CAROUSEL CENTRADO */
-#heroCarousel .carousel-indicators {
-  position: absolute !important;
-  bottom: var(--spacing-6) !important;
-  left: 50% !important;
-  right: auto !important;
-  transform: translateX(-50%) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: var(--spacing-2) !important;
-  z-index: 3 !important;
-  width: auto !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-#heroCarousel .carousel-indicators button {
-  /* WCAG 2.5.5 compliance total:
-   * - Touch target 24x24 (mínimo WCAG)
-   * - Background translúcido en TODO el área (no solo el dot) → Lighthouse
-   *   ahora cuenta los 24x24 como "área visible clickeable", no solo los
-   *   16x16 internos. Antes con background-clip: content-box fallaba el
-   *   check porque medía el área coloreada del dot, no el button completo.
-   * - Inner dot (visual focal) lo damos con box-shadow inset blanco más
-   *   denso, así se ve como dot 16x16 dentro de un halo translúcido.
-   */
-  width: 24px !important;
-  height: 24px !important;
-  padding: 0 !important;
-  box-sizing: border-box !important;
-  border-radius: 50% !important;
-  border: none !important;
-  background: rgba(255, 255, 255, 0.25) !important;
-  box-shadow: inset 0 0 0 4px transparent, inset 0 0 0 8px rgba(255, 255, 255, 0.55) !important;
-  margin: 0 4px !important;
-  transition: all var(--transition-base) !important;
-  flex-shrink: 0 !important;
-}
-
-#heroCarousel .carousel-indicators button.active {
-  background: var(--primary-yellow) !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
 .carousel-control-prev,
 .carousel-control-next {
   width: 60px;
@@ -393,11 +188,6 @@
 
 /* Responsive */
 @media (max-width: 992px) {
-  .hero-slide {
-    min-height: auto;
-    height: auto;
-    padding: var(--spacing-12) 0;
-  }
 
   .hero-title {
     font-size: clamp(var(--font-size-2xl), 4vw, var(--font-size-4xl));
@@ -408,17 +198,9 @@
     margin-bottom: var(--spacing-6);
   }
 
-  .hero-image {
-    margin-top: var(--spacing-6);
-  }
 }
 
 @media (max-width: 768px) {
-  .hero-slide {
-    min-height: auto;
-    height: auto;
-    padding: var(--spacing-8) 0;
-  }
 
   .hero-title {
     font-size: clamp(var(--font-size-xl), 6vw, var(--font-size-3xl));
@@ -439,11 +221,6 @@
   .hero-actions .btn {
     width: 100%;
     justify-content: center;
-  }
-
-  .hero-stats, .service-stats {
-    justify-content: center;
-    gap: var(--spacing-4);
   }
 
   .stat-item {
@@ -472,18 +249,6 @@
     font-size: var(--font-size-base);
   }
 
-  .hero-image {
-    margin-top: var(--spacing-4);
-  }
-
-  .hero-image img {
-    transform: perspective(1000px) rotateY(0deg);
-  }
-
-  #heroCarousel .carousel-indicators {
-    bottom: var(--spacing-4) !important;
-  }
-
   .carousel-control-prev,
   .carousel-control-next {
     width: 48px;
@@ -506,17 +271,6 @@
 }
 
 @media (max-width: 480px) {
-  .hero-slide {
-    min-height: auto;
-    height: auto;
-    padding: var(--spacing-6) 0;
-  }
-
-  .hero-badge {
-    font-size: var(--font-size-xs);
-    padding: var(--spacing-1) var(--spacing-3);
-    margin-bottom: var(--spacing-3);
-  }
 
   .hero-title {
     font-size: clamp(var(--font-size-lg), 7vw, var(--font-size-2xl));
@@ -580,18 +334,6 @@
   .carousel-control-next-icon {
     width: 14px !important;
     height: 14px !important;
-  }
-
-  #heroCarousel .carousel-indicators {
-    bottom: var(--spacing-3) !important;
-  }
-
-  #heroCarousel .carousel-indicators button {
-    /* Mobile: mismo 24x24 que desktop (no se puede ir más chico sin
-     * romper WCAG 2.5.5). Mantenemos el background translúcido. */
-    width: 24px !important;
-    height: 24px !important;
-    padding: 0 !important;
   }
 }
 
@@ -1209,45 +951,10 @@
   overflow: hidden;
 }
 
-/* Reutiliza .hero-slide y .hero-slide-main ya definidos arriba.
-   Solo necesitamos ajustar la altura mínima para el hero estático. */
-.hero-section .hero-slide {
-  min-height: 520px;
-  padding: var(--spacing-16) 0;
-}
-
-@media (min-width: 1024px) {
-  .hero-section .hero-slide {
-    min-height: 580px;
-    padding: var(--spacing-20) 0;
-  }
-}
-
-@media (max-width: 992px) {
-  .hero-section .hero-slide {
-    min-height: auto;
-    padding: var(--spacing-14) 0;
-  }
-}
-
 @media (max-width: 768px) {
-  .hero-section .hero-slide {
-    padding: var(--spacing-12) 0;
-    text-align: center;
-  }
 
   .hero-section .hero-actions {
     justify-content: center;
-  }
-
-  .hero-section .hero-badge {
-    display: inline-block;
-  }
-}
-
-@media (max-width: 480px) {
-  .hero-section .hero-slide {
-    padding: var(--spacing-10) 0;
   }
 }
 

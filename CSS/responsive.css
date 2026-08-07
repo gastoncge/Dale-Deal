@@ -459,11 +459,6 @@ svg,
 
 /* Mobile small: compact hero */
 @media (max-width: 374px) {
-  .hero-slide {
-    min-height: auto;
-    height: auto;
-    padding: var(--spacing-8) 0 var(--spacing-6);
-  }
 
   .hero-title {
     font-size: clamp(1.125rem, 7vw, 1.5rem);
@@ -475,10 +470,6 @@ svg,
     line-height: 1.4;
   }
 
-  .hero-badge {
-    font-size: var(--font-size-xs);
-    padding: var(--spacing-1) var(--spacing-3);
-  }
 
   .hero-price .current-price {
     font-size: var(--font-size-2xl);
@@ -509,24 +500,11 @@ svg,
   }
 
   /* Hero image should not overflow */
-  .hero-image {
-    max-height: 200px;
-  }
 
-  .hero-image img,
-  .hero-image .img-fluid {
-    max-height: 200px;
-    object-fit: contain;
-  }
 }
 
 /* Mobile standard */
 @media (max-width: 575px) {
-  .hero-slide {
-    min-height: auto;
-    height: auto;
-    padding: var(--spacing-10) 0 var(--spacing-8);
-  }
 
   .hero-actions {
     flex-direction: column;
@@ -541,26 +519,10 @@ svg,
 
 /* Tablet */
 @media (max-width: 767px) {
-  .hero-slide {
-    min-height: auto;
-    height: auto;
-    padding: var(--spacing-12) 0 var(--spacing-10);
-  }
 
   /* Stack hero content and image vertically */
-  .hero-slide .row {
-    text-align: center;
-  }
 
-  .hero-content {
-    text-align: center;
-    margin-bottom: var(--spacing-6);
-  }
 
-  .hero-badge {
-    margin-left: auto;
-    margin-right: auto;
-  }
 
   .hero-actions {
     justify-content: center;
@@ -568,16 +530,6 @@ svg,
 
   /* Imagen del hero en mobile: centrada explícita + más compacta (pedido del
      equipo: "céntralo" + "achicá el carrusel"). Antes ocupaba ~400px de alto. */
-  .hero-image {
-    text-align: center;
-  }
-  .hero-image img,
-  .hero-image .img-fluid {
-    max-height: 240px;
-    width: auto;
-    margin-left: auto;
-    margin-right: auto;
-  }
 }
 
 /* ===== PRODUCT CARDS - RESPONSIVE GRID ===== */
@@ -1181,13 +1133,6 @@ svg,
 /* ===== PRINT STYLES ===== */
 @media print {
   .navbar,
-  .hero-carousel-section,
-  footer,
-  .site-footer,
-  .product-actions,
-  .service-actions {
-    display: none !important;
-  }
 
   .product-card,
   .service-card {
@@ -1197,11 +1142,6 @@ svg,
 
 /* ===== LANDSCAPE PHONE FIXES ===== */
 @media (max-height: 500px) and (orientation: landscape) {
-  .hero-slide {
-    min-height: auto;
-    height: auto;
-    padding: var(--spacing-6) 0;
-  }
 
   .modal-body {
     max-height: 60vh;
