@@ -5788,3 +5788,33 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
 }
 [data-theme="dark"] .navbar .search-wrapper { border: 1px solid var(--gray-600); box-shadow: none; background: var(--gray-800); }
 [data-theme="dark"] .footer { background: var(--gray-900); border-top: 1px solid var(--gray-700); }
+
+/* ── Feria Viva: cards de catálogo (T4) ── */
+.product-card.product-card.product-card.product-card, .service-card.service-card.service-card.service-card {
+  background: #fff;
+  border: 3px solid var(--tinta);
+  border-radius: 14px;
+  box-shadow: var(--sombra-card);
+  overflow: hidden;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.product-card.product-card.product-card.product-card:hover, .service-card.service-card.service-card.service-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 9px 9px 0 var(--tinta);
+}
+.product-card.product-card.product-card.product-card .product-image-container { border-bottom: 3px solid var(--tinta); }
+.service-card.service-card.service-card.service-card .service-image-container, .service-card.service-card.service-card.service-card .service-image { border-bottom: 3px solid var(--tinta); }
+.product-current-price.product-current-price.product-current-price { color: var(--coral); font-weight: 900; letter-spacing: -0.02em; }
+.product-installments.product-installments.product-installments { color: var(--verde); font-weight: 700; }
+[data-theme="dark"] .product-card.product-card.product-card.product-card, [data-theme="dark"] .service-card.service-card.service-card.service-card {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-700);
+  box-shadow: none;
+}
+[data-theme="dark"] .product-card.product-card.product-card.product-card:hover, [data-theme="dark"] .service-card.service-card.service-card.service-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0,0,0,.35);
+}
+[data-theme="dark"] .product-card.product-card.product-card.product-card .product-image-container,
+[data-theme="dark"] .service-card.service-card.service-card.service-card .service-image-container,
+[data-theme="dark"] .service-card.service-card.service-card.service-card .service-image { border-bottom: 1px solid var(--gray-700); }
