@@ -5839,3 +5839,50 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
   border-color: var(--gray-700);
   color: var(--gray-800); /* claro en dark (escala invertida) */
 }
+
+/* ── Feria Viva: formularios y cajas de cuenta (T6) ── */
+.form-control, .form-select {
+  border: 2px solid var(--tinta);
+  border-radius: 10px;
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--tinta);
+  box-shadow: 3px 3px 0 var(--tinta);
+}
+.account-card.account-card {
+  background: #fff;
+  border: 3px solid var(--tinta);
+  border-radius: 16px;
+  box-shadow: var(--sombra-card);
+}
+.btn-publish.btn-publish {
+  background: var(--sol);
+  color: var(--tinta);
+  border: 3px solid var(--tinta);
+  border-radius: 12px;
+  font-weight: 900;
+  box-shadow: var(--sombra-btn);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.btn-publish.btn-publish:hover {
+  background: var(--sol);
+  color: var(--tinta);
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 0 var(--tinta);
+}
+[data-theme="dark"] .form-control, [data-theme="dark"] .form-select {
+  border: 1px solid var(--gray-600);
+}
+[data-theme="dark"] .form-control:focus, [data-theme="dark"] .form-select:focus {
+  border-color: var(--gray-500);
+  box-shadow: none;
+}
+[data-theme="dark"] .account-card.account-card {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-700);
+  box-shadow: none;
+}
+[data-theme="dark"] .btn-publish.btn-publish {
+  border-color: transparent;
+  box-shadow: none;
+}
