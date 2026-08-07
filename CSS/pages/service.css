@@ -1382,3 +1382,25 @@
   letter-spacing: 0;
   margin-bottom: 0;
 }
+
+/* ── Feria Viva: ficha de servicio (T5) ── */
+.provider-card.provider-card {
+  background: #fff;
+  border: 3px solid var(--tinta);
+  border-radius: 16px;
+  box-shadow: var(--sombra-caja);
+}
+[data-theme="dark"] .provider-card.provider-card {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-700);
+  box-shadow: none;
+}
+/* Insignias pastel con borde tinta (tema claro; dark conserva su variante) */
+.verif-badge.verif-badge { border: 2px solid var(--tinta); font-weight: 800; }
+.verif-badge.verif-badge.verif-identity { background: #dbeafe; color: #1e40af; }
+.verif-badge.verif-badge.verif-pro      { background: #d1fae5; color: #065f46; }
+.verif-badge.verif-badge.verif-bg       { background: #ede9fe; color: #5b21b6; }
+[data-theme="dark"] .verif-badge.verif-badge { border-color: transparent; }
+[data-theme="dark"] .verif-badge.verif-badge.verif-identity { background: rgba(29,155,240,.18); color: #6cc0ff; }
+[data-theme="dark"] .verif-badge.verif-badge.verif-pro      { background: rgba(16,185,129,.18); color: #4ade80; }
+[data-theme="dark"] .verif-badge.verif-badge.verif-bg       { background: rgba(139,92,246,.20); color: #c4b5fd; }

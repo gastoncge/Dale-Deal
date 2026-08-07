@@ -2397,3 +2397,24 @@
   top: 160px;
   transform: translateY(-50%);
 }
+
+/* ── Feria Viva: marcos de la ficha (T5) ── */
+.main-image-container.main-image-container {
+  border: 3px solid var(--tinta);
+  border-radius: 16px;
+  box-shadow: var(--sombra-caja);
+  overflow: hidden;
+  background: #fff;
+}
+.product-info.product-info {
+  background: #fff;
+  border: 3px solid var(--tinta);
+  border-radius: 16px;
+  box-shadow: var(--sombra-caja);
+}
+[data-theme="dark"] .main-image-container.main-image-container,
+[data-theme="dark"] .product-info.product-info {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-700);
+  box-shadow: none;
+}

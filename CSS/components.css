@@ -5818,3 +5818,24 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
 [data-theme="dark"] .product-card.product-card.product-card.product-card .product-image-container,
 [data-theme="dark"] .service-card.service-card.service-card.service-card .service-image-container,
 [data-theme="dark"] .service-card.service-card.service-card.service-card .service-image { border-bottom: 1px solid var(--gray-700); }
+
+/* ── Feria Viva: caja de confianza en fichas (T5) ── */
+.dd-trustbox {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  background: #fff8dc;
+  border: 2px solid var(--tinta);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 14px;
+  color: var(--tinta);
+}
+.dd-trustbox i { color: var(--verde); font-size: 16px; margin-top: 1px; }
+[data-theme="dark"] .dd-trustbox {
+  background: rgba(255, 210, 63, .07);
+  border-color: var(--gray-700);
+  color: var(--gray-800); /* claro en dark (escala invertida) */
+}
