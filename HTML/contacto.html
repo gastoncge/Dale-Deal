@@ -226,7 +226,7 @@
     <script src="../JS/component-loader.js" defer></script>
     <script>
       // Wrapped en DOMContentLoaded: los scripts `defer` (AOS incluido)
-      // se evalúan ENTRE el cierre de </body> y el evento DOMContentLoaded.
+      // se evalúan entre el cierre del body y el evento DOMContentLoaded.
       // Si llamábamos AOS.init() inline, AOS todavía no existía y el guard
       // `typeof AOS !== 'undefined'` saltaba la init → elementos con
       // [data-aos] quedaban en opacity:0 (CSS de AOS lo aplica) y la

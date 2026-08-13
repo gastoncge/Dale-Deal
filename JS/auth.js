@@ -263,7 +263,7 @@ class AuthManager {
 
     const currentPath = window.location.pathname;
     if (currentPath.includes("/HTML/")) {
-      window.location.href = "../index.html";
+      window.location.href = "/";
     } else {
       window.location.href = "./index.html";
     }
@@ -274,7 +274,7 @@ class AuthManager {
     if (currentPath.includes("/HTML/")) {
       window.location.href = "./login.html";
     } else {
-      window.location.href = "./HTML/login.html";
+      window.location.href = "/login";
     }
   }
 
@@ -915,7 +915,7 @@ class AuthManager {
       // Redirigir a home (mismo flow que login normal)
       setTimeout(() => {
         const inHtmlFolder = window.location.pathname.includes('/HTML/');
-        window.location.href = inHtmlFolder ? '../index.html' : './index.html';
+        window.location.href = inHtmlFolder ? '/' : './index.html';
       }, 1000);
     } catch (err) {
       console.error("[auth] Google callback falló:", err);
@@ -938,7 +938,7 @@ function initializeAuth() {
 
   // Setup específico según la página.
   // Cloudflare Pages sirve URLs limpias (sin .html), así que matcheamos
-  // ambas variantes: /HTML/login y /HTML/login.html
+  // ambas variantes: /HTML/login y /login
   const currentPage = window.location.pathname;
   const isLogin = /\/login(\.html)?$/.test(currentPage);
   const isSignup = /\/signup(\.html)?$/.test(currentPage);

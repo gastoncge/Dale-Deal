@@ -223,11 +223,12 @@ textarea.form-control {
   border-color: var(--primary-red);
 }
 
+/* (0,2,0) le gana a .card-img-top de Bootstrap (0,1,0) sin !important */
 .favorite-card .card-img-top {
-  width: 100% !important;
-  height: 200px !important;
-  object-fit: cover !important;
-  object-position: center !important;
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  object-position: center;
 }
 
 .favorite-card .card-body {
@@ -355,6 +356,93 @@ textarea.form-control {
   }
 }
 
+/* Stock bajo / urgencia honesta — rojo de marca + ícono de fuego.
+   Solo se muestra con stock real entre 1 y 5 (sin inventar urgencia). */
+.product-stock-low,
+.stock-low {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--primary-red);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1.3;
+}
+.stock-low {
+  font-size: 14px;
+}
+.product-stock-low i,
+.stock-low i {
+  font-size: 13px;
+}
+
+/* Trust bar — debajo del botón de compra/contacto. Señal de seguridad
+   (Baymard: un badge de confianza junto al pago sube la completación ~12%). */
+.trust-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 14px 0;
+  padding: 12px 14px;
+  background: var(--gray-50, #f8f9fa);
+  border: 1px solid var(--gray-200, #e9ecef);
+  border-radius: 10px;
+}
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--gray-700, #495057);
+  line-height: 1.3;
+}
+.trust-item i {
+  font-size: 16px;
+  color: #15803d; /* verde "seguro" (cumple WCAG AA sobre el gris claro) */
+  flex-shrink: 0;
+}
+.trust-item strong { color: var(--gray-900, #212529); }
+
+[data-theme="dark"] .trust-bar {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+[data-theme="dark"] .trust-item { color: var(--gray-300, #ced4da); }
+[data-theme="dark"] .trust-item i { color: #4ade80; }
+[data-theme="dark"] .trust-item strong { color: #fff; }
+
+.cart-trust {
+  margin: 8px 0 0;
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--gray-600, #6c757d);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.cart-trust i { color: #15803d; }
+
+/* Botón "Contactar por WhatsApp" en la ficha de servicio (verde de WhatsApp) */
+.btn-whatsapp-provider {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  background: #25d366;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s ease;
+  min-height: 44px;
+}
+.btn-whatsapp-provider:hover { background: #1ebe5d; color: #fff; }
+
 .heart-animate {
   animation: heartBeat 0.6s ease-in-out;
 }
@@ -388,9 +476,9 @@ textarea.form-control {
   margin: var(--spacing-4) auto;
 }
 
-/* Prevenir overflow horizontal del modal */
+/* Prevenir overflow horizontal del modal (mismo valor que Bootstrap; gana por orden) */
 .modal {
-  overflow-x: hidden !important;
+  overflow-x: hidden;
 }
 
 .modal-content {
@@ -403,21 +491,27 @@ textarea.form-control {
 }
 
 /* ===== NAVBAR ===== */
-.navbar {
-  background: var(--gray-50) !important;
+/* Sin !important: el <nav> no lleva clases .bg-* de Bootstrap, así que
+   alcanza con empatar especificidad con .navbar de Bootstrap (0,1,0) y
+   ganar por orden de carga (core.css va después del CDN).
+   nav.navbar (0,1,1): el safe-area de responsive.css (@supports, carga
+   después) pondría padding-x 7.5px a todo ancho — con el !important viejo
+   esa regla siempre estuvo muerta; esto mantiene el layout flush actual. */
+nav.navbar {
+  background: var(--gray-50);
   border-bottom: 1px solid var(--gray-200);
   box-shadow: var(--shadow-lg);
-  padding: var(--spacing-2) 0 !important; /* Reducido de spacing-4 */
+  padding: var(--spacing-2) 0; /* Reducido de spacing-4 */
   min-height: 60px; /* Altura fija más compacta */
   position: sticky;
   top: 0;
   z-index: 1050;
-  overflow: visible !important; /* Permitir que dropdowns se muestren fuera del navbar */
+  overflow: visible; /* Permitir que dropdowns se muestren fuera del navbar */
 }
 
 .navbar .container-fluid {
-  overflow: visible !important;
-  display: grid !important;
+  overflow: visible;
+  display: grid; /* (0,2,0) empata con .navbar>.container-fluid de Bootstrap; gana por orden */
   grid-template-columns: 1fr minmax(300px, 600px) 1fr;
   align-items: center;
 }
@@ -442,16 +536,19 @@ textarea.form-control {
   align-items: center;
   gap: var(--spacing-2);
   text-decoration: none;
-  color: var(--gray-900) !important;
+  color: var(--gray-900);
   font-weight: 700;
   font-size: var(--font-size-lg);
-  padding: 0 !important;
+  padding: 0;
 }
 
 .logo-navbar {
   height: 32px; /* Reducido de 40px */
   width: auto;
   filter: drop-shadow(var(--shadow-sm));
+  transform-origin: center;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter 0.3s ease;
 }
 
 .brand-text {
@@ -536,12 +633,12 @@ textarea.form-control {
   display: flex;
   align-items: center;
   gap: var(--spacing-4); /* Reducido de spacing-6 */
-  overflow: visible !important;
+  overflow: visible;
 }
 
 .action-item {
   position: relative;
-  overflow: visible !important;
+  overflow: visible;
 }
 
 .action-btn {
@@ -602,7 +699,7 @@ textarea.form-control {
   top: -6px;
   right: -6px;
   background: var(--primary-red);
-  color: #fff !important;
+  color: #fff;
   font-size: var(--font-size-2xs);
   font-weight: 700;
   padding: 0;
@@ -619,9 +716,11 @@ textarea.form-control {
 }
 
 /* ===== PERFIL DE USUARIO ===== */
-.profile-btn {
-  padding: var(--spacing-2) var(--spacing-3) !important;
-  gap: var(--spacing-2) !important;
+/* .action-btn.profile-btn (0,2,0): mantiene este padding por encima del
+   .action-btn de responsive.css ≤374px (0,1,0), como hacía el !important. */
+.action-btn.profile-btn {
+  padding: var(--spacing-2) var(--spacing-3);
+  gap: var(--spacing-2);
 }
 
 .profile-btn:hover .profile-name {
@@ -655,16 +754,16 @@ textarea.form-control {
   padding: var(--spacing-2);
   margin-top: var(--spacing-2);
   min-width: 220px;
-  z-index: 9999 !important; /* Z-index sobre TODO - navbar, header, barra búsqueda */
+  z-index: 9999; /* Z-index sobre TODO - navbar, header, barra búsqueda */
   position: absolute;
   will-change: transform; /* Optimización de rendering */
   isolation: isolate; /* Crea nuevo contexto de apilamiento */
 }
 
-/* Forzar z-index cuando dropdown está visible (.show de Bootstrap) */
+/* Z-index cuando dropdown está visible (.show de Bootstrap, gana por orden) */
 .dropdown-menu.show {
-  z-index: 9999 !important; /* Sobre TODO absolutamente */
-  display: block !important;
+  z-index: 9999; /* Sobre TODO absolutamente */
+  display: block;
 }
 
 /* ========================================================================
@@ -1053,7 +1152,7 @@ textarea.form-control {
 
 .btn-primary i,
 .btn-primary .bi {
-  color: #fff !important;
+  color: #fff;
 }
 
 .btn-primary::before {
@@ -1128,7 +1227,7 @@ textarea.form-control {
 .btn-loading {
   pointer-events: none;
   opacity: 0.7;
-  cursor: wait !important;
+  cursor: wait;
 }
 
 /* Disabled state: cualquier botón disabled (auth con form inválido, "Comprar"
@@ -1138,8 +1237,8 @@ textarea.form-control {
   pointer-events: none;
   opacity: 0.55;
   cursor: not-allowed;
-  transform: none !important;
-  box-shadow: none !important;
+  transform: none;
+  box-shadow: none;
 }
 
 /* ===== TARJETAS DE PRODUCTO ===== */
@@ -1241,71 +1340,69 @@ textarea.form-control {
   transform: translateY(-50%) scale(1.1);
 }
 
-/* Indicadores del carrusel - CENTRADO FORZADO */
+/* Indicadores del carrusel — centrado.
+   Cascada (sin !important):
+   - Contra Bootstrap gana por orden de carga (mismo nombre de clase).
+   - En el hero (#heroCarousel) las reglas con ID de home.css siguen
+     dominando, igual que antes (acá solo aporta opacity/cursor/scale).
+   - Los carousels custom de cards usan <span class="indicator"> sin
+     [data-bs-target], así que las reglas de Bootstrap ni los matchean. */
 .carousel-indicators {
-  position: absolute !important;
-  bottom: 12px !important;
-  left: 50% !important;
-  right: auto !important;
-  transform: translateX(-50%) !important;
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  /* ÚNICO !important que queda en esta sección: product-carousel.js setea
+     style="display:none" inline en carousels de 1 imagen y hoy esta regla
+     lo anula (los dots se ven igual). Sacarlo cambiaría el aspecto actual;
+     si algún día se quiere ocultar dots de 1 imagen, va con un fix de JS. */
   display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 6px !important;
-  z-index: 10 !important;
-  width: auto !important;
-  margin: 0 !important;
-  padding: 0 !important;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  z-index: 10;
+  width: auto;
+  margin: 0;
+  padding: 0;
 }
 
 .indicator,
 .carousel-indicators .indicator,
-.carousel-indicators button {
+.carousel-indicators button[data-bs-target] {
   /* WCAG 2.5.5 pide mínimo 24x24px de touch target. El visual del
    * indicator sigue siendo 8x8 (el dot rojo) gracias a background-clip:
    * content-box + padding de 8px que rodea el dot con área transparente
-   * pero clickeable. Total real: 24x24px. */
-  width: 24px !important;
-  height: 24px !important;
-  padding: 8px !important;
-  box-sizing: border-box !important;
-  background: rgba(255, 255, 255, 0.6) !important;
-  background-clip: content-box !important;
-  border-radius: 50% !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
-  border: none !important;
-  margin: 0 4px !important; /* sin esto, el padding-area de un indicator pisa al vecino */
-  flex-shrink: 0 !important;
-  opacity: 1 !important;
+   * pero clickeable. Total real: 24x24px.
+   * button[data-bs-target] (0,2,1) supera a `.carousel-indicators
+   * [data-bs-target]` de Bootstrap (0,2,0) sin !important. */
+  width: 24px;
+  height: 24px;
+  padding: 8px;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.6);
+  background-clip: content-box;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  margin: 0 4px; /* sin esto, el padding-area de un indicator pisa al vecino */
+  flex-shrink: 0;
+  opacity: 1; /* Bootstrap pone .5 en los no-activos */
 }
 
 .indicator.active,
 .carousel-indicators .indicator.active,
-.carousel-indicators button.active {
-  background: var(--primary-red) !important;
-  transform: scale(1.3) !important;
-  border-color: var(--primary-red) !important;
+.carousel-indicators button[data-bs-target].active {
+  background: var(--primary-red);
+  transform: scale(1.3);
+  border-color: var(--primary-red);
 }
 
 .indicator:hover,
 .carousel-indicators .indicator:hover,
-.carousel-indicators button:hover {
-  background: rgba(255, 255, 255, 0.9) !important;
-}
-
-/* En mobile, agrandar el ÁREA TÁCTIL de los dots del hero a 44px de alto
-   (Lighthouse touch-targets) sin agrandar el dot visual: el padding extra
-   queda transparente (background-clip: content-box) pero sigue siendo
-   clickeable. Así el dedo tiene blanco cómodo sin dots gigantes. */
-@media (max-width: 767px) {
-  .carousel-indicators button,
-  .carousel-indicators .indicator {
-    width: 44px !important;
-    height: 44px !important;
-    padding: 18px !important;  /* (44-8)/2 = 18 → dot visual sigue 8px */
-    margin: 0 2px !important;
-  }
+.carousel-indicators button[data-bs-target]:hover {
+  background: rgba(255, 255, 255, 0.9);
 }
 
 /* Carrusel de imágenes de productos */
@@ -1316,48 +1413,48 @@ textarea.form-control {
   overflow: hidden;
 }
 
-/* Indicadores específicos para carrusel de productos */
+/* Indicadores específicos para carrusel de productos (specificity (0,2,0)
+   sobre la regla genérica; home.css repite estos mismos valores) */
 .product-image-carousel .carousel-indicators {
-  position: absolute !important;
-  bottom: 12px !important;
-  left: 50% !important;
-  right: auto !important;
-  transform: translateX(-50%) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 6px !important;
-  z-index: 10 !important;
-  width: auto !important;
-  margin: 0 !important;
-  padding: 0 !important;
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  z-index: 10;
+  width: auto;
+  margin: 0;
+  padding: 0;
 }
 
 .product-image-carousel .carousel-control {
-  z-index: 10 !important;
-  pointer-events: auto !important;
+  z-index: 10;
+  pointer-events: auto;
 }
 
 .product-image-carousel .carousel-indicators .indicator {
-  width: 8px !important;
-  height: 8px !important;
-  background: rgba(255, 255, 255, 0.6) !important;
-  border-radius: 50% !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
-  border: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  flex-shrink: 0 !important;
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  padding: 0;
+  margin: 0;
+  flex-shrink: 0;
 }
 
 .product-image-carousel .carousel-indicators .indicator.active {
-  background: var(--primary-red) !important;
-  transform: scale(1.3) !important;
+  background: var(--primary-red);
+  transform: scale(1.3);
 }
 
 .product-image-carousel .carousel-indicators .indicator:hover {
-  background: rgba(255, 255, 255, 0.9) !important;
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .product-badge {
@@ -1606,7 +1703,7 @@ textarea.form-control {
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-2xl);
   background: var(--white);
-  z-index: 9999 !important; /* Z-index sobre TODO */
+  z-index: 9999; /* Z-index sobre TODO (gana a .dropdown-menu por orden) */
 }
 
 .notifications-dropdown .notifications-header {
@@ -1647,18 +1744,21 @@ textarea.form-control {
 }
 
 /* ===== TABLET: Panel Flotante (< 768px) ===== */
+/* .dropdown-menu.notifications-dropdown (0,2,0): empata con las reglas
+   [data-bs-popper] de Bootstrap (top/left/margin al abrir) y les gana por
+   orden de carga — el motivo original de los !important. */
 @media (max-width: 768px) {
-  .notifications-dropdown {
-    position: fixed !important;
-    top: 65px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 90% !important;
-    max-width: 400px !important;
-    max-height: 75vh !important;
-    margin: 0 !important;
-    z-index: 9999 !important;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+  .dropdown-menu.notifications-dropdown {
+    position: fixed;
+    top: 65px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 400px;
+    max-height: 75vh;
+    margin: 0;
+    z-index: 9999;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
   }
 
@@ -1674,38 +1774,42 @@ textarea.form-control {
    ======================================================================== */
 @media (max-width: 576px) {
 
-  /* NOTIFICACIONES: Modal Completo con Backdrop */
-  .notifications-dropdown {
+  /* NOTIFICACIONES: Modal Completo con Backdrop
+     (0,2,0) + declarado después del bloque tablet → gana en <576 */
+  .dropdown-menu.notifications-dropdown {
     /* ROMPER EL FLUJO - Obligatorio para estar sobre barra de búsqueda */
-    position: fixed !important;
+    position: fixed;
 
     /* CENTRADO Y TAMAÑO - Estilo Modal */
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: 90vw !important;                  /* 90% del ancho de la ventana */
-    max-height: 80vh !important;
-    margin: 0 !important;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90vw;                  /* 90% del ancho de la ventana */
+    max-height: 80vh;
+    margin: 0;
 
-    /* CAPAS - Z-Index NUCLEAR sobre TODO */
-    z-index: 10000 !important;               /* Nuclear - sobre navbar y search */
+    /* CAPAS - sobre navbar y search */
+    z-index: 10000;
 
     /* ESTÉTICA - Sombra de panel */
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
 
     /* Estilos visuales adicionales */
-    border-radius: var(--radius-3xl) !important;
-    border: none !important;
-    overflow: hidden !important;
+    border-radius: var(--radius-3xl);
+    border: none;
+    overflow: hidden;
 
     /* Reset posicionamiento */
-    right: auto !important;
-    bottom: auto !important;
+    right: auto;
+    bottom: auto;
   }
 
-  .notifications-dropdown .notifications-body {
-    max-height: calc(80vh - 200px) !important;
-    overflow-y: auto !important;
+  /* (0,3,0) para seguir ganándole al `.notifications-dropdown
+     .notifications-body { max-height: 60vh }` del bloque ≤768 de más
+     abajo en el archivo (responsive optimizations). */
+  .dropdown-menu.notifications-dropdown .notifications-body {
+    max-height: calc(80vh - 200px);
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
 
@@ -1724,7 +1828,10 @@ textarea.form-control {
 }
 
 /* ===== DROPDOWN DEL CARRITO ===== */
-.cart-dropdown {
+/* .dropdown-menu.cart-dropdown (0,2,0): el carrito va FIJO bajo el navbar
+   también en desktop; el doble selector empata con [data-bs-popper] de
+   Bootstrap (que setea top/left/margin al abrir) y gana por orden. */
+.dropdown-menu.cart-dropdown {
   width: 380px;
   max-height: 80vh;
   overflow: hidden;
@@ -1734,12 +1841,12 @@ textarea.form-control {
   border-radius: var(--radius-2xl);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   background: var(--white);
-  z-index: 10000 !important; /* Z-index sobre TODO */
-  position: fixed !important;
-  top: 70px !important;
-  right: 20px !important;
-  left: auto !important;
-  transform: none !important;
+  z-index: 10000; /* Z-index sobre TODO */
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  left: auto;
+  transform: none;
 }
 
 .cart-dropdown .cart-header {
@@ -1849,18 +1956,19 @@ textarea.form-control {
 }
 
 /* ===== TABLET: Panel Flotante (< 768px) ===== */
+/* (0,2,0) + posterior en el archivo → pisa al bloque base de arriba */
 @media (max-width: 768px) {
-  .cart-dropdown {
-    position: fixed !important;
-    top: 65px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 90% !important;
-    max-width: 400px !important;
-    max-height: 75vh !important;
-    margin: 0 !important;
-    z-index: 9999 !important;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+  .dropdown-menu.cart-dropdown {
+    position: fixed;
+    top: 65px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 400px;
+    max-height: 75vh;
+    margin: 0;
+    z-index: 9999;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
   }
 
@@ -1873,38 +1981,39 @@ textarea.form-control {
 /* ===== MÓVIL: CARRITO COMO MODAL (< 576px) ===== */
 @media (max-width: 576px) {
 
-  /* CARRITO: Modal Completo con Backdrop */
-  .cart-dropdown {
+  /* CARRITO: Modal Completo con Backdrop
+     (0,2,0) + posterior al bloque tablet → gana en <576 */
+  .dropdown-menu.cart-dropdown {
     /* ROMPER EL FLUJO - Obligatorio para estar sobre barra de búsqueda */
-    position: fixed !important;
+    position: fixed;
 
     /* CENTRADO Y TAMAÑO - Estilo Modal */
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: 90vw !important;                  /* 90% del ancho de la ventana */
-    max-height: 80vh !important;
-    margin: 0 !important;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90vw;                  /* 90% del ancho de la ventana */
+    max-height: 80vh;
+    margin: 0;
 
-    /* CAPAS - Z-Index NUCLEAR sobre TODO */
-    z-index: 10000 !important;               /* Nuclear - sobre navbar y search */
+    /* CAPAS - sobre navbar y search */
+    z-index: 10000;
 
     /* ESTÉTICA - Sombra de panel */
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
 
     /* Estilos visuales adicionales */
-    border-radius: var(--radius-3xl) !important;
-    border: none !important;
-    overflow: hidden !important;
+    border-radius: var(--radius-3xl);
+    border: none;
+    overflow: hidden;
 
     /* Reset posicionamiento */
-    right: auto !important;
-    bottom: auto !important;
+    right: auto;
+    bottom: auto;
   }
 
   .cart-dropdown .cart-body {
-    max-height: calc(80vh - 250px) !important;
-    overflow-y: auto !important;
+    max-height: calc(80vh - 250px); /* gana al calc(75vh-200) ≤768 por orden */
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
 
@@ -2188,10 +2297,7 @@ textarea.form-control {
 }
 
 @media (max-width: 768px) {
-  .navbar {
-    padding: var(--spacing-2) 0 !important;
-  }
-
+  /* (.navbar padding ≤768 eliminado: era idéntico al padding base) */
   .search-container {
     order: 3;
     width: 100%;
@@ -2273,10 +2379,10 @@ textarea.form-control {
   box-shadow: var(--shadow-sm);
 }
 
-/* Badge de oferta */
+/* Badge de oferta (todas las variantes en pages/* también son #fff) */
 .badge-offer {
   background: var(--primary-red);
-  color: #fff !important;
+  color: #fff;
 }
 
 /* Badge de envío gratis */
@@ -2896,17 +3002,18 @@ textarea.form-control {
   color: #ffffff;
 }
 
-/* Overlay del servicio - Completamente oculto (sin botón Ver más) */
+/* Overlay del servicio - Completamente oculto (sin botón Ver más).
+   Sin competidores en ningún CSS/JS: no necesita !important. */
 .service-overlay {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
+  display: none;
+  visibility: hidden;
+  opacity: 0;
 }
 
 .service-cta {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
+  display: none;
+  visibility: hidden;
+  opacity: 0;
 }
 
 /* Acciones del servicio (icono de favoritos) */
@@ -3301,7 +3408,7 @@ textarea.form-control {
 
 /* ===== FOOTER ===== */
 .footer {
-  background: #1e293b !important;
+  background: #1e293b;
   color: #ffffff;
   padding: var(--spacing-16) 0 0;
   margin-top: 0;
@@ -3711,9 +3818,12 @@ textarea.form-control {
     gap: var(--spacing-3);
   }
 
-  .newsletter-input,
-  .newsletter-btn {
+  /* Prefijo .newsletter-form para ganarle a .input-group>.form-control de
+     Bootstrap (width:1%) — sin esto el input quedaba colapsado en mobile. */
+  .newsletter-form .newsletter-input,
+  .newsletter-form .newsletter-btn {
     width: 100%;
+    flex: 1 1 auto;
     border-radius: var(--radius-lg);
   }
 
@@ -3767,9 +3877,10 @@ textarea.form-control {
     font-size: var(--font-size-xs);
   }
 
-  /* Ocultar separadores en móviles */
+  /* Ocultar separadores en móviles (.text-muted de Bootstrap solo fuerza
+     color, no display → no hace falta !important) */
   .legal-links-group .text-muted {
-    display: none !important;
+    display: none;
   }
 
   .footer-bottom {
@@ -3823,7 +3934,7 @@ textarea.form-control {
 }
 
 .stat-number .bi {
-  color: #fff !important;
+  color: #fff;
 }
 
 .stat-label {
@@ -3895,17 +4006,18 @@ textarea.form-control {
   box-shadow: var(--shadow-md);
 }
 
-/* Botón limpiar filtros */
+/* Botón limpiar filtros — declarado después de .filter-option-btn y su
+   :hover, así gana por orden sin !important */
 .filter-clear-btn {
-  background: linear-gradient(135deg, #ff6b6b, #ee5a52) !important;
-  color: #ffffff !important;
-  border-color: transparent !important;
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  color: #ffffff;
+  border-color: transparent;
 }
 
 .filter-clear-btn:hover {
-  background: linear-gradient(135deg, #ee5a52, #dc3545) !important;
-  color: #ffffff !important;
-  border-color: transparent !important;
+  background: linear-gradient(135deg, #ee5a52, #dc3545);
+  color: #ffffff;
+  border-color: transparent;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(238, 90, 82, 0.3);
 }
@@ -4164,9 +4276,9 @@ textarea.form-control {
     padding-right: var(--spacing-4);
   }
 
-  /* Modal de Favoritos - Tablet */
+  /* Modal de Favoritos - Tablet (gana al max-width base por orden) */
   #favoritesModal .modal-dialog {
-    max-width: 95vw !important;
+    max-width: 95vw;
     margin: var(--spacing-4) auto;
   }
 
@@ -4204,9 +4316,10 @@ textarea.form-control {
     font-size: var(--font-size-sm);
   }
 
-  /* Dropdown de Notificaciones - Tablet */
-  .notifications-body {
-    max-height: 60vh !important;
+  /* Dropdown de Notificaciones - Tablet. Con scope al dropdown (0,2,0)
+     pisa al max-height:300px base; en <576 gana el bloque (0,3,0). */
+  .notifications-dropdown .notifications-body {
+    max-height: 60vh;
   }
 
   /* Secciones */
@@ -4299,57 +4412,60 @@ textarea.form-control {
     max-width: 95vw;
   }
 
-  /* Dropdown de Perfil - Panel Flotante en Tablet */
+  /* Dropdown de Perfil - Panel Flotante en Tablet.
+     El :not()x2 ya da (0,3,0): supera a [data-bs-popper] de Bootstrap
+     (0,2,0) y a la base .dropdown-menu sin !important. */
   .dropdown-menu:not(.notifications-dropdown):not(.cart-dropdown) {
-    position: fixed !important;
-    top: 65px !important;
-    right: 5% !important;
-    left: auto !important;
-    transform: none !important;
-    width: 320px !important;
-    max-width: 90vw !important;
-    margin: 0 !important;
-    z-index: 9999 !important;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    position: fixed;
+    top: 65px;
+    right: 5%;
+    left: auto;
+    transform: none;
+    width: 320px;
+    max-width: 90vw;
+    margin: 0;
+    z-index: 9999;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   }
 }
 
 /* ===== MÓVIL: PERFIL COMO MODAL (< 576px) ===== */
 @media (max-width: 576px) {
 
-  /* PERFIL (Usuario): Modal Completo con Backdrop */
+  /* PERFIL (Usuario): Modal Completo con Backdrop
+     (0,3,0) + posterior al bloque tablet → gana en <576 */
   .dropdown-menu:not(.notifications-dropdown):not(.cart-dropdown) {
     /* ROMPER EL FLUJO - Obligatorio para estar sobre barra de búsqueda */
-    position: fixed !important;
+    position: fixed;
 
     /* CENTRADO Y TAMAÑO - Estilo Modal */
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: 90vw !important;                  /* 90% del ancho de la ventana */
-    max-width: 380px !important;             /* Límite para perfil más pequeño */
-    max-height: 80vh !important;
-    margin: 0 !important;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90vw;                  /* 90% del ancho de la ventana */
+    max-width: 380px;             /* Límite para perfil más pequeño */
+    max-height: 80vh;
+    margin: 0;
 
-    /* CAPAS - Z-Index NUCLEAR sobre TODO */
-    z-index: 10000 !important;               /* Nuclear - sobre navbar y search */
+    /* CAPAS - sobre navbar y search */
+    z-index: 10000;
 
     /* ESTÉTICA - Sombra de panel */
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
 
     /* Estilos visuales adicionales */
-    border-radius: var(--radius-3xl) !important;
-    border: none !important;
-    overflow-y: auto !important;
+    border-radius: var(--radius-3xl);
+    border: none;
+    overflow-y: auto;
 
     /* Reset posicionamiento */
-    right: auto !important;
-    bottom: auto !important;
+    right: auto;
+    bottom: auto;
   }
 
   /* Asegurar que todos los dropdowns usen el z-index correcto */
   .dropdown-menu.show {
-    z-index: 10000 !important;
+    z-index: 10000;
   }
 }
 
@@ -4470,12 +4586,12 @@ textarea.form-control {
   /* Modal y dropdowns */
   .modal-dialog {
     margin: var(--spacing-3);
-    max-width: calc(100vw - var(--spacing-6)) !important;
+    max-width: calc(100vw - var(--spacing-6));
   }
 
   #favoritesModal .modal-dialog {
     margin: var(--spacing-2);
-    max-width: calc(100vw - var(--spacing-4)) !important;
+    max-width: calc(100vw - var(--spacing-4));
   }
 
   .modal-header {
@@ -4496,14 +4612,16 @@ textarea.form-control {
   }
 
   /* Dropdowns - ancho responsive en 320-480px para evitar overflow */
-  /* Mantener el centrado del bloque < 576px, solo ajustar el ancho */
-  .cart-dropdown,
-  .notifications-dropdown {
-    width: 92vw !important;
-    max-width: 360px !important;
-    left: 50% !important;
-    right: auto !important;
-    transform: translate(-50%, -50%) !important;
+  /* Mantener el centrado del bloque < 576px, solo ajustar el ancho.
+     (0,2,0) + posterior a los bloques <576 → gana acá; el width:95vw
+     !important de responsive.css ≤374 le sigue ganando, igual que antes. */
+  .dropdown-menu.cart-dropdown,
+  .dropdown-menu.notifications-dropdown {
+    width: 92vw;
+    max-width: 360px;
+    left: 50%;
+    right: auto;
+    transform: translate(-50%, -50%);
   }
 
   /* Footer ajustes adicionales */
@@ -4575,13 +4693,13 @@ textarea.form-control {
     font-size: var(--font-size-sm);
   }
 
-  /* Dropdown de Carrito - Footer optimizado */
-  .cart-footer {
-    padding: var(--spacing-3) !important;
+  /* Dropdown de Carrito - Footer optimizado ((0,2,0) + posterior a la base) */
+  .cart-dropdown .cart-footer {
+    padding: var(--spacing-3);
   }
 
   .cart-total {
-    margin-bottom: var(--spacing-2) !important;
+    margin-bottom: var(--spacing-2);
     padding: var(--spacing-2);
     background: var(--gray-50);
     border-radius: var(--radius-lg);
@@ -4606,11 +4724,7 @@ textarea.form-control {
     margin-bottom: 0;
   }
 
-  /* Dropdown de Notificaciones - Optimizado */
-  .notifications-dropdown {
-    padding: 0 !important;
-  }
-
+  /* (padding:0 del dropdown eliminado: la base ya lo declara y gana) */
   .notifications-header {
     padding: var(--spacing-3);
     border-bottom: 1px solid var(--gray-200);
@@ -4630,12 +4744,11 @@ textarea.form-control {
     padding: var(--spacing-1) var(--spacing-3);
   }
 
-  .notifications-body {
-    max-height: 50vh !important;
-  }
-
-  .notification-item {
-    padding: var(--spacing-3) !important;
+  /* (max-height 50vh eliminado: estaba muerto — el bloque <576 con mayor
+     especificidad ya fijaba calc(80vh - 200px) también acá) */
+  /* (0,3,0): mantiene spacing-3 sobre el spacing-2 ≤374 de responsive.css */
+  .dropdown-menu.notifications-dropdown .notification-item {
+    padding: var(--spacing-3);
   }
 
   .notification-item .notification-title {
@@ -4650,8 +4763,8 @@ textarea.form-control {
     font-size: 11px;
   }
 
-  .notifications-footer {
-    padding: var(--spacing-3) !important;
+  .notifications-dropdown .notifications-footer {
+    padding: var(--spacing-3);
   }
 
   .notifications-footer .btn {
@@ -4659,14 +4772,18 @@ textarea.form-control {
     padding: var(--spacing-2) var(--spacing-3);
   }
 
-  /* Cart Items - Optimizado */
-  .cart-item {
-    padding: var(--spacing-3) !important;
+  /* Cart Items - Optimizado. Doble selector: el bare cubre el modal de
+     carrito (gana por orden) y el (0,3,0) mantiene el valor en el dropdown
+     por encima de los overrides ≤374 de responsive.css. */
+  .cart-item,
+  .dropdown-menu.cart-dropdown .cart-item {
+    padding: var(--spacing-3);
   }
 
-  .cart-item-image {
-    width: 60px !important;
-    height: 60px !important;
+  .cart-item-image,
+  .dropdown-menu.cart-dropdown .cart-item-image {
+    width: 60px;
+    height: 60px;
   }
 
   .cart-item-details {
@@ -4687,8 +4804,10 @@ textarea.form-control {
   }
 
   .quantity-btn {
-    width: 28px !important;
-    height: 28px !important;
+    /* El tamaño final lo fijan los min-width/min-height táctiles
+       (44px global de responsive.css / 36px en el dropdown) */
+    width: 28px;
+    height: 28px;
     font-size: var(--font-size-xs);
   }
 
@@ -4766,15 +4885,15 @@ textarea.form-control {
    DARK MODE — OVERRIDES DE COMPONENTES
    ===================================================== */
 
-/* Main content background */
+/* Main content background ((0,2,0) > los .main-content de pages/*) */
 [data-theme="dark"] .main-content {
-  background: var(--gray-50) !important;
+  background: var(--gray-50);
 }
 
-/* Navbar */
+/* Navbar ((0,2,0) > .navbar base sin !important) */
 [data-theme="dark"] .navbar {
-  background: #1e293b !important;
-  border-bottom-color: transparent !important;
+  background: #1e293b;
+  border-bottom-color: transparent;
 }
 [data-theme="dark"] .search-input {
   background: #0f172a;
@@ -4793,7 +4912,7 @@ textarea.form-control {
 [data-theme="dark"] .action-btn { color: var(--gray-800); }
 [data-theme="dark"] .action-btn:hover { background: rgba(255,255,255,0.08); }
 [data-theme="dark"] .action-link { color: var(--gray-800); }
-[data-theme="dark"] .navbar-brand, [data-theme="dark"] .brand-text { color: var(--gray-900) !important; }
+[data-theme="dark"] .navbar-brand, [data-theme="dark"] .brand-text { color: var(--gray-900); }
 
 /* Dropdowns */
 [data-theme="dark"] .dropdown-menu {
@@ -4822,22 +4941,24 @@ textarea.form-control {
 }
 [data-theme="dark"] .carousel-control {
   background: rgba(255,255,255,0.25);
-  color: #fff !important;
+  color: #fff;
 }
 [data-theme="dark"] .carousel-control:hover {
   background: rgba(255,255,255,0.5);
 }
+/* box-shadow mantiene !important: el .products-section .badge-offer de
+   home.css (mismo peso, archivo posterior) le pondría shadow-md en dark */
 [data-theme="dark"] .badge-offer,
-[data-theme="dark"] .badge-featured { color: #fff !important; box-shadow: none !important; }
+[data-theme="dark"] .badge-featured { color: #fff; box-shadow: none !important; }
 
 /* Footer */
 [data-theme="dark"] .footer {
-  background: #1e293b !important;
+  background: #1e293b;
   color: #cbd5e1;
   border-top: none;
 }
 [data-theme="dark"] .footer-newsletter {
-  border: none !important;
+  border: none;
   background: rgba(255, 255, 255, 0.04);
 }
 /* Dots visible on dark footer in both themes */
@@ -4853,13 +4974,13 @@ textarea.form-control {
 [data-theme="dark"] .footer-links a:hover { color: #fff; }
 [data-theme="dark"] .footer-description { color: #94a3b8; }
 [data-theme="dark"] .footer-title,
-[data-theme="dark"] .footer-brand-text { color: #fff !important; }
+[data-theme="dark"] .footer-brand-text { color: #fff; }
 [data-theme="dark"] .copyright-year,
-[data-theme="dark"] .copyright-brand { color: #fff !important; }
-[data-theme="dark"] .copyright-text { color: rgba(255, 255, 255, 0.55) !important; }
+[data-theme="dark"] .copyright-brand { color: #fff; }
+[data-theme="dark"] .copyright-text { color: rgba(255, 255, 255, 0.55); }
 [data-theme="dark"] .footer-tagline,
-[data-theme="dark"] .legal-link { color: #94a3b8 !important; }
-[data-theme="dark"] .legal-link:hover { color: var(--primary-yellow) !important; }
+[data-theme="dark"] .legal-link { color: #94a3b8; }
+[data-theme="dark"] .legal-link:hover { color: var(--primary-yellow); }
 [data-theme="dark"] .footer-social a { color: #94a3b8; }
 [data-theme="dark"] .footer-social a:hover { color: #fff; }
 
@@ -4896,7 +5017,7 @@ textarea.form-control {
 [data-theme="dark"] .bg-light,
 [data-theme="dark"] .bg-white,
 [data-theme="dark"] section { background: var(--white) !important; }
-[data-theme="dark"] .section-alt { background: var(--gray-50) !important; }
+[data-theme="dark"] .section-alt { background: var(--gray-50); }
 
 /* Notificaciones & Cart dropdowns */
 [data-theme="dark"] .notifications-dropdown,
@@ -4921,21 +5042,24 @@ textarea.form-control {
 [data-theme="dark"] p, [data-theme="dark"] span, [data-theme="dark"] li { color: var(--gray-700); }
 [data-theme="dark"] .text-muted { color: var(--gray-500) !important; }
 
-/* Excluir hero slides de la regla global de color en dark mode */
+/* Excluir hero slides de la regla global de color en dark mode
+   (más específicos y posteriores que la regla global de arriba) */
 [data-theme="dark"] .hero-slide p,
 [data-theme="dark"] .hero-slide span,
 [data-theme="dark"] .hero-slide li,
 [data-theme="dark"] .hero-subtitle,
 [data-theme="dark"] .stat-label,
-[data-theme="dark"] .stat-number { color: inherit !important; }
+[data-theme="dark"] .stat-number { color: inherit; }
 
 /* =====================================================
    BOTÓN VOLVER ARRIBA (BACK TO TOP)
    ===================================================== */
 #backToTop {
   position: fixed;
-  bottom: var(--spacing-8);
-  right: var(--spacing-8);
+  /* Apilado ARRIBA del widget de soporte (#dd-support-widget: 56px en
+     bottom/right 16px) — antes compartían esquina y se superponían. */
+  bottom: 88px;
+  right: 20px;
   width: 48px;
   height: 48px;
   border-radius: var(--radius-full);
@@ -5087,10 +5211,29 @@ textarea.form-control {
 }
 .filter-chip:active { transform: scale(0.95); }
 
-/* Logo navbar: sutil hover glow */
-.navbar-brand:hover .logo-navbar {
-  filter: drop-shadow(0 0 8px rgba(214,48,49,0.4));
-  transition: filter 0.3s ease;
+/* Logo navbar: crece con pop elástico + glow al hover. El logo ya es link a
+ * home (#homeLink). transform/filter solo → barato y el guard global de
+ * prefers-reduced-motion lo neutraliza. */
+.navbar-brand:hover .logo-navbar,
+.navbar-brand:focus-visible .logo-navbar {
+  transform: scale(1.14) rotate(-4deg);
+  filter: drop-shadow(0 0 10px rgba(214, 48, 49, 0.5));
+}
+
+.navbar-brand:active .logo-navbar {
+  transform: scale(1.05) rotate(0deg);
+}
+
+/* El texto "DALE DEAL" hace fluir su degradé de marca al hover. */
+.navbar-brand:hover .brand-text {
+  background-size: 200% auto;
+  animation: brandTextFlow 1.2s linear infinite;
+}
+
+@keyframes brandTextFlow {
+  to {
+    background-position: 200% center;
+  }
 }
 
 /* Action buttons del navbar: ring de foco accesible */
@@ -5181,7 +5324,7 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
 .chat-list-preview { font-size: var(--font-size-xs); color: var(--gray-500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .chat-list-empty small { font-size: 11px; color: var(--gray-500); max-width: 220px; line-height: 1.4; }
 .chat-list-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
-.chat-list-time { font-size: 10px; color: var(--gray-400); }
+.chat-list-time { font-size: 10px; color: var(--gray-500); }
 .chat-list-unread { width: 18px; height: 18px; border-radius: 50%; background: var(--primary-red); color: #ffffff; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 .chat-conversation-view { display: flex; flex-direction: column; }
 .chat-back-btn { background: rgba(255,255,255,0.2); border: none; color: #ffffff; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: background var(--transition-base); flex-shrink: 0; }
@@ -5460,8 +5603,8 @@ body:has(.chat-float-panel.chat-float-open) #notificationContainer {
 
 [data-theme="dark"] .page-header-new,
 [data-theme="dark"] .page-header-new .container-fluid {
-  background: #0f172a !important;
-  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+  background: #0f172a;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
 .page-header-new .breadcrumb-nav {

@@ -320,7 +320,7 @@ class NotificationManager {
   // Marcar notificaciones seleccionadas como leídas
   markSelectedAsRead() {
     if (this.selectedNotifications.size === 0) {
-      this.showToast('Selecciona al menos una notificación', 'warning');
+      this.showToast('Seleccioná al menos una notificación', 'warning');
       return;
     }
 
@@ -405,7 +405,7 @@ class NotificationManager {
   // Ver todas las notificaciones
   viewAllNotifications() {
     const isInHtmlFolder = window.location.pathname.includes('/HTML/');
-    window.location.href = isInHtmlFolder ? './notificaciones.html' : './HTML/notificaciones.html';
+    window.location.href = isInHtmlFolder ? './notificaciones.html' : '/notificaciones';
   }
 
   // Renderizar notificaciones

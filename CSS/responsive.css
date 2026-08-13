@@ -301,18 +301,28 @@ svg,
     gap: 2px !important;
   }
 
-  /* Asegurar que cada botón de acción no exceda lo necesario */
+  /* Asegurar que cada botón de acción no exceda lo necesario.
+   * min 44x44 = tap target WCAG. Este selector (0,2,0) le gana por
+   * especificidad a `.action-btn { min-height:44px }` (0,1,0) de más abajo,
+   * así que el tamaño táctil real se define ACÁ. */
   .navbar-actions .action-btn,
   .navbar-actions .profile-btn {
     padding: 4px 6px !important;
-    min-width: 40px;
-    min-height: 40px;
+    min-width: 44px;
+    min-height: 44px;
   }
 
   /* Avatar más chico */
   .profile-image {
     width: 28px !important;
     height: 28px !important;
+  }
+
+  /* En mobile el botón de perfil muestra solo el avatar — el nombre
+   * ("Usuario") ensanchaba la fila del navbar a 375px. Antes esto recién
+   * se ocultaba en ≤374; lo extendemos a todo mobile (≤575). */
+  .profile-name {
+    display: none;
   }
 }
 
@@ -354,9 +364,7 @@ svg,
     display: none;
   }
 
-  .profile-name {
-    display: none;
-  }
+  /* .profile-name ya se oculta en el bloque ≤575 (cubre 375). */
 
   .search-container {
     margin: var(--spacing-2) 0 0 0;
@@ -557,6 +565,19 @@ svg,
   .hero-actions {
     justify-content: center;
   }
+
+  /* Imagen del hero en mobile: centrada explícita + más compacta (pedido del
+     equipo: "céntralo" + "achicá el carrusel"). Antes ocupaba ~400px de alto. */
+  .hero-image {
+    text-align: center;
+  }
+  .hero-image img,
+  .hero-image .img-fluid {
+    max-height: 240px;
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 /* ===== PRODUCT CARDS - RESPONSIVE GRID ===== */
@@ -659,9 +680,12 @@ svg,
 }
 
 @media (max-width: 575px) {
+  /* En mobile .products-row apila en columna → la card va a ancho completo.
+     (El calc(50%) anterior era de un layout viejo de 2 por fila y dejaba
+     cards de ~165px con la mitad derecha de la pantalla vacía.) */
   .products-row .product-card {
-    max-width: calc(50% - var(--spacing-2));
-    flex: 0 0 calc(50% - var(--spacing-2));
+    max-width: 100%;
+    flex: 0 0 auto;
   }
 }
 
@@ -853,6 +877,36 @@ svg,
   .spec-item {
     flex-direction: column;
     gap: var(--spacing-1);
+  }
+}
+
+/* CTA sticky en mobile: mantiene "Comprar"/"Contactar" siempre a mano al hacer
+   scroll. Usa position:sticky (no fixed) → no tapa el footer ni necesita
+   padding extra en el body. */
+@media (max-width: 767px) {
+  .purchase-actions,
+  .svc-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 30;
+    background: var(--white, #fff);
+    padding: 10px 0;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.06);
+  }
+  [data-theme="dark"] .purchase-actions,
+  [data-theme="dark"] .svc-actions {
+    background: #15151f;
+  }
+
+  /* En las fichas, el CTA sticky vive pegado abajo → subimos los botones
+     flotantes para que el "?" de soporte no tape "Agregar al carrito". */
+  body:has(.purchase-actions) #dd-support-widget,
+  body:has(.svc-actions) #dd-support-widget {
+    bottom: 150px;
+  }
+  body:has(.purchase-actions) #backToTop,
+  body:has(.svc-actions) #backToTop {
+    bottom: 218px;
   }
 }
 

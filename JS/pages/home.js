@@ -89,8 +89,11 @@ function renderProductCard(product) {
   const badges = (product.badges || []).filter(b =>
     BADGE_KEYWORDS.some(kw => b.toLowerCase().includes(kw))
   );
+  // Coacciona a string primero: escapeHtml() devuelve '' para no-strings (ej. id numérico),
+  // lo que vaciaría data-id y rompería navegación/favoritos.
+  const esc = (v) => window.DaleDeal.utils.escapeHtml(String(v ?? ''));
   const badgesHTML = badges.map(badge =>
-    `<span class="badge-offer">${badge}</span>`
+    `<span class="badge-offer">${esc(badge)}</span>`
   ).join('');
 
   // Renderizar imágenes
@@ -100,18 +103,18 @@ function renderProductCard(product) {
       <div class="product-image-carousel" data-current-image="0">
         ${product.images.gallery.map((img, index) => `
           <img
-            src="${img}"
-            alt="${product.title} - Vista ${index + 1}"
+            src="${esc(img)}"
+            alt="${esc(product.title)} - Vista ${index + 1}"
             class="product-image ${index === 0 ? 'active' : ''}"
             loading="lazy"
           />
         `).join('')}
 
         <!-- Controles de navegación -->
-        <button class="carousel-control carousel-prev" data-direction="prev" aria-label="Categoría anterior">
+        <button class="carousel-control carousel-prev" data-direction="prev" aria-label="Foto anterior">
           <i class="bi bi-chevron-left" aria-hidden="true"></i>
         </button>
-        <button class="carousel-control carousel-next" data-direction="next" aria-label="Categoría siguiente">
+        <button class="carousel-control carousel-next" data-direction="next" aria-label="Foto siguiente">
           <i class="bi bi-chevron-right" aria-hidden="true"></i>
         </button>
 
@@ -126,8 +129,8 @@ function renderProductCard(product) {
   } else {
     imagesHTML = `
       <img
-        src="${product.images.main}"
-        alt="${product.title}"
+        src="${esc(product.images.main)}"
+        alt="${esc(product.title)}"
         class="product-image"
         loading="lazy"
       />
@@ -137,12 +140,16 @@ function renderProductCard(product) {
   // Renderizar precio
   const priceHTML = `<span class="product-current-price">${window.DaleDeal.utils.formatCurrency(product.price)}</span>`;
 
-  // Cuotas sin interés — solo mostrar si la cuota mensual >= $1.000 (evita "12 cuotas de $42")
-  // 12 cuotas sin interés es el estándar de MercadoPago para vendedores en Argentina.
-  const installments = 12;
-  const monthlyAmount = product.price / installments;
-  const installmentsHTML = monthlyAmount >= 1000
-    ? `<div class="product-installments"><i class="bi bi-credit-card"></i> ${installments} cuotas sin interés de ${window.DaleDeal.utils.formatCurrency(Math.round(monthlyAmount))}</div>`
+  // Cuotas sin interés — helper único en utils.js (elige el mejor plan y evita "12 cuotas de $42")
+  const inst = window.DaleDeal.utils.formatInstallments(product.price);
+  const installmentsHTML = inst.show
+    ? `<div class="product-installments"><i class="bi bi-credit-card"></i> ${inst.count} cuotas sin interés de ${inst.monthlyFormatted}</div>`
+    : '';
+
+  // Stock bajo / urgencia honesta — solo con stock real entre 1 y 5 (sin inventar urgencia)
+  const lowStock = product.stock > 0 && product.stock <= 5;
+  const stockHTML = lowStock
+    ? `<div class="product-stock-low"><i class="bi bi-fire"></i> ${product.stock === 1 ? '¡Última unidad!' : `¡Quedan ${product.stock}!`}</div>`
     : '';
 
   // Reseñas: si no hay reviews, mostrar "Sin reseñas aún" en lugar de "(0)"
@@ -152,7 +159,7 @@ function renderProductCard(product) {
     : `<span class="reviews-count text-muted">Sin reseñas aún</span>`;
 
   // WhatsApp share — el link contiene URL del producto + título
-  const shareUrl = `${window.location.origin}/HTML/producto.html?id=${product.id}`;
+  const shareUrl = `${window.location.origin}/producto?id=${product.id}`;
   const shareText = encodeURIComponent(`Mirá esto en Dale Deal: ${product.title} — ${shareUrl}`);
   const whatsappHref = `https://wa.me/?text=${shareText}`;
 
@@ -164,12 +171,12 @@ function renderProductCard(product) {
     : '';
 
   return `
-    <div class="product-card ${hasDiscount ? 'has-offer' : ''}" data-id="${product.id}" data-clickable="true">
+    <div class="product-card ${hasDiscount ? 'has-offer' : ''}" data-id="${esc(product.id)}" data-clickable="true">
       <div class="product-image-container">
         ${imagesHTML}
         ${badgesHTML}
         <div class="product-actions">
-          <button class="action-heart" title="Agregar a favoritos" data-product-id="${product.id}">
+          <button class="action-heart" title="Agregar a favoritos" data-product-id="${esc(product.id)}">
             <i class="bi bi-heart"></i>
           </button>
           <a href="${whatsappHref}"
@@ -178,14 +185,14 @@ function renderProductCard(product) {
              target="_blank"
              rel="noopener noreferrer"
              onclick="event.stopPropagation()"
-             aria-label="Compartir ${product.title} por WhatsApp">
+             aria-label="Compartir ${esc(product.title)} por WhatsApp">
             <i class="bi bi-whatsapp"></i>
           </a>
         </div>
       </div>
       <div class="product-info">
-        <h3 class="product-title">${product.title}</h3>
-        <p class="product-description">${shortDescription}</p>
+        <h3 class="product-title">${esc(product.title)}</h3>
+        <p class="product-description">${esc(shortDescription)}</p>
 
         <div class="product-meta-group">
           <div class="product-rating">
@@ -202,6 +209,7 @@ function renderProductCard(product) {
           <div class="product-pricing">
             ${priceHTML}
             ${installmentsHTML}
+            ${stockHTML}
           </div>
         </div>
       </div>
@@ -449,13 +457,13 @@ if (typeof window !== 'undefined') {
 
     // Botón ver todos los productos
     document.getElementById('viewAllProductsBtn')?.addEventListener('click', () => {
-      window.location.href = './HTML/productos.html';
+      window.location.href = '/productos';
     });
 
     // Botón ver todos los servicios (faltaba handler — el botón existía
     // en index.html pero no hacía nada al click)
     document.getElementById('viewAllServicesBtn')?.addEventListener('click', () => {
-      window.location.href = './HTML/servicios.html';
+      window.location.href = '/servicios';
     });
 
     // Service cards estáticas del home — cada card tiene data-id con el slug
@@ -472,7 +480,7 @@ if (typeof window !== 'undefined') {
       card.style.cursor = 'pointer';
       card.addEventListener('click', (e) => {
         if (e.target.closest('.action-heart')) return; // no robar el click del corazón
-        window.location.href = `./HTML/servicio.html?id=${encodeURIComponent(id)}`;
+        window.location.href = `/servicio?id=${encodeURIComponent(id)}`;
       });
     });
 

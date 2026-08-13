@@ -203,6 +203,20 @@
           </div>
         </div>
 
+        <!-- Card: Verificá tu cuenta -->
+        <div class="account-card">
+          <div class="account-card-header">
+            <div class="account-card-icon"><i class="bi bi-patch-check-fill"></i></div>
+            <div>
+              <h3 class="account-card-title">Verificá tu cuenta</h3>
+              <p class="account-card-subtitle">Las cuentas verificadas generan más confianza y se destacan en los servicios.</p>
+            </div>
+          </div>
+          <div class="account-card-body" id="verificationBody">
+            <div class="text-muted small">Cargando…</div>
+          </div>
+        </div>
+
         <!-- Card: Mis publicaciones (links rápidos) -->
         <div class="account-card">
           <div class="account-card-header">
@@ -456,6 +470,92 @@
 
         // Init
         loadProfile();
+      });
+    </script>
+
+    <script>
+      // Verificá tu cuenta — solicitar insignias (identidad / profesional) y ver estado.
+      // MVP manual: el equipo revisa por fuera (videollamada / matrícula en registro
+      // público) y aprueba/rechaza desde el admin. No se guardan documentos ni datos
+      // biométricos. Backend: migration 013 + /verifications. Tolerante si aún no está.
+      document.addEventListener('DOMContentLoaded', () => {
+        const API = (window.DaleDeal?.CONFIG?.API_BASE_URL || 'https://daledeal-backend-production.up.railway.app').replace(/\/$/, '');
+        const getToken = () => localStorage.getItem('daledeal_token') || sessionStorage.getItem('daledeal_token');
+        const body = document.getElementById('verificationBody');
+        if (!body) return;
+        const esc = (s) => (window.DaleDeal?.utils?.escapeHtml ? window.DaleDeal.utils.escapeHtml(String(s ?? '')) : String(s ?? ''));
+
+        const TYPES = [
+          { key: 'identity',     label: 'Identidad verificada',   icon: 'bi-person-badge', ask: '¿Cómo te contactamos para una videollamada corta de verificación? (ej: WhatsApp + horario)' },
+          { key: 'professional', label: 'Profesional verificado', icon: 'bi-mortarboard',   ask: 'Indicá tu matrícula o título y el colegio/ente/universidad que lo emite (lo chequeamos en el registro público).' },
+          { key: 'background',   label: 'Antecedentes verificados', icon: 'bi-shield-check', ask: 'Sacá tu Certificado de Antecedentes Penales desde Mi Argentina (tarda minutos) y pasanos el código de verificación del certificado — lo validamos contra la fuente oficial, sin guardar el documento.' },
+        ];
+
+        async function load() {
+          const t = getToken();
+          if (!t) return; // la card vive dentro de accountContent (oculto sin sesión)
+          let data = { requests: [] };
+          try {
+            const r = await fetch(`${API}/verifications/me`, { headers: { Authorization: `Bearer ${t}` } });
+            if (r.ok) data = await r.json();
+          } catch (_) { /* sin conexión → dejamos el estado por defecto */ }
+          render(data || { requests: [] });
+        }
+
+        function render(data) {
+          const reqs = data.requests || [];
+          body.innerHTML = TYPES.map((tp, i) => {
+            const verified = data['verified_' + tp.key];
+            const pending  = reqs.find((r) => r.type === tp.key && r.status === 'pending');
+            let right;
+            if (verified)      right = '<span class="badge bg-success"><i class="bi bi-check-lg me-1"></i>Verificado</span>';
+            else if (pending)  right = '<span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>En revisión</span>';
+            else               right = `<button class="btn btn-sm btn-outline-primary" data-verif="${tp.key}">Solicitar</button>`;
+            return `<div class="d-flex align-items-center justify-content-between py-2 ${i < TYPES.length - 1 ? 'border-bottom' : ''}">
+                <div><i class="bi ${tp.icon} me-2" style="color:var(--primary-red)"></i><strong>${esc(tp.label)}</strong></div>
+                <div>${right}</div>
+              </div>`;
+          }).join('') + '<div id="verifFormArea" class="mt-2"></div>';
+          body.querySelectorAll('[data-verif]').forEach((b) => b.addEventListener('click', () => openForm(b.dataset.verif)));
+        }
+
+        function openForm(type) {
+          const tp = TYPES.find((t) => t.key === type);
+          const area = document.getElementById('verifFormArea');
+          area.innerHTML = `
+            <div class="p-3 rounded" style="background:rgba(0,0,0,.03);border:1px solid var(--gray-200,#e5e7eb);">
+              <label class="form-label small fw-semibold" for="verifNote">${esc(tp.ask)}</label>
+              <textarea class="form-control mb-2" id="verifNote" rows="2" maxlength="500"></textarea>
+              <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-primary" id="verifSend">Enviar solicitud</button>
+                <button class="btn btn-sm btn-outline-secondary" id="verifCancel">Cancelar</button>
+              </div>
+              <div class="small mt-2" id="verifFormMsg"></div>
+            </div>`;
+          document.getElementById('verifCancel').onclick = () => { area.innerHTML = ''; };
+          document.getElementById('verifSend').onclick = () => send(type);
+        }
+
+        async function send(type) {
+          const note = document.getElementById('verifNote').value.trim();
+          const msg  = document.getElementById('verifFormMsg');
+          const btn  = document.getElementById('verifSend');
+          btn.disabled = true; msg.className = 'small mt-2 text-muted'; msg.textContent = 'Enviando…';
+          try {
+            const r = await fetch(`${API}/verifications`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+              body: JSON.stringify({ type, contact_note: note }),
+            });
+            const d = await r.json().catch(() => ({}));
+            if (!r.ok) { msg.className = 'small mt-2 text-danger'; msg.textContent = d.error || 'No se pudo enviar el pedido.'; btn.disabled = false; return; }
+            await load(); // refresca el estado (ahora "En revisión")
+          } catch (_) {
+            msg.className = 'small mt-2 text-danger'; msg.textContent = 'Error de conexión. Probá de nuevo.'; btn.disabled = false;
+          }
+        }
+
+        load();
       });
     </script>
   </body>

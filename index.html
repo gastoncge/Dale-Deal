@@ -6,7 +6,7 @@
     <title>DALE DEAL - Tu Marketplace Favorito</title>
 
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Descubrí miles de productos y servicios en Dale Deal. Compra, vende y conecta con la mejor comunidad de marketplace de Argentina." />
+    <meta name="description" content="Descubrí miles de productos y servicios en Dale Deal. Comprá, vendé y conectá con la mejor comunidad de marketplace de Argentina." />
     <meta name="keywords" content="marketplace, comprar, vender, productos, servicios, Argentina" />
     <meta name="author" content="Dale Deal" />
     <meta name="robots" content="index, follow" />
@@ -16,14 +16,18 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://daledeal.com.ar/" />
     <meta property="og:title" content="DALE DEAL - Tu Marketplace Favorito" />
-    <meta property="og:description" content="Descubrí miles de productos y servicios. Compra, vende y contrata servicios profesionales en Argentina." />
-    <meta property="og:image" content="https://daledeal.com.ar/IMG/LOGO-2.png" />
+    <meta property="og:description" content="Descubrí miles de productos y servicios. Comprá, vendé y contratá servicios profesionales en Argentina." />
+    <meta property="og:image" content="https://daledeal.com.ar/IMG/og-home.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="DALE DEAL — Comprá, vendé y contratá en Argentina" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="DALE DEAL - Tu Marketplace Favorito" />
     <meta name="twitter:description" content="Descubrí miles de productos y servicios en Argentina." />
-    <meta name="twitter:image" content="https://daledeal.com.ar/IMG/LOGO-2.png" />
+    <meta name="twitter:image" content="https://daledeal.com.ar/IMG/og-home.jpg" />
 
     <!-- Canonical -->
     <link rel="canonical" href="https://daledeal.com.ar/" />
@@ -42,7 +46,7 @@
           "name": "Dale Deal",
           "url": "https://daledeal.com.ar/",
           "logo": "https://daledeal.com.ar/IMG/LOGO-2.png",
-          "description": "Marketplace argentino de productos y servicios. Compra, vende y contrata profesionales verificados.",
+          "description": "Marketplace argentino de productos y servicios. Comprá, vendé y contratá profesionales verificados.",
           "address": {
             "@type": "PostalAddress",
             "addressCountry": "AR",
@@ -165,7 +169,7 @@
                         <h1 class="hero-title">Tu marketplace de productos y servicios</h1>
                         <p class="hero-subtitle">
                           Descubrí miles de productos al mejor precio y servicios profesionales de calidad. 
-                          Compra, vende y contrata servicios con la mejor experiencia online en Argentina.
+                          Comprá, vendé y contratá servicios con la mejor experiencia online en Argentina.
                         </p>
                         <div class="hero-actions">
                           <a href="HTML/productos.html" class="btn btn-primary btn-lg" id="heroShopBtn">
@@ -366,6 +370,48 @@
         </div>
       </section>
 
+      <!-- How It Works Section -->
+      <section class="how-it-works-section" id="howItWorksSection">
+        <div class="container">
+          <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title">Cómo <span class="accent">funciona</span></h2>
+            <p class="section-subtitle">Comprar y contratar en Dale Deal es así de simple</p>
+          </div>
+
+          <div class="how-it-works-grid">
+            <div class="how-it-works-card" data-aos="fade-up" data-aos-delay="0">
+              <span class="how-step-number">1</span>
+              <div class="how-step-icon"><i class="bi bi-search"></i></div>
+              <h3 class="how-step-title">Buscá lo que necesitás</h3>
+              <p class="how-step-description">
+                Explorá miles de productos y servicios profesionales. Filtrá por
+                categoría, precio y ubicación hasta encontrar lo que buscás.
+              </p>
+            </div>
+
+            <div class="how-it-works-card" data-aos="fade-up" data-aos-delay="100">
+              <span class="how-step-number">2</span>
+              <div class="how-step-icon"><i class="bi bi-chat-dots"></i></div>
+              <h3 class="how-step-title">Contactá al vendedor o prestador</h3>
+              <p class="how-step-description">
+                Escribile directamente para resolver tus dudas, coordinar detalles
+                y acordar la mejor opción para vos.
+              </p>
+            </div>
+
+            <div class="how-it-works-card" data-aos="fade-up" data-aos-delay="200">
+              <span class="how-step-number">3</span>
+              <div class="how-step-icon"><i class="bi bi-shield-check"></i></div>
+              <h3 class="how-step-title">Comprá o contratá con confianza</h3>
+              <p class="how-step-description">
+                Cerrá la operación con protección al comprador y seguí todo desde
+                "Mis compras". Simple, seguro y sin vueltas.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Products Section -->
       <!-- Trending: "Lo más visto" — usa el campo views de cada producto.
            Se carga dinámicamente desde JS/pages/home.js (loadTrending).
@@ -380,6 +426,20 @@
             <p class="text-muted">Lo que más están explorando los usuarios</p>
           </div>
           <div class="products-grid" id="trendingGrid"></div>
+        </div>
+      </section>
+
+      <!-- Vistos recientemente — se llena desde localStorage (JS/recently-viewed.js).
+           Hidden por default; aparece solo si el usuario ya abrió alguna ficha. -->
+      <section class="products-section" id="recentlyViewedSection" style="display:none;">
+        <div class="container">
+          <div class="section-header text-center mb-4" data-aos="fade-up">
+            <h2 class="section-title">
+              <i class="bi bi-clock-history me-2"></i>Vistos recientemente
+            </h2>
+            <p class="text-muted">Seguí donde dejaste</p>
+          </div>
+          <div class="products-grid" id="recentlyViewedGrid"></div>
         </div>
       </section>
 
@@ -1063,7 +1123,7 @@
                 </div>
                 <p class="footer-description">
                   Tu marketplace de productos y servicios en Argentina.
-                  Compra, vende productos y contrata servicios profesionales de calidad.
+                  Comprá, vendé productos y contratá servicios profesionales de calidad.
                 </p>
                 <div class="footer-social">
                   <a href="https://www.instagram.com/daledeal.ar/" class="social-link" title="Instagram" target="_blank" rel="noopener noreferrer">
@@ -1154,9 +1214,9 @@
               <div class="col-md-6">
                 <h3 class="newsletter-title">
                   <i class="bi bi-bell me-2"></i>
-                  Mantente actualizado
+                  Mantenete actualizado
                 </h3>
-                <p class="newsletter-subtitle">Recibe las mejores ofertas y novedades de Dale Deal</p>
+                <p class="newsletter-subtitle">Recibí las mejores ofertas y novedades de Dale Deal</p>
               </div>
               <div class="col-md-6">
                 <form class="newsletter-form" id="footerNewsletterForm">
@@ -1164,7 +1224,7 @@
                     <input
                       type="email"
                       class="form-control newsletter-input"
-                      placeholder="Ingresa tu email"
+                      placeholder="Ingresá tu email"
                       id="footerNewsletterEmail"
                       required
                     >
@@ -1284,6 +1344,7 @@
     <script defer src="./JS/product-data.js"></script>
     <script defer src="./JS/search.js"></script>
     <script defer src="./JS/pages/home.js"></script>
+    <script defer src="./JS/recently-viewed.js"></script>
 
     <!-- AOS.init dentro de DOMContentLoaded porque los inline NO esperan
          a defer; sin esto AOS no está cargado cuando esta línea evalúa.

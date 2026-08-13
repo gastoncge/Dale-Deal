@@ -72,7 +72,7 @@ function fixHeaderPaths() {
   // Corregir logo link
   const homeLink = document.getElementById('homeLink');
   if (homeLink) {
-    homeLink.href = isRoot ? './index.html' : '../index.html';
+    homeLink.href = isRoot ? './index.html' : '/';
   }
 
   // Corregir logo image
@@ -198,7 +198,7 @@ function initializeHeaderComponents() {
 function fixPublicarLink() {
   const path = window.location.pathname.toLowerCase();
   const isInHtml = path.includes('/html/');
-  const base = isInHtml ? './publicar.html' : './HTML/publicar.html';
+  const base = isInHtml ? './publicar.html' : '/publicar';
 
   let href = base;
   if (path.includes('productos')) {

@@ -17,6 +17,7 @@
     reviews:  { page: 1, loading: false },
     reports:  { page: 1, status: '', category: '', loading: false },
     leads:    { page: 1, status: '', loading: false },
+    verifications: { status: 'pending', loading: false },
   };
 
   document.addEventListener('DOMContentLoaded', init);
@@ -49,6 +50,8 @@
     document.getElementById('btn-refresh-stats')?.addEventListener('click', loadStats);
     // Cargar badge de reportes pendientes apenas entra al panel
     updateReportsBadge();
+    // Idem verificaciones pendientes
+    updateVerifBadge();
   }
 
   function revealAdmin() {
@@ -93,6 +96,7 @@
       case 'reviews':  if (!state.reviews.loaded)  loadReviews();  break;
       case 'reports':  if (!state.reports.loaded)  loadReports();  break;
       case 'leads':    if (!state.leads.loaded)    loadLeads();    break;
+      case 'verifications': if (!state.verifications.loaded) loadVerifications(); break;
     }
   }
 
@@ -159,6 +163,11 @@
       state.leads.status = e.target.value;
       state.leads.page = 1;
       loadLeads();
+    });
+
+    document.getElementById('verif-status')?.addEventListener('change', e => {
+      state.verifications.status = e.target.value;
+      loadVerifications();
     });
 
     // Export CSV buttons (orders, leads, newsletter)
@@ -857,6 +866,110 @@
           loadReports();
         } catch (err) {
           alert('Error: ' + (err.message || 'no se pudo actualizar'));
+        }
+      });
+    });
+  }
+
+  // ── VERIFICACIONES DE PRESTADORES ────────────────────────────────────────
+  // Cola de revisión manual: el prestador pide identidad/profesional, el equipo
+  // aprueba (prende la insignia) o rechaza. Backend: /admin/verifications.
+  async function loadVerifications() {
+    try {
+      const res = await window.DaleDeal.api.apiFetch(`/admin/verifications?status=${encodeURIComponent(state.verifications.status)}`);
+      state.verifications.loaded = true;
+      renderVerifications(res);
+      updateVerifBadge();
+    } catch (err) {
+      document.getElementById('verif-content').innerHTML = errorHTML(err);
+    }
+  }
+
+  async function updateVerifBadge() {
+    try {
+      const res = await window.DaleDeal.api.apiFetch('/admin/verifications?status=pending');
+      const badge = document.getElementById('verif-badge');
+      if (badge) {
+        const n = res.total || 0;
+        badge.textContent = n > 99 ? '99+' : n;
+        badge.style.display = n > 0 ? '' : 'none';
+      }
+    } catch (_) { /* silencioso */ }
+  }
+
+  function renderVerifications(res) {
+    const c = document.getElementById('verif-content');
+    const rows = res.requests || [];
+    if (rows.length === 0) {
+      c.innerHTML = emptyHTML('No hay verificaciones en este estado');
+      return;
+    }
+    c.innerHTML = `
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Prestador</th><th>Tipo</th><th>Datos de contacto</th>
+              <th>Estado</th><th>Fecha</th><th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(v => verifRow(v)).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+    bindVerifActions();
+  }
+
+  function verifRow(v) {
+    const typeLabel = { identity: 'Identidad', professional: 'Profesional', background: 'Antecedentes' }[v.type] || v.type;
+    const typeIcon  = { identity: 'bi-person-badge', professional: 'bi-mortarboard', background: 'bi-shield-check' }[v.type] || 'bi-patch-check';
+    const stClass = { pending: 'admin-pill-warning', approved: 'admin-pill-success', rejected: 'admin-pill-muted' }[v.status] || 'admin-pill-muted';
+    const stLabel = { pending: 'Pendiente', approved: 'Aprobada', rejected: 'Rechazada' }[v.status] || v.status;
+
+    const provider = `<small><strong>${esc(v.user_name || 'Sin nombre')}</strong><br>
+        <span class="text-muted">${esc(v.user_email || '')}</span>
+        ${v.user_location ? `<br><span class="text-muted"><i class="bi bi-geo-alt"></i> ${esc(v.user_location)}</span>` : ''}</small>`;
+
+    const actions = v.status === 'pending'
+      ? `<div class="admin-actions">
+           <button class="btn btn-sm btn-outline-success" data-action="verif-review" data-id="${v.id}" data-decision="approve"><i class="bi bi-check-lg"></i> Aprobar</button>
+           <button class="btn btn-sm btn-outline-danger"  data-action="verif-review" data-id="${v.id}" data-decision="reject"><i class="bi bi-x-lg"></i> Rechazar</button>
+         </div>`
+      : `<small class="text-muted">${v.reviewed_at ? formatDate(v.reviewed_at) : '—'}</small>`;
+
+    return `
+      <tr>
+        <td>#${v.id}</td>
+        <td>${provider}</td>
+        <td><span class="admin-pill admin-pill-info"><i class="bi ${typeIcon}"></i> ${typeLabel}</span></td>
+        <td style="max-width:320px;"><small>${v.contact_note ? esc(v.contact_note) : '<span class="text-muted">—</span>'}</small></td>
+        <td><span class="admin-pill ${stClass}">${stLabel}</span></td>
+        <td>${formatDate(v.created_at)}</td>
+        <td>${actions}</td>
+      </tr>
+    `;
+  }
+
+  function bindVerifActions() {
+    document.querySelectorAll('#verif-content [data-action="verif-review"]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.id;
+        const decision = btn.dataset.decision;
+        const isApprove = decision === 'approve';
+        if (!confirm(isApprove ? '¿Aprobar y activar la insignia de este prestador?' : '¿Rechazar esta verificación?')) return;
+        const admin_note = isApprove ? '' : (prompt('Motivo del rechazo (opcional, uso interno):') || '');
+        btn.disabled = true;
+        try {
+          await window.DaleDeal.api.apiFetch(`/admin/verifications/${id}/review`, {
+            method: 'POST',
+            body: JSON.stringify({ decision, admin_note }),
+          });
+          loadVerifications();
+        } catch (err) {
+          alert('Error: ' + (err.message || 'no se pudo procesar'));
+          btn.disabled = false;
         }
       });
     });
