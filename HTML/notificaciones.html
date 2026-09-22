@@ -323,6 +323,10 @@
                   <i class="bi bi-bag me-2"></i>
                   <span>Mis compras</span>
                 </a>
+                <a href="#" class="sidebar-nav-item" data-section="mis-ventas">
+                  <i class="bi bi-bag-check me-2"></i>
+                  <span>Mis ventas</span>
+                </a>
                 <a href="#" class="sidebar-nav-item" data-section="favoritos">
                   <i class="bi bi-heart me-2"></i>
                   <span>Favoritos</span>
@@ -561,6 +565,57 @@
                   <a href="./productos.html" class="btn btn-primary">
                     <i class="bi bi-search me-2"></i>Explorar productos
                   </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===== SECCIÓN: MIS VENTAS ===== -->
+            <div id="view-mis-ventas" class="centro-section" style="display:none">
+              <div class="centro-section-header">
+                <h2 class="centro-section-title"><i class="bi bi-bag-check me-2"></i>Mis Ventas</h2>
+                <a href="./publicar.html" class="btn btn-primary btn-sm">
+                  <i class="bi bi-plus-circle me-2"></i>Nueva publicación
+                </a>
+              </div>
+              <!-- Poblado por initMisVentasSection() en JS/pages/mis-ventas.js -->
+              <div class="orders-list" id="misVentasList">
+                <div class="empty-state">
+                  <div class="spinner-border text-danger" role="status" aria-hidden="true"></div>
+                  <p class="empty-state-text mt-3">Cargando tus ventas…</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal: gestionar envío de una venta -->
+            <div class="modal fade" id="trackingModal" tabindex="-1">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-truck me-2"></i>Gestionar envío</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p class="small text-muted" id="tracking-order-info"></p>
+                    <div class="mb-3">
+                      <label class="form-label small fw-semibold">Número de tracking</label>
+                      <input type="text" class="form-control" id="tracking-input" maxlength="80"
+                             placeholder="Ej: AR123456789" />
+                      <div class="form-text small">Lo genera el courier (Correo, Andreani, OCA…) cuando despachás.</div>
+                    </div>
+                    <div class="form-check mb-2">
+                      <input class="form-check-input" type="checkbox" id="tracking-mark-shipped" />
+                      <label class="form-check-label small" for="tracking-mark-shipped">
+                        Marcar como <strong>despachado</strong> (la orden pasa a "shipped" y se notifica al comprador)
+                      </label>
+                    </div>
+                    <div id="tracking-error" class="alert alert-danger d-none small mb-0"></div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="tracking-save-btn">
+                      <i class="bi bi-save me-1"></i> Guardar
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -870,6 +925,7 @@
     <script defer src="../JS/dropdown-fix.js"></script>
     <script defer src="../JS/component-loader.js"></script>
     <script defer src="../JS/pages/notifications.js"></script>
+    <script defer src="../JS/pages/mis-ventas.js"></script>
     <script src="../JS/chat.js" defer></script>
     <script src="../JS/support-widget.js" defer></script>
 
@@ -955,6 +1011,22 @@
       .order-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-3); padding-top: var(--spacing-4); border-top: 1px solid var(--gray-100); }
       .order-total { font-size: var(--font-size-lg); font-weight: 800; color: var(--gray-900); }
       .order-total small { display: block; font-size: var(--font-size-xs); font-weight: 500; color: var(--gray-500); }
+
+      /* ---- Mis Ventas (mismas clases .order-* de arriba + estados propios) ---- */
+      .order-buyer { font-size: var(--font-size-sm); color: var(--gray-600); margin-top: 2px; }
+      .status-pending   { background: rgba(245,158,11,.12); color: #92400e; }
+      .status-confirmed { background: rgba(59,130,246,.12); color: #1d4ed8; }
+      .status-shipped   { background: rgba(99,102,241,.12); color: #3730a3; }
+      [data-theme="dark"] .status-pending   { background: rgba(245,158,11,.18); color: #fbbf24; }
+      [data-theme="dark"] .status-confirmed { background: rgba(59,130,246,.18); color: #60a5fa; }
+      [data-theme="dark"] .status-shipped   { background: rgba(99,102,241,.18); color: #818cf8; }
+      .ship-block { background: var(--gray-50); color: var(--gray-700); border-radius: var(--radius-md); padding: var(--spacing-3); margin-top: var(--spacing-3); font-size: var(--font-size-sm); }
+      .ship-block strong { display: block; margin-bottom: var(--spacing-1); }
+      [data-theme="dark"] .ship-block { background: rgba(255,255,255,0.04); }
+      .order-actions { display: flex; gap: var(--spacing-2); flex-wrap: wrap; margin-top: var(--spacing-3); }
+      @media (max-width: 575px) {
+        .order-actions .btn { width: 100%; justify-content: center; }
+      }
 
       /* ---- Centro de Ayuda ---- */
       .help-search-banner { background: var(--gradient-primary); border-radius: var(--radius-xl); padding: var(--spacing-8) var(--spacing-6); text-align: center; color: #ffffff; margin-bottom: var(--spacing-6); }
@@ -1087,7 +1159,7 @@
       });
 
       // ===== NAVEGACIÓN DE SECCIONES =====
-      const allSections = ['notifications','mi-perfil','mensajes','mis-compras','favoritos','centro-ayuda','contacto','reportar-problema','estado-servicio','seguridad'];
+      const allSections = ['notifications','mi-perfil','mensajes','mis-compras','mis-ventas','favoritos','centro-ayuda','contacto','reportar-problema','estado-servicio','seguridad'];
 
       function showSection(name) {
         allSections.forEach(s => {
@@ -1112,6 +1184,9 @@
           stopMensajesPolling();
         }
         if (name === 'favoritos') renderFavoritosPage();
+        if (name === 'mis-ventas' && typeof initMisVentasSection === 'function') {
+          initMisVentasSection();
+        }
       }
 
       // ===== FAVORITOS =====
@@ -1835,7 +1910,14 @@
           showSection(section);
         }
       }
-      navigateToHash();
+      // Este <script> no es defer — corre durante el parseo, antes de que
+      // los scripts defer (mis-ventas.js, favorites.js, etc.) hayan
+      // ejecutado. Si el usuario entra directo con #mis-ventas o
+      // #favoritos, showSection() llamaba a un hook que todavía no existía
+      // (typeof … === 'function' fallaba en silencio) y la sección quedaba
+      // pegada en su estado inicial (spinner de "Cargando…" para siempre).
+      // 'load' sí espera a que todo (incluidos los defer) haya corrido.
+      window.addEventListener('load', navigateToHash);
       window.addEventListener('hashchange', navigateToHash);
     </script>
   </body>

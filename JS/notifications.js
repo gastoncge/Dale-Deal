@@ -385,7 +385,7 @@ class NotificationManager {
         window.location.href = `${prefix}notificaciones.html#mis-compras`;
         break;
       case 'view-sale':    // Vendedor ve la venta
-        window.location.href = `${prefix}mis-ventas.html`;
+        window.location.href = `${prefix}notificaciones.html#mis-ventas`;
         break;
       case 'rate':         // Dejar reseña: ir al producto, scrollear al tab
         if (data.orderId) {

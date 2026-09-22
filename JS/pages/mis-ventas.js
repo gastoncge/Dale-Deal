@@ -1,38 +1,57 @@
 // =====================================================
 // DALE DEAL - Mis ventas (dashboard del vendedor)
+// Vive como sección de HTML/notificaciones.html ("Mi Centro"), no como
+// página aparte — initMisVentasSection() la llama showSection('mis-ventas')
+// cada vez que el usuario entra a la pestaña (ver notificaciones.html).
 // =====================================================
 
 (function () {
   'use strict';
 
-  let currentOrders   = [];
-  let trackingModal   = null;
-  let activeOrderId   = null;
+  let currentOrders = [];
+  let trackingModal = null;
+  let activeOrderId = null;
+  let wired = false; // evita re-crear el modal / re-bindear el submit en cada visita a la pestaña
 
-  document.addEventListener('DOMContentLoaded', async () => {
+  window.initMisVentasSection = async function initMisVentasSection() {
+    if (!wired) {
+      const modalEl = document.getElementById('trackingModal');
+      if (modalEl && window.bootstrap) trackingModal = new bootstrap.Modal(modalEl);
+      document.getElementById('tracking-save-btn')?.addEventListener('click', saveTracking);
+      wired = true;
+    }
+
     if (!localStorage.getItem('daledeal_token')) {
-      window.location.href = './login.html?redirect=mis-ventas';
+      renderLoginRequired();
       return;
     }
 
-    trackingModal = new bootstrap.Modal(document.getElementById('trackingModal'));
-
-    document.getElementById('tracking-save-btn')
-      .addEventListener('click', saveTracking);
-
     await loadSales();
-  });
+  };
+
+  function renderLoginRequired() {
+    const listEl = document.getElementById('misVentasList');
+    if (!listEl) return;
+    listEl.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon"><i class="bi bi-person-lock"></i></div>
+        <h3 class="empty-state-title">Iniciá sesión</h3>
+        <p class="empty-state-text">Necesitás estar logueado para ver tus ventas.</p>
+        <a href="./login.html?redirect=${encodeURIComponent('/HTML/notificaciones.html#mis-ventas')}" class="empty-state-cta btn btn-primary">
+          <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar sesión
+        </a>
+      </div>`;
+  }
 
   async function loadSales() {
-    const loadingEl = document.getElementById('ventas-loading');
-    const emptyEl   = document.getElementById('ventas-empty');
-    const errorEl   = document.getElementById('ventas-error');
-    const listEl    = document.getElementById('ventas-list');
+    const listEl = document.getElementById('misVentasList');
+    if (!listEl) return;
 
-    loadingEl.style.display = '';
-    emptyEl.style.display   = 'none';
-    errorEl.style.display   = 'none';
-    listEl.innerHTML = '';
+    listEl.innerHTML = `
+      <div class="empty-state">
+        <div class="spinner-border text-danger" role="status" aria-hidden="true"></div>
+        <p class="empty-state-text mt-3">Cargando tus ventas…</p>
+      </div>`;
 
     try {
       const apiFetch = window.DaleDeal?.api?.apiFetch;
@@ -41,28 +60,36 @@
       const res = await apiFetch('/orders/sales?limit=50');
       currentOrders = res?.data || [];
 
-      loadingEl.style.display = 'none';
-
       if (currentOrders.length === 0) {
-        emptyEl.style.display = '';
+        listEl.innerHTML = `
+          <div class="empty-state">
+            <i class="bi bi-bag-check empty-state-icon" aria-hidden="true"></i>
+            <h3 class="empty-state-title">Todavía no tenés ventas</h3>
+            <p class="empty-state-text">Cuando alguien compre uno de tus productos o contrate un servicio, va a aparecer acá.</p>
+            <a href="./publicar.html" class="btn btn-primary">
+              <i class="bi bi-plus-circle me-2"></i>Publicar algo
+            </a>
+          </div>`;
         return;
       }
 
       listEl.innerHTML = currentOrders.map(renderOrderCard).join('');
 
-      // Wire-up de botones por orden
       listEl.querySelectorAll('[data-action]').forEach(btn => {
         btn.addEventListener('click', () => {
-          const action  = btn.dataset.action;
+          const action = btn.dataset.action;
           const orderId = parseInt(btn.dataset.orderId, 10);
           if (action === 'tracking') openTrackingModal(orderId);
           if (action === 'delivered') markDelivered(orderId);
         });
       });
     } catch (err) {
-      loadingEl.style.display = 'none';
-      errorEl.style.display = '';
-      document.getElementById('ventas-error-msg').textContent = err.message || '';
+      listEl.innerHTML = `
+        <div class="empty-state is-error">
+          <i class="bi bi-exclamation-triangle empty-state-icon" aria-hidden="true"></i>
+          <h3 class="empty-state-title">No pudimos cargar tus ventas</h3>
+          <p class="empty-state-text">${escape(err.message || '')}</p>
+        </div>`;
       console.error('[mis-ventas] error:', err);
     }
   }
@@ -104,21 +131,23 @@
       `;
     }
 
+    const imgFallback = window.DaleDeal?.utils?.imgFallbackAttr ? window.DaleDeal.utils.imgFallbackAttr() : '';
+
     return `
       <div class="order-card">
-        <div class="d-flex justify-content-between align-items-start mb-2">
+        <div class="order-header">
           <div>
-            <div class="order-id">Orden #${o.id} · ${formatDate(o.created_at)}</div>
+            <div class="order-id">Orden #${o.id}</div>
+            <div class="order-date">${formatDate(o.created_at)}</div>
             <div class="order-buyer"><i class="bi bi-person me-1"></i>${escape(o.buyer_name || 'Comprador')}</div>
           </div>
-          <span class="badge-status status-${o.status}">${statusLabel}</span>
+          <span class="order-status status-${o.status}">${statusLabel}</span>
         </div>
         <div class="order-row">
-          <img class="order-img" src="${getProductImage(o)}" alt="" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
-          <div class="order-meta">
-            <p class="order-title">${escape(o.product_title || 'Producto')}</p>
-            <div class="text-muted small">Cantidad: ${o.quantity ?? 1}</div>
-            <div class="fw-bold mt-1">Total: ${formatPrice(o.total_price)}</div>
+          <img class="order-item-img" src="${getProductImage(o)}" alt="" loading="lazy" decoding="async" ${imgFallback} />
+          <div>
+            <p class="order-item-name mb-1">${escape(o.product_title || 'Producto')}</p>
+            <div class="order-item-qty">Cantidad: ${o.quantity ?? 1}</div>
           </div>
         </div>
         ${shipBlock}
@@ -137,6 +166,9 @@
             ` : ''}
           </div>
         ` : ''}
+        <div class="order-footer">
+          <span class="order-total">Total: ${formatPrice(o.total_price)}</span>
+        </div>
       </div>
     `;
   }
@@ -144,7 +176,7 @@
   function openTrackingModal(orderId) {
     activeOrderId = orderId;
     const order = currentOrders.find(o => o.id === orderId);
-    if (!order) return;
+    if (!order || !trackingModal) return;
 
     document.getElementById('tracking-order-info').textContent =
       `Orden #${order.id} · ${order.product_title || 'Producto'} · ${formatPrice(order.total_price)}`;
