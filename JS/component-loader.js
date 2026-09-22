@@ -237,7 +237,8 @@ async function loadAllComponents() {
           window.authManager.updateUI();
         }
       } catch (_) {}
-      // Evento global por si otros módulos lo necesitan
+      // Evento global: también lo escucha init-aos.js para no llamar a
+      // AOS.init() hasta que el navbar (con sus [data-aos]) ya esté en el DOM.
       document.dispatchEvent(new CustomEvent('daledeal:header-loaded'));
     }, 100);
   }

@@ -241,6 +241,6 @@
     <script defer src="../JS/api.js"></script>
     <script defer src="../JS/api-messages.js"></script>
     <script defer src="../JS/api-payments.js"></script>
-    <script>document.addEventListener('DOMContentLoaded', () => { if (window.AOS) AOS.init({ duration: 800, once: true, offset: 100 }); });</script>
+    <script>document.addEventListener('daledeal:header-loaded', () => { if (window.AOS) AOS.init({ duration: 800, once: true, offset: 100 }); }, { once: true });</script>
   </body>
 </html>

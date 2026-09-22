@@ -193,6 +193,6 @@
         $('overallTime').textContent = new Date().toLocaleString('es-AR', { dateStyle: 'medium', timeStyle: 'short' });
       });
     </script>
-    <script>document.addEventListener('DOMContentLoaded', () => { if (window.AOS) AOS.init({ duration: 800, once: true, offset: 100 }); });</script>
+    <script>document.addEventListener('daledeal:header-loaded', () => { if (window.AOS) AOS.init({ duration: 800, once: true, offset: 100 }); }, { once: true });</script>
   </body>
 </html>

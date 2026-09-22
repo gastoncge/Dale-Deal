@@ -258,11 +258,12 @@
     <script defer src="../JS/api-messages.js"></script>
     <script defer src="../JS/api-payments.js"></script>
     <script>
-      // AOS dentro de DOMContentLoaded — los `defer` corren entre el cierre
-      // del body y este evento, sino [data-aos] elements quedan invisibles.
-      document.addEventListener('DOMContentLoaded', function() {
+      // AOS.init() esperando el navbar, no DOMContentLoaded — DOMContentLoaded
+      // corre antes de que el fetch() async del header resuelva y dejaba
+      // el logo (data-aos) invisible para siempre.
+      document.addEventListener('daledeal:header-loaded', function() {
         if (typeof AOS !== 'undefined') AOS.init({ duration: 800, once: true, offset: 100 });
-      });
+      }, { once: true });
 
       // Password strength meter
       document.getElementById('newPassword')?.addEventListener('input', function() {
