@@ -209,7 +209,7 @@ class CartManager {
       .map(
         (item) => `
       <div class="cart-item" data-id="${item.id}">
-        <img src="${item.image}" alt="${item.title}" class="cart-item-image">
+        <img src="${item.image}" alt="${item.title}" class="cart-item-image" ${window.DaleDeal.utils.imgFallbackAttr()}>
         <div class="cart-item-info">
           <h6 class="cart-item-title">${item.title}</h6>
           <div class="cart-item-price">${item.priceText || this.formatPrice(item.price)}</div>
@@ -228,10 +228,6 @@ class CartManager {
     `
       )
       .join("");
-
-    const totalPrice = this.getTotalPrice();
-    const shipping = totalPrice > 50000 ? 0 : 5000;
-    const finalTotal = totalPrice + shipping;
 
     cartDropdownBody.innerHTML = `
       <div class="cart-items">
