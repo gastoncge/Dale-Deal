@@ -315,7 +315,7 @@ class ProductPage {
       ? (p.description || '').substring(0, 160) + '…'
       : (p.description || '');
     const fullDesc = previewDesc
-      ? `${previewDesc} Compralo en Dale Deal con cuotas sin interés y envío a todo el país.`
+      ? `${previewDesc} Compralo en Dale Deal con cuotas sin interés. Coordiná la entrega directo con el vendedor.`
       : `${p.title} disponible en Dale Deal. Marketplace argentino de productos y servicios.`;
     const titleSEO = `${p.title} | DALE DEAL`;
 
@@ -1408,7 +1408,7 @@ class ProductPage {
         <div class="product-card ${isRecent ? 'recent-product-card' : 'similar-product-card'} w-100"
              data-id="${pid}" data-clickable="true">
           <div class="product-image-container">
-            <img src="${imgSrc}" alt="${titleSafe}" class="product-image" loading="lazy" decoding="async" />
+            <img src="${imgSrc}" alt="${titleSafe}" class="product-image" loading="lazy" decoding="async" ${window.DaleDeal.utils.imgFallbackAttr()} />
             ${product.discount ? `<div class="product-badges"><span class="badge-offer">-${Number(product.discount) || 0}%</span></div>` : ''}
             ${isRecent ? `<div class="recently-viewed-badge"><i class="bi bi-clock-history"></i></div>` : ''}
             <div class="product-actions">

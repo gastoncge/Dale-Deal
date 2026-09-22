@@ -540,7 +540,7 @@ class FavoritesManager {
       <div class="col-md-6 col-lg-4 mb-4">
         <div class="product-card favorite-product-card" data-id="${id}">
           <div class="product-image-container">
-            <img src="${esc(favorite.imageUrl)}" alt="${esc(favorite.title)}" class="product-image active">
+            <img src="${esc(favorite.imageUrl)}" alt="${esc(favorite.title)}" class="product-image active" ${window.DaleDeal.utils.imgFallbackAttr()}>
 
             <div class="product-actions-favorite">
               <button class="action-remove-favorite" title="Eliminar de favoritos">
@@ -584,7 +584,7 @@ class FavoritesManager {
       <div class="col-md-6 col-lg-4 mb-4">
         <div class="service-card favorite-service-card" data-id="${id}">
           <div class="service-image-container">
-            <img src="${esc(favorite.imageUrl)}" alt="${esc(favorite.title)}" class="service-image">
+            <img src="${esc(favorite.imageUrl)}" alt="${esc(favorite.title)}" class="service-image" ${window.DaleDeal.utils.imgFallbackAttr()}>
 
             <div class="product-actions-favorite">
               <button class="action-remove-favorite" title="Eliminar de favoritos">

@@ -426,6 +426,27 @@ DaleDeal.utils.escapeHtml = (str) => {
     .replace(/'/g, '&#039;');
 };
 
+/**
+ * Placeholder para <img> cuando la URL real (cargada por el vendedor) da
+ * 404/rota — sin esto el browser muestra su ícono nativo de "imagen rota",
+ * feo e inconsistente entre navegadores. SVG inline, sin request de red.
+ */
+// OJO: %27 (no comilla simple literal) en todos los atributos del SVG — el
+// onerror que usa esta constante la mete dentro de un `this.src='...'` (dos
+// comillas simples), así que una comilla simple literal acá cortaría ese
+// string de JS antes de tiempo y rompería el onerror en silencio.
+DaleDeal.utils.IMG_FALLBACK =
+  "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 200%27%3E%3Crect width=%27200%27 height=%27200%27 fill=%27%23252b3d%27/%3E%3Cg fill=%27none%27 stroke=%27%23555f75%27 stroke-width=%276%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Crect x=%2740%27 y=%2750%27 width=%27120%27 height=%27100%27 rx=%278%27/%3E%3Ccircle cx=%2775%27 cy=%2785%27 r=%2710%27/%3E%3Cpath d=%27M40 130l35-30 25 20 30-25 40 35%27/%3E%3C/g%3E%3C/svg%3E";
+
+/**
+ * Atributo onerror listo para pegar en un template de <img>:
+ * `<img src="${esc(url)}" ${DaleDeal.utils.imgFallbackAttr()} class="..." />`
+ * El onerror se autolimpia (onerror=null) para no loopear si el propio
+ * fallback fallara.
+ */
+DaleDeal.utils.imgFallbackAttr = () =>
+  `onerror="this.onerror=null;this.src='${DaleDeal.utils.IMG_FALLBACK}';this.classList.add('img-fallback');"`;
+
 // ===== UTILIDADES DE UI =====
 /**
  * Renderiza estrellas de rating como HTML de Bootstrap Icons.

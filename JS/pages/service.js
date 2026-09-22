@@ -985,7 +985,7 @@ class ServicePage {
     const provider = service.provider || {};
     const providerHTML = provider.name ? `
       <div class="product-provider">
-        <img src="${provider.avatar}" alt="${provider.name}" class="product-provider-avatar" />
+        <img src="${provider.avatar}" alt="${provider.name}" class="product-provider-avatar" ${window.DaleDeal.utils.imgFallbackAttr()} />
         <span class="product-provider-name">${provider.name}</span>
         ${provider.verified ? '<i class="bi bi-patch-check-fill product-provider-verified"></i>' : ''}
       </div>` : '';
@@ -993,7 +993,7 @@ class ServicePage {
     return `
       <div class="product-card w-100" data-id="${service.id}" data-service-id="${service.id}" data-type="service" style="cursor:pointer;">
           <div class="product-image-container">
-            <img src="${service.image}" alt="${service.title}" class="product-image active" loading="lazy" />
+            <img src="${service.image}" alt="${service.title}" class="product-image active" loading="lazy" ${window.DaleDeal.utils.imgFallbackAttr()} />
             ${badgesHTML}
             <div class="product-actions">
               <button class="action-heart" title="Guardar">

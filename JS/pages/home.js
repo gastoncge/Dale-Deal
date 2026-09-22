@@ -107,6 +107,7 @@ function renderProductCard(product) {
             alt="${esc(product.title)} - Vista ${index + 1}"
             class="product-image ${index === 0 ? 'active' : ''}"
             loading="lazy"
+            ${window.DaleDeal.utils.imgFallbackAttr()}
           />
         `).join('')}
 
@@ -133,6 +134,7 @@ function renderProductCard(product) {
         alt="${esc(product.title)}"
         class="product-image"
         loading="lazy"
+        ${window.DaleDeal.utils.imgFallbackAttr()}
       />
     `;
   }
