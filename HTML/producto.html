@@ -749,21 +749,33 @@
     <!-- Form de reviews: monta UI cuando product.js cargó y sabemos el id -->
     <script src="../JS/reviews-form.js" defer></script>
     <script defer>
-      // Esperar a que product.js cargue el producto antes de montar el form
-      // de review. window.__currentProductId lo setea product.js.
-      document.addEventListener('DOMContentLoaded', function tryMount(retries) {
-        retries = typeof retries === 'number' ? retries : 20;
-        const urlParam = new URLSearchParams(window.location.search).get('id');
-        const id = window.__currentProductId || urlParam;
-        if (id && window.DaleDealReviews) {
+      // Esperar a que product.js resuelva el producto (URL param o fallback
+      // de localStorage) antes de montar el form de review. product.js
+      // dispara 'dd:product-ready' y setea window.__currentProductId apenas
+      // lo sabe — escuchamos el evento en vez de sólo pollear el global, para
+      // no depender de una carrera de timing entre ambos scripts.
+      (function () {
+        let mounted = false;
+        function mountReviews(id) {
+          if (mounted || !id || !window.DaleDealReviews) return;
+          mounted = true;
           window.DaleDealReviews.mount('#reviews-form-container', {
             itemType: 'product',
             itemId: parseInt(id, 10),
           });
-        } else if (retries > 0) {
-          setTimeout(() => tryMount(retries - 1), 300);
         }
-      });
+        document.addEventListener('dd:product-ready', (e) => mountReviews(e.detail?.id));
+        document.addEventListener('DOMContentLoaded', function tryMount(retries) {
+          retries = typeof retries === 'number' ? retries : 20;
+          const urlParam = new URLSearchParams(window.location.search).get('id');
+          const id = window.__currentProductId || urlParam;
+          if (id && window.DaleDealReviews) {
+            mountReviews(id);
+          } else if (!mounted && retries > 0) {
+            setTimeout(() => tryMount(retries - 1), 300);
+          }
+        });
+      })();
     </script>
     <script src="../JS/dropdown-fix.js" defer></script>
     <script src="../JS/component-loader.js" defer></script>

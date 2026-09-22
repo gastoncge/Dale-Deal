@@ -389,6 +389,10 @@ const uploadedPhotos = {
   's-photo-area': [],
 };
 let uploadsInFlight = 0;
+// Igual que uploadedPhotos pero para subidas todavía en curso — sin esto,
+// seleccionar un lote de fotos y sumar más antes de que termine el primero
+// dejaba pasar más de MAX_PHOTOS (recién se truncaban, ya subidas, al enviar).
+const uploadsInFlightByArea = { 'p-photo-area': 0, 's-photo-area': 0 };
 
 function getProductImages() {
   return uploadedPhotos['p-photo-area']
@@ -438,6 +442,7 @@ function uploadOnePhoto(file, areaId, previews) {
   previews.appendChild(card);
 
   uploadsInFlight++;
+  uploadsInFlightByArea[areaId]++;
   uploadImageFile(file)
     .then((url) => {
       uploadedPhotos[areaId].push(url);
@@ -464,6 +469,7 @@ function uploadOnePhoto(file, areaId, previews) {
     })
     .finally(() => {
       uploadsInFlight--;
+      uploadsInFlightByArea[areaId]--;
     });
 }
 
@@ -566,11 +572,16 @@ function handleMediaUpload(input, previewId, type) {
     return;
   }
 
-  const room = MAX_PHOTOS - uploadedPhotos[areaId].length;
+  const room = MAX_PHOTOS - uploadedPhotos[areaId].length - uploadsInFlightByArea[areaId];
   const selected = files.filter(f => f.type && f.type.startsWith('image/'));
   const limited = selected.slice(0, Math.max(0, room));
-  if (selected.length > limited.length) {
+  const rejectedByLimit = selected.length - limited.length;
+  const rejectedByType = files.length - selected.length;
+  if (rejectedByLimit > 0) {
     alert(`Podés subir hasta ${MAX_PHOTOS} fotos por publicación.`);
+  }
+  if (rejectedByType > 0) {
+    alert(`${rejectedByType === 1 ? 'Un archivo no es' : rejectedByType + ' archivos no son'} una imagen válida y no se subió.`);
   }
   limited.forEach(file => uploadOnePhoto(file, areaId, previews));
   input.value = ''; // permite volver a elegir los mismos archivos

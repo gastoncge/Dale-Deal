@@ -29,7 +29,23 @@ class ServicePage {
   }
 
   async loadAndRenderReviews() {
-    if (!this.currentService?.id || !window.DaleDealReviews?.loadList) return;
+    if (!this.currentService?.id) return;
+
+    if (!window.DaleDealReviews?.loadList) {
+      // reviews-form.js no llegó a cargar (ad-blocker, CDN caído, error de
+      // red) — sin esto la pestaña quedaba pegada en el skeleton para siempre.
+      const tab = document.querySelector('#reviews .reviews-content');
+      if (tab) {
+        tab.setAttribute('aria-busy', 'false');
+        tab.innerHTML = `
+          <div class="text-center py-5 text-muted">
+            <i class="bi bi-wifi-off" style="font-size:2rem;opacity:.4;"></i>
+            <p class="mt-2 mb-0">No pudimos cargar las reseñas. Recargá la página para reintentar.</p>
+          </div>`;
+      }
+      return;
+    }
+
     const s = this.currentService;
     await window.DaleDealReviews.loadList({
       itemType: 'service',

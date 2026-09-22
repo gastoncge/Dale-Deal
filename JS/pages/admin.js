@@ -616,11 +616,8 @@
           </div>
         </div>`;
       document.body.appendChild(modal);
-
-      // Habilitar el botón solo cuando se chequea el checkbox
-      modal.querySelector('#refundConfirmCheck').addEventListener('change', e => {
-        modal.querySelector('#refundConfirmBtn').disabled = !e.target.checked;
-      });
+      // El bind real del checkbox va más abajo (se re-ejecuta en cada
+      // apertura vía onchange=, que sobreescribe en vez de acumular).
     }
 
     // Rellenar datos del request actual
@@ -638,10 +635,12 @@
     newConfirmBtn.disabled = true;
     confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
 
-    // El listener del checkbox se rompe al clonar — rebind también
-    modal.querySelector('#refundConfirmCheck').addEventListener('change', e => {
+    // Habilitar el botón solo cuando se chequea el checkbox. Se re-asigna en
+    // cada apertura (onchange= sobreescribe, no acumula como addEventListener)
+    // porque newConfirmBtn cambia de referencia cada vez que se clona arriba.
+    modal.querySelector('#refundConfirmCheck').onchange = e => {
       newConfirmBtn.disabled = !e.target.checked;
-    });
+    };
 
     newConfirmBtn.addEventListener('click', async () => {
       const reason = modal.querySelector('#refundReason').value.trim();

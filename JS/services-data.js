@@ -177,6 +177,60 @@ const servicesData = [
     image: 'https://images.unsplash.com/photo-1631545804657-2c2f0b4122bf?w=400&h=300&fit=crop',
     badges: ['Certificado', 'Garantía 2 años'],
     featured: true
+  },
+  {
+    id: 'repair-express',
+    title: 'Reparación Express',
+    description: 'Reparación rápida y profesional con repuestos originales y garantía extendida.',
+    category: 'repair',
+    price: 12999,
+    rating: 4.8,
+    reviewCount: 215,
+    location: 'CABA y GBA',
+    image: 'https://images.unsplash.com/photo-1597733153203-a54d0fbc47de?w=400&h=300&fit=crop',
+    badges: ['Rápido', 'Garantía'],
+    featured: true
+  },
+  {
+    id: 'setup-gaming',
+    title: 'Setup Gaming & Productividad',
+    description: 'Configuración personalizada de tu setup ideal para gaming, trabajo o entretenimiento.',
+    category: 'installation',
+    price: 25999,
+    rating: 5.0,
+    reviewCount: 78,
+    location: 'Buenos Aires',
+    image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=300&fit=crop',
+    badges: ['Personalizado', 'Premium'],
+    topRated: true,
+    featured: true
+  },
+  {
+    id: 'maintenance-preventive',
+    title: 'Mantenimiento Preventivo',
+    description: 'Mantenimiento programado para mantener tus equipos funcionando al máximo rendimiento.',
+    category: 'maintenance',
+    price: 19999,
+    priceType: 'per_visit',
+    rating: 4.7,
+    reviewCount: 142,
+    location: 'Zona Norte',
+    image: 'https://images.unsplash.com/photo-1603899122634-f086ca5f5ddd?w=400&h=300&fit=crop',
+    badges: ['Preventivo', 'Programado'],
+    featured: true
+  },
+  {
+    id: 'data-recovery',
+    title: 'Recuperación de Datos',
+    description: 'Recuperación profesional de datos perdidos con tecnología avanzada y máxima seguridad.',
+    category: 'repair',
+    price: 29999,
+    rating: 4.9,
+    reviewCount: 98,
+    location: 'CABA y GBA',
+    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop',
+    badges: ['Seguro', '95% éxito'],
+    featured: true
   }
 ];
 

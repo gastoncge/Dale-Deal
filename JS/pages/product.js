@@ -122,6 +122,13 @@ class ProductPage {
       pickup_address:    productData.pickup_address || null,
     };
 
+    // Exponer el id apenas se resuelve (URL param o fallback de localStorage)
+    // para que otros módulos (p.ej. el mount del form de reviews) no dependan
+    // de parsear la URL ellos mismos ni de pollear un global que nunca se
+    // seteaba.
+    window.__currentProductId = this.currentProduct.id;
+    document.dispatchEvent(new CustomEvent('dd:product-ready', { detail: { id: this.currentProduct.id } }));
+
     // Convert arrays → keyed objects
     (productData.colors || []).forEach(c => {
       this.currentProduct.colors[c.value] = { name: c.name, price: 0, color: c.color };
@@ -521,7 +528,11 @@ class ProductPage {
     // Escape de title (input usuario) + cast de id a número para evitar
     // injection en el onclick. Mejor sería event delegation con data-id,
     // pero acá voy por el fix mínimo.
-    const esc = (s) => (window.DaleDeal?.utils?.escapeHtml ? DaleDeal.utils.escapeHtml(s) : String(s ?? ''));
+    // Si utils.js no cargó, no hay que fallar abierto (texto crudo en
+    // innerHTML) — escapamos igual con una copia mínima del mismo helper.
+    const esc = (s) => (window.DaleDeal?.utils?.escapeHtml
+      ? DaleDeal.utils.escapeHtml(s)
+      : String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])));
     // Filtramos items sin id válido — antes generábamos `?id=0` que rompía.
     grid.innerHTML = others
       .filter(prod => Number.isFinite(Number(prod.id)) && Number(prod.id) > 0)
@@ -567,7 +578,11 @@ class ProductPage {
 
     const storageKeys = Object.keys(this.currentProduct.storage);
     container.innerHTML = '';
-    const esc = (s) => (window.DaleDeal?.utils?.escapeHtml ? DaleDeal.utils.escapeHtml(s) : String(s ?? ''));
+    // Si utils.js no cargó, no hay que fallar abierto (texto crudo en
+    // innerHTML) — escapamos igual con una copia mínima del mismo helper.
+    const esc = (s) => (window.DaleDeal?.utils?.escapeHtml
+      ? DaleDeal.utils.escapeHtml(s)
+      : String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])));
     storageKeys.forEach((key, i) => {
       const s = this.currentProduct.storage[key];
       const div = document.createElement('div');
@@ -1139,7 +1154,22 @@ class ProductPage {
 
   // ── Reviews: carga real desde el backend ──────────────────────────────────
   async loadAndRenderReviews() {
-    if (!this.currentProduct?.id || !window.DaleDealReviews?.loadList) return;
+    if (!this.currentProduct?.id) return;
+
+    if (!window.DaleDealReviews?.loadList) {
+      // reviews-form.js no llegó a cargar (ad-blocker, CDN caído, error de
+      // red) — sin esto la pestaña quedaba pegada en el skeleton para siempre.
+      const tab = document.querySelector('#reviews .reviews-content');
+      if (tab) {
+        tab.setAttribute('aria-busy', 'false');
+        tab.innerHTML = `
+          <div class="text-center py-5 text-muted">
+            <i class="bi bi-wifi-off" style="font-size:2rem;opacity:.4;"></i>
+            <p class="mt-2 mb-0">No pudimos cargar las reseñas. Recargá la página para reintentar.</p>
+          </div>`;
+      }
+      return;
+    }
 
     await window.DaleDealReviews.loadList({
       itemType: 'product',
@@ -1356,7 +1386,11 @@ class ProductPage {
   renderProductCard(product, isRecent = false) {
     // Escape de title/description (input vendedor). product.id casteado a
     // número porque va a data-id (atributo) y al onclick implícito.
-    const esc = (s) => (window.DaleDeal?.utils?.escapeHtml ? DaleDeal.utils.escapeHtml(s) : String(s ?? ''));
+    // Si utils.js no cargó, no hay que fallar abierto (texto crudo en
+    // innerHTML) — escapamos igual con una copia mínima del mismo helper.
+    const esc = (s) => (window.DaleDeal?.utils?.escapeHtml
+      ? DaleDeal.utils.escapeHtml(s)
+      : String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])));
     const titleSafe = esc(product.title);
     // Si el id no es válido devolvemos cadena vacía — el caller filtra estos
     // items en su renderRecentlyViewed/loadSimilarProducts. Antes pasábamos

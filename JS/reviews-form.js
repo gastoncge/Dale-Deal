@@ -257,7 +257,12 @@
 
     const breakdown = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
     reviews.forEach(r => { breakdown[r.rating] = (breakdown[r.rating] || 0) + 1; });
-    const pct = (n) => total > 0 ? Math.round((n / total) * 100) : 0;
+    // `reviews` es una página (fetchReviews limit:20), no el universo completo
+    // cuando `total` es mayor — dividir por `total` subestimaba cada barra
+    // (sumaban bien menos de 100%). Dividimos por la cantidad que realmente
+    // tenemos, así las barras siempre suman 100% (sobre la muestra cargada).
+    const sampleSize = reviews.length;
+    const pct = (n) => sampleSize > 0 ? Math.round((n / sampleSize) * 100) : 0;
     const label = itemLabel(itemType);
 
     const reviewsHTML = reviews.length === 0

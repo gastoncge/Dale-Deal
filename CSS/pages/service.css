@@ -110,11 +110,8 @@
   background: rgba(139, 92, 246, .13);
   color: #6d28d9;
 }
-@media (prefers-color-scheme: dark) {
-  .verif-badge.verif-identity { background: rgba(29,155,240,.18); color: #6cc0ff; }
-  .verif-badge.verif-pro      { background: rgba(16,185,129,.18); color: #4ade80; }
-  .verif-badge.verif-bg       { background: rgba(139,92,246,.20); color: #c4b5fd; }
-}
+/* Mismo criterio que el resto del sitio: toggle manual via data-theme,
+ * no prefers-color-scheme (evita 2 fuentes de verdad que puedan divergir). */
 :root[data-theme="dark"] .verif-badge.verif-identity { background: rgba(29,155,240,.18); color: #6cc0ff; }
 :root[data-theme="dark"] .verif-badge.verif-pro      { background: rgba(16,185,129,.18); color: #4ade80; }
 :root[data-theme="dark"] .verif-badge.verif-bg       { background: rgba(139,92,246,.20); color: #c4b5fd; }

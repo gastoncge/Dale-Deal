@@ -108,6 +108,21 @@ class FavoritesManager {
         this.handleProductWishlistClick(e);
       }
 
+      // Quitar / agregar al carrito desde las cards de favoritos.
+      // data-* + delegation en vez de onclick inline con el id interpolado.
+      const removeBtn = e.target.closest('.action-remove-favorite');
+      if (removeBtn) {
+        e.stopPropagation();
+        const id = removeBtn.closest('[data-id]')?.dataset.id;
+        if (id) this.removeFromFavoritesModal(id);
+      }
+      const addToCartBtn = e.target.closest('.favorite-actions-buttons .btn-add-to-cart');
+      if (addToCartBtn) {
+        e.stopPropagation();
+        const id = addToCartBtn.closest('[data-id]')?.dataset.id;
+        if (id) this.addToCartFromFavorites(id);
+      }
+
       // Event delegation para clics en product cards
       if (e.target.closest('.product-card[data-clickable="true"]') && !e.target.closest('.action-heart') && !e.target.closest('.carousel-control') && !e.target.closest('.indicator')) {
         const productCard = e.target.closest('.product-card');
@@ -528,7 +543,7 @@ class FavoritesManager {
             <img src="${esc(favorite.imageUrl)}" alt="${esc(favorite.title)}" class="product-image active">
 
             <div class="product-actions-favorite">
-              <button class="action-remove-favorite" title="Eliminar de favoritos" onclick="event.stopPropagation(); window.favoritesManager.removeFromFavoritesModal('${id}')">
+              <button class="action-remove-favorite" title="Eliminar de favoritos">
                 <i class="bi bi-x"></i>
               </button>
             </div>
@@ -550,7 +565,7 @@ class FavoritesManager {
                 ${favorite.originalPriceText ? `<span class="product-original-price">${esc(favorite.originalPriceText)}</span>` : ''}
               </div>
               <div class="favorite-actions-buttons">
-                <button class="btn-add-to-cart" onclick="event.stopPropagation(); window.favoritesManager.addToCartFromFavorites('${id}')">
+                <button class="btn-add-to-cart">
                   <i class="bi bi-cart-plus me-2"></i>Agregar al carrito
                 </button>
               </div>
@@ -572,7 +587,7 @@ class FavoritesManager {
             <img src="${esc(favorite.imageUrl)}" alt="${esc(favorite.title)}" class="service-image">
 
             <div class="product-actions-favorite">
-              <button class="action-remove-favorite" title="Eliminar de favoritos" onclick="event.stopPropagation(); window.favoritesManager.removeFromFavoritesModal('${id}')">
+              <button class="action-remove-favorite" title="Eliminar de favoritos">
                 <i class="bi bi-x"></i>
               </button>
             </div>
