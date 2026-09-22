@@ -237,19 +237,9 @@ async function loadAllComponents() {
           window.authManager.updateUI();
         }
       } catch (_) {}
-      // Evento global por si otros módulos lo necesitan
+      // Evento global: también lo escucha init-aos.js para no llamar a
+      // AOS.init() hasta que el navbar (con sus [data-aos]) ya esté en el DOM.
       document.dispatchEvent(new CustomEvent('daledeal:header-loaded'));
-      // AOS.init() (init-aos.js) puede correr antes de que este fetch
-      // resuelva — sin esto, los elementos [data-aos] del header (p.ej.
-      // el logo) quedan para siempre en su estado pre-animación (invisibles/
-      // corridos fuera de pantalla) porque AOS nunca los escaneó. Pasa
-      // siempre al servir el HTML fuente sin el build (Live Server, etc.);
-      // el build.js de producción evita esto inyectando el navbar estático
-      // antes de que corra ningún script.
-      // refreshHard (no refresh): refresh() solo recalcula posiciones de
-      // elementos que AOS ya conocía — no descubre [data-aos] agregados
-      // después de AOS.init(). refreshHard() vuelve a escanear el DOM.
-      if (window.AOS?.refreshHard) window.AOS.refreshHard();
     }, 100);
   }
 

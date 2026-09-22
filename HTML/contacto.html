@@ -225,14 +225,17 @@
     <script defer src="../JS/dropdown-fix.js"></script>
     <script src="../JS/component-loader.js" defer></script>
     <script>
-      // Wrapped en DOMContentLoaded: los scripts `defer` (AOS incluido)
-      // se evalúan entre el cierre del body y el evento DOMContentLoaded.
-      // Si llamábamos AOS.init() inline, AOS todavía no existía y el guard
-      // `typeof AOS !== 'undefined'` saltaba la init → elementos con
-      // [data-aos] quedaban en opacity:0 (CSS de AOS lo aplica) y la
-      // página entera se veía vacía/negra.
-      document.addEventListener('DOMContentLoaded', function() {
+      // AOS.init() esperando 'daledeal:header-loaded' (component-loader.js),
+      // no DOMContentLoaded: DOMContentLoaded espera a que los scripts
+      // `defer` terminen de CORRER, pero no a que el fetch() async del
+      // navbar resuelva — con DOMContentLoaded, AOS.init() corría antes de
+      // que el navbar estuviera en el DOM y nunca escaneaba sus [data-aos]
+      // (el logo), que quedaba en opacity:0 para siempre.
+      document.addEventListener('daledeal:header-loaded', function() {
         if (typeof AOS !== 'undefined') AOS.init({ duration: 800, once: true, offset: 100 });
+      }, { once: true });
+
+      document.addEventListener('DOMContentLoaded', function() {
 
         // Soporte ?tipo=empresa — pre-selecciona el option y marca tipo oculto
         // (el link "¿Sos una empresa?" en signup.html viene acá con este query)

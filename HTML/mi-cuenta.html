@@ -267,8 +267,14 @@
       // Mi Cuenta — carga + guardado de perfil propio.
       // Diseño: si no hay sesión, mostramos "auth-required" + CTA login.
       //          Si hay sesión, GET /users/me, paint, PUT /users/me al guardar.
-      document.addEventListener('DOMContentLoaded', () => {
+      // AOS.init() esperando el navbar (ver comentario largo en contacto.html)
+      // en vez de DOMContentLoaded, que corre antes de que el fetch() async
+      // del header resuelva y dejaba el logo invisible para siempre.
+      document.addEventListener('daledeal:header-loaded', () => {
         if (typeof AOS !== 'undefined') AOS.init({ duration: 600, once: true, offset: 50 });
+      }, { once: true });
+
+      document.addEventListener('DOMContentLoaded', () => {
 
         const API_BASE = (window.DaleDeal?.CONFIG?.API_BASE_URL || 'https://daledeal-backend-production.up.railway.app').replace(/\/$/, '');
         const TOKEN_KEY = 'daledeal_token';

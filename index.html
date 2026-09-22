@@ -1346,10 +1346,14 @@
     <script defer src="./JS/pages/home.js"></script>
     <script defer src="./JS/recently-viewed.js"></script>
 
-    <!-- AOS.init dentro de DOMContentLoaded porque los inline NO esperan
-         a defer; sin esto AOS no está cargado cuando esta línea evalúa.
-         DOMContentLoaded SÍ espera por los defer scripts. -->
-    <script>document.addEventListener('DOMContentLoaded', () => { if (window.AOS) AOS.init({ duration: 800, easing: "ease-out-cubic", once: true, offset: 50 }); });</script>
+    <!-- AOS.init esperando 'daledeal:header-loaded' (lo dispara
+         component-loader.js) en vez de DOMContentLoaded: DOMContentLoaded
+         espera a que los scripts defer TERMINEN DE CORRER, pero no a que
+         el fetch() async de component-loader.js resuelva — con
+         DOMContentLoaded, AOS.init() corría antes de que el navbar
+         estuviera en el DOM y nunca escaneaba sus [data-aos] (el logo),
+         que quedaba invisible para siempre. -->
+    <script>document.addEventListener('daledeal:header-loaded', () => { if (window.AOS) AOS.init({ duration: 800, easing: "ease-out-cubic", once: true, offset: 50 }); }, { once: true });</script>
     <!-- component-loader.js inyecta el navbar compartido (header.html) en
          #navbar-placeholder. Después llama a authManager.updateUI() para
          que reaplique el estado loggeado/no-loggeado sobre los elementos
