@@ -392,9 +392,14 @@
 }
 
 /* Responsive */
+/* min-height fijo (no "auto") en los 3 breakpoints de acá abajo: los 4
+ * slides (main/offers/product/service) tienen contenido de altura muy
+ * distinta (el de "product" es el más alto, con features + precio), y sin
+ * un mínimo común el carrusel "saltaba" de tamaño en cada transición —
+ * valores medidos con cada slide activo a cada ancho. */
 @media (max-width: 992px) {
   .hero-slide {
-    min-height: auto;
+    min-height: 900px;
     height: auto;
     padding: var(--spacing-12) 0;
   }
@@ -415,7 +420,7 @@
 
 @media (max-width: 768px) {
   .hero-slide {
-    min-height: auto;
+    min-height: 900px;
     height: auto;
     padding: var(--spacing-8) 0;
   }
@@ -515,7 +520,7 @@
 
 @media (max-width: 480px) {
   .hero-slide {
-    min-height: auto;
+    min-height: 820px;
     height: auto;
     padding: var(--spacing-6) 0;
   }
