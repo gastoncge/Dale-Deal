@@ -239,6 +239,14 @@ async function loadAllComponents() {
       } catch (_) {}
       // Evento global por si otros módulos lo necesitan
       document.dispatchEvent(new CustomEvent('daledeal:header-loaded'));
+      // AOS.init() (init-aos.js) puede correr antes de que este fetch
+      // resuelva — sin refresh, los elementos [data-aos] del header (p.ej.
+      // el logo) quedan para siempre en su estado pre-animación (invisibles/
+      // corridos fuera de pantalla) porque AOS nunca los escaneó. Pasa
+      // siempre al servir el HTML fuente sin el build (Live Server, etc.);
+      // el build.js de producción evita esto inyectando el navbar estático
+      // antes de que corra ningún script.
+      if (window.AOS?.refresh) window.AOS.refresh();
     }, 100);
   }
 
