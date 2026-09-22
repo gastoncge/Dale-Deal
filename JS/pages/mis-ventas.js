@@ -117,7 +117,7 @@
           <img class="order-img" src="${getProductImage(o)}" alt="" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
           <div class="order-meta">
             <p class="order-title">${escape(o.product_title || 'Producto')}</p>
-            <div class="text-muted small">Cantidad: ${o.quantity}</div>
+            <div class="text-muted small">Cantidad: ${o.quantity ?? 1}</div>
             <div class="fw-bold mt-1">Total: ${formatPrice(o.total_price)}</div>
           </div>
         </div>
