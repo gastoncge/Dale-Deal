@@ -8,6 +8,16 @@
   let currentOrders   = [];
   let trackingModal   = null;
   let activeOrderId   = null;
+  let carriers        = [];
+
+  // Por si el backend todavía no expone GET /shipping/carriers.
+  const FALLBACK_CARRIERS = [
+    { slug: 'correo_argentino', name: 'Correo Argentino' },
+    { slug: 'andreani',         name: 'Andreani' },
+    { slug: 'oca',              name: 'OCA' },
+    { slug: 'via_cargo',        name: 'Vía Cargo' },
+    { slug: 'other',            name: 'Otro correo' },
+  ];
 
   document.addEventListener('DOMContentLoaded', async () => {
     if (!localStorage.getItem('daledeal_token')) {
@@ -20,8 +30,21 @@
     document.getElementById('tracking-save-btn')
       .addEventListener('click', saveTracking);
 
-    await loadSales();
+    await Promise.all([loadCarriers(), loadSales()]);
   });
+
+  async function loadCarriers() {
+    const sel = document.getElementById('tracking-carrier');
+    if (!sel) return;
+    try {
+      const res = await window.DaleDeal?.api?.apiFetch('/shipping/carriers');
+      carriers = Array.isArray(res?.data) && res.data.length ? res.data : FALLBACK_CARRIERS;
+    } catch (_) {
+      carriers = FALLBACK_CARRIERS;
+    }
+    sel.innerHTML = '<option value="">Elegí el correo…</option>'
+      + carriers.map(c => `<option value="${escape(c.slug)}">${escape(c.name)}</option>`).join('');
+  }
 
   async function loadSales() {
     const loadingEl = document.getElementById('ventas-loading');
@@ -89,7 +112,8 @@
           <div>${escape(o.shipping_recipient_name || '—')} · ${escape(o.shipping_phone || '')}</div>
           <div>${escape(o.shipping_street || '')}, ${escape(o.shipping_city || '')}, ${escape(o.shipping_province || '')} ${o.shipping_postal_code ? `(CP ${escape(o.shipping_postal_code)})` : ''}</div>
           ${o.shipping_notes ? `<div class="text-muted mt-1">Nota: ${escape(o.shipping_notes)}</div>` : ''}
-          ${o.tracking_number ? `<div class="mt-1"><strong>Tracking:</strong> ${escape(o.tracking_number)}</div>` : ''}
+          ${o.tracking_number ? `<div class="mt-1"><strong>Seguimiento</strong>${o.shipping_carrier_name ? escape(o.shipping_carrier_name) + ' · ' : ''}${escape(o.tracking_number)}${o.tracking_url ? ` · <a href="${escape(o.tracking_url)}" target="_blank" rel="noopener">Seguir envío <i class="bi bi-box-arrow-up-right"></i></a>` : ''}</div>` : ''}
+          ${o.tracking_status_label ? `<div class="mt-1"><i class="bi bi-truck me-1"></i>${escape(o.tracking_status_label)}${o.tracking_status_at ? ' · ' + formatDate(o.tracking_status_at) : ''}${o.delivered_source === 'carrier' ? ' (confirmado por el correo)' : ''}</div>` : ''}
           <div class="text-muted mt-1">
             Costo del envío cobrado: ${formatPrice(o.shipping_cost || 0)}
           </div>
@@ -149,6 +173,8 @@
     document.getElementById('tracking-order-info').textContent =
       `Orden #${order.id} · ${order.product_title || 'Producto'} · ${formatPrice(order.total_price)}`;
     document.getElementById('tracking-input').value = order.tracking_number || '';
+    const carrierSel = document.getElementById('tracking-carrier');
+    if (carrierSel) carrierSel.value = order.shipping_carrier || '';
     document.getElementById('tracking-mark-shipped').checked = order.status === 'confirmed';
     document.getElementById('tracking-error').classList.add('d-none');
     trackingModal.show();
@@ -158,10 +184,16 @@
     if (!activeOrderId) return;
     const tracking = document.getElementById('tracking-input').value.trim();
     const markShipped = document.getElementById('tracking-mark-shipped').checked;
+    const carrier  = document.getElementById('tracking-carrier')?.value || '';
     const errorEl = document.getElementById('tracking-error');
     const btn     = document.getElementById('tracking-save-btn');
 
     errorEl.classList.add('d-none');
+    if (tracking && !carrier) {
+      errorEl.textContent = 'Elegí con qué correo lo mandaste, así el comprador puede seguir el envío.';
+      errorEl.classList.remove('d-none');
+      return;
+    }
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando…';
 
@@ -171,6 +203,7 @@
         method: 'PATCH',
         body: JSON.stringify({
           tracking_number: tracking || null,
+          carrier:         carrier || null,
           mark_shipped:    markShipped,
         }),
       });

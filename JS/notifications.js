@@ -87,7 +87,7 @@ class NotificationManager {
       return {
         id, type: 'orders', timestamp: ts, time: this.relativeTime(ts), read: false,
         title: 'Tu pedido fue despachado',
-        message: `${product} (#${orderId}) está en camino${o.tracking_number ? ` · Tracking: ${o.tracking_number}` : ''}`,
+        message: `${product} (#${orderId}) está en camino${o.shipping_carrier_name ? ` por ${o.shipping_carrier_name}` : ''}${o.tracking_number ? ` · Tracking: ${o.tracking_number}` : ''}`,
         icon: 'bi-truck', iconColor: 'bg-info',
         actions: [{ label: 'Ver detalles', action: 'view', data: { orderId } }],
       };

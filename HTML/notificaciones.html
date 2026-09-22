@@ -548,10 +548,9 @@
                   <button class="filter-tab" data-order-filter="cancelled">Cancelados</button>
                 </div>
               </div>
-              <!-- Listado dinámico: JS/pages/notifications.js debe poblar este contenedor
-                   con los pedidos reales del usuario desde el backend (GET /api/orders/mine).
-                   Mientras no haya integración, mostramos estado vacío en lugar de
-                   mockups falsos (#12345, iPhone, etc.) que confundían al usuario. -->
+              <!-- Listado dinámico: JS/pages/mis-compras.js lo puebla con los pedidos
+                   reales (GET /orders/my), el seguimiento del envío y el botón
+                   "Recibí el producto". El estado vacío de abajo es el placeholder inicial. -->
               <div class="orders-list" id="misComprasList">
                 <div class="empty-state">
                   <i class="bi bi-bag empty-state-icon" aria-hidden="true"></i>
@@ -869,6 +868,7 @@
     <script defer src="../JS/dropdown-fix.js"></script>
     <script defer src="../JS/component-loader.js"></script>
     <script defer src="../JS/pages/notifications.js"></script>
+    <script defer src="../JS/pages/mis-compras.js"></script>
     <script src="../JS/chat.js" defer></script>
     <script src="../JS/support-widget.js" defer></script>
 

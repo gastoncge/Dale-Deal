@@ -188,7 +188,15 @@
             <p class="small text-muted" id="tracking-order-info"></p>
 
             <div class="mb-3">
-              <label class="form-label small fw-semibold">Número de tracking</label>
+              <label class="form-label small fw-semibold" for="tracking-carrier">Correo</label>
+              <select class="form-select" id="tracking-carrier">
+                <option value="">Elegí el correo…</option>
+              </select>
+              <div class="form-text small">Con el correo elegido, el comprador recibe el link para seguir el envío.</div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold" for="tracking-input">Número de tracking</label>
               <input type="text" class="form-control" id="tracking-input" maxlength="80"
                      placeholder="Ej: AR123456789" />
               <div class="form-text small">Lo genera el courier (Correo, Andreani, OCA…) cuando despachás.</div>
