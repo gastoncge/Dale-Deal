@@ -226,8 +226,12 @@ function inlineCriticalCssInHome() {
 // El JS de component-loader.js sigue funcionando como fallback y para
 // reaplicar los path fixes / authManager.updateUI() después de hidratar.
 //
-// Footer NO se inyecta porque está al final de la página, no es above-the-fold
-// y el flash es invisible (se ve solo al hacer scroll).
+// El footer también se inyecta (ver inlineFooterInHtmls): no por el flash,
+// sino porque en producción el fetch en runtime NO puede funcionar — las
+// páginas se sirven con URL limpia (/notificaciones) y el _redirects manda
+// cualquier /HTML/* a /:splat con 301, así que /HTML/components/footer.html
+// termina en /components/footer.html → 404 y las páginas internas quedaban
+// sin footer (la home lo tiene inline).
 function inlineNavbarInHtmls() {
   const headerSrc = path.join(ROOT, 'HTML', 'components', 'header.html');
   if (!fs.existsSync(headerSrc)) {
@@ -286,6 +290,50 @@ function inlineNavbarInHtmls() {
     injected++;
   }
   console.log(`✓ Navbar inyectada en ${injected} HTMLs (sin flash de hidratación)`);
+}
+
+// Inyecta el footer (HTML/components/footer.html) en cada HTML que tenga el
+// div#footer-placeholder vacío. footer.html asume que vive en /HTML/ (hrefs
+// ./x.html y logo ../IMG/), igual que header.html: en /HTML/ va tal cual y en
+// la raíz se reescriben las rutas. component-loader.js detecta que el
+// placeholder ya tiene contenido y no lo vuelve a pedir.
+function inlineFooterInHtmls() {
+  const footerSrc = path.join(ROOT, 'HTML', 'components', 'footer.html');
+  if (!fs.existsSync(footerSrc)) {
+    console.log('= footer.html no existe, skipeo inline footer');
+    return;
+  }
+  const footerHtml = fs.readFileSync(footerSrc, 'utf8');
+
+  const htmls = [];
+  const walk = (d) => {
+    for (const entry of fs.readdirSync(d, { withFileTypes: true })) {
+      const p = path.join(d, entry.name);
+      if (entry.isDirectory()) walk(p);
+      else if (entry.name.endsWith('.html')) htmls.push(p);
+    }
+  };
+  walk(DIST);
+
+  let injected = 0;
+  for (const fp of htmls) {
+    let content = fs.readFileSync(fp, 'utf8');
+    const placeholderRe = /<div\s+id="footer-placeholder"\s*>\s*<\/div>/;
+    if (!placeholderRe.test(content)) continue;
+
+    const fromRoot = path.relative(DIST, fp).indexOf(path.sep) === -1;
+    let footerFixed = footerHtml;
+    if (fromRoot) {
+      footerFixed = footerFixed
+        .replace(/href="\.\/(?!index\.html|HTML\/|#)([^"]+\.html[^"]*)"/g, 'href="./HTML/$1"')
+        .replace(/src="\.\.\/IMG\//g, 'src="./IMG/');
+    }
+
+    content = content.replace(placeholderRe, '<div id="footer-placeholder">' + footerFixed + '</div>');
+    fs.writeFileSync(fp, content);
+    injected++;
+  }
+  console.log(`✓ Footer inyectado en ${injected} HTMLs (en prod el fetch en runtime daba 404)`);
 }
 
 // Inyecta el snippet de Cloudflare Web Analytics antes del </body> en cada HTML.
@@ -560,6 +608,7 @@ async function build() {
   copyHTMLsAndAssets();
   rewriteHtmlLinksToBundle();     // reemplaza 3 links → 1 link a core.css en dist/
   inlineNavbarInHtmls();          // inyecta navbar en cada HTML (sin flash)
+  inlineFooterInHtmls();          // inyecta footer (el fetch en runtime falla con URLs limpias)
   // NOTA: inlineCriticalCssInHome() probado y deshabilitado — en local sin gzip
   // hace el HTML 3x más grande y empeora FCP. En producción con gzip+HTTP/2
   // sería ganancia (1 request menos). Reactivar si se valida en deploy real.

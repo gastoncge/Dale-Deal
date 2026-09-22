@@ -245,7 +245,12 @@ async function loadAllComponents() {
   // Cargar footer
   const footerPlaceholder = document.getElementById('footer-placeholder');
   if (footerPlaceholder) {
-    await loadComponent(`${basePath}footer.html`, 'footer-placeholder');
+    // Si el build ya inyectó el footer (build.js → inlineFooterInHtmls) no lo
+    // pedimos de nuevo: en producción las páginas viven en URLs limpias y
+    // /HTML/components/footer.html redirige a un 404.
+    if (footerPlaceholder.children.length === 0) {
+      await loadComponent(`${basePath}footer.html`, 'footer-placeholder');
+    }
     // Esperar un poco para que el DOM se actualice
     setTimeout(() => {
       initializeNewsletterForm();
