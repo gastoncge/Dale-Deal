@@ -1286,6 +1286,21 @@ nav.navbar {
   transition: opacity var(--transition-base);
 }
 
+/* Placeholder de imagen rota (ver DaleDeal.utils.imgFallbackAttr en utils.js)
+ * — contain en vez de cover para no recortar/estirar el ícono. */
+.product-image.img-fallback,
+.service-image.img-fallback {
+  object-fit: contain;
+  padding: var(--spacing-8);
+  background: #252b3d;
+}
+.cart-item-image.img-fallback,
+.product-provider-avatar.img-fallback {
+  object-fit: contain;
+  padding: 15%;
+  background: #252b3d;
+}
+
 .product-image-carousel .product-image {
   position: absolute;
   top: 0;
@@ -4786,7 +4801,7 @@ nav.navbar {
     height: 60px;
   }
 
-  .cart-item-details {
+  .cart-item-info {
     gap: var(--spacing-1);
   }
 
