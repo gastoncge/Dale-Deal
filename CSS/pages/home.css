@@ -29,7 +29,14 @@
 
 @media (min-width: 1024px) {
   .hero-slide {
-    min-height: 480px;
+    /* 480px no alcanzaba para el slide más alto (hero-slide-product,
+     * mide ~550px con el grid de features + precio a 1440px de ancho,
+     * y hasta ~646px a 1024px porque el texto se ajusta más angosto)
+     * — con min-height más bajo que el contenido real, cada slide
+     * crecía más allá del mínimo según SU propio contenido, y el
+     * carrusel saltaba de tamaño en cada transición igual que en
+     * mobile/tablet. 660px cubre el peor caso medido (1024px de ancho). */
+    min-height: 660px;
     padding: var(--spacing-12) 0;
   }
 }
@@ -397,7 +404,10 @@
  * distinta (el de "product" es el más alto, con features + precio), y sin
  * un mínimo común el carrusel "saltaba" de tamaño en cada transición —
  * valores medidos con cada slide activo a cada ancho. */
-@media (max-width: 992px) {
+@media (max-width: 1023px) {
+  /* 1023 (no 992) para no dejar un hueco 993-1023px sin ninguna regla de
+   * min-height — ahí no aplicaba ésta (max-width:992) ni la de arriba
+   * (min-width:1024), y el carrusel volvía a saltar de tamaño. */
   .hero-slide {
     min-height: 900px;
     height: auto;
