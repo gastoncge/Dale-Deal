@@ -93,6 +93,19 @@ class NotificationManager {
       };
     }
     if (o.status === 'delivered') {
+      // Compra Protegida: el vendedor cobra cuando el comprador confirma. Solo
+      // si el backend manda buyer_confirmed_at (versiones viejas no lo tienen).
+      const closed = o.release_status === 'released' || o.release_status === 'refunded';
+      if (o.payment_status === 'paid' && 'buyer_confirmed_at' in o && !o.buyer_confirmed_at && !closed) {
+        const tsDelivered = o.delivered_at ? new Date(o.delivered_at).getTime() : ts;
+        return {
+          id: `buyer-${o.id}-confirm`, type: 'orders', timestamp: tsDelivered, time: this.relativeTime(tsDelivered), read: false,
+          title: '¿Te llegó bien?',
+          message: `${product} (#${orderId}) figura entregado. Confirmá que lo recibiste para que el vendedor cobre.`,
+          icon: 'bi-box-seam', iconColor: 'bg-info',
+          actions: [{ label: 'Confirmar recepción', action: 'view', data: { orderId } }],
+        };
+      }
       return {
         id, type: 'orders', timestamp: ts, time: this.relativeTime(ts), read: false,
         title: 'Pedido entregado',
@@ -124,30 +137,58 @@ class NotificationManager {
 
   // Vista del vendedor
   buildSellerNotification(o) {
-    const id = `seller-${o.id}-${o.status}`;
-    const ts = new Date(o.updated_at || o.created_at).getTime();
     const product = o.product_title || 'tu producto';
     const orderId = o.id;
     const buyer   = o.buyer_name || 'un comprador';
+    const paid    = o.payment_status === 'paid';
+    const notif = (id, when, fields) => {
+      const ts = new Date(when || o.updated_at || o.created_at).getTime();
+      return { id, type: 'orders', timestamp: ts, time: this.relativeTime(ts), read: false, ...fields };
+    };
+    const net = o.payout_net != null
+      ? parseFloat(o.payout_net)
+      : (parseFloat(o.total_price) || 0) - (parseFloat(o.commission_amount) || 0);
+    const money = n => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(n || 0);
+    const viewSale = [{ label: 'Ver venta', action: 'view-sale', data: { orderId } }];
 
-    // Nueva venta (pago confirmado)
-    if (o.status === 'confirmed' || o.payment_status === 'paid') {
-      return {
-        id, type: 'orders', timestamp: ts, time: this.relativeTime(ts), read: false,
-        title: '¡Tenés una venta nueva!',
-        message: `${buyer} compró "${product}". Preparalo para envío.`,
-        icon: 'bi-cart-check', iconColor: 'bg-success',
-        actions: [{ label: 'Ver venta', action: 'view-sale', data: { orderId } }],
-      };
+    // La plata del vendedor (Compra Protegida) es lo que más le importa.
+    if (o.release_status === 'released') {
+      return notif(`seller-${orderId}-released`, o.released_at, {
+        title: 'Te liberamos el pago',
+        message: `${money(net)} por "${product}" (#${orderId})${o.payout_reference ? ` · Comprobante ${o.payout_reference}` : ''}`,
+        icon: 'bi-cash-coin', iconColor: 'bg-success', actions: viewSale,
+      });
     }
-    if (o.status === 'delivered') {
-      return {
-        id, type: 'orders', timestamp: ts, time: this.relativeTime(ts), read: false,
-        title: 'Venta completada',
-        message: `${buyer} recibió "${product}". Tu pago está liberado.`,
-        icon: 'bi-cash-coin', iconColor: 'bg-success',
-        actions: [],
-      };
+    if (o.release_status === 'held') {
+      return notif(`seller-${orderId}-held`, null, {
+        title: 'Pago frenado por un reclamo',
+        message: `La venta de "${product}" (#${orderId}) tiene un reclamo en revisión. Te vamos a contactar.`,
+        icon: 'bi-pause-circle', iconColor: 'bg-danger', actions: viewSale,
+      });
+    }
+    if (paid && o.buyer_confirmed_at) {
+      return notif(`seller-${orderId}-buyer-confirmed`, o.buyer_confirmed_at, {
+        title: 'Confirmaron la recepción',
+        message: `${buyer} recibió "${product}". Tu pago${net > 0 ? ` de ${money(net)}` : ''} queda listo para liberar.`,
+        icon: 'bi-patch-check', iconColor: 'bg-success', actions: viewSale,
+      });
+    }
+    if (paid && o.status === 'delivered') {
+      return notif(`seller-${orderId}-delivered`, o.delivered_at, {
+        title: 'Venta entregada',
+        message: `"${product}" fue entregado. Tu pago se libera cuando ${buyer} confirme la recepción o a los 7 días.`,
+        icon: 'bi-box-seam', iconColor: 'bg-info', actions: viewSale,
+      });
+    }
+    // Venta nueva: mismo id mientras la preparás y la despachás, así no se repite.
+    if (paid || o.status === 'confirmed') {
+      return notif(`seller-${orderId}-confirmed`, o.created_at, {
+        title: '¡Tenés una venta nueva!',
+        message: o.status === 'shipped'
+          ? `${buyer} compró "${product}". Ya lo despachaste: te avisamos cuando lo reciba.`
+          : `${buyer} compró "${product}". Preparalo para envío.`,
+        icon: 'bi-cart-check', iconColor: 'bg-success', actions: viewSale,
+      });
     }
     return null;
   }

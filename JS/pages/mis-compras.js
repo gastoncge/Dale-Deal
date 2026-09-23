@@ -95,7 +95,11 @@
   function card(o) {
     const statusLabel = STATUS_LABEL[o.status] || o.status;
     const confirmed   = !!o.buyer_confirmed_at;
-    const canConfirm  = !confirmed && (o.status === 'shipped' || o.status === 'delivered');
+    // Pago ya liberado (a los 7 días sin reclamo, o por el admin) o reembolsado:
+    // la compra está cerrada y confirmar ya no cambia nada.
+    const refunded    = o.payment_status === 'refunded' || o.release_status === 'refunded';
+    const closed      = refunded || o.release_status === 'released';
+    const canConfirm  = !confirmed && !closed && (o.status === 'shipped' || o.status === 'delivered');
     const byCarrier   = o.status === 'delivered' && o.delivered_source === 'carrier';
     const carrierName = o.shipping_carrier_name || '';
 
@@ -145,6 +149,11 @@
       actions = `
         <div class="order-actions">
           <span class="order-hint text-success"><i class="bi bi-patch-check-fill me-1" aria-hidden="true"></i>Recepción confirmada el ${formatDate(o.buyer_confirmed_at)}</span>
+        </div>`;
+    } else if (closed) {
+      actions = `
+        <div class="order-actions">
+          <span class="order-hint"><i class="bi bi-check2-all me-1" aria-hidden="true"></i>${refunded ? 'Compra reembolsada.' : 'Compra finalizada: el pago al vendedor ya se liberó.'}</span>
         </div>`;
     }
 

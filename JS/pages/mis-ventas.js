@@ -10,6 +10,9 @@
   let activeOrderId   = null;
   let carriers        = [];
 
+  // Compra Protegida: días desde la entrega hasta que el pago es liberable.
+  const RELEASE_DAYS  = 7;
+
   // Por si el backend todavía no expone GET /shipping/carriers.
   const FALLBACK_CARRIERS = [
     { slug: 'correo_argentino', name: 'Correo Argentino' },
@@ -146,6 +149,7 @@
           </div>
         </div>
         ${shipBlock}
+        ${payoutBlock(o)}
         ${(showShipActions || showMarkDelivered) ? `
           <div class="order-actions">
             ${showShipActions ? `
@@ -163,6 +167,62 @@
         ` : ''}
       </div>
     `;
+  }
+
+  // ── Cobro (Compra Protegida / escrow) ──────────────────────────────────
+  // En qué quedó la plata de la venta. Si el backend todavía no manda
+  // release_status (versión vieja) no se muestra nada.
+  function payoutBlock(o) {
+    if (o.payment_status === 'refunded' || o.release_status === 'refunded') {
+      return `
+        <div class="payout-block payout-refunded">
+          <strong><i class="bi bi-arrow-counterclockwise me-1"></i>Reembolsado al comprador</strong>
+          <div>Esta venta se devolvió y no se cobra.</div>
+        </div>`;
+    }
+    if (o.payment_status !== 'paid' || !o.release_status) return '';
+
+    const total      = parseFloat(o.total_price) || 0;
+    const commission = parseFloat(o.commission_amount) || 0;
+    const net = o.payout_net != null
+      ? parseFloat(o.payout_net)
+      : Math.round((total - commission) * 100) / 100;
+    const breakdown = `<div class="payout-sub">Neto: <strong>${formatPrice(net)}</strong>${commission ? ` · total ${formatPrice(total)} menos comisión ${formatPrice(commission)}` : ''}</div>`;
+
+    if (o.release_status === 'released') {
+      return `
+        <div class="payout-block payout-released">
+          <strong><i class="bi bi-cash-coin me-1"></i>Pago liberado${o.released_at ? ' el ' + formatDate(o.released_at) : ''}</strong>
+          <div>Te transferimos <strong>${formatPrice(net)}</strong> por Mercado Pago.${o.payout_reference ? ` Comprobante: <span class="payout-ref">${escape(o.payout_reference)}</span>` : ''}</div>
+        </div>`;
+    }
+    if (o.release_status === 'held') {
+      return `
+        <div class="payout-block payout-held">
+          <strong><i class="bi bi-pause-circle me-1"></i>Pago frenado por un reclamo</strong>
+          <div>Lo estamos revisando con el comprador y te vamos a contactar.</div>
+          ${breakdown}
+        </div>`;
+    }
+    if (o.releasable) {
+      return `
+        <div class="payout-block payout-ready">
+          <strong><i class="bi bi-check2-circle me-1"></i>Listo para liberar</strong>
+          <div>${o.buyer_confirmed_at ? 'El comprador confirmó que lo recibió.' : `Pasaron ${RELEASE_DAYS} días de la entrega sin reclamos.`} Te lo transferimos a la brevedad y te avisamos por mail.</div>
+          ${breakdown}
+        </div>`;
+    }
+    const releaseFrom = o.delivered_at
+      ? new Date(new Date(o.delivered_at).getTime() + RELEASE_DAYS * 86400000)
+      : null;
+    return `
+      <div class="payout-block payout-retained">
+        <strong><i class="bi bi-shield-lock me-1"></i>Pago protegido por Compra Protegida</strong>
+        <div>${releaseFrom
+          ? `Se libera cuando el comprador confirme que lo recibió o, si no hay reclamos, desde el ${formatDate(releaseFrom)}.`
+          : `Se libera cuando el comprador confirme que lo recibió, o a los ${RELEASE_DAYS} días de la entrega.`}</div>
+        ${breakdown}
+      </div>`;
   }
 
   function openTrackingModal(orderId) {
