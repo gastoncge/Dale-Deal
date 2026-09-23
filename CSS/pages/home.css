@@ -499,17 +499,20 @@
     bottom: var(--spacing-4) !important;
   }
 
-  /* top:50% centra respecto al slide completo, que en mobile es
-   * height:auto (contenido apilado). Según el slide, ese punto medio
-   * puede caer sobre los botones en vez de la imagen. Anclamos a
-   * bottom, a la misma altura que los indicadores, que sí es una
-   * franja libre en los 4 slides. */
+  /* Centradas sobre la imagen del slide, no sobre el slide completo:
+   * probado con los 4 slides activos — el texto arriba de la imagen
+   * varía en altura según el slide (más o menos botones/stats), pero
+   * la imagen es siempre el último elemento con la misma altura fija,
+   * así que la distancia del borde inferior del carrusel a SU centro
+   * da igual (160px) en los 4. Con top:50% del slide completo, el
+   * medio cae más arriba, sobre los botones, en el slide con menos
+   * contenido (probado, los tapaba). */
   .carousel-control-prev,
   .carousel-control-next {
     width: 48px;
     height: 48px;
     top: auto;
-    bottom: var(--spacing-4);
+    bottom: 160px;
     transform: none;
   }
 
@@ -583,9 +586,11 @@
   }
 
   /* Reducir controles del carrusel en móviles (no ocultar — son necesarios).
-   * top/bottom: mismo motivo que en el breakpoint de 992px — anclar a
-   * bottom (altura de los indicadores) en vez de centrar en el slide
-   * completo, para no superponerse con los botones del hero. */
+   * Centradas sobre la imagen del slide (bottom fijo, medido: la imagen
+   * mide ~215px y su centro cae a ~145px del borde inferior del
+   * carrusel en los 4 slides) — NO al 50% de todo el slide: con el
+   * texto arriba y la imagen abajo, el 50% del slide completo cae
+   * sobre los botones (probado, los tapaba). */
   .carousel-control-prev,
   .carousel-control-next {
     width: 32px !important;
@@ -593,7 +598,7 @@
     min-width: 32px !important;
     min-height: 32px !important;
     top: auto !important;
-    bottom: var(--spacing-3) !important;
+    bottom: 145px !important;
     transform: none !important;
   }
 
