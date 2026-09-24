@@ -29,7 +29,9 @@ test.describe('Smoke — páginas públicas cargan OK', () => {
           //  - GSI_LOGGER origin not allowed: localhost:5566 no está en los
           //    Authorized Origins de Google (solo prod lo está) — esperado
           //  - Sentry: DSN dev
-          if (/Failed to fetch|NetworkError|net::ERR|conectar|servidor|backend|401|403|Sentry|GSI_LOGGER|origin is not allowed|accounts\.google/i.test(t)) return;
+          //  - Cloudflare Web Analytics: el build inyecta el beacon y su POST
+          //    a cloudflareinsights.com falla por CORS desde localhost
+          if (/Failed to fetch|NetworkError|net::ERR|conectar|servidor|backend|401|403|Sentry|GSI_LOGGER|origin is not allowed|accounts\.google|cloudflareinsights/i.test(t)) return;
           errors.push(t);
         }
       });

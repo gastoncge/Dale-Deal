@@ -145,8 +145,9 @@ test.describe('Página de servicio — render dinámico', () => {
     await mockBackend(page, {}); // ningún id existe → 404
 
     await page.goto('/HTML/servicio.html?id=99999');
-    // El código redirige a servicios.html tras mostrar "no encontrado"
-    await page.waitForURL(/servicios\.html/, { timeout: 6_000 });
-    expect(page.url()).toContain('servicios.html');
+    // El código redirige al listado tras mostrar "no encontrado" — a la URL
+    // limpia /servicios (la de prod); se acepta también la vieja servicios.html.
+    await page.waitForURL(/\/servicios(\.html)?(\?|#|$)/, { timeout: 6_000 });
+    expect(page.url()).toMatch(/\/servicios(\.html)?(\?|#|$)/);
   });
 });
