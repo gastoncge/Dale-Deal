@@ -2523,7 +2523,7 @@
                 Catálogo de Servicios
               </h1>
               <p class="header-description">
-                <span class="badge-count" id="headerServiceCount">2000+ servicios</span>
+                <span class="badge-count" id="headerServiceCount">Servicios</span>
               </p>
             </div>
           </div>
@@ -3004,9 +3004,13 @@
 
             // Intentar cargar desde la API real
             if (window.DaleDeal?.api?.fetchServices) {
-              const apiServices = await window.DaleDeal.api.fetchServices();
+              // limit=100 (máximo del backend): sin limit trae solo 20.
+              const apiServices = await window.DaleDeal.api.fetchServices({ limit: 100 });
               if (apiServices && apiServices.length > 0) {
                 this.services = this.transformAPIServices(apiServices);
+                // Badge del header con el total real (decía "2000+ servicios" fijo).
+                const headerCount = document.getElementById('headerServiceCount');
+                if (headerCount) headerCount.textContent = `${this.services.length} servicio${this.services.length !== 1 ? 's' : ''}`;
                 DaleDeal.log(`✅ ${this.services.length} servicios cargados desde la API`);
               } else {
                 throw new Error('API sin datos, usando fallback');
@@ -3069,7 +3073,8 @@
             priceTo: service.priceTo,
             category: this.mapCategoryFromSlug(service.category),
             image: service.image || 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=400&h=300&fit=crop',
-            rating: service.rating || 4.5,
+            // 0 si no tiene reseñas (antes 4.5: estrellas inventadas junto a "Sin reseñas aún").
+            rating: service.rating || 0,
             reviewCount: service.reviewCount || 0,
             location: service.location || 'Argentina',
             badges: service.badges || [],

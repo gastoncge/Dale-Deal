@@ -154,8 +154,11 @@ function renderProductCard(product) {
     ? `<div class="product-stock-low"><i class="bi bi-fire"></i> ${product.stock === 1 ? '¡Última unidad!' : `¡Quedan ${product.stock}!`}</div>`
     : '';
 
-  // Reseñas: si no hay reviews, mostrar "Sin reseñas aún" en lugar de "(0)"
-  const reviewCount = product.reviewCount || 0;
+  // Reseñas: si no hay reviews, mostrar "Sin reseñas aún" en lugar de "(0)".
+  // productos.html pasa el conteo como `reviews` (su transformProductsData),
+  // no como `reviewCount`: sin el fallback las cards mostraban las estrellas
+  // reales junto a "Sin reseñas aún".
+  const reviewCount = product.reviewCount ?? product.reviews ?? 0;
   const reviewsHTML = reviewCount > 0
     ? `<span class="reviews-count">(${reviewCount.toLocaleString('es-AR')})</span>`
     : `<span class="reviews-count text-muted">Sin reseñas aún</span>`;
@@ -203,7 +206,7 @@ function renderProductCard(product) {
           </div>
           <div class="product-location">
             <i class="bi bi-geo-alt-fill"></i>
-            <span>CABA</span>
+            <span>${esc(product.location || 'Argentina')}</span>
           </div>
         </div>
 

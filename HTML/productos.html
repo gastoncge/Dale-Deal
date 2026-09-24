@@ -257,7 +257,7 @@
                 Catálogo de Productos
               </h1>
               <p class="header-description">
-                <span class="badge-count" id="headerProductCount">2000+ productos</span>
+                <span class="badge-count" id="headerProductCount">Productos</span>
               </p>
             </div>
           </div>
@@ -3081,11 +3081,17 @@
             // ProductFilters — pendiente.
             this.showLoading(true);
 
-            // Fetch products from API
-            const productsData = await window.DaleDeal.api.fetchProducts();
+            // Fetch products from API. limit=100 (el máximo del backend): sin
+            // limit el backend devuelve solo 20 y el resto del catálogo no
+            // aparecía en ningún lado (el "Ver más" pagina en local).
+            const productsData = await window.DaleDeal.api.fetchProducts({ limit: 100 });
 
             // Transform API data to match expected format
             this.products = this.transformProductsData(productsData);
+
+            // Badge del header con el total real (decía "2000+ productos" fijo).
+            const headerCount = document.getElementById('headerProductCount');
+            if (headerCount) headerCount.textContent = `${this.products.length} producto${this.products.length !== 1 ? 's' : ''}`;
 
             this.showLoading(false);
             this.createProductCards();
@@ -3129,6 +3135,7 @@
                 image: p.images?.main || (Array.isArray(p.images) ? p.images[0] : p.images),
                 rating: p.rating || 0,
                 reviews: p.reviewCount || 0,
+                location: p.location,
                 featured: (p.badges || []).some(b => /premium|vendido/i.test(b)),
                 isOffer: (p.discount || 0) > 0,
                 shipping: p.shipping || { free: true, speed: 'tomorrow' }
@@ -3163,6 +3170,7 @@
             image: product.images?.main,
             rating: product.rating,
             reviews: product.reviewCount || 0,
+            location: product.location,
             featured: product.badges?.includes('Premium') || product.badges?.includes('MÁS VENDIDO') || false,
             isOffer: product.discount > 0,
             shipping: product.shipping || { free: true, speed: 'tomorrow' }

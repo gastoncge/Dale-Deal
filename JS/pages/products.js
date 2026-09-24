@@ -49,7 +49,8 @@ class ProductsPageLoader {
       }
 
       // Cargar desde API
-      this.allProducts = await window.DaleDeal.api.fetchProducts();
+      // limit=100 (máximo del backend): sin limit trae solo los primeros 20.
+      this.allProducts = await window.DaleDeal.api.fetchProducts({ limit: 100 });
       this.filteredProducts = [...this.allProducts];
 
       // Ocultar loading
