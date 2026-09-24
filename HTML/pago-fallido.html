@@ -166,6 +166,10 @@
       @keyframes spin {
         to { transform: rotate(360deg); }
       }
+      /* theme.js inyecta #backToTop en todas las páginas, pero sus estilos
+         viven en components.css, que esta página no carga: quedaba un botón
+         "↑" sin estilo al pie. La página es corta, no lo necesita. */
+      #backToTop { display: none !important; }
     </style>
   </head>
 

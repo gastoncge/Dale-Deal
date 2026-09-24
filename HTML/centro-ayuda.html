@@ -26,7 +26,9 @@
         display: flex; gap: var(--spacing-2);
       }
       .search-help-box input {
-        flex: 1; padding: var(--spacing-3) var(--spacing-5);
+        /* min-width:0 — sin esto el input no baja de su ancho intrínseco y en
+           375px empujaba el botón "Buscar" fuera de la pantalla (scroll horizontal). */
+        flex: 1; min-width: 0; padding: var(--spacing-3) var(--spacing-5);
         border: none; border-radius: var(--radius-full);
         font-size: var(--font-size-base); outline: none;
       }

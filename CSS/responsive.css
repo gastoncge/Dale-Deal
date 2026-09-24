@@ -92,7 +92,11 @@ svg,
 .dropdown-backdrop,
 .modal,
 .modal-dialog,
-.modal-content {
+.modal-content,
+/* .row de Bootstrap: sus márgenes negativos (medio gutter por lado) necesitan
+   que la fila sea MÁS ancha que el padre. Con max-width:100% quedaba clampeada
+   y corrida medio gutter a la izquierda — cards y columnas descentradas. */
+.row {
   max-width: none;
 }
 
