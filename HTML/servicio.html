@@ -302,11 +302,7 @@
                     </div>
                     <div class="provider-location">
                       <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
-                      <span id="providerLocation">—</span>
-                      &nbsp;·&nbsp;
-                      <span id="providerMemberSince">—</span>
-                      &nbsp;·&nbsp;
-                      <span id="providerCompletedJobs">—</span>
+                      <span id="providerLocation">—</span><span id="providerMemberSince"></span><span id="providerCompletedJobs"></span>
                     </div>
                   </div>
                 </div>
@@ -393,7 +389,9 @@
                       <p>Satisfacción garantizada o te devolvemos el dinero</p>
                     </div>
                   </div>
-                  <div class="guarantee-item">
+                  <!-- Oculto por defecto: service.js lo muestra solo si el prestador
+                       tiene alguna verificación aprobada (antes aparecía para todos). -->
+                  <div class="guarantee-item" id="guaranteeVerified" style="display:none;">
                     <i class="bi bi-patch-check-fill" aria-hidden="true"></i>
                     <div>
                       <strong>Prestador verificado</strong>

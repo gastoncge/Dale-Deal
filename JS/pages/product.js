@@ -235,9 +235,13 @@ class ProductPage {
     const ratingStars = document.querySelector('.product-rating .stars');
     if (ratingStars) ratingStars.innerHTML = this.renderProductStars(p.rating);
 
-    // Sold count
+    // Sold count — el backend todavía no manda ventas (soldCount siempre 0):
+    // en vez de "+0 vendidos" ocultamos el bloque hasta que haya un dato real.
     const soldEl = document.querySelector('.product-sold span');
-    if (soldEl) soldEl.textContent = `+${p.salesCount} vendidos`;
+    const soldCount = Number(p.salesCount) || 0;
+    if (soldEl) soldEl.textContent = `${soldCount.toLocaleString('es-AR')} vendido${soldCount === 1 ? '' : 's'}`;
+    const soldBlock = document.querySelector('.product-sold');
+    if (soldBlock) soldBlock.style.display = soldCount > 0 ? '' : 'none';
 
     // Prices
     const currentPriceEl = document.querySelector('.current-price');
@@ -443,7 +447,7 @@ class ProductPage {
     const avatar   = document.getElementById('sellerCardAvatar');
     const name     = document.getElementById('sellerCardName');
     const sold     = document.getElementById('sellerCardSold');
-    const location = document.querySelector('.provider-location span:last-child');
+    const location = document.getElementById('sellerCardLocation');
     const chatAvatar = document.getElementById('providerChatAvatar');
     const chatName   = document.getElementById('chatProviderName');
 
@@ -478,7 +482,13 @@ class ProductPage {
 
       const ratingEl  = document.getElementById('sellerCardRating');
       const reviewsEl = document.getElementById('sellerCardReviews');
+      const starsEl   = document.getElementById('sellerCardStars');
       const ratingText = document.querySelector('.provider-rating .rating-text');
+
+      if (starsEl) {
+        starsEl.innerHTML = window.DaleDeal.utils.renderStars(total > 0 ? avg : 0);
+        starsEl.setAttribute('aria-label', total > 0 ? `${avg.toFixed(1)} de 5 estrellas` : 'Sin calificaciones');
+      }
 
       if (total === 0) {
         // Vendedor todavía sin reseñas — texto neutral en lugar de "0 (0 reseñas)"

@@ -205,11 +205,12 @@ class ServicePage {
     const provider = realProvider ? {
       name:         realProvider.name || mockProvider.name,
       avatar:       realProvider.avatar || mockProvider.avatar,
-      // memberSince/responseTime/completedJobs no vienen del backend hoy,
-      // dejamos mock como placeholder hasta que se agreguen al endpoint.
-      memberSince:  realProvider.memberSince || mockProvider.memberSince,
-      responseTime: mockProvider.responseTime,
-      completedJobs: mockProvider.completedJobs,
+      // responseTime/completedJobs no vienen del backend hoy: null (no se
+      // muestran). Antes se completaban con el mock ("Responde en < 1h",
+      // "312 trabajos") y aparecían como datos del prestador real.
+      memberSince:  realProvider.memberSince || null,
+      responseTime: null,
+      completedJobs: null,
       verifiedIdentity:     !!realProvider.verifiedIdentity,
       verifiedProfessional: !!realProvider.verifiedProfessional,
       verifiedBackground:   !!realProvider.verifiedBackground,
@@ -271,25 +272,36 @@ class ServicePage {
       if (p.verifiedBackground)   bhtml += '<span class="verif-badge verif-bg" title="Certificado de antecedentes penales validado contra la fuente oficial"><i class="bi bi-shield-check"></i> Antecedentes</span>';
       badgesEl.innerHTML = bhtml;
     }
+    const guaranteeVerified = document.getElementById('guaranteeVerified');
+    if (guaranteeVerified) {
+      const isVerified = p.verifiedIdentity || p.verifiedProfessional || p.verifiedBackground;
+      guaranteeVerified.style.display = isVerified ? '' : 'none';
+    }
 
     const providerStatEl = document.getElementById('providerStats');
     if (providerStatEl) {
       providerStatEl.innerHTML = `
         <span class="stars">${this._renderStars(s.rating)}</span>
-        <strong>${s.rating}</strong> · ${s.reviewCount?.toLocaleString('es-AR') || 0} reseñas`;
+        <strong>${s.rating}</strong> · ${(s.reviewCount || 0).toLocaleString('es-AR')} reseña${s.reviewCount === 1 ? '' : 's'}`;
     }
 
     const responseTimeEl = document.getElementById('providerResponseTime');
-    if (responseTimeEl) responseTimeEl.textContent = `Responde en ${p.responseTime || '< 1h'}`;
+    if (responseTimeEl) {
+      responseTimeEl.textContent = p.responseTime ? `Responde en ${p.responseTime}` : '';
+      const row = responseTimeEl.closest('.provider-response-time');
+      if (row) row.style.display = p.responseTime ? '' : 'none';
+    }
 
     const locationEl = document.getElementById('providerLocation');
-    if (locationEl) locationEl.textContent = s.location || 'CABA';
+    if (locationEl) locationEl.textContent = s.location || p.location || 'Argentina';
 
+    // El separador " · " va dentro de cada span para que un dato que falta no
+    // deje un "·" colgando.
     const memberSinceEl = document.getElementById('providerMemberSince');
-    if (memberSinceEl) memberSinceEl.textContent = `Miembro desde ${p.memberSince || '2021'}`;
+    if (memberSinceEl) memberSinceEl.textContent = p.memberSince ? `\u00a0·\u00a0Miembro desde ${p.memberSince}` : '';
 
     const completedJobsEl = document.getElementById('providerCompletedJobs');
-    if (completedJobsEl) completedJobsEl.textContent = `${p.completedJobs || 0} trabajos`;
+    if (completedJobsEl) completedJobsEl.textContent = p.completedJobs ? `\u00a0·\u00a0${p.completedJobs} trabajos` : '';
 
     // WhatsApp directo al prestador (solo si tiene teléfono). Normalización AR best-effort.
     const waBtn = document.getElementById('svcWhatsapp');
@@ -310,13 +322,22 @@ class ServicePage {
     if (titleEl) titleEl.textContent = s.title;
 
     const ratingTextEl = document.querySelector('.service-rating .rating-text');
-    if (ratingTextEl) ratingTextEl.textContent = `${s.rating} (${s.reviewCount?.toLocaleString('es-AR') || 0} reseñas)`;
+    if (ratingTextEl) {
+      ratingTextEl.textContent = s.reviewCount > 0
+        ? `${s.rating} (${s.reviewCount.toLocaleString('es-AR')} reseña${s.reviewCount === 1 ? '' : 's'})`
+        : 'Sin reseñas aún';
+    }
 
     const ratingStarsEl = document.querySelector('.service-rating .stars');
     if (ratingStarsEl) ratingStarsEl.innerHTML = this._renderStars(s.rating);
 
+    // Proxy: cada reseña corresponde a un servicio prestado. Con 0 se oculta
+    // (antes decía "+0 servicios prestados").
     const contractedEl = document.querySelector('.service-contracted span');
-    if (contractedEl) contractedEl.textContent = `+${s.reviewCount || 0} servicios prestados`;
+    const contracted = s.reviewCount || 0;
+    if (contractedEl) contractedEl.textContent = `${contracted.toLocaleString('es-AR')} servicio${contracted === 1 ? '' : 's'} prestado${contracted === 1 ? '' : 's'}`;
+    const contractedBlock = document.querySelector('.service-contracted');
+    if (contractedBlock) contractedBlock.style.display = contracted > 0 ? '' : 'none';
 
     // Badges/tags
     const tagsContainer = document.querySelector('.service-tags');

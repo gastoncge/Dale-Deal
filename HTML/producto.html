@@ -339,26 +339,25 @@
                   <div class="provider-details">
                     <div class="provider-name-row">
                       <span class="provider-name provider-name-text" id="sellerCardName">Vendedor</span>
-                      <i class="bi bi-patch-check-fill provider-verified" id="sellerCardVerified" aria-label="Vendedor verificado"></i>
+                      <!-- Oculto: el endpoint de productos no trae verificación del
+                           vendedor. Antes se mostraba el tilde a TODOS los vendedores. -->
+                      <i class="bi bi-patch-check-fill provider-verified" id="sellerCardVerified" aria-label="Vendedor verificado" style="display:none;"></i>
                       <span class="provider-member-badge" id="sellerCardProBadge" style="display:none;">Pro</span>
                     </div>
+                    <!-- Valores neutros por defecto: product.js los reemplaza con el
+                         rating real del vendedor. Antes decía "4.8 · 2.847 reseñas"
+                         fijo y quedaba así cuando la API fallaba. -->
                     <div class="provider-stats" id="sellerCardStats">
-                      <span class="stars" role="img" aria-label="4.8 de 5 estrellas">
-                        <i class="bi bi-star-fill" aria-hidden="true"></i><i class="bi bi-star-fill" aria-hidden="true"></i>
-                        <i class="bi bi-star-fill" aria-hidden="true"></i><i class="bi bi-star-fill" aria-hidden="true"></i>
-                        <i class="bi bi-star-half" aria-hidden="true"></i>
+                      <span class="stars" id="sellerCardStars" role="img" aria-label="Sin calificaciones">
+                        <i class="bi bi-star" aria-hidden="true"></i><i class="bi bi-star" aria-hidden="true"></i>
+                        <i class="bi bi-star" aria-hidden="true"></i><i class="bi bi-star" aria-hidden="true"></i>
+                        <i class="bi bi-star" aria-hidden="true"></i>
                       </span>
-                      <strong id="sellerCardRating">4.8</strong> · <span id="sellerCardReviews">2.847</span> reseñas
-                    </div>
-                    <div class="provider-response-time mb-1">
-                      <i class="bi bi-clock-fill" aria-hidden="true"></i>
-                      <span>Responde en &lt; 1h</span>
+                      <strong id="sellerCardRating">—</strong> · <span id="sellerCardReviews">0</span> reseñas
                     </div>
                     <div class="provider-location">
                       <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
-                      <span>CABA</span>
-                      &nbsp;·&nbsp;
-                      <span>Miembro desde 2023</span>
+                      <span id="sellerCardLocation">Argentina</span>
                       &nbsp;·&nbsp;
                       <span id="sellerCardSold">0 ventas</span>
                     </div>
