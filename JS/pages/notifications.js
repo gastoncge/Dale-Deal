@@ -19,191 +19,23 @@ class NotificationsCenterManager {
     this.updateFilterCounts();
   }
 
-  // Cargar notificaciones desde localStorage o datos de ejemplo
+  // Cargar notificaciones guardadas en localStorage.
+  // Antes, si no había nada guardado, se sembraban 12 notificaciones de
+  // EJEMPLO ("Tu pedido #12345 ha sido confirmado", "Pago de $1.299.999"...) y
+  // se guardaban: cualquier visitante, logueado o no, las veía como propias.
+  // Esta página todavía no está conectada a las notificaciones reales (esas
+  // las muestra la campanita del header, JS/notifications.js).
   loadNotifications() {
-    const stored = localStorage.getItem('daledeal_notifications');
-    if (stored) {
-      this.notifications = JSON.parse(stored);
-    } else {
-      // Datos de ejemplo más completos
-      this.notifications = [
-        {
-          id: 1,
-          type: 'orders',
-          title: 'Pedido confirmado',
-          message: 'Tu pedido #12345 ha sido confirmado y está siendo procesado. Recibirás una notificación cuando esté listo para el envío.',
-          time: 'Hace 2 horas',
-          timestamp: Date.now() - 2 * 60 * 60 * 1000,
-          read: false,
-          icon: 'bi-check-circle-fill',
-          iconClass: 'icon-orders',
-          actions: [
-            { label: 'Ver detalles', action: 'view', isPrimary: true },
-            { label: 'Rastrear envío', action: 'track', isPrimary: false }
-          ]
-        },
-        {
-          id: 2,
-          type: 'services',
-          title: 'Servicio agendado',
-          message: 'Tu servicio de instalación técnica ha sido agendado para el 25 de octubre a las 14:00 hs.',
-          time: 'Hace 3 horas',
-          timestamp: Date.now() - 3 * 60 * 60 * 1000,
-          read: false,
-          icon: 'bi-tools',
-          iconClass: 'icon-services',
-          actions: [
-            { label: 'Ver detalles', action: 'view', isPrimary: true },
-            { label: 'Reagendar', action: 'reschedule', isPrimary: false }
-          ]
-        },
-        {
-          id: 3,
-          type: 'messages',
-          title: 'Nuevo mensaje del vendedor',
-          message: 'El vendedor respondió tu consulta sobre el producto "iPhone 15 Pro Max".',
-          time: 'Hace 5 horas',
-          timestamp: Date.now() - 5 * 60 * 60 * 1000,
-          read: false,
-          icon: 'bi-chat-dots-fill',
-          iconClass: 'icon-messages',
-          actions: [
-            { label: 'Ver mensaje', action: 'view', isPrimary: true },
-            { label: 'Responder', action: 'reply', isPrimary: false }
-          ]
-        },
-        {
-          id: 4,
-          type: 'orders',
-          title: 'Pedido en camino',
-          message: 'Tu pedido #12340 está en camino. Llegará aproximadamente el 24 de octubre.',
-          time: 'Hace 8 horas',
-          timestamp: Date.now() - 8 * 60 * 60 * 1000,
-          read: false,
-          icon: 'bi-truck',
-          iconClass: 'icon-orders',
-          actions: [
-            { label: 'Rastrear', action: 'track', isPrimary: true },
-            { label: 'Ver detalles', action: 'view', isPrimary: false }
-          ]
-        },
-        {
-          id: 5,
-          type: 'payments',
-          title: 'Pago confirmado',
-          message: 'Recibimos el pago de $1.299.999 por tu pedido #12345. El envío será procesado pronto.',
-          time: 'Hace 1 día',
-          timestamp: Date.now() - 24 * 60 * 60 * 1000,
-          read: true,
-          icon: 'bi-credit-card-fill',
-          iconClass: 'icon-payments',
-          actions: [
-            { label: 'Ver recibo', action: 'receipt', isPrimary: true }
-          ]
-        },
-        {
-          id: 6,
-          type: 'system',
-          title: 'Actualización de términos',
-          message: 'Hemos actualizado nuestros términos y condiciones. Por favor, revísalos cuando puedas.',
-          time: 'Hace 2 días',
-          timestamp: Date.now() - 48 * 60 * 60 * 1000,
-          read: true,
-          icon: 'bi-gear-fill',
-          iconClass: 'icon-system',
-          actions: [
-            { label: 'Leer términos', action: 'terms', isPrimary: true }
-          ]
-        },
-        {
-          id: 7,
-          type: 'orders',
-          title: 'Pedido entregado',
-          message: 'Tu pedido #12330 fue entregado exitosamente. ¿Te gustaría calificar tu experiencia?',
-          time: 'Hace 3 días',
-          timestamp: Date.now() - 72 * 60 * 60 * 1000,
-          read: true,
-          icon: 'bi-box-seam',
-          iconClass: 'icon-orders',
-          actions: [
-            { label: 'Calificar', action: 'rate', isPrimary: true },
-            { label: 'Soporte', action: 'support', isPrimary: false }
-          ]
-        },
-        {
-          id: 8,
-          type: 'services',
-          title: 'Servicio completado',
-          message: 'El servicio de instalación ha sido completado. ¿Cómo fue tu experiencia?',
-          time: 'Hace 4 días',
-          timestamp: Date.now() - 96 * 60 * 60 * 1000,
-          read: true,
-          icon: 'bi-check-circle',
-          iconClass: 'icon-services',
-          actions: [
-            { label: 'Calificar servicio', action: 'rate', isPrimary: true }
-          ]
-        },
-        {
-          id: 9,
-          type: 'messages',
-          title: 'Pregunta respondida',
-          message: 'Recibiste una respuesta a tu pregunta en el producto "Smart TV 55 pulgadas".',
-          time: 'Hace 5 días',
-          timestamp: Date.now() - 120 * 60 * 60 * 1000,
-          read: true,
-          icon: 'bi-chat-square-text',
-          iconClass: 'icon-messages',
-          actions: [
-            { label: 'Ver respuesta', action: 'view', isPrimary: true }
-          ]
-        },
-        {
-          id: 10,
-          type: 'payments',
-          title: 'Reembolso procesado',
-          message: 'Tu reembolso de $45.000 por el pedido #12320 ha sido procesado y estará disponible en 3-5 días hábiles.',
-          time: 'Hace 6 días',
-          timestamp: Date.now() - 144 * 60 * 60 * 1000,
-          read: true,
-          icon: 'bi-arrow-left-circle',
-          iconClass: 'icon-payments',
-          actions: [
-            { label: 'Ver detalles', action: 'view', isPrimary: true }
-          ]
-        },
-        {
-          id: 11,
-          type: 'orders',
-          title: 'Promoción disponible',
-          message: 'Tienes 20% de descuento en tu próxima compra. Válido hasta fin de mes.',
-          time: 'Hace 1 semana',
-          timestamp: Date.now() - 168 * 60 * 60 * 1000,
-          read: true,
-          icon: 'bi-gift',
-          iconClass: 'icon-orders',
-          actions: [
-            { label: 'Ver promoción', action: 'view', isPrimary: true },
-            { label: 'Usar ahora', action: 'use', isPrimary: false }
-          ]
-        },
-        {
-          id: 12,
-          type: 'system',
-          title: 'Nueva función disponible',
-          message: 'Ahora podés guardar tus productos favoritos y crear listas de deseos personalizadas.',
-          time: 'Hace 1 semana',
-          timestamp: Date.now() - 175 * 60 * 60 * 1000,
-          read: true,
-          icon: 'bi-star',
-          iconClass: 'icon-system',
-          actions: [
-            { label: 'Explorar función', action: 'explore', isPrimary: true }
-          ]
-        }
-      ];
-      this.saveNotifications();
-    }
+    let stored = [];
+    try {
+      stored = JSON.parse(localStorage.getItem('daledeal_notifications') || '[]');
+    } catch (_) { /* dato corrupto → vacío */ }
+    // Las de ejemplo tenían id numérico (1..12): se limpian también de los
+    // navegadores que ya las tenían guardadas.
+    this.notifications = Array.isArray(stored)
+      ? stored.filter(n => n && typeof n.id !== 'number')
+      : [];
+    this.saveNotifications();
   }
 
   // Guardar notificaciones en localStorage

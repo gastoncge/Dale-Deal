@@ -2161,6 +2161,13 @@ nav.navbar {
   opacity: 1;
 }
 
+/* En pantallas táctiles no hay hover: sin esto los botones nunca se veían. */
+@media (hover: none) {
+  .notification-actions {
+    opacity: 1;
+  }
+}
+
 .notification-action-btn {
   padding: var(--spacing-1) var(--spacing-2);
   border: 1px solid var(--gray-300);

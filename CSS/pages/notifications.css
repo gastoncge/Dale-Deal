@@ -477,6 +477,10 @@
   gap: var(--spacing-2);
   flex-wrap: wrap;
   margin-top: var(--spacing-3);
+  /* components.css oculta .notification-actions (opacity:0) hasta el hover
+     de .notification-item — regla del dropdown del header. Acá no hay ese
+     hover, así que los botones quedaban invisibles (pero clickeables). */
+  opacity: 1;
 }
 
 .notification-card .notification-action-btn {
