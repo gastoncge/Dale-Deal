@@ -223,8 +223,17 @@ async function loadAllComponents() {
 
   // Cargar header
   const navbarPlaceholder = document.getElementById('navbar-placeholder');
-  if (navbarPlaceholder) {
-    await loadComponent(`${basePath}header.html`, 'navbar-placeholder');
+  // En prod el build (build.js → inlineNavbarInHtmls) reemplaza el placeholder
+  // por el navbar y lo marca con data-build-inlined: no hay nada que pedir,
+  // pero sí hay que hacer el mismo post-proceso que en dev — sobre todo
+  // disparar 'daledeal:header-loaded', que varias páginas (index, contacto,
+  // terminos, ...) esperan para correr AOS.init(). Sin el evento, en pantallas
+  // > 768px el logo, el hero y los títulos ([data-aos]) quedaban invisibles.
+  const inlinedNavbar = document.querySelector('#mainNavbar[data-build-inlined]');
+  if (navbarPlaceholder || inlinedNavbar) {
+    if (navbarPlaceholder) {
+      await loadComponent(`${basePath}header.html`, 'navbar-placeholder');
+    }
     // Esperar un poco para que el DOM se actualice
     setTimeout(() => {
       fixHeaderPaths();

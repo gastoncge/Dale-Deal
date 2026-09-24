@@ -285,6 +285,11 @@ function inlineNavbarInHtmls() {
       headerFixed = headerFixed.replace(/src="\.\/IMG\//g, 'src="../IMG/');
     }
 
+    // Marca para component-loader.js: el navbar ya está, no hay placeholder,
+    // pero igual tiene que disparar 'daledeal:header-loaded' (AOS.init() de
+    // varias páginas lo espera; sin él el contenido [data-aos] queda invisible).
+    headerFixed = headerFixed.replace('id="mainNavbar"', 'id="mainNavbar" data-build-inlined');
+
     content = content.replace(placeholderRe, headerFixed);
     fs.writeFileSync(fp, content);
     injected++;
