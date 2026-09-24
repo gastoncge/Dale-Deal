@@ -83,6 +83,7 @@
               class="search-input"
               placeholder="¿Qué estás buscando hoy?"
               id="searchInput"
+              enterkeyhint="search"
             />
           </div>
         </div>
@@ -3610,7 +3611,10 @@
         // home (Google ofrece "buscar en Dale Deal" → trae al user acá con
         // ?search=lo-que-buscó). También sirve para deep linking desde el
         // hero ("Ver productos similares" → ?search=iphone).
-        const searchParam = urlParams.get('search');
+        // ?q= es el que usa el buscador del navbar (search.js) y el SearchAction
+        // del JSON-LD del home; antes solo se leía ?search= y esas búsquedas
+        // mostraban el catálogo entero.
+        const searchParam = urlParams.get('search') || urlParams.get('q');
         if (searchParam && searchInput) {
           searchInput.value = searchParam;
           setTimeout(() => {

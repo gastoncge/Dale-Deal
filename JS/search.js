@@ -52,6 +52,12 @@ class SearchManager {
     // Limpiar el timer anterior
     clearTimeout(this.debounceTimer);
 
+    // Búsqueda en vivo solo en /productos (filtra el grid). En el resto de
+    // las páginas buscar significa ir a /productos: eso pasa con Enter, no
+    // a los 300ms de tipear 2 letras (antes la página cambiaba a mitad de
+    // la palabra y se perdía lo escrito).
+    if (this.currentPage() !== 'productos') return;
+
     // Si el query está vacío, limpiar resultados
     if (query.length === 0) {
       this.clearSearchResults();
@@ -76,11 +82,11 @@ class SearchManager {
     try {
       this.isSearching = true;
       DaleDeal.log(`🔍 Buscando: "${query}"`);
-      const path = window.location.pathname;
+      const page = this.currentPage();
 
-      // Si estamos en servicios.html, dejamos que el manager interno
+      // Si estamos en servicios, dejamos que el manager interno
       // de esa página filtre vía su searchTerm. Solo disparamos el input event.
-      if (path.includes('servicios.html')) {
+      if (page === 'servicios') {
         // No hacemos nada extra: el input #searchInput tiene listener nativo
         // en servicios.html que filtra el grid de servicios.
         return;
@@ -93,7 +99,7 @@ class SearchManager {
 
       this.searchResults = await window.DaleDeal.api.searchProducts(query);
 
-      if (path.includes('productos.html')) {
+      if (page === 'productos') {
         this.renderSearchResults();
       } else {
         // Cualquier otra página → redirigir a productos
@@ -105,6 +111,16 @@ class SearchManager {
     } finally {
       this.isSearching = false;
     }
+  }
+
+  /**
+   * Página actual sin extensión: sirve para /productos (URL limpia de prod) y
+   * para /HTML/productos.html (dev). Antes se chequeaba solo 'productos.html'
+   * y en prod ninguna página matcheaba: tipear en el buscador redirigía a
+   * /productos?q=… incluso estando en /productos.
+   */
+  currentPage() {
+    return (window.location.pathname.split('/').pop() || 'index').replace(/\.html$/, '');
   }
 
   /**
