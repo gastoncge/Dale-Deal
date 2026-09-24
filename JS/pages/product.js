@@ -458,7 +458,7 @@ class ProductPage {
     }
     if (name)     name.textContent = p.seller_name || 'Vendedor';
     if (sold)     sold.textContent = `${p.stock > 0 ? 'En stock' : 'Sin stock'}`;
-    if (location) location.textContent = p.location || 'Argentina';
+    if (location) location.textContent = p.seller_location || 'Argentina';
 
     // Rating real del vendedor (todos sus productos sumados)
     this.loadSellerRating(p.seller_id);
