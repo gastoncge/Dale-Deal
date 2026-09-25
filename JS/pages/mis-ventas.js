@@ -75,6 +75,7 @@
       }
 
       listEl.innerHTML = currentOrders.map(renderOrderCard).join('');
+      checkPayoutAccount();
 
       // Wire-up de botones por orden
       listEl.querySelectorAll('[data-action]').forEach(btn => {
@@ -223,6 +224,24 @@
           : `Se libera cuando el comprador confirme que lo recibió, o a los ${RELEASE_DAYS} días de la entrega.`}</div>
         ${breakdown}
       </div>`;
+  }
+
+  // Si vende y todavía no cargó a dónde cobrar, se lo pedimos arriba de todo.
+  async function checkPayoutAccount() {
+    if (document.getElementById('payout-banner')) return;
+    try {
+      const d = await window.DaleDeal?.api?.apiFetch('/users/me/payout-account');
+      if (!d || !d.available || d.account) return;
+      const html = `
+        <div class="alert alert-warning d-flex align-items-start gap-2" id="payout-banner" role="alert">
+          <i class="bi bi-bank2" style="font-size:1.2rem;line-height:1.2;"></i>
+          <div><strong>Cargá tus datos de cobro.</strong> Necesitamos tu alias, CVU o CBU para transferirte cuando se libere el pago de una venta.
+            <a href="./mi-cuenta.html#datos-cobro" class="alert-link">Cargarlos ahora</a></div>
+        </div>`;
+      const header = document.querySelector('.ventas-header');
+      if (header) header.insertAdjacentHTML('afterend', html);
+      else document.getElementById('ventas-list')?.insertAdjacentHTML('beforebegin', html);
+    } catch (_) { /* sin datos de cobro no bloqueamos la página */ }
   }
 
   function openTrackingModal(orderId) {

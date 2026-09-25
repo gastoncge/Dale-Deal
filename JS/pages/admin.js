@@ -1090,7 +1090,7 @@
           <table class="admin-table">
             <thead><tr>
               <th>Orden</th><th>Producto</th><th>Vendedor</th><th>Bruto</th><th>Comisión</th><th>Neto transferido</th>
-              <th>Comprobante</th><th>Nota</th><th>Liberó</th><th>Fecha</th>
+              <th>Destino</th><th>Comprobante</th><th>Nota</th><th>Liberó</th><th>Fecha</th>
             </tr></thead>
             <tbody>${rows.map(releasedRow).join('')}</tbody>
           </table>
@@ -1136,6 +1136,18 @@
     return `<small>${formatDate(o.delivered_at)}${src ? `<br><span class="text-muted">${src}</span>` : ''}${conf}</small>`;
   }
 
+  // Datos de cobro del vendedor (migration 017). undefined = backend viejo → nada.
+  function payoutAccountLabel(acc) {
+    if (!acc) return '';
+    return /^\d{22}$/.test(acc) ? `${acc.startsWith('000') ? 'CVU' : 'CBU'} ${acc}` : `Alias ${acc}`;
+  }
+  function payoutAccountLine(o) {
+    if (o.seller_payout_account === undefined) return '';
+    return o.seller_payout_account
+      ? `<br><span class="text-muted"><i class="bi bi-bank2"></i> ${esc(payoutAccountLabel(o.seller_payout_account))}</span>`
+      : '<br><span class="admin-pill admin-pill-warning">Sin datos de cobro</span>';
+  }
+
   function payoutRow(o) {
     const sit  = payoutSituation(o);
     const held = o.release_status === 'held';
@@ -1149,7 +1161,7 @@
         <td>#${o.id}<br><small class="text-muted">pagada ${formatDate(o.paid_at)}</small></td>
         <td>${esc(o.product_title || '—')}</td>
         <td><small>${esc(o.buyer_name || '')}</small></td>
-        <td><small><strong>${esc(o.seller_name || '')}</strong><br><span class="text-muted">${esc(o.seller_email || '')}</span></small></td>
+        <td><small><strong>${esc(o.seller_name || '')}</strong><br><span class="text-muted">${esc(o.seller_email || '')}</span>${payoutAccountLine(o)}</small></td>
         <td>${money(o.total_price, o.currency)}</td>
         <td>${money(o.commission_amount, o.currency)}</td>
         <td><strong>${money(netOf(o), o.currency)}</strong></td>
@@ -1168,6 +1180,7 @@
         <td>${money(p.gross_amount, p.currency)}</td>
         <td>${money(p.commission_amount, p.currency)}</td>
         <td><strong>${money(p.net_amount, p.currency)}</strong></td>
+        <td style="max-width:220px;"><small>${p.destination ? esc(p.destination) : '<span class="text-muted">—</span>'}</small></td>
         <td><small>${p.reference ? esc(p.reference) : '<span class="text-muted">—</span>'}</small></td>
         <td style="max-width:260px;"><small>${p.note ? esc(p.note) : '<span class="text-muted">—</span>'}</small></td>
         <td><small>${esc(p.admin_name || '—')}</small></td>
@@ -1233,6 +1246,7 @@
               <dl class="row small mb-3">
                 <dt class="col-sm-4 text-muted">Orden:</dt><dd class="col-sm-8" id="releaseOrder">—</dd>
                 <dt class="col-sm-4 text-muted">Vendedor:</dt><dd class="col-sm-8" id="releaseSeller">—</dd>
+                <dt class="col-sm-4 text-muted">Transferir a:</dt><dd class="col-sm-8" id="releaseDest">—</dd>
                 <dt class="col-sm-4 text-muted">Total cobrado:</dt><dd class="col-sm-8" id="releaseGross">—</dd>
                 <dt class="col-sm-4 text-muted">Comisión Dale Deal:</dt><dd class="col-sm-8" id="releaseCommission">—</dd>
                 <dt class="col-sm-4 text-muted">Neto a transferir:</dt><dd class="col-sm-8 fw-bold" id="releaseNet2">—</dd>
@@ -1270,6 +1284,29 @@
     $('#releaseOrder').textContent      = `#${o.id} · ${o.product_title || '—'}`;
     $('#releaseSeller').textContent     = `${o.seller_name || ''} · ${o.seller_email || ''}`;
     $('#releaseGross').textContent      = money(o.total_price, o.currency);
+    // A dónde transferir (datos de cobro del vendedor, migration 017)
+    const dest = $('#releaseDest');
+    const changedAfterSale = o.seller_payout_updated_at && o.paid_at
+      && new Date(o.seller_payout_updated_at) > new Date(o.paid_at);
+    if (o.seller_payout_account === undefined) {
+      dest.innerHTML = '<span class="text-muted">—</span>';
+    } else if (o.seller_payout_account) {
+      dest.innerHTML = `
+        <span class="fw-semibold" style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;">${esc(payoutAccountLabel(o.seller_payout_account))}</span>
+        <button type="button" class="btn btn-sm btn-link p-0 ms-1 align-baseline" id="releaseCopy"><i class="bi bi-clipboard"></i> Copiar</button>
+        <div class="small text-muted">Titular: ${esc(o.seller_payout_holder || '—')}</div>
+        ${changedAfterSale ? `<div class="small text-danger mt-1"><i class="bi bi-exclamation-triangle"></i> Cambió sus datos de cobro el ${formatDate(o.seller_payout_updated_at)}, después de la venta. Confirmá con el vendedor antes de transferir.</div>` : ''}`;
+      $('#releaseCopy').onclick = () => {
+        navigator.clipboard?.writeText(o.seller_payout_account)
+          .then(() => { $('#releaseCopy').innerHTML = '<i class="bi bi-check2"></i> Copiado'; })
+          .catch(() => {});
+      };
+    } else {
+      const mailBody = `Hola! Para transferirte el pago de tu venta #${o.id} necesitamos tu alias, CVU o CBU. Cargalo en https://daledeal.com.ar/mi-cuenta#datos-cobro`;
+      dest.innerHTML = `
+        <span class="text-danger"><i class="bi bi-exclamation-triangle"></i> No cargó sus datos de cobro.</span>
+        <a href="mailto:${esc(o.seller_email || '')}?subject=${encodeURIComponent('Tus datos de cobro en Dale Deal')}&body=${encodeURIComponent(mailBody)}">Pedírselos por mail</a>`;
+    }
     $('#releaseCommission').textContent = money(o.commission_amount, o.currency);
     $('#releaseReference').value = '';
     $('#releaseNote').value      = '';

@@ -217,6 +217,20 @@
           </div>
         </div>
 
+        <!-- Card: Datos de cobro (Compra Protegida: a dónde transferimos cuando se libera el pago de una venta) -->
+        <div class="account-card" id="datos-cobro">
+          <div class="account-card-header">
+            <div class="account-card-icon"><i class="bi bi-bank2"></i></div>
+            <div>
+              <h3 class="account-card-title">Datos de cobro</h3>
+              <p class="account-card-subtitle">A dónde te transferimos cuando se libera el pago de una venta.</p>
+            </div>
+          </div>
+          <div class="account-card-body" id="payoutBody">
+            <div class="text-muted small">Cargando…</div>
+          </div>
+        </div>
+
         <!-- Card: Mis publicaciones (links rápidos) -->
         <div class="account-card">
           <div class="account-card-header">
@@ -550,6 +564,99 @@
             const d = await r.json().catch(() => ({}));
             if (!r.ok) { msg.className = 'small mt-2 text-danger'; msg.textContent = d.error || 'No se pudo enviar el pedido.'; btn.disabled = false; return; }
             await load(); // refresca el estado (ahora "En revisión")
+          } catch (_) {
+            msg.className = 'small mt-2 text-danger'; msg.textContent = 'Error de conexión. Probá de nuevo.'; btn.disabled = false;
+          }
+        }
+
+        load();
+      });
+    </script>
+    <script>
+      // Datos de cobro — alias, CVU o CBU donde le transferimos al vendedor cuando se
+      // libera el pago de una venta (Compra Protegida). Backend: migration 017 +
+      // GET/PUT /users/me/payout-account. El servidor valida (incluye los dígitos del CBU).
+      document.addEventListener('DOMContentLoaded', () => {
+        const API = (window.DaleDeal?.CONFIG?.API_BASE_URL || 'https://daledeal-backend-production.up.railway.app').replace(/\/$/, '');
+        const getToken = () => localStorage.getItem('daledeal_token') || sessionStorage.getItem('daledeal_token');
+        const body = document.getElementById('payoutBody');
+        if (!body) return;
+        const esc = (s) => (window.DaleDeal?.utils?.escapeHtml ? window.DaleDeal.utils.escapeHtml(String(s ?? '')) : String(s ?? ''));
+        const fmtDate = (d) => (d ? new Date(d).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' }) : '');
+        let current = null;
+
+        async function load() {
+          const t = getToken();
+          if (!t) return; // la card vive dentro de accountContent (oculto sin sesión)
+          try {
+            const r = await fetch(`${API}/users/me/payout-account`, { headers: { Authorization: `Bearer ${t}` } });
+            current = r.ok ? await r.json() : null;
+          } catch (_) { current = null; }
+          render();
+          if (location.hash === '#datos-cobro') {
+            document.getElementById('datos-cobro')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            if (current && current.available && !current.account) document.getElementById('payoutAccount')?.focus({ preventScroll: true });
+          }
+        }
+
+        function render(flash) {
+          if (!current) { body.innerHTML = '<div class="text-muted small">No pudimos cargar tus datos de cobro. Probá de nuevo en un rato.</div>'; return; }
+          if (!current.available) { body.innerHTML = '<div class="text-muted small">Esta sección se está activando. Probá de nuevo en unos minutos.</div>'; return; }
+          if (!current.account) { renderForm(false); return; }
+          body.innerHTML = `
+            ${flash ? `<div class="alert alert-success py-2 small mb-3"><i class="bi bi-check-circle me-1"></i>${esc(flash)}</div>` : ''}
+            <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap">
+              <div>
+                <div class="fw-semibold" style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;">${esc(current.label || current.account)}</div>
+                <div class="small text-muted">Titular: ${esc(current.holder || '—')}${current.updated_at ? ` · Actualizado el ${esc(fmtDate(current.updated_at))}` : ''}</div>
+              </div>
+              <button class="btn btn-sm btn-outline-secondary" id="payoutEdit"><i class="bi bi-pencil me-1"></i>Cambiar</button>
+            </div>
+            <p class="small text-muted mt-3 mb-0">Cuando se libera el pago de una venta, te transferimos el neto a esta cuenta y te mandamos el comprobante por mail.</p>`;
+          document.getElementById('payoutEdit').onclick = () => renderForm(true);
+        }
+
+        function renderForm(editing) {
+          body.innerHTML = `
+            <p class="small text-muted mb-3">Cuando se libera el pago de una venta, te transferimos el neto a esta cuenta. Puede ser el alias o CVU de Mercado Pago o el CBU de tu banco, y tiene que estar a tu nombre.</p>
+            <div class="mb-3">
+              <label class="form-label small fw-semibold" for="payoutAccount">Alias, CVU o CBU</label>
+              <input class="form-control" id="payoutAccount" maxlength="30" autocomplete="off" spellcheck="false" placeholder="Ej: mi.alias.mp o los 22 números" value="${esc(editing && current && current.account ? current.account : '')}" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-semibold" for="payoutHolder">Titular de la cuenta</label>
+              <input class="form-control" id="payoutHolder" maxlength="120" autocomplete="name" placeholder="Nombre y apellido, como figura en la cuenta" value="${esc(current && current.holder ? current.holder : '')}" />
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-primary" id="payoutSave"><i class="bi bi-save me-1"></i>Guardar</button>
+              ${editing ? '<button class="btn btn-sm btn-outline-secondary" id="payoutCancel">Cancelar</button>' : ''}
+            </div>
+            <div class="small mt-2" id="payoutMsg" role="status"></div>`;
+          document.getElementById('payoutSave').onclick = save;
+          if (editing) document.getElementById('payoutCancel').onclick = () => render();
+        }
+
+        async function save() {
+          const account = document.getElementById('payoutAccount').value;
+          const holder  = document.getElementById('payoutHolder').value;
+          const msg = document.getElementById('payoutMsg');
+          const btn = document.getElementById('payoutSave');
+          btn.disabled = true; msg.className = 'small mt-2 text-muted'; msg.textContent = 'Guardando…';
+          try {
+            const r = await fetch(`${API}/users/me/payout-account`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+              body: JSON.stringify({ account, holder }),
+            });
+            const d = await r.json().catch(() => ({}));
+            if (!r.ok) {
+              msg.className = 'small mt-2 text-danger'; msg.textContent = d.error || 'No pudimos guardar tus datos de cobro.';
+              btn.disabled = false;
+              document.getElementById(d.field === 'holder' ? 'payoutHolder' : 'payoutAccount')?.focus();
+              return;
+            }
+            current = d;
+            render('Datos de cobro guardados. Te mandamos un mail de confirmación.');
           } catch (_) {
             msg.className = 'small mt-2 text-danger'; msg.textContent = 'Error de conexión. Probá de nuevo.'; btn.disabled = false;
           }
