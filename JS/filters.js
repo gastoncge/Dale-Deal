@@ -608,12 +608,17 @@ class ProductFilters {
       return;
     }
 
+    const esc = (v) => window.DaleDeal.utils.escapeHtml(String(v ?? ''));
     container.innerHTML = suggestions.map(location => `
-      <div class="location-suggestion" onclick="productFilters.selectLocation('${location}')">
+      <div class="location-suggestion" data-location="${esc(location)}" role="button">
         <i class="bi bi-geo-alt me-2"></i>
-        ${location}
+        ${esc(location)}
       </div>
     `).join('');
+    // listeners en vez de onclick inline (evita inyección en el string del onclick)
+    container.querySelectorAll('.location-suggestion').forEach(el => {
+      el.addEventListener('click', () => this.selectLocation(el.dataset.location));
+    });
     container.classList.add('active');
   }
 

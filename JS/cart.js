@@ -178,8 +178,8 @@ class CartManager {
       // Detectar si estamos en HTML/* (path relativo a productos.html)
       // o en root (index.html). Sin esto el CTA navega a 404 desde root.
       const productosHref = window.location.pathname.includes('/HTML/')
-        ? './productos.html'
-        : './HTML/productos.html';
+        ? '/productos'
+        : '/productos';
       cartDropdownBody.innerHTML = `
         <div class="empty-state" style="padding: var(--spacing-8) var(--spacing-4);">
           <div class="empty-state-icon"><i class="bi bi-cart-x"></i></div>
@@ -277,7 +277,7 @@ class CartManager {
     // Eventos para botones del dropdown del carrito
     document.getElementById('viewFullCart')?.addEventListener('click', () => {
       const isInHtmlFolder = window.location.pathname.includes('/HTML/');
-      window.location.href = isInHtmlFolder ? './notificaciones.html' : './HTML/notificaciones.html';
+      window.location.href = isInHtmlFolder ? '/notificaciones' : '/notificaciones';
     });
 
     document.getElementById('proceedToCheckout')?.addEventListener('click', async () => {
@@ -288,7 +288,7 @@ class CartManager {
       // Chequear sesión
       if (!localStorage.getItem('daledeal_token')) {
         DaleDeal.utils?.showNotification?.('Tenés que iniciar sesión para comprar.', 'warning');
-        const goTo = window.location.pathname.includes('/HTML/') ? './login.html' : './HTML/login.html';
+        const goTo = window.location.pathname.includes('/HTML/') ? '/login' : '/login';
         setTimeout(() => { window.location.href = goTo; }, 1200);
         return;
       }

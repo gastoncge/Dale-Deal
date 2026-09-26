@@ -189,12 +189,10 @@
   }
 
   // Inserta la review recién creada al INICIO de la lista visible.
-  // Busca el primer .review-item del DOM y le pone la nueva antes.
-  // Si no encuentra ninguna, no hace nada (el user verá la review al refrescar).
-  function insertNewReviewIntoList(review, container) {
+  function insertNewReviewIntoList(review) {
     if (!review) return;
 
-    const reviewsContent = document.querySelector('.reviews-content, #reviews .reviews-content');
+    const reviewsContent = document.querySelector('#reviews .reviews-content');
     if (!reviewsContent) return;
 
     const stars = '★'.repeat(review.rating || 5) + '☆'.repeat(5 - (review.rating || 5));
@@ -221,12 +219,142 @@
       </div>
     `;
 
-    // Insertar después del header del summary, antes del primer .review-item existente
-    const firstExisting = reviewsContent.querySelector('.review-item');
-    if (firstExisting) {
-      firstExisting.insertAdjacentHTML('beforebegin', html);
-    } else {
-      reviewsContent.insertAdjacentHTML('beforeend', html);
+    const list = reviewsContent.querySelector('#reviews-list');
+    if (list) {
+      list.insertAdjacentHTML('afterbegin', html);
+      return;
+    }
+    reviewsContent.insertAdjacentHTML('beforeend', html);
+  }
+
+  function fmtReviewDate(d) {
+    if (!d) return '';
+    const date = new Date(d);
+    const days = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24));
+    if (days === 0) return 'Hoy';
+    if (days === 1) return 'Ayer';
+    if (days < 30) return `Hace ${days} días`;
+    return date.toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  function renderReviewStars(rating) {
+    let html = '';
+    for (let i = 1; i <= 5; i++) {
+      if (i <= rating)            html += '<i class="bi bi-star-fill" aria-hidden="true"></i>';
+      else if (i - 0.5 <= rating) html += '<i class="bi bi-star-half" aria-hidden="true"></i>';
+      else                         html += '<i class="bi bi-star" aria-hidden="true"></i>';
+    }
+    return html;
+  }
+
+  function itemLabel(itemType) {
+    return itemType === 'service' ? 'servicio' : 'producto';
+  }
+
+  function renderListTab(reviews, total, avg, itemType) {
+    const reviewsTab = document.querySelector('#reviews .reviews-content');
+    if (!reviewsTab) return;
+
+    const breakdown = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    reviews.forEach(r => { breakdown[r.rating] = (breakdown[r.rating] || 0) + 1; });
+    const pct = (n) => total > 0 ? Math.round((n / total) * 100) : 0;
+    const label = itemLabel(itemType);
+
+    const reviewsHTML = reviews.length === 0
+      ? `<div class="text-center py-5 text-muted">
+           <i class="bi bi-chat-dots" style="font-size:3rem;opacity:.3;"></i>
+           <p class="mt-3 mb-1 fw-semibold">Todavía no hay reseñas</p>
+           <p class="small">Dejá la primera reseña sobre este ${label}.</p>
+         </div>`
+      : reviews.map(r => `
+          <div class="review-item">
+            <div class="review-header">
+              <img src="${esc(r.reviewer_avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(r.reviewer_name || 'U')}&background=D63031&color=fff&size=48`)}"
+                   alt="${esc(r.reviewer_name)}"
+                   class="review-avatar" loading="lazy" decoding="async" width="48" height="48" />
+              <div class="review-info">
+                <h6>${esc(r.reviewer_name || 'Usuario')}</h6>
+                <div class="review-meta">
+                  <div class="review-rating">${renderReviewStars(r.rating)}</div>
+                  <span class="review-date">${esc(fmtReviewDate(r.created_at))}</span>
+                </div>
+              </div>
+            </div>
+            ${(r.title || r.body) ? `
+              <div class="review-content">
+                ${r.title ? `<h6 class="review-title">${esc(r.title)}</h6>` : ''}
+                ${r.body ? `<p class="review-text">${esc(r.body)}</p>` : ''}
+              </div>
+            ` : ''}
+          </div>
+        `).join('');
+
+    reviewsTab.removeAttribute('aria-busy');
+    reviewsTab.innerHTML = `
+      <div class="reviews-summary">
+        <div class="rating-overview">
+          <div class="overall-rating">
+            <span class="rating-number">${avg ? Number(avg).toFixed(1) : '—'}</span>
+            <div class="rating-stars" role="img" aria-label="${avg ? Number(avg).toFixed(1) : 0} de 5 estrellas">
+              ${renderReviewStars(avg || 0)}
+            </div>
+            <div class="rating-count">${Number(total).toLocaleString('es-AR')} reseña${total === 1 ? '' : 's'}</div>
+          </div>
+          <div class="rating-breakdown">
+            ${[5, 4, 3, 2, 1].map(n => `
+              <div class="rating-bar">
+                <span>${n}</span>
+                <div class="progress">
+                  <div class="progress-bar" style="width: ${pct(breakdown[n])}%"></div>
+                </div>
+                <span>${pct(breakdown[n])}%</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div id="review-cta-block"></div>
+
+      <div id="reviews-list">
+        ${reviewsHTML}
+      </div>
+    `;
+  }
+
+  function renderListError(itemType) {
+    const reviewsTab = document.querySelector('#reviews .reviews-content');
+    if (!reviewsTab) return;
+    const label = itemLabel(itemType);
+
+    reviewsTab.removeAttribute('aria-busy');
+    reviewsTab.innerHTML = `
+      <div class="reviews-content--error">
+        <i class="bi bi-wifi-off" aria-hidden="true"></i>
+        <p class="fw-semibold mb-1">No pudimos cargar las reseñas</p>
+        <p class="small mb-0">Probá de nuevo en unos minutos o recargá la página.</p>
+      </div>
+      <div id="review-cta-block"></div>
+      <div id="reviews-list" class="visually-hidden" aria-hidden="true"></div>
+    `;
+  }
+
+  async function loadList({ itemType, itemId, fallbackAvg = 0, fallbackTotal = 0 }) {
+    const reviewsTab = document.querySelector('#reviews .reviews-content');
+    if (!reviewsTab) return;
+
+    const numericId = parseInt(itemId, 10);
+    if (!window.DaleDeal?.api?.fetchReviews || !numericId || Number.isNaN(numericId)) {
+      renderListTab([], fallbackTotal, fallbackAvg, itemType);
+      return;
+    }
+
+    try {
+      const res = await window.DaleDeal.api.fetchReviews(itemType, numericId, { limit: 20 });
+      renderListTab(res?.data || [], res?.total || 0, res?.avgRating || 0, itemType);
+    } catch (err) {
+      console.warn('[reviews] No se pudieron cargar reseñas:', err?.message);
+      renderListError(itemType);
     }
   }
 
@@ -250,5 +378,7 @@
       }
       renderForm({ itemType, itemId, container });
     },
+    loadList,
+    renderListTab,
   };
 })();

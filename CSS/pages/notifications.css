@@ -272,7 +272,7 @@
 
 .results-count-container {
   font-size: 13px;
-  color: var(--gray-400);
+  color: var(--gray-500);
   font-weight: 500;
   background: var(--gray-100);
   padding: 6px 12px;
@@ -623,7 +623,7 @@
 .sidebar-section-label {
   font-size: 11px;
   font-weight: 700;
-  color: var(--gray-400);
+  color: var(--gray-500);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   padding: 0 var(--spacing-2) var(--spacing-2);
@@ -860,7 +860,7 @@
 [data-theme="dark"] .mensajes-list-item-name { color: #f1f5f9; }
 .mensajes-list-item-preview { font-size: var(--font-size-xs); color: var(--gray-500); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .mensajes-list-item-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
-.mensajes-list-item-time { font-size: 11px; color: var(--gray-400); }
+.mensajes-list-item-time { font-size: 11px; color: var(--gray-500); }
 .mensajes-list-item-unread { background: var(--primary-red); color: #ffffff; font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; border-radius: 9px; display: flex; align-items: center; justify-content: center; padding: 0 5px; }
 .mensajes-chat-panel { display: flex; flex-direction: column; background: var(--white); }
 [data-theme="dark"] .mensajes-chat-panel { background: #1e293b; }
@@ -1018,4 +1018,64 @@
   .empty-state-text {
     font-size: var(--font-size-sm);
   }
+}
+
+/* =====================================================
+   MIS COMPRAS — tarjetas de pedido + seguimiento del envío
+   (misma gramática visual que Mis ventas; scoped a .orders-list)
+   ===================================================== */
+.orders-list .order-card {
+  background: var(--white);
+  color: var(--gray-800);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+.orders-list .order-head { display: flex; justify-content: space-between; align-items: flex-start; gap: .75rem; margin-bottom: .75rem; }
+.orders-list .order-id { font-size: .8rem; color: var(--gray-500); margin-bottom: .15rem; }
+.orders-list .order-seller { font-size: .85rem; color: var(--gray-700); }
+.orders-list .order-row { display: flex; gap: 1rem; align-items: flex-start; }
+.orders-list .order-img { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: var(--gray-100); }
+.orders-list .order-meta { flex: 1; min-width: 0; }
+.orders-list .order-title { font-weight: 600; margin: 0 0 .25rem; }
+.orders-list .badge-status { font-size: .75rem; padding: .25rem .6rem; border-radius: 999px; font-weight: 600; white-space: nowrap; }
+.orders-list .status-pending   { background: #fef3c7; color: #92400e; }
+.orders-list .status-confirmed { background: #dbeafe; color: #1e40af; }
+.orders-list .status-shipped   { background: #e0e7ff; color: #3730a3; }
+.orders-list .status-delivered { background: #d1fae5; color: #065f46; }
+.orders-list .status-cancelled { background: #fee2e2; color: #991b1b; }
+[data-theme="dark"] .orders-list .status-pending   { background: rgba(245, 158, 11, .18); color: #fbbf24; }
+[data-theme="dark"] .orders-list .status-confirmed { background: rgba(59, 130, 246, .18); color: #60a5fa; }
+[data-theme="dark"] .orders-list .status-shipped   { background: rgba(99, 102, 241, .18); color: #818cf8; }
+[data-theme="dark"] .orders-list .status-delivered { background: rgba(16, 185, 129, .18); color: #34d399; }
+[data-theme="dark"] .orders-list .status-cancelled { background: rgba(239, 68, 68, .18); color: #f87171; }
+
+.orders-list .ship-block { background: var(--gray-50); color: var(--gray-700); border-radius: 8px; padding: .75rem; margin-top: .75rem; font-size: .85rem; }
+.orders-list .ship-block > strong { display: block; margin-bottom: .25rem; }
+.orders-list .ship-block a { color: var(--primary-red); font-weight: 600; text-decoration: none; }
+.orders-list .ship-block a:hover { text-decoration: underline; }
+.orders-list .tracking-number { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: .02em; }
+.orders-list .tracking-status { color: var(--primary-red); font-weight: 600; }
+
+.orders-list .tracking-timeline { margin: .5rem 0 0 .35rem; padding-left: 1rem; border-left: 2px solid var(--gray-300); }
+.orders-list .tracking-timeline .tl-item { position: relative; padding: .15rem 0 .6rem .35rem; }
+.orders-list .tracking-timeline .tl-item::before {
+  content: ''; position: absolute; left: -1.42rem; top: .45rem;
+  width: .6rem; height: .6rem; border-radius: 50%; background: var(--gray-400);
+}
+.orders-list .tracking-timeline .tl-item:first-child::before { background: var(--primary-red); }
+.orders-list .tracking-timeline .tl-title { font-weight: 600; }
+.orders-list .tracking-timeline .tl-meta { font-size: .78rem; color: var(--gray-500); }
+
+.orders-list .order-actions { display: flex; gap: .5rem .75rem; flex-wrap: wrap; align-items: center; margin-top: .75rem; }
+.orders-list .order-hint { font-size: .8rem; color: var(--gray-500); }
+
+@media (max-width: 575px) {
+  .orders-list .order-card { padding: 1rem; }
+  .orders-list .order-img { width: 64px; height: 64px; }
+  .orders-list .order-row { gap: .75rem; }
+  .orders-list .ship-block { font-size: .8rem; padding: .6rem; }
+  .orders-list .order-actions .btn { width: 100%; justify-content: center; }
 }

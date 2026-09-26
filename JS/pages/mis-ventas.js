@@ -8,6 +8,19 @@
   let currentOrders   = [];
   let trackingModal   = null;
   let activeOrderId   = null;
+  let carriers        = [];
+
+  // Compra Protegida: días desde la entrega hasta que el pago es liberable.
+  const RELEASE_DAYS  = 7;
+
+  // Por si el backend todavía no expone GET /shipping/carriers.
+  const FALLBACK_CARRIERS = [
+    { slug: 'correo_argentino', name: 'Correo Argentino' },
+    { slug: 'andreani',         name: 'Andreani' },
+    { slug: 'oca',              name: 'OCA' },
+    { slug: 'via_cargo',        name: 'Vía Cargo' },
+    { slug: 'other',            name: 'Otro correo' },
+  ];
 
   document.addEventListener('DOMContentLoaded', async () => {
     if (!localStorage.getItem('daledeal_token')) {
@@ -20,8 +33,21 @@
     document.getElementById('tracking-save-btn')
       .addEventListener('click', saveTracking);
 
-    await loadSales();
+    await Promise.all([loadCarriers(), loadSales()]);
   });
+
+  async function loadCarriers() {
+    const sel = document.getElementById('tracking-carrier');
+    if (!sel) return;
+    try {
+      const res = await window.DaleDeal?.api?.apiFetch('/shipping/carriers');
+      carriers = Array.isArray(res?.data) && res.data.length ? res.data : FALLBACK_CARRIERS;
+    } catch (_) {
+      carriers = FALLBACK_CARRIERS;
+    }
+    sel.innerHTML = '<option value="">Elegí el correo…</option>'
+      + carriers.map(c => `<option value="${escape(c.slug)}">${escape(c.name)}</option>`).join('');
+  }
 
   async function loadSales() {
     const loadingEl = document.getElementById('ventas-loading');
@@ -49,6 +75,7 @@
       }
 
       listEl.innerHTML = currentOrders.map(renderOrderCard).join('');
+      checkPayoutAccount();
 
       // Wire-up de botones por orden
       listEl.querySelectorAll('[data-action]').forEach(btn => {
@@ -89,7 +116,8 @@
           <div>${escape(o.shipping_recipient_name || '—')} · ${escape(o.shipping_phone || '')}</div>
           <div>${escape(o.shipping_street || '')}, ${escape(o.shipping_city || '')}, ${escape(o.shipping_province || '')} ${o.shipping_postal_code ? `(CP ${escape(o.shipping_postal_code)})` : ''}</div>
           ${o.shipping_notes ? `<div class="text-muted mt-1">Nota: ${escape(o.shipping_notes)}</div>` : ''}
-          ${o.tracking_number ? `<div class="mt-1"><strong>Tracking:</strong> ${escape(o.tracking_number)}</div>` : ''}
+          ${o.tracking_number ? `<div class="mt-1"><strong>Seguimiento</strong>${o.shipping_carrier_name ? escape(o.shipping_carrier_name) + ' · ' : ''}${escape(o.tracking_number)}${o.tracking_url ? ` · <a href="${escape(o.tracking_url)}" target="_blank" rel="noopener">Seguir envío <i class="bi bi-box-arrow-up-right"></i></a>` : ''}</div>` : ''}
+          ${o.tracking_status_label ? `<div class="mt-1"><i class="bi bi-truck me-1"></i>${escape(o.tracking_status_label)}${o.tracking_status_at ? ' · ' + formatDate(o.tracking_status_at) : ''}${o.delivered_source === 'carrier' ? ' (confirmado por el correo)' : ''}</div>` : ''}
           <div class="text-muted mt-1">
             Costo del envío cobrado: ${formatPrice(o.shipping_cost || 0)}
           </div>
@@ -122,6 +150,7 @@
           </div>
         </div>
         ${shipBlock}
+        ${payoutBlock(o)}
         ${(showShipActions || showMarkDelivered) ? `
           <div class="order-actions">
             ${showShipActions ? `
@@ -141,6 +170,80 @@
     `;
   }
 
+  // ── Cobro (Compra Protegida / escrow) ──────────────────────────────────
+  // En qué quedó la plata de la venta. Si el backend todavía no manda
+  // release_status (versión vieja) no se muestra nada.
+  function payoutBlock(o) {
+    if (o.payment_status === 'refunded' || o.release_status === 'refunded') {
+      return `
+        <div class="payout-block payout-refunded">
+          <strong><i class="bi bi-arrow-counterclockwise me-1"></i>Reembolsado al comprador</strong>
+          <div>Esta venta se devolvió y no se cobra.</div>
+        </div>`;
+    }
+    if (o.payment_status !== 'paid' || !o.release_status) return '';
+
+    const total      = parseFloat(o.total_price) || 0;
+    const commission = parseFloat(o.commission_amount) || 0;
+    const net = o.payout_net != null
+      ? parseFloat(o.payout_net)
+      : Math.round((total - commission) * 100) / 100;
+    const breakdown = `<div class="payout-sub">Neto: <strong>${formatPrice(net)}</strong>${commission ? ` · total ${formatPrice(total)} menos comisión ${formatPrice(commission)}` : ''}</div>`;
+
+    if (o.release_status === 'released') {
+      return `
+        <div class="payout-block payout-released">
+          <strong><i class="bi bi-cash-coin me-1"></i>Pago liberado${o.released_at ? ' el ' + formatDate(o.released_at) : ''}</strong>
+          <div>Te transferimos <strong>${formatPrice(net)}</strong> por Mercado Pago.${o.payout_reference ? ` Comprobante: <span class="payout-ref">${escape(o.payout_reference)}</span>` : ''}</div>
+        </div>`;
+    }
+    if (o.release_status === 'held') {
+      return `
+        <div class="payout-block payout-held">
+          <strong><i class="bi bi-pause-circle me-1"></i>Pago frenado por un reclamo</strong>
+          <div>Lo estamos revisando con el comprador y te vamos a contactar.</div>
+          ${breakdown}
+        </div>`;
+    }
+    if (o.releasable) {
+      return `
+        <div class="payout-block payout-ready">
+          <strong><i class="bi bi-check2-circle me-1"></i>Listo para liberar</strong>
+          <div>${o.buyer_confirmed_at ? 'El comprador confirmó que lo recibió.' : `Pasaron ${RELEASE_DAYS} días de la entrega sin reclamos.`} Te lo transferimos a la brevedad y te avisamos por mail.</div>
+          ${breakdown}
+        </div>`;
+    }
+    const releaseFrom = o.delivered_at
+      ? new Date(new Date(o.delivered_at).getTime() + RELEASE_DAYS * 86400000)
+      : null;
+    return `
+      <div class="payout-block payout-retained">
+        <strong><i class="bi bi-shield-lock me-1"></i>Pago protegido por Compra Protegida</strong>
+        <div>${releaseFrom
+          ? `Se libera cuando el comprador confirme que lo recibió o, si no hay reclamos, desde el ${formatDate(releaseFrom)}.`
+          : `Se libera cuando el comprador confirme que lo recibió, o a los ${RELEASE_DAYS} días de la entrega.`}</div>
+        ${breakdown}
+      </div>`;
+  }
+
+  // Si vende y todavía no cargó a dónde cobrar, se lo pedimos arriba de todo.
+  async function checkPayoutAccount() {
+    if (document.getElementById('payout-banner')) return;
+    try {
+      const d = await window.DaleDeal?.api?.apiFetch('/users/me/payout-account');
+      if (!d || !d.available || d.account) return;
+      const html = `
+        <div class="alert alert-warning d-flex align-items-start gap-2" id="payout-banner" role="alert">
+          <i class="bi bi-bank2" style="font-size:1.2rem;line-height:1.2;"></i>
+          <div><strong>Cargá tus datos de cobro.</strong> Necesitamos tu alias, CVU o CBU para transferirte cuando se libere el pago de una venta.
+            <a href="./mi-cuenta.html#datos-cobro" class="alert-link">Cargarlos ahora</a></div>
+        </div>`;
+      const header = document.querySelector('.ventas-header');
+      if (header) header.insertAdjacentHTML('afterend', html);
+      else document.getElementById('ventas-list')?.insertAdjacentHTML('beforebegin', html);
+    } catch (_) { /* sin datos de cobro no bloqueamos la página */ }
+  }
+
   function openTrackingModal(orderId) {
     activeOrderId = orderId;
     const order = currentOrders.find(o => o.id === orderId);
@@ -149,6 +252,8 @@
     document.getElementById('tracking-order-info').textContent =
       `Orden #${order.id} · ${order.product_title || 'Producto'} · ${formatPrice(order.total_price)}`;
     document.getElementById('tracking-input').value = order.tracking_number || '';
+    const carrierSel = document.getElementById('tracking-carrier');
+    if (carrierSel) carrierSel.value = order.shipping_carrier || '';
     document.getElementById('tracking-mark-shipped').checked = order.status === 'confirmed';
     document.getElementById('tracking-error').classList.add('d-none');
     trackingModal.show();
@@ -158,10 +263,16 @@
     if (!activeOrderId) return;
     const tracking = document.getElementById('tracking-input').value.trim();
     const markShipped = document.getElementById('tracking-mark-shipped').checked;
+    const carrier  = document.getElementById('tracking-carrier')?.value || '';
     const errorEl = document.getElementById('tracking-error');
     const btn     = document.getElementById('tracking-save-btn');
 
     errorEl.classList.add('d-none');
+    if (tracking && !carrier) {
+      errorEl.textContent = 'Elegí con qué correo lo mandaste, así el comprador puede seguir el envío.';
+      errorEl.classList.remove('d-none');
+      return;
+    }
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando…';
 
@@ -171,6 +282,7 @@
         method: 'PATCH',
         body: JSON.stringify({
           tracking_number: tracking || null,
+          carrier:         carrier || null,
           mark_shipped:    markShipped,
         }),
       });

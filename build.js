@@ -29,13 +29,12 @@ const esbuild = require('esbuild');
 const ROOT = __dirname;
 const DIST = path.join(ROOT, 'dist');
 
-// Cloudflare Web Analytics beacon token. Si está vacío, el build no inyecta
-// el snippet — útil para dev local. Sacalo del dashboard de Cloudflare
-// (Analytics → Web Analytics → tu sitio → JavaScript snippet → copiar el
-// valor dentro de data-cf-beacon).
-//
-// También se puede sobreescribir con env var: CF_BEACON_TOKEN=xxx npm run build
-const CF_BEACON_TOKEN = process.env.CF_BEACON_TOKEN || '';
+// Cloudflare Web Analytics beacon token (daledeal.com.ar). Es un token
+// PÚBLICO por diseño — viaja en el HTML de cada visitante — así que puede
+// vivir commiteado acá como default. Se puede anular con la env var
+// (CF_BEACON_TOKEN= npm run build → builds sin analytics, p.ej. dev local
+// usa otro path porque sirve los HTML sin pasar por el build).
+const CF_BEACON_TOKEN = process.env.CF_BEACON_TOKEN ?? '9d2b4a29f7184c14a28bf735cc70bac8';
 const WATCH = process.argv.includes('--watch');
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -227,8 +226,12 @@ function inlineCriticalCssInHome() {
 // El JS de component-loader.js sigue funcionando como fallback y para
 // reaplicar los path fixes / authManager.updateUI() después de hidratar.
 //
-// Footer NO se inyecta porque está al final de la página, no es above-the-fold
-// y el flash es invisible (se ve solo al hacer scroll).
+// El footer también se inyecta (ver inlineFooterInHtmls): no por el flash,
+// sino porque en producción el fetch en runtime NO puede funcionar — las
+// páginas se sirven con URL limpia (/notificaciones) y el _redirects manda
+// cualquier /HTML/* a /:splat con 301, así que /HTML/components/footer.html
+// termina en /components/footer.html → 404 y las páginas internas quedaban
+// sin footer (la home lo tiene inline).
 function inlineNavbarInHtmls() {
   const headerSrc = path.join(ROOT, 'HTML', 'components', 'header.html');
   if (!fs.existsSync(headerSrc)) {
@@ -289,6 +292,50 @@ function inlineNavbarInHtmls() {
   console.log(`✓ Navbar inyectada en ${injected} HTMLs (sin flash de hidratación)`);
 }
 
+// Inyecta el footer (HTML/components/footer.html) en cada HTML que tenga el
+// div#footer-placeholder vacío. footer.html asume que vive en /HTML/ (hrefs
+// ./x.html y logo ../IMG/), igual que header.html: en /HTML/ va tal cual y en
+// la raíz se reescriben las rutas. component-loader.js detecta que el
+// placeholder ya tiene contenido y no lo vuelve a pedir.
+function inlineFooterInHtmls() {
+  const footerSrc = path.join(ROOT, 'HTML', 'components', 'footer.html');
+  if (!fs.existsSync(footerSrc)) {
+    console.log('= footer.html no existe, skipeo inline footer');
+    return;
+  }
+  const footerHtml = fs.readFileSync(footerSrc, 'utf8');
+
+  const htmls = [];
+  const walk = (d) => {
+    for (const entry of fs.readdirSync(d, { withFileTypes: true })) {
+      const p = path.join(d, entry.name);
+      if (entry.isDirectory()) walk(p);
+      else if (entry.name.endsWith('.html')) htmls.push(p);
+    }
+  };
+  walk(DIST);
+
+  let injected = 0;
+  for (const fp of htmls) {
+    let content = fs.readFileSync(fp, 'utf8');
+    const placeholderRe = /<div\s+id="footer-placeholder"\s*>\s*<\/div>/;
+    if (!placeholderRe.test(content)) continue;
+
+    const fromRoot = path.relative(DIST, fp).indexOf(path.sep) === -1;
+    let footerFixed = footerHtml;
+    if (fromRoot) {
+      footerFixed = footerFixed
+        .replace(/href="\.\/(?!index\.html|HTML\/|#)([^"]+\.html[^"]*)"/g, 'href="./HTML/$1"')
+        .replace(/src="\.\.\/IMG\//g, 'src="./IMG/');
+    }
+
+    content = content.replace(placeholderRe, '<div id="footer-placeholder">' + footerFixed + '</div>');
+    fs.writeFileSync(fp, content);
+    injected++;
+  }
+  console.log(`✓ Footer inyectado en ${injected} HTMLs (en prod el fetch en runtime daba 404)`);
+}
+
 // Inyecta el snippet de Cloudflare Web Analytics antes del </body> en cada HTML.
 // Idempotente: skipea si ya está el script (por el data-cf-beacon attribute).
 // No-op si CF_BEACON_TOKEN está vacío (dev local o pre-config).
@@ -314,8 +361,13 @@ function injectCloudflareWebAnalytics() {
   for (const fp of htmls) {
     let content = fs.readFileSync(fp, 'utf8');
     if (content.includes('data-cf-beacon=')) continue; // ya inyectado
-    if (!content.includes('</body>')) continue; // HTML mal formado
-    content = content.replace('</body>', snippet + '</body>');
+    // Inyectar antes del ÚLTIMO </body> (el real). Usar replace() con string
+    // pisa la PRIMERA aparición, y si hay un </body> literal en un comentario o
+    // string de JS, el beacon se mete ahí y su </script> corta el script inline
+    // → AOS no inicializa y la página queda en blanco.
+    const bodyClose = content.lastIndexOf('</body>');
+    if (bodyClose === -1) continue; // HTML mal formado
+    content = content.slice(0, bodyClose) + snippet + content.slice(bodyClose);
     fs.writeFileSync(fp, content);
     injected++;
   }
@@ -452,7 +504,7 @@ function copyHTMLsAndAssets() {
   // manifest.json (PWA): SI FALTA, Cloudflare devuelve index.html como SPA
   // fallback y el browser tira "Manifest: Syntax error" al parsearlo como JSON.
   // Antes faltaba en esta lista — 5 HTMLs con <link rel="manifest"> rompían.
-  for (const f of ['robots.txt', 'sitemap.xml', 'sitemap-index.xml', 'products.json', 'manifest.json']) {
+  for (const f of ['robots.txt', 'sitemap.xml', 'sitemap-index.xml', 'products.json', 'manifest.json', '_headers', '_redirects']) {
     const src = path.join(ROOT, f);
     if (fs.existsSync(src)) copyFile(src, path.join(DIST, f));
   }
@@ -514,6 +566,36 @@ function appendCacheBust(hash) {
   console.log(`✓ Cache-busting ?v=${hash} agregado a ${count} HTMLs (forza refetch en deploy)`);
 }
 
+// URLs limpias: reescribe los links de PÁGINAS (href/action que terminan en
+// .html) a su forma limpia sin /HTML/ ni .html (ej. ./HTML/servicios.html →
+// /servicios, ../index.html → /). Así la navegación va directo a la URL limpia
+// sin pasar por el redirect (sin "parpadeo"). NO toca assets (.css/.js/img),
+// externos, anclas ni mailto. El _redirects queda como red de seguridad.
+function cleanPageUrls() {
+  const htmls = listFiles(DIST, '.html');
+  let count = 0;
+  for (const fp of htmls) {
+    let html = fs.readFileSync(fp, 'utf8');
+    const before = html;
+    // 1) href/action relativos a páginas .html → /pagina (o / para index)
+    html = html.replace(/\b(href|action)=(["'])([^"']+?)\2/gi, (m, attr, q, url) => {
+      if (/^(https?:|mailto:|tel:|javascript:|#|data:)/i.test(url)) return m;
+      const mm = url.match(/(?:^|\/)([\w-]+)\.html(\?[^"']*|#[^"']*)?$/i);
+      if (!mm) return m;
+      const page = mm[1].toLowerCase();
+      const clean = page === 'index' ? '/' : '/' + page;
+      return `${attr}=${q}${clean}${mm[2] || ''}${q}`;
+    });
+    // 2) URLs absolutas del propio dominio (canonical, og:url) → sin /HTML/ ni .html
+    html = html.replace(
+      /(https?:\/\/(?:www\.)?daledeal\.com\.ar)\/HTML\/([\w-]+)\.html/gi,
+      (m, host, page) => `${host}/${page.toLowerCase() === 'index' ? '' : page.toLowerCase()}`
+    );
+    if (html !== before) { fs.writeFileSync(fp, html); count++; }
+  }
+  console.log(`✓ URLs limpias: links de páginas reescritos en ${count} HTMLs`);
+}
+
 async function build() {
   const start = Date.now();
   // Limpiar dist/ entero para builds reproducibles
@@ -526,6 +608,7 @@ async function build() {
   copyHTMLsAndAssets();
   rewriteHtmlLinksToBundle();     // reemplaza 3 links → 1 link a core.css en dist/
   inlineNavbarInHtmls();          // inyecta navbar en cada HTML (sin flash)
+  inlineFooterInHtmls();          // inyecta footer (el fetch en runtime falla con URLs limpias)
   // NOTA: inlineCriticalCssInHome() probado y deshabilitado — en local sin gzip
   // hace el HTML 3x más grande y empeora FCP. En producción con gzip+HTTP/2
   // sería ganancia (1 request menos). Reactivar si se valida en deploy real.
@@ -538,6 +621,7 @@ async function build() {
   const buildHash = (process.env.GITHUB_SHA
     ? process.env.GITHUB_SHA.slice(0, 7)
     : Date.now().toString(36)).toLowerCase();
+  cleanPageUrls();                // links de páginas → URLs limpias (sin /HTML/ ni .html)
   appendCacheBust(buildHash);
 
   console.log(`✓ Build completo en ${Date.now() - start}ms — output: dist/`);

@@ -25,6 +25,18 @@ class ServicePage {
     this._updateSaveButton();
     this.loadRelatedServices();
     this.loadProviderServices();
+    this.loadAndRenderReviews();
+  }
+
+  async loadAndRenderReviews() {
+    if (!this.currentService?.id || !window.DaleDealReviews?.loadList) return;
+    const s = this.currentService;
+    await window.DaleDealReviews.loadList({
+      itemType: 'service',
+      itemId: s.id,
+      fallbackAvg: s.rating || 0,
+      fallbackTotal: s.reviewCount || 0,
+    });
   }
 
   // ── Cargar datos del servicio por ID (URL param o localStorage) ────────────
@@ -90,7 +102,7 @@ class ServicePage {
           main.innerHTML = '<div style="text-align:center;padding:80px 24px;"><h2>Servicio no encontrado</h2><p>Te llevamos al listado en un segundo…</p></div>';
         }
       }
-      setTimeout(() => { window.location.href = './servicios.html'; }, 2000);
+      setTimeout(() => { window.location.href = '/servicios'; }, 2000);
       return;
     }
 
@@ -182,10 +194,12 @@ class ServicePage {
       memberSince:  realProvider.memberSince || mockProvider.memberSince,
       responseTime: mockProvider.responseTime,
       completedJobs: mockProvider.completedJobs,
-      verified:     realProvider.verified !== undefined ? realProvider.verified : true,
+      verifiedIdentity:     !!realProvider.verifiedIdentity,
+      verifiedProfessional: !!realProvider.verifiedProfessional,
+      verifiedBackground:   !!realProvider.verifiedBackground,
       phone:        realProvider.phone,
       location:     realProvider.location,
-    } : { ...mockProvider, verified: true };
+    } : { ...mockProvider, verifiedIdentity: false, verifiedProfessional: false, verifiedBackground: false };
 
     // Galería: priorizar real (array del backend), sino mock por categoría
     const realGallery = Array.isArray(service.gallery) && service.gallery.length > 0
@@ -231,6 +245,17 @@ class ServicePage {
 
     document.querySelectorAll('.provider-name-text').forEach(el => el.textContent = p.name);
 
+    // Insignias de verificación reales (identidad / profesional). Solo aparecen
+    // si el equipo aprobó la verificación del prestador (no inventamos confianza).
+    const badgesEl = document.getElementById('providerBadges');
+    if (badgesEl) {
+      let bhtml = '';
+      if (p.verifiedIdentity)     bhtml += '<span class="verif-badge verif-identity" title="Identidad verificada por Dale Deal"><i class="bi bi-patch-check-fill"></i> Identidad</span>';
+      if (p.verifiedProfessional) bhtml += '<span class="verif-badge verif-pro" title="Matrícula o título verificado"><i class="bi bi-mortarboard-fill"></i> Profesional</span>';
+      if (p.verifiedBackground)   bhtml += '<span class="verif-badge verif-bg" title="Certificado de antecedentes penales validado contra la fuente oficial"><i class="bi bi-shield-check"></i> Antecedentes</span>';
+      badgesEl.innerHTML = bhtml;
+    }
+
     const providerStatEl = document.getElementById('providerStats');
     if (providerStatEl) {
       providerStatEl.innerHTML = `
@@ -250,6 +275,20 @@ class ServicePage {
     const completedJobsEl = document.getElementById('providerCompletedJobs');
     if (completedJobsEl) completedJobsEl.textContent = `${p.completedJobs || 0} trabajos`;
 
+    // WhatsApp directo al prestador (solo si tiene teléfono). Normalización AR best-effort.
+    const waBtn = document.getElementById('svcWhatsapp');
+    if (waBtn) {
+      const digits = (p.phone || '').replace(/\D/g, '');
+      if (digits.length >= 8) {
+        const intl = digits.startsWith('54') ? digits : `549${digits.replace(/^0/, '')}`;
+        const txt = encodeURIComponent(`Hola${p.name ? ' ' + p.name : ''}, te contacto desde Dale Deal por el servicio "${s.title}".`);
+        waBtn.href = `https://wa.me/${intl}?text=${txt}`;
+        waBtn.classList.remove('d-none');
+      } else {
+        waBtn.classList.add('d-none');
+      }
+    }
+
     // Service title + meta
     const titleEl = document.querySelector('.svc-title');
     if (titleEl) titleEl.textContent = s.title;
@@ -266,10 +305,11 @@ class ServicePage {
     // Badges/tags
     const tagsContainer = document.querySelector('.service-tags');
     if (tagsContainer && s.badges?.length) {
+      const esc = (v) => window.DaleDeal.utils.escapeHtml(String(v ?? ''));
       tagsContainer.innerHTML = s.badges
         .map(b => {
           const label = typeof b === 'object' ? b.text : b;
-          return `<span class="service-tag"><i class="bi bi-check-circle-fill me-1"></i>${label}</span>`;
+          return `<span class="service-tag"><i class="bi bi-check-circle-fill me-1"></i>${esc(label)}</span>`;
         })
         .join('');
     }
@@ -277,7 +317,7 @@ class ServicePage {
     // Availability
     const availEl = document.getElementById('serviceAvailability');
     if (availEl) {
-      availEl.innerHTML = `<span class="availability-dot available"></span> Disponible esta semana · Responde en ${p.responseTime || '< 1h'}`;
+      availEl.innerHTML = `<span class="availability-dot available"></span> Disponible esta semana · Responde en ${window.DaleDeal.utils.escapeHtml(p.responseTime || '< 1h')}`;
     }
 
     // Price
@@ -289,25 +329,28 @@ class ServicePage {
 
     const installmentsEl = document.querySelector('.service-installments');
     if (installmentsEl) {
-      installmentsEl.innerHTML = `Hasta <strong>6 cuotas sin interés</strong> de ${this._formatPrice(s.price / 6)}`;
+      const inst = window.DaleDeal.utils.formatInstallments(s.price);
+      installmentsEl.innerHTML = inst.show
+        ? `Hasta <strong>${inst.count} cuotas sin interés</strong> de ${inst.monthlyFormatted}`
+        : '';
     }
+
+    // Guardar en "vistos recientemente" (localStorage, para el carrusel del home)
+    window.DDRecentlyViewed?.track({ id: s.id, type: 'service', title: s.title, price: s.price, image: s.images?.main });
 
     // Description tab
     const descEl = document.querySelector('.service-description-text');
     if (descEl) {
-      const isHTML = /<[a-z][\s\S]*>/i.test(s.description || '');
-      descEl.innerHTML = isHTML
-        ? s.description
-        : `<p style="white-space:pre-line;line-height:1.8;color:var(--gray-700)">${s.description || ''}</p>`;
+      // Sanitizar SIEMPRE: la descripción viene del editor Quill del prestador (HTML no confiable).
+      // DOMPurify preserva el formato seguro y elimina <script>/onerror/etc. Fallback: escapar.
+      const raw = s.description || '';
+      if (window.DOMPurify) {
+        descEl.innerHTML = window.DOMPurify.sanitize(raw, { USE_PROFILES: { html: true } });
+      } else {
+        const escDesc = window.DaleDeal.utils.escapeHtml(raw);
+        descEl.innerHTML = `<p style="white-space:pre-line;line-height:1.8;color:var(--gray-700)">${escDesc}</p>`;
+      }
     }
-
-    // Reviews summary
-    const ratingNumEl = document.querySelector('.overall-rating .rating-number');
-    if (ratingNumEl) ratingNumEl.textContent = s.rating;
-    const reviewCountEl = document.querySelector('.overall-rating .rating-count');
-    if (reviewCountEl) reviewCountEl.textContent = `${s.reviewCount?.toLocaleString('es-AR') || 0} reseñas`;
-    const reviewStarsEl = document.querySelector('.overall-rating .rating-stars');
-    if (reviewStarsEl) reviewStarsEl.innerHTML = this._renderStars(s.rating);
   }
 
   // ── Galería de imágenes/videos ─────────────────────────────────────────────
@@ -728,7 +771,7 @@ class ServicePage {
 
     // Ver todos relacionados
     document.getElementById('viewAllRelatedBtn')?.addEventListener('click', () => {
-      window.location.href = `./servicios.html?category=${encodeURIComponent(this.currentService.category)}`;
+      window.location.href = `/servicios?category=${encodeURIComponent(this.currentService.category)}`;
     });
 
   }
@@ -860,7 +903,7 @@ class ServicePage {
       card.addEventListener('click', (e) => {
         if (e.target.closest('.action-heart')) return;
         const id = card.dataset.serviceId;
-        if (id) window.location.href = `servicio.html?id=${id}`;
+        if (id) window.location.href = `/servicio?id=${id}`;
       });
     });
 

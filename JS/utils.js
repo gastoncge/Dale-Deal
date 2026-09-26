@@ -69,6 +69,37 @@ DaleDeal.utils.formatPrice = (price) => {
 // Alias usado en home.js y servicios.html
 DaleDeal.utils.formatCurrency = DaleDeal.utils.formatPrice;
 
+/**
+ * Calcula el mejor plan de cuotas sin interés para un precio.
+ * Elige el MAYOR número de cuotas (de [max,9,6,3]) cuya cuota mensual siga
+ * siendo >= minMonthly, para no mostrar "12 cuotas de $42". Si ni la opción
+ * más baja llega al mínimo, devuelve { show:false }.
+ *
+ * Fuente única de verdad — usar en card (home.js), ficha de producto y servicio.
+ * (En la Etapa 2, el nº de cuotas saldrá de la config por publicación + Mercado Pago.)
+ *
+ * @param {number} price
+ * @param {object} [opts] - { max=12, minMonthly=1000 }
+ * @returns {{show:boolean, count?:number, monthly?:number, monthlyFormatted?:string}}
+ */
+DaleDeal.utils.formatInstallments = (price, opts = {}) => {
+  const max = opts.max || 12;
+  const minMonthly = opts.minMonthly || 1000;
+  if (!price || price <= 0) return { show: false };
+  for (const n of [max, 9, 6, 3].filter((c) => c <= max)) {
+    const monthly = price / n;
+    if (monthly >= minMonthly) {
+      return {
+        show: true,
+        count: n,
+        monthly,
+        monthlyFormatted: DaleDeal.utils.formatPrice(Math.round(monthly)),
+      };
+    }
+  }
+  return { show: false };
+};
+
 // ===== UTILIDADES DE VALIDACIÓN =====
 DaleDeal.utils.calculatePasswordStrength = (password) => {
   let score = 0;
@@ -218,7 +249,7 @@ DaleDeal.utils.showToast = (message, type, config) => {
       <div class="d-flex">
         <div class="toast-body">
           <i class="bi bi-${icon} me-2"></i>
-          ${message}
+          ${DaleDeal.utils.escapeHtml(String(message ?? ''))}
         </div>
         <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
       </div>
@@ -264,7 +295,7 @@ DaleDeal.utils.showAlert = (message, type, config) => {
     <div class="d-flex align-items-center">
       <i class="bi bi-${icon} me-2"></i>
       <div class="flex-grow-1">
-        <div>${message}</div>
+        <div>${DaleDeal.utils.escapeHtml(String(message ?? ''))}</div>
       </div>
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
     </div>
@@ -486,8 +517,8 @@ window.goToProduct = function(productId) {
   if (path.includes('producto.html')) {
     window.location.href = window.location.pathname + '?id=' + productId;
   } else if (path.includes('/HTML/')) {
-    window.location.href = './producto.html?id=' + productId;
+    window.location.href = '/producto?id=' + productId;
   } else {
-    window.location.href = './HTML/producto.html?id=' + productId;
+    window.location.href = '/producto?id=' + productId;
   }
 };

@@ -72,7 +72,7 @@ function fixHeaderPaths() {
   // Corregir logo link
   const homeLink = document.getElementById('homeLink');
   if (homeLink) {
-    homeLink.href = isRoot ? './index.html' : '../index.html';
+    homeLink.href = isRoot ? './index.html' : '/';
   }
 
   // Corregir logo image
@@ -198,7 +198,7 @@ function initializeHeaderComponents() {
 function fixPublicarLink() {
   const path = window.location.pathname.toLowerCase();
   const isInHtml = path.includes('/html/');
-  const base = isInHtml ? './publicar.html' : './HTML/publicar.html';
+  const base = isInHtml ? './publicar.html' : '/publicar';
 
   let href = base;
   if (path.includes('productos')) {
@@ -245,7 +245,12 @@ async function loadAllComponents() {
   // Cargar footer
   const footerPlaceholder = document.getElementById('footer-placeholder');
   if (footerPlaceholder) {
-    await loadComponent(`${basePath}footer.html`, 'footer-placeholder');
+    // Si el build ya inyectó el footer (build.js → inlineFooterInHtmls) no lo
+    // pedimos de nuevo: en producción las páginas viven en URLs limpias y
+    // /HTML/components/footer.html redirige a un 404.
+    if (footerPlaceholder.children.length === 0) {
+      await loadComponent(`${basePath}footer.html`, 'footer-placeholder');
+    }
     // Esperar un poco para que el DOM se actualice
     setTimeout(() => {
       initializeNewsletterForm();

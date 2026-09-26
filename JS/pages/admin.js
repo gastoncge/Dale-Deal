@@ -17,6 +17,8 @@
     reviews:  { page: 1, loading: false },
     reports:  { page: 1, status: '', category: '', loading: false },
     leads:    { page: 1, status: '', loading: false },
+    verifications: { status: 'pending', loading: false },
+    payouts:  { view: 'all', loaded: false, pending: [], released: [] },
   };
 
   document.addEventListener('DOMContentLoaded', init);
@@ -49,6 +51,10 @@
     document.getElementById('btn-refresh-stats')?.addEventListener('click', loadStats);
     // Cargar badge de reportes pendientes apenas entra al panel
     updateReportsBadge();
+    // Idem verificaciones pendientes
+    updateVerifBadge();
+    // Idem retenciones liberables (plata para transferir)
+    updatePayoutsBadge();
   }
 
   function revealAdmin() {
@@ -93,6 +99,8 @@
       case 'reviews':  if (!state.reviews.loaded)  loadReviews();  break;
       case 'reports':  if (!state.reports.loaded)  loadReports();  break;
       case 'leads':    if (!state.leads.loaded)    loadLeads();    break;
+      case 'verifications': if (!state.verifications.loaded) loadVerifications(); break;
+      case 'payouts':  if (!state.payouts.loaded)  loadPayouts();  break;
     }
   }
 
@@ -160,6 +168,17 @@
       state.leads.page = 1;
       loadLeads();
     });
+
+    document.getElementById('verif-status')?.addEventListener('change', e => {
+      state.verifications.status = e.target.value;
+      loadVerifications();
+    });
+
+    document.getElementById('payouts-view')?.addEventListener('change', e => {
+      state.payouts.view = e.target.value;
+      if (state.payouts.loaded) renderPayouts(); else loadPayouts();
+    });
+    document.getElementById('payouts-refresh')?.addEventListener('click', () => loadPayouts());
 
     // Export CSV buttons (orders, leads, newsletter)
     document.getElementById('exportOrdersCsv')?.addEventListener('click',     () => downloadCsv('/admin/orders.csv',     'orders'));
@@ -860,6 +879,491 @@
         }
       });
     });
+  }
+
+  // ── VERIFICACIONES DE PRESTADORES ────────────────────────────────────────
+  // Cola de revisión manual: el prestador pide identidad/profesional, el equipo
+  // aprueba (prende la insignia) o rechaza. Backend: /admin/verifications.
+  async function loadVerifications() {
+    try {
+      const res = await window.DaleDeal.api.apiFetch(`/admin/verifications?status=${encodeURIComponent(state.verifications.status)}`);
+      state.verifications.loaded = true;
+      renderVerifications(res);
+      updateVerifBadge();
+    } catch (err) {
+      document.getElementById('verif-content').innerHTML = errorHTML(err);
+    }
+  }
+
+  async function updateVerifBadge() {
+    try {
+      const res = await window.DaleDeal.api.apiFetch('/admin/verifications?status=pending');
+      const badge = document.getElementById('verif-badge');
+      if (badge) {
+        const n = res.total || 0;
+        badge.textContent = n > 99 ? '99+' : n;
+        badge.style.display = n > 0 ? '' : 'none';
+      }
+    } catch (_) { /* silencioso */ }
+  }
+
+  function renderVerifications(res) {
+    const c = document.getElementById('verif-content');
+    const rows = res.requests || [];
+    if (rows.length === 0) {
+      c.innerHTML = emptyHTML('No hay verificaciones en este estado');
+      return;
+    }
+    c.innerHTML = `
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Prestador</th><th>Tipo</th><th>Datos de contacto</th>
+              <th>Estado</th><th>Fecha</th><th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(v => verifRow(v)).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+    bindVerifActions();
+  }
+
+  function verifRow(v) {
+    const typeLabel = { identity: 'Identidad', professional: 'Profesional', background: 'Antecedentes' }[v.type] || v.type;
+    const typeIcon  = { identity: 'bi-person-badge', professional: 'bi-mortarboard', background: 'bi-shield-check' }[v.type] || 'bi-patch-check';
+    const stClass = { pending: 'admin-pill-warning', approved: 'admin-pill-success', rejected: 'admin-pill-muted' }[v.status] || 'admin-pill-muted';
+    const stLabel = { pending: 'Pendiente', approved: 'Aprobada', rejected: 'Rechazada' }[v.status] || v.status;
+
+    const provider = `<small><strong>${esc(v.user_name || 'Sin nombre')}</strong><br>
+        <span class="text-muted">${esc(v.user_email || '')}</span>
+        ${v.user_location ? `<br><span class="text-muted"><i class="bi bi-geo-alt"></i> ${esc(v.user_location)}</span>` : ''}</small>`;
+
+    const actions = v.status === 'pending'
+      ? `<div class="admin-actions">
+           <button class="btn btn-sm btn-outline-success" data-action="verif-review" data-id="${v.id}" data-decision="approve"><i class="bi bi-check-lg"></i> Aprobar</button>
+           <button class="btn btn-sm btn-outline-danger"  data-action="verif-review" data-id="${v.id}" data-decision="reject"><i class="bi bi-x-lg"></i> Rechazar</button>
+         </div>`
+      : `<small class="text-muted">${v.reviewed_at ? formatDate(v.reviewed_at) : '—'}</small>`;
+
+    return `
+      <tr>
+        <td>#${v.id}</td>
+        <td>${provider}</td>
+        <td><span class="admin-pill admin-pill-info"><i class="bi ${typeIcon}"></i> ${typeLabel}</span></td>
+        <td style="max-width:320px;"><small>${v.contact_note ? esc(v.contact_note) : '<span class="text-muted">—</span>'}</small></td>
+        <td><span class="admin-pill ${stClass}">${stLabel}</span></td>
+        <td>${formatDate(v.created_at)}</td>
+        <td>${actions}</td>
+      </tr>
+    `;
+  }
+
+  function bindVerifActions() {
+    document.querySelectorAll('#verif-content [data-action="verif-review"]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.id;
+        const decision = btn.dataset.decision;
+        const isApprove = decision === 'approve';
+        if (!confirm(isApprove ? '¿Aprobar y activar la insignia de este prestador?' : '¿Rechazar esta verificación?')) return;
+        const admin_note = isApprove ? '' : (prompt('Motivo del rechazo (opcional, uso interno):') || '');
+        btn.disabled = true;
+        try {
+          await window.DaleDeal.api.apiFetch(`/admin/verifications/${id}/review`, {
+            method: 'POST',
+            body: JSON.stringify({ decision, admin_note }),
+          });
+          loadVerifications();
+        } catch (err) {
+          alert('Error: ' + (err.message || 'no se pudo procesar'));
+          btn.disabled = false;
+        }
+      });
+    });
+  }
+
+  // ── RETENCIONES (escrow / Compra Protegida) ──────────────────────────────
+  // GET  /admin/payouts/pending   → órdenes pagas retenidas o frenadas
+  // GET  /admin/payouts/released  → historial de payouts registrados
+  // POST /admin/orders/:id/release {reference, note, force}
+  // POST /admin/orders/:id/hold    {hold: true|false}
+  const RELEASE_DAYS = 7;
+
+  async function loadPayouts() {
+    const c = document.getElementById('payouts-content');
+    if (!c) return;
+    if (!state.payouts.loaded) c.innerHTML = emptyHTML('Cargando retenciones…');
+    try {
+      const [pending, released] = await Promise.all([
+        window.DaleDeal.api.apiFetch('/admin/payouts/pending'),
+        window.DaleDeal.api.apiFetch('/admin/payouts/released?limit=100').catch(() => ({ payouts: [] })),
+      ]);
+      state.payouts.pending  = pending.orders || [];
+      state.payouts.released = released.payouts || [];
+      state.payouts.loaded   = true;
+      renderPayoutStats();
+      renderPayouts();
+      setPayoutsBadge(state.payouts.pending.filter(o => payoutSituation(o).kind === 'releasable').length);
+    } catch (err) {
+      c.innerHTML = errorHTML(err);
+    }
+  }
+
+  async function updatePayoutsBadge() {
+    try {
+      const res = await window.DaleDeal.api.apiFetch('/admin/payouts/pending');
+      setPayoutsBadge((res.orders || []).filter(o => payoutSituation(o).kind === 'releasable').length);
+    } catch (_) { /* silencioso */ }
+  }
+
+  function setPayoutsBadge(n) {
+    const badge = document.getElementById('payouts-badge');
+    if (!badge) return;
+    badge.textContent = n > 99 ? '99+' : n;
+    badge.style.display = n > 0 ? '' : 'none';
+  }
+
+  // Situación de una orden retenida, con el mismo criterio que el backend.
+  function payoutSituation(o) {
+    if (o.release_status === 'held') {
+      return { kind: 'held', label: 'Frenada por reclamo', cls: 'admin-pill-danger', why: 'está frenada por un reclamo' };
+    }
+    if (o.releasable) {
+      const why = o.buyer_confirmed_at ? 'el comprador confirmó la recepción' : `pasaron ${RELEASE_DAYS} días de la entrega sin reclamo`;
+      return { kind: 'releasable', label: 'Liberable', cls: 'admin-pill-success', why };
+    }
+    if (o.delivered_at) {
+      const days = Math.max(0, RELEASE_DAYS - Math.floor((Date.now() - new Date(o.delivered_at).getTime()) / 86400000));
+      return {
+        kind: 'waiting', cls: 'admin-pill-warning',
+        label: `Entregada · faltan ${days} día${days === 1 ? '' : 's'}`,
+        why: `fue entregada el ${formatDate(o.delivered_at)} y el comprador todavía no confirmó; se libera sola a los ${RELEASE_DAYS} días si no reclama`,
+      };
+    }
+    return {
+      kind: 'waiting', cls: 'admin-pill-warning',
+      label: o.status === 'shipped' ? 'En camino' : 'Sin entrega registrada',
+      why: 'todavía no hay entrega registrada',
+    };
+  }
+
+  const netOf = o => {
+    const net = parseFloat(o.net_amount);
+    if (!Number.isNaN(net)) return net;
+    return (parseFloat(o.total_price) || 0) - (parseFloat(o.commission_amount) || 0);
+  };
+
+  function renderPayoutStats() {
+    const c = document.getElementById('payouts-stats');
+    if (!c) return;
+    const pend = state.payouts.pending;
+    const rel  = pend.filter(o => payoutSituation(o).kind === 'releasable');
+    const held = pend.filter(o => o.release_status === 'held');
+    const done = state.payouts.released || [];
+    const sum  = list => list.reduce((a, o) => a + netOf(o), 0);
+    const card = (label, value, detail, color) => `
+      <div class="admin-stat-card">
+        <p class="admin-stat-label">${label}</p>
+        <p class="admin-stat-value"${color ? ` style="color:${color}"` : ''}>${value}</p>
+        <p class="admin-stat-detail">${detail}</p>
+      </div>`;
+    c.innerHTML =
+      card('Retenidas', pend.length, `${money(sum(pend))} neto a vendedores`) +
+      card('Liberables ahora', rel.length, rel.length ? `${money(sum(rel))} para transferir` : 'Nada pendiente de transferir', rel.length ? '#059669' : '') +
+      card('Frenadas por reclamo', held.length, held.length ? `${money(sum(held))} en disputa` : 'Sin reclamos abiertos', held.length ? '#dc2626' : '') +
+      card('Liberadas', done.length, `${money(done.reduce((a, p) => a + (parseFloat(p.net_amount) || 0), 0))} transferidos en total`);
+  }
+
+  function renderPayouts() {
+    const c = document.getElementById('payouts-content');
+    if (!c) return;
+    const view = state.payouts.view;
+
+    if (view === 'released') {
+      const rows = state.payouts.released || [];
+      if (rows.length === 0) { c.innerHTML = emptyHTML('Todavía no se registró ninguna liberación.'); return; }
+      c.innerHTML = `
+        <div style="overflow-x:auto;">
+          <table class="admin-table">
+            <thead><tr>
+              <th>Orden</th><th>Producto</th><th>Vendedor</th><th>Bruto</th><th>Comisión</th><th>Neto transferido</th>
+              <th>Destino</th><th>Comprobante</th><th>Nota</th><th>Liberó</th><th>Fecha</th>
+            </tr></thead>
+            <tbody>${rows.map(releasedRow).join('')}</tbody>
+          </table>
+        </div>`;
+      return;
+    }
+
+    const rows = state.payouts.pending.filter(o => {
+      const k = payoutSituation(o).kind;
+      return view === 'all' || (view === 'releasable' && k === 'releasable')
+        || (view === 'waiting' && k === 'waiting') || (view === 'held' && k === 'held');
+    });
+    if (rows.length === 0) {
+      c.innerHTML = emptyHTML({
+        all:        'No hay plata retenida: ninguna orden paga está pendiente de liberar.',
+        releasable: 'Nada para liberar por ahora.',
+        waiting:    'No hay órdenes esperando confirmación o plazo.',
+        held:       'No hay órdenes frenadas por reclamo.',
+      }[view] || 'Sin resultados');
+      return;
+    }
+    c.innerHTML = `
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead><tr>
+            <th>Orden</th><th>Producto</th><th>Comprador</th><th>Vendedor (cobra)</th>
+            <th>Total</th><th>Comisión</th><th>Neto</th><th>Entrega</th><th>Situación</th><th>Acciones</th>
+          </tr></thead>
+          <tbody>${rows.map(payoutRow).join('')}</tbody>
+        </table>
+      </div>`;
+    bindPayoutActions();
+  }
+
+  function deliveryCell(o) {
+    if (!o.delivered_at) {
+      return `<small class="text-muted">${o.status === 'shipped' ? 'Despachada, sin entrega' : 'Sin entrega'}</small>`;
+    }
+    const src = { carrier: 'la confirmó el correo', seller: 'la marcó el vendedor', buyer: 'la confirmó el comprador' }[o.delivered_source] || '';
+    const conf = o.buyer_confirmed_at
+      ? `<br><span class="text-success"><i class="bi bi-patch-check-fill"></i> comprador confirmó el ${formatDate(o.buyer_confirmed_at)}</span>`
+      : '';
+    return `<small>${formatDate(o.delivered_at)}${src ? `<br><span class="text-muted">${src}</span>` : ''}${conf}</small>`;
+  }
+
+  // Datos de cobro del vendedor (migration 017). undefined = backend viejo → nada.
+  function payoutAccountLabel(acc) {
+    if (!acc) return '';
+    return /^\d{22}$/.test(acc) ? `${acc.startsWith('000') ? 'CVU' : 'CBU'} ${acc}` : `Alias ${acc}`;
+  }
+  function payoutAccountLine(o) {
+    if (o.seller_payout_account === undefined) return '';
+    return o.seller_payout_account
+      ? `<br><span class="text-muted"><i class="bi bi-bank2"></i> ${esc(payoutAccountLabel(o.seller_payout_account))}</span>`
+      : '<br><span class="admin-pill admin-pill-warning">Sin datos de cobro</span>';
+  }
+
+  function payoutRow(o) {
+    const sit  = payoutSituation(o);
+    const held = o.release_status === 'held';
+    const releaseBtn = `<button class="btn btn-sm ${sit.kind === 'releasable' ? 'btn-success' : 'btn-outline-secondary'}" data-action="payout-release" data-id="${o.id}">
+        <i class="bi bi-cash-coin"></i> Liberar</button>`;
+    const holdBtn = held
+      ? `<button class="btn btn-sm btn-outline-secondary" data-action="payout-hold" data-id="${o.id}" data-hold="false"><i class="bi bi-unlock"></i> Destrabar</button>`
+      : `<button class="btn btn-sm btn-outline-danger" data-action="payout-hold" data-id="${o.id}" data-hold="true"><i class="bi bi-pause-circle"></i> Frenar</button>`;
+    return `
+      <tr data-order-id="${o.id}">
+        <td>#${o.id}<br><small class="text-muted">pagada ${formatDate(o.paid_at)}</small></td>
+        <td>${esc(o.product_title || '—')}</td>
+        <td><small>${esc(o.buyer_name || '')}</small></td>
+        <td><small><strong>${esc(o.seller_name || '')}</strong><br><span class="text-muted">${esc(o.seller_email || '')}</span>${payoutAccountLine(o)}</small></td>
+        <td>${money(o.total_price, o.currency)}</td>
+        <td>${money(o.commission_amount, o.currency)}</td>
+        <td><strong>${money(netOf(o), o.currency)}</strong></td>
+        <td>${deliveryCell(o)}</td>
+        <td><span class="admin-pill ${sit.cls}">${esc(sit.label)}</span></td>
+        <td><div class="admin-actions">${releaseBtn}${holdBtn}</div></td>
+      </tr>`;
+  }
+
+  function releasedRow(p) {
+    return `
+      <tr>
+        <td>#${p.order_id}</td>
+        <td>${esc(p.product_title || '—')}</td>
+        <td><small><strong>${esc(p.seller_name || '')}</strong><br><span class="text-muted">${esc(p.seller_email || '')}</span></small></td>
+        <td>${money(p.gross_amount, p.currency)}</td>
+        <td>${money(p.commission_amount, p.currency)}</td>
+        <td><strong>${money(p.net_amount, p.currency)}</strong></td>
+        <td style="max-width:220px;"><small>${p.destination ? esc(p.destination) : '<span class="text-muted">—</span>'}</small></td>
+        <td><small>${p.reference ? esc(p.reference) : '<span class="text-muted">—</span>'}</small></td>
+        <td style="max-width:260px;"><small>${p.note ? esc(p.note) : '<span class="text-muted">—</span>'}</small></td>
+        <td><small>${esc(p.admin_name || '—')}</small></td>
+        <td>${formatDate(p.created_at)}</td>
+      </tr>`;
+  }
+
+  function bindPayoutActions() {
+    document.querySelectorAll('#payouts-content [data-action="payout-release"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const o = state.payouts.pending.find(x => String(x.id) === btn.dataset.id);
+        if (o) openReleaseModal(o);
+      });
+    });
+    document.querySelectorAll('#payouts-content [data-action="payout-hold"]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const hold = btn.dataset.hold === 'true';
+        const msg = hold
+          ? '¿Frenar la liberación de esta orden?\n\nQueda marcada como reclamo abierto y no se puede liberar hasta destrabarla.'
+          : '¿Destrabar esta orden?\n\nVuelve a la cola normal y se podrá liberar cuando corresponda.';
+        if (!confirm(msg)) return;
+        btn.disabled = true;
+        try {
+          await window.DaleDeal.api.apiFetch(`/admin/orders/${btn.dataset.id}/hold`, {
+            method: 'POST',
+            body: JSON.stringify({ hold }),
+          });
+          loadPayouts();
+        } catch (err) {
+          alert('Error: ' + (err.message || 'no se pudo actualizar la retención'));
+          btn.disabled = false;
+        }
+      });
+    });
+  }
+
+  let releaseModalInstance = null;
+  function openReleaseModal(o) {
+    const sit = payoutSituation(o);
+    const needsForce = sit.kind !== 'releasable';
+    const net = money(netOf(o), o.currency);
+
+    let modal = document.getElementById('releaseModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'releaseModal';
+      modal.className = 'modal fade';
+      modal.tabIndex = -1;
+      modal.setAttribute('aria-hidden', 'true');
+      modal.innerHTML = `
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title"><i class="bi bi-cash-coin text-success me-2"></i>Liberar pago al vendedor</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+              <div class="alert alert-info d-flex align-items-start gap-2" role="alert">
+                <i class="bi bi-info-circle-fill" style="font-size:20px;"></i>
+                <div>Primero transferí <strong id="releaseNet">—</strong> desde la cuenta de Mercado Pago de Dale Deal al vendedor. Después registrá acá el comprobante. Esto <strong>no mueve plata</strong>: deja asentado que ya se pagó.</div>
+              </div>
+              <div id="releaseWarn" class="alert alert-warning d-none" role="alert"></div>
+              <dl class="row small mb-3">
+                <dt class="col-sm-4 text-muted">Orden:</dt><dd class="col-sm-8" id="releaseOrder">—</dd>
+                <dt class="col-sm-4 text-muted">Vendedor:</dt><dd class="col-sm-8" id="releaseSeller">—</dd>
+                <dt class="col-sm-4 text-muted">Transferir a:</dt><dd class="col-sm-8" id="releaseDest">—</dd>
+                <dt class="col-sm-4 text-muted">Total cobrado:</dt><dd class="col-sm-8" id="releaseGross">—</dd>
+                <dt class="col-sm-4 text-muted">Comisión Dale Deal:</dt><dd class="col-sm-8" id="releaseCommission">—</dd>
+                <dt class="col-sm-4 text-muted">Neto a transferir:</dt><dd class="col-sm-8 fw-bold" id="releaseNet2">—</dd>
+              </dl>
+              <div class="mb-3">
+                <label for="releaseReference" class="form-label">Nº de operación / comprobante de MP <small class="text-muted">(recomendado)</small></label>
+                <input id="releaseReference" class="form-control" maxlength="120" placeholder="Ej: 12345678901" />
+              </div>
+              <div class="mb-3">
+                <label for="releaseNote" class="form-label">Nota <small class="text-muted" id="releaseNoteHint">(opcional, uso interno)</small></label>
+                <textarea id="releaseNote" class="form-control" rows="2" maxlength="500"></textarea>
+              </div>
+              <div class="form-check mb-2 d-none" id="releaseForceWrap">
+                <input class="form-check-input" type="checkbox" id="releaseForce">
+                <label class="form-check-label" for="releaseForce">Liberar igual, aunque todavía no corresponda <strong>(requiere nota con el motivo)</strong></label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="releaseConfirm">
+                <label class="form-check-label" for="releaseConfirm">Confirmo que <strong>ya transferí</strong> el neto al vendedor.</label>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="button" class="btn btn-success" id="releaseConfirmBtn" disabled><i class="bi bi-check2-circle me-1"></i>Registrar liberación</button>
+            </div>
+          </div>
+        </div>`;
+      document.body.appendChild(modal);
+    }
+
+    const $ = sel => modal.querySelector(sel);
+    modal.querySelectorAll('.alert-error-runtime').forEach(e => e.remove());
+    $('#releaseNet').textContent        = net;
+    $('#releaseNet2').textContent       = net;
+    $('#releaseOrder').textContent      = `#${o.id} · ${o.product_title || '—'}`;
+    $('#releaseSeller').textContent     = `${o.seller_name || ''} · ${o.seller_email || ''}`;
+    $('#releaseGross').textContent      = money(o.total_price, o.currency);
+    // A dónde transferir (datos de cobro del vendedor, migration 017)
+    const dest = $('#releaseDest');
+    const changedAfterSale = o.seller_payout_updated_at && o.paid_at
+      && new Date(o.seller_payout_updated_at) > new Date(o.paid_at);
+    if (o.seller_payout_account === undefined) {
+      dest.innerHTML = '<span class="text-muted">—</span>';
+    } else if (o.seller_payout_account) {
+      dest.innerHTML = `
+        <span class="fw-semibold" style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;">${esc(payoutAccountLabel(o.seller_payout_account))}</span>
+        <button type="button" class="btn btn-sm btn-link p-0 ms-1 align-baseline" id="releaseCopy"><i class="bi bi-clipboard"></i> Copiar</button>
+        <div class="small text-muted">Titular: ${esc(o.seller_payout_holder || '—')}</div>
+        ${changedAfterSale ? `<div class="small text-danger mt-1"><i class="bi bi-exclamation-triangle"></i> Cambió sus datos de cobro el ${formatDate(o.seller_payout_updated_at)}, después de la venta. Confirmá con el vendedor antes de transferir.</div>` : ''}`;
+      $('#releaseCopy').onclick = () => {
+        navigator.clipboard?.writeText(o.seller_payout_account)
+          .then(() => { $('#releaseCopy').innerHTML = '<i class="bi bi-check2"></i> Copiado'; })
+          .catch(() => {});
+      };
+    } else {
+      const mailBody = `Hola! Para transferirte el pago de tu venta #${o.id} necesitamos tu alias, CVU o CBU. Cargalo en https://daledeal.com.ar/mi-cuenta#datos-cobro`;
+      dest.innerHTML = `
+        <span class="text-danger"><i class="bi bi-exclamation-triangle"></i> No cargó sus datos de cobro.</span>
+        <a href="mailto:${esc(o.seller_email || '')}?subject=${encodeURIComponent('Tus datos de cobro en Dale Deal')}&body=${encodeURIComponent(mailBody)}">Pedírselos por mail</a>`;
+    }
+    $('#releaseCommission').textContent = money(o.commission_amount, o.currency);
+    $('#releaseReference').value = '';
+    $('#releaseNote').value      = '';
+    $('#releaseForce').checked   = false;
+    $('#releaseConfirm').checked = false;
+    $('#releaseForceWrap').classList.toggle('d-none', !needsForce);
+    const warn = $('#releaseWarn');
+    warn.classList.toggle('d-none', !needsForce);
+    warn.innerHTML = !needsForce ? '' : (sit.kind === 'held'
+      ? '<strong>Esta orden está frenada por reclamo.</strong> Resolvé el reclamo y destrabala, o liberá igual dejando el motivo.'
+      : `<strong>Todavía no es liberable:</strong> ${esc(sit.why)}. Si igual corresponde pagar, marcá la casilla y explicá el motivo.`);
+    $('#releaseNoteHint').textContent = needsForce ? '(obligatoria si liberás igual)' : '(opcional, uso interno)';
+
+    // Botón nuevo en cada apertura (cambia la orden); los checkboxes usan
+    // onchange para no acumular listeners.
+    const oldBtn = $('#releaseConfirmBtn');
+    const btn = oldBtn.cloneNode(true);
+    oldBtn.parentNode.replaceChild(btn, oldBtn);
+    const refresh = () => {
+      btn.disabled = !($('#releaseConfirm').checked && (!needsForce || $('#releaseForce').checked));
+    };
+    $('#releaseConfirm').onchange = refresh;
+    $('#releaseForce').onchange   = refresh;
+    refresh();
+
+    btn.addEventListener('click', async () => {
+      const reference = $('#releaseReference').value.trim();
+      const note  = $('#releaseNote').value.trim();
+      const force = needsForce && $('#releaseForce').checked;
+      if (force && !note) {
+        alert('Para liberar antes de tiempo hay que dejar una nota con el motivo.');
+        return;
+      }
+      const original = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Registrando…';
+      try {
+        const res = await window.DaleDeal.api.apiFetch(`/admin/orders/${o.id}/release`, {
+          method: 'POST',
+          body: JSON.stringify({ reference: reference || undefined, note: note || undefined, force }),
+        });
+        releaseModalInstance.hide();
+        setTimeout(() => alert(`✅ Liberación registrada (payout #${res.payout?.id || '—'}).\nOrden #${o.id} · ${net} al vendedor.`), 300);
+        loadPayouts();
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = original;
+        modal.querySelectorAll('.alert-error-runtime').forEach(e => e.remove());
+        const e = document.createElement('div');
+        e.className = 'alert alert-danger alert-error-runtime mt-3 mb-0';
+        e.textContent = '❌ ' + (err.message || 'No se pudo registrar la liberación.');
+        modal.querySelector('.modal-body').appendChild(e);
+      }
+    });
+
+    releaseModalInstance = bootstrap.Modal.getOrCreateInstance(modal);
+    releaseModalInstance.show();
   }
 
   // ── Helpers ──────────────────────────────────────────────────────────────

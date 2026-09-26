@@ -1,0 +1,58 @@
+---
+description: Reglas del proyecto Dale Deal (frontend) — contexto, convenciones y límites
+alwaysApply: true
+---
+
+# Dale Deal — Frontend (daledeal.com.ar)
+
+Marketplace argentino de productos + servicios. **EN PRODUCCIÓN** — cualquier
+cambio acá puede terminar en la web real, así que prudencia.
+
+## Mapa del proyecto
+- HTML/JS/CSS **vanilla** + Bootstrap 5. SIN frameworks (no React/Vue) — no introducir.
+- `index.html` (home) + `HTML/*.html` (páginas) + `JS/` (módulos) + `CSS/` (estilos).
+- `JS/pages/*.js` = lógica por página. `JS/utils.js` = config global (`window.DaleDeal`),
+  helpers (`escapeHtml`, `formatPrice`, `formatInstallments`). `JS/api.js` = llamadas al backend.
+- `HTML/components/header.html` y `footer.html` = navbar/footer compartidos
+  (header se inlinea en el build; footer se carga en runtime con `component-loader.js`).
+- `worker.js` = Cloudflare Worker (subida de fotos `/api/upload` + servir `/img/*` desde KV).
+- `build.js` = pipeline: minifica JS/CSS, bundlea `core.css`, inlinea navbar,
+  envuelve imágenes en `<picture>`, reescribe URLs limpias, cache-busting `?v=`.
+  **Output: `dist/` — NUNCA editar `dist/` a mano**; editar fuentes y correr `node build.js`.
+
+## Reglas duras (no negociables)
+1. **Seguridad XSS**: TODO dato dinámico que entre a `innerHTML` pasa por
+   `DaleDeal.utils.escapeHtml(String(v ?? ''))` (coercionar números). Para HTML rico
+   (descripciones Quill) usar `DOMPurify.sanitize(raw, {USE_PROFILES:{html:true}})`.
+   No introducir `onclick=` inline con datos del usuario — usar `data-*` + listeners.
+2. **URLs limpias**: los links internos son `/productos`, `/producto?id=N`, etc.
+   (sin `/HTML/` ni `.html`). El build los reescribe en HTML; en JS escribirlos limpios.
+3. **NO tocar `.env`** ni archivos con secretos. No hardcodear tokens/keys
+   (la única excepción ya existente: el token PÚBLICO de Cloudflare Web Analytics en build.js).
+4. **Deploys**: son manuales (`npx wrangler deploy`) y los ejecuta Claude/Graciano con
+   OK explícito. **NO deployar ni sugerir auto-deploy.** Pushear a `main` NO publica nada
+   (y main está divergido — ver Ramas).
+5. **Español argentino (voseo)** en todo texto de UI: "Ingresá", "Mantenete", "tenés".
+6. CSS: hay deuda de `!important` y selectores muy específicos en `components.css` /
+   `CSS/pages/home.css`. NO agregar `!important` nuevos; resolver por especificidad y
+   probar SIEMPRE en mobile 375px (los bugs de cascada aparecen ahí).
+
+## Ramas (importante)
+- `feat/mejoras-ui` ← **ESTA es la rama de trabajo y lo que está deployado en la web.**
+- `main` ← divergida: tiene el refactor de Gastón, NO se deploya. No mergear sin coordinación.
+- El deploy real sale de esta carpeta (worktree) con wrangler.
+
+## Cómo probar local
+```bash
+node build.js                                # compilar a dist/
+python3 -m http.server 5555 --directory dist # servir
+# abrir http://localhost:5555 (páginas: /HTML/productos.html etc. — el server local
+# no aplica las URLs limpias; eso lo hace Cloudflare en prod)
+```
+El backend de prueba: carpeta hermana `dale-deal-backend` (`PORT=3000 npm start`,
+usa Postgres local). El frontend en localhost apunta solo a `localhost:3000`.
+
+## Backend/infra (contexto)
+- API prod: Express en Railway (`daledeal-backend-production.up.railway.app`).
+- Frontend prod: Cloudflare Workers (assets `dist/` + `worker.js`), dominio daledeal.com.ar.
+- Fotos de publicaciones: Workers KV vía `/api/upload` (auth con JWT del backend).

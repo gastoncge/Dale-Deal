@@ -183,7 +183,7 @@ class ProductsPageLoader {
           <div class="no-results-container text-center py-5">
             <i class="bi bi-inbox display-1 text-muted mb-3"></i>
             <h4 class="text-muted">No se encontraron productos</h4>
-            <p class="text-muted">Intenta con otros filtros</p>
+            <p class="text-muted">Probá con otros filtros</p>
             <button class="btn btn-primary" onclick="window.productsPageLoader.resetFilters()">
               <i class="bi bi-arrow-counterclockwise me-2"></i>Limpiar filtros
             </button>

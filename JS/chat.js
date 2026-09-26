@@ -2,7 +2,7 @@
  * DALE DEAL - Shim del chat global.
  *
  * El chat real vive en la sección "Mensajes" del perfil
- * (HTML/notificaciones.html#mensajes). Este archivo ya NO inyecta
+ * (/notificaciones#mensajes). Este archivo ya NO inyecta
  * un widget flotante en el feed; sólo expone `DaleDeal.chat` con
  * funciones que redirigen al perfil y un badge global opcional.
  *
@@ -22,7 +22,7 @@
   // Path al perfil > Mensajes, dependiendo de desde qué carpeta se llama
   function mensajesUrl(convId) {
     const isHtmlSubdir = window.location.pathname.includes('/HTML/');
-    const base = isHtmlSubdir ? './notificaciones.html' : './HTML/notificaciones.html';
+    const base = isHtmlSubdir ? './notificaciones.html' : '/notificaciones';
     const hash = '#mensajes';
     // usamos un query-param que la página del perfil puede leer para abrir
     // directamente la conversación
