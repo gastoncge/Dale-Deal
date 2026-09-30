@@ -1324,10 +1324,47 @@
       function showPerfilStatus(msg, type) {
         const el = document.getElementById('perfilFormStatus');
         if (!el) return;
-        el.className = `alert alert-${type === 'error' ? 'danger' : 'success'} mb-3`;
+        const cls = type === 'error' ? 'danger' : (type === 'warning' ? 'warning' : 'success');
+        el.className = `alert alert-${cls} mb-3`;
         el.textContent = msg;
         el.classList.remove('d-none');
-        setTimeout(() => el.classList.add('d-none'), 4000);
+        clearTimeout(showPerfilStatus._timer);
+        showPerfilStatus._timer = setTimeout(() => el.classList.add('d-none'), type === 'warning' ? 8000 : 4000);
+      }
+
+      // ── Foto de perfil ──
+      // Antes la foto se mandaba como data URL en avatar_url y el backend solo
+      // acepta URLs http(s) → 400, y tampoco se guardaban nombre ni teléfono.
+      // Ahora se sube igual que las fotos de publicar (uploadImageFile en
+      // JS/pages/publicar.js): POST /api/upload al Worker del mismo dominio,
+      // que devuelve la URL pública /img/<key>, y esa URL va en avatar_url.
+      const AVATAR_MAX_BYTES = 8 * 1024 * 1024; // espejo del límite del Worker
+      const AVATAR_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
+      let pendingAvatarFile = null;   // se sube recién al guardar
+      let avatarPreviewUrl = null;
+
+      async function uploadAvatarFile(file) {
+        const token = localStorage.getItem('daledeal_token');
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token || ''}`,
+            'Content-Type': file.type,
+          },
+          body: file,
+        });
+        let data = null;
+        try { data = await res.json(); } catch (_) { /* respuesta no-JSON (p.ej. 404 en dev local) */ }
+        if (!res.ok || !data?.ok || !data.url) {
+          throw new Error(data?.error || 'No se pudo subir la imagen.');
+        }
+        return data.url;
+      }
+
+      function clearAvatarPreview() {
+        pendingAvatarFile = null;
+        if (avatarPreviewUrl) URL.revokeObjectURL(avatarPreviewUrl);
+        avatarPreviewUrl = null;
       }
 
       document.getElementById('perfilForm')?.addEventListener('submit', async function(e) {
@@ -1346,9 +1383,15 @@
             phone:    document.getElementById('perfilPhone').value.trim() || null,
             location: document.getElementById('perfilLocation').value.trim() || null,
           };
-          // Si hay avatar nuevo en pendingAvatarDataURL, lo mandamos
-          if (window._pendingAvatarDataURL) {
-            payload.avatar_url = window._pendingAvatarDataURL;
+          // Foto nueva: primero se sube. Si la subida falla, el resto del
+          // perfil se guarda igual y se avisa el error de la foto.
+          let avatarError = null;
+          if (pendingAvatarFile) {
+            try {
+              payload.avatar_url = await uploadAvatarFile(pendingAvatarFile);
+            } catch (err) {
+              avatarError = err.message || 'No se pudo subir la imagen.';
+            }
           }
           const updated = await apiFetch('/users/me', {
             method: 'PUT',
@@ -1369,9 +1412,15 @@
             if (window.authManager) window.authManager.currentUser = merged;
           } catch (_) {}
 
-          window._pendingAvatarDataURL = null;
+          // loadPerfilData vuelve a mostrar la foto guardada: si la subida
+          // falló, la vista previa no queda como si se hubiera guardado.
+          clearAvatarPreview();
           loadPerfilData();
-          showPerfilStatus('Perfil actualizado correctamente', 'success');
+          if (avatarError) {
+            showPerfilStatus(`Guardamos tus datos, pero no pudimos subir la foto: ${avatarError}`, 'warning');
+          } else {
+            showPerfilStatus('Perfil actualizado correctamente', 'success');
+          }
           // refrescar UI global (avatar en navbar, nombre, etc.)
           if (window.authManager?.updateUI) window.authManager.updateUI();
         } catch (err) {
@@ -1384,21 +1433,21 @@
 
       document.getElementById('avatarInput')?.addEventListener('change', function() {
         const file = this.files[0];
+        this.value = ''; // permite volver a elegir el mismo archivo
         if (!file) return;
-        // Tamaño máximo 2MB para avatar como data URL
-        if (file.size > 2 * 1024 * 1024) {
-          showPerfilStatus('La imagen es muy grande (máx 2MB)', 'error');
+        if (!AVATAR_TYPES.includes(file.type)) {
+          showPerfilStatus('Formato no soportado. Usá JPG, PNG, WebP, GIF o AVIF.', 'error');
           return;
         }
-        const reader = new FileReader();
-        reader.onload = e => {
-          const dataUrl = e.target.result;
-          document.getElementById('perfilAvatarImg').src = dataUrl;
-          // Guardar para mandar en el próximo submit
-          window._pendingAvatarDataURL = dataUrl;
-          showPerfilStatus('Foto cargada — apretá "Guardar cambios" para confirmar', 'success');
-        };
-        reader.readAsDataURL(file);
+        if (file.size > AVATAR_MAX_BYTES) {
+          showPerfilStatus('La imagen es muy grande (máx 8 MB)', 'error');
+          return;
+        }
+        clearAvatarPreview();
+        pendingAvatarFile = file;
+        avatarPreviewUrl = URL.createObjectURL(file);
+        document.getElementById('perfilAvatarImg').src = avatarPreviewUrl;
+        showPerfilStatus('Foto cargada — apretá "Guardar cambios" para confirmar', 'success');
       });
 
       // ===== DIRECCIONES =====
