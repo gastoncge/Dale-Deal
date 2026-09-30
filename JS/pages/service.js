@@ -80,16 +80,11 @@ class ServicePage {
         try {
           service = await window.DaleDeal.api.fetchServiceById(serviceId);
         } catch (err) {
-          // Backend devolvió 404 o se cayó la red — caemos al lookup local
-          console.warn('[service] fetchServiceById falló, intentando data local:', err?.message);
+          console.warn('[service] fetchServiceById falló:', err?.message);
         }
       }
-
-      // 1.b — Fallback a data local (servicesData). Sin coerción `==` para
-      //       evitar matches accidentales (1 == '1' true pero queremos exacto).
-      if (!service && typeof servicesData !== 'undefined') {
-        service = servicesData.find(s => String(s.id) === String(serviceId));
-      }
+      // Sin fallback a servicesData: esa data de ejemplo mostraba fichas
+      // inventadas ("Alejandro R.", 4.9 con 127 reseñas) como si fueran reales.
     }
 
     if (!service) {
@@ -113,105 +108,29 @@ class ServicePage {
 
   // ── Enriquecer datos del servicio con defaults ─────────────────────────────
   _enrichServiceData(service) {
-    const providerDefaults = {
-      'installation': { name: 'Alejandro R.', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face', memberSince: '2021', responseTime: '< 30 min', completedJobs: 312 },
-      'consultation': { name: 'Valentina G.', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face', memberSince: '2020', responseTime: '< 1h', completedJobs: 189 },
-      'catering': { name: 'Carlos M.', avatar: 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=80&h=80&fit=crop&crop=face', memberSince: '2019', responseTime: '< 2h', completedJobs: 456 },
-      'construction': { name: 'Roberto L.', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face', memberSince: '2018', responseTime: '< 3h', completedJobs: 278 },
-      'repair': { name: 'Miguel S.', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face', memberSince: '2020', responseTime: '< 1h', completedJobs: 534 },
-      'maintenance': { name: 'Lucía P.', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face', memberSince: '2022', responseTime: '< 2h', completedJobs: 145 },
+    // Solo datos reales del prestador. Antes, a un prestador real se le
+    // completaban campos con datos de ejemplo ("312 trabajos", "Responde en
+    // < 30 min", "Miembro desde 2021") y, sin prestador, se inventaba uno.
+    const real = service.provider || {};
+    const provider = {
+      name:          real.name || service.provider_name || 'Prestador',
+      avatar:        real.avatar || null,
+      memberSince:   real.memberSince || null,
+      responseTime:  null,   // el backend todavía no lo mide
+      completedJobs: null,   // ídem
+      verifiedIdentity:     !!real.verifiedIdentity,
+      verifiedProfessional: !!real.verifiedProfessional,
+      verifiedBackground:   !!real.verifiedBackground,
+      phone:         real.phone,
+      location:      real.location,
     };
 
-    const galleryDefaults = {
-      'installation': [
-        'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1609692814858-f7cd2f0afa4f?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=700&h=500&fit=crop',
-      ],
-      'consultation': [
-        'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1600518464441-9154a4dea21b?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=700&h=500&fit=crop',
-      ],
-      'catering': [
-        'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1547592180-85f173990554?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1555244162-803834f70033?w=700&h=500&fit=crop',
-      ],
-      'construction': [
-        'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=700&h=500&fit=crop',
-      ],
-      'repair': [
-        'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1631545804657-2c2f0b4122bf?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&h=500&fit=crop',
-      ],
-      'maintenance': [
-        'https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=700&h=500&fit=crop',
-      ],
-    };
-
-    // Priorizar SIEMPRE los datos reales del backend (que llegan via
-    // transformService como service.provider y service.gallery). Solo si NO
-    // hay datos reales caemos al mock — y mapeamos category_slug del backend
-    // ('plomeria', 'electricidad'…) al key del mock ('repair', 'installation'…).
-    //
-    // Antes: el código pisaba SIEMPRE service.provider y service.gallery con
-    // el mock — la página de plomería se veía con datos del electricista.
-    const slugToMockCategory = {
-      'plomeria': 'repair',
-      'electricidad': 'installation',
-      'gasista': 'maintenance',
-      'peluqueria': 'consultation',
-      'limpieza': 'maintenance',
-      'pintura': 'installation',
-      'carpinteria': 'installation',
-      'mecanica': 'repair',
-      'informatica': 'consultation',
-      'otros-servicios': 'consultation',
-    };
-    const mockCatKey = slugToMockCategory[service.category]
-                       || (providerDefaults[service.category] ? service.category : 'consultation');
-
-    // Provider: priorizar real, sino mock por categoría
-    const realProvider = service.provider;
-    const mockProvider = providerDefaults[mockCatKey] || providerDefaults['consultation'];
-    const provider = realProvider ? {
-      name:         realProvider.name || mockProvider.name,
-      avatar:       realProvider.avatar || mockProvider.avatar,
-      // memberSince/responseTime/completedJobs no vienen del backend hoy,
-      // dejamos mock como placeholder hasta que se agreguen al endpoint.
-      memberSince:  realProvider.memberSince || mockProvider.memberSince,
-      responseTime: mockProvider.responseTime,
-      completedJobs: mockProvider.completedJobs,
-      verifiedIdentity:     !!realProvider.verifiedIdentity,
-      verifiedProfessional: !!realProvider.verifiedProfessional,
-      verifiedBackground:   !!realProvider.verifiedBackground,
-      phone:        realProvider.phone,
-      location:     realProvider.location,
-    } : { ...mockProvider, verifiedIdentity: false, verifiedProfessional: false, verifiedBackground: false };
-
-    // Galería: priorizar real (array del backend), sino mock por categoría
-    const realGallery = Array.isArray(service.gallery) && service.gallery.length > 0
+    // Galería: solo fotos del servicio. Antes, sin galería, se mostraban fotos
+    // de ejemplo de otros trabajos con la nota "Fotos reales de trabajos".
+    const gallery = Array.isArray(service.gallery) && service.gallery.length > 0
       ? service.gallery
-      : null;
-    const gallery = realGallery || galleryDefaults[mockCatKey] || galleryDefaults['consultation'];
-    const thumbnails = gallery.map(img => {
-      // El reemplazo de tamaño solo aplica a las URLs de Unsplash del mock
-      // (formato `?w=700&h=500`). Para imágenes reales con otro formato lo
-      // dejamos igual — sino quedaría sin reemplazo y la thumbnail es la full.
-      return img.replace('w=700&h=500', 'w=120&h=120');
-    });
+      : [service.image];
+    const thumbnails = gallery.slice();
 
     return {
       ...service,
@@ -231,6 +150,10 @@ class ServicePage {
 
     // SEO
     document.title = `${s.title} - DALE DEAL`;
+    // Canonical por servicio (el HTML trae uno fijo sin id y Google no indexaba
+    // cada servicio por separado).
+    document.querySelector('link[rel="canonical"]')
+      ?.setAttribute('href', `https://daledeal.com.ar/servicio?id=${encodeURIComponent(s.id)}`);
     document.querySelector('meta[name="description"]')?.setAttribute('content',
       `${s.title} – ${DaleDeal.utils.htmlToText(s.description).substring(0, 120)} Contratá en Dale Deal.`
     );
@@ -241,7 +164,11 @@ class ServicePage {
 
     // Provider card
     const providerAvatar = document.getElementById('providerAvatar');
-    if (providerAvatar) { providerAvatar.src = p.avatar; providerAvatar.alt = p.name; }
+    if (providerAvatar) {
+      // Sin foto: queda el placeholder gris del HTML (no una cara de stock).
+      if (p.avatar) providerAvatar.src = p.avatar;
+      providerAvatar.alt = p.name;
+    }
 
     document.querySelectorAll('.provider-name-text').forEach(el => el.textContent = p.name);
 
@@ -270,14 +197,21 @@ class ServicePage {
       else responseTimeEl.closest('.provider-response-time')?.setAttribute('hidden', '');
     }
 
-    const locationEl = document.getElementById('providerLocation');
-    if (locationEl) locationEl.textContent = s.location || 'CABA';
-
-    const memberSinceEl = document.getElementById('providerMemberSince');
-    if (memberSinceEl) memberSinceEl.textContent = `Miembro desde ${p.memberSince || '2021'}`;
-
-    const completedJobsEl = document.getElementById('providerCompletedJobs');
-    if (completedJobsEl) completedJobsEl.textContent = `${p.completedJobs || 0} trabajos`;
+    // Ubicación · miembro desde · trabajos: solo lo que es real.
+    const locationRow = document.querySelector('.provider-location');
+    if (locationRow) {
+      const parts = [
+        s.location || p.location,
+        p.memberSince ? `Miembro desde ${p.memberSince}` : null,
+        p.completedJobs ? `${p.completedJobs} trabajos` : null,
+      ].filter(Boolean);
+      const span = document.createElement('span');
+      span.id = 'providerLocation';
+      span.textContent = parts.join(' · ');
+      locationRow.innerHTML = '<i class="bi bi-geo-alt-fill" aria-hidden="true"></i> ';
+      locationRow.appendChild(span);
+      locationRow.hidden = parts.length === 0;
+    }
 
     // WhatsApp directo al prestador (solo si tiene teléfono). Normalización AR best-effort.
     const waBtn = document.getElementById('svcWhatsapp');
@@ -303,8 +237,12 @@ class ServicePage {
     const ratingStarsEl = document.querySelector('.service-rating .stars');
     if (ratingStarsEl) ratingStarsEl.innerHTML = this._renderStars(s.rating);
 
+    // Solo si hay reseñas (cada una es un servicio prestado); antes "+0 servicios prestados".
     const contractedEl = document.querySelector('.service-contracted span');
-    if (contractedEl) contractedEl.textContent = `+${s.reviewCount || 0} servicios prestados`;
+    if (contractedEl) {
+      if (s.reviewCount > 0) contractedEl.textContent = `+${s.reviewCount} servicios prestados`;
+      else contractedEl.closest('.service-contracted')?.setAttribute('hidden', '');
+    }
 
     // Badges/tags
     const tagsContainer = document.querySelector('.service-tags');

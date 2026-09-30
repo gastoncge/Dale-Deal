@@ -219,6 +219,7 @@
     </div>
 
     <script defer src="../JS/theme.js"></script>
+    <script defer src="../JS/utils.js"></script>
     <script defer src="../JS/api.js"></script>
     <script defer src="../JS/api-payments.js"></script>
     <script>
@@ -259,7 +260,7 @@
           return;
         }
 
-        const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const esc = (v) => window.DaleDeal.utils.escapeHtml(String(v == null ? '' : v)); // decodifica y escapa
 
         // Consultar estado actual
         try {

@@ -212,6 +212,7 @@
     </div>
 
     <script defer src="../JS/theme.js"></script>
+    <script defer src="../JS/utils.js"></script>
     <script defer src="../JS/api.js"></script>
     <script defer src="../JS/api-payments.js"></script>
     <script>
@@ -231,7 +232,7 @@
         }
 
         try {
-          const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+          const esc = (v) => window.DaleDeal.utils.escapeHtml(String(v == null ? '' : v)); // decodifica y escapa
           // payment_id lo agrega MP al volver: si el webhook todavía no llegó,
           // el backend le pregunta el pago a MP y la orden queda al día.
           const mpPaymentId = params.get('payment_id') || params.get('collection_id');
