@@ -688,13 +688,14 @@
       window.onFooterLoaded = function() {
         const list = document.getElementById('footerCategoriesList');
         if (!list) return;
+        // Slugs reales de la API (los mismos values de los radios del filtro)
         list.innerHTML = `
           <li><a href="./productos.html">Todos los productos</a></li>
-          <li><a href="./productos.html?category=electronics">Electrónica</a></li>
-          <li><a href="./productos.html?category=home">Hogar y Jardín</a></li>
-          <li><a href="./productos.html?category=fashion">Moda y Belleza</a></li>
-          <li><a href="./productos.html?category=sports">Deportes</a></li>
-          <li><a href="./productos.html?category=toys">Juguetes</a></li>
+          <li><a href="./productos.html?category=electronica">Electrónica</a></li>
+          <li><a href="./productos.html?category=hogar-jardin">Hogar y jardín</a></li>
+          <li><a href="./productos.html?category=ropa-accesorios">Ropa y accesorios</a></li>
+          <li><a href="./productos.html?category=deportes">Deportes</a></li>
+          <li><a href="./productos.html?category=juguetes">Juguetes</a></li>
         `;
       };
     </script>
@@ -3082,8 +3083,11 @@
             // ProductFilters — pendiente.
             this.showLoading(true);
 
-            // Fetch products from API
-            const productsData = await window.DaleDeal.api.fetchProducts();
+            // Fetch products from API. limit=100 (el máximo del backend): sin
+            // limit la API devuelve 20 y el resto no aparecía en el catálogo ni
+            // en los filtros. Con más de 100 publicaciones va a hacer falta
+            // paginar del lado del servidor.
+            const productsData = await window.DaleDeal.api.fetchProducts({ limit: 100 });
 
             // Transform API data to match expected format
             this.products = this.transformProductsData(productsData);
@@ -3104,10 +3108,13 @@
                 window.productFilters.originalProducts = [...window.productFilters.products];
 
                 // Aplicar filtro de ofertas si viene en la URL
-                const filterParam = new URLSearchParams(window.location.search).get('filter');
-                if (filterParam === 'ofertas') {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('filter') === 'ofertas') {
                   window.productFilters.onlyOffers = true;
                 }
+                // ?category= (links del footer y "Ver más" de la ficha). El
+                // término de ?q= / ?search= ya lo tomó ProductFilters al crearse.
+                this.applyCategoryFromURL(urlParams.get('category'));
                 window.productFilters.filterAndRender();
               }
             }, 100);
@@ -3159,26 +3166,57 @@
             price: product.price,
             originalPrice: product.originalPrice,
             discount: product.discount,
-            category: this.mapCategory(product.category),
+            // category = slug de la API (category_slug, que api.js deja en
+            // subcategory): es lo que traen los radios del filtro. Antes se
+            // mapeaba el nombre ("Electrónica" → "electrónica") y ninguna
+            // categoría coincidía → 0 resultados.
+            category: this.categorySlug(product),
+            categoryName: product.category || '',
             images: product.images?.gallery || [product.images?.main],
             image: product.images?.main,
             rating: product.rating,
             reviews: product.reviewCount || 0,
+            location: product.location || '',
             featured: product.badges?.includes('Premium') || product.badges?.includes('MÁS VENDIDO') || false,
             isOffer: product.discount > 0,
-            shipping: product.shipping || { free: true, speed: 'tomorrow' }
+            shipping: product.shipping || null
           }));
         }
 
-        mapCategory(category) {
-          const categoryMap = {
-            'Electrónicos': 'electronics',
-            'Moda': 'fashion',
-            'Hogar': 'home',
-            'Deportes': 'sports',
-            'Libros': 'books'
-          };
-          return categoryMap[category] || category.toLowerCase();
+        // Slug de la categoría: el de la API y, si no vino, uno armado con el
+        // nombre ("Hogar y jardín" → "hogar-y-jardin").
+        categorySlug(product) {
+          if (product.subcategory) return product.subcategory;
+          return (product.category || '').toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+        }
+
+        // ?category= puede venir con el slug ("electronica", links del footer)
+        // o con el nombre ("Electrónica", "Ver más" de la ficha). Marca el radio
+        // que corresponda; si no hay radio, lo busca como "Otros".
+        applyCategoryFromURL(param) {
+          if (!param || !window.productFilters) return;
+          const norm = (s) => (s || '').toString().toLowerCase().normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '').trim();
+          const wanted = norm(param);
+          const radios = [...document.querySelectorAll('input[name="category"]')];
+          const radio = radios.find(r => r.value !== 'all' && r.value !== 'otros' && (
+            norm(r.value) === wanted ||
+            norm(r.closest('label')?.querySelector('.option-text')?.textContent) === wanted
+          ));
+          if (radio) {
+            radio.checked = true;
+            window.productFilters.currentCategory = radio.value;
+            return;
+          }
+          const otros = document.getElementById('categoryOtros');
+          const otrosPanel = document.getElementById('otrosCategorySearch');
+          const otrosInput = document.getElementById('otrosCategoryInput');
+          if (otros) otros.checked = true;
+          if (otrosPanel) otrosPanel.style.display = 'block';
+          if (otrosInput) otrosInput.value = param;
+          window.productFilters.currentCategory = param;
         }
 
         showLoading(show) {
@@ -3280,6 +3318,7 @@
             priceText: `$${product.price.toLocaleString()}`,
             rating: product.rating,
             category: product.category,
+            categoryName: product.categoryName,
             imageUrl: product.image,
             isOffer: !!product.isOffer,
             badges: this.extractBadges(product),
@@ -3576,23 +3615,13 @@
           catalog.loadMore();
         });
 
-        // Category filter from URL params
-        const urlParams = new URLSearchParams(window.location.search);
-        const categoryParam = urlParams.get('category');
-        if (categoryParam && window.productFilters) {
-          setTimeout(() => {
-            const categoryTab = document.querySelector(`[data-category="${categoryParam}"]`);
-            if (categoryTab) {
-              categoryTab.click();
-            }
-          }, 500);
-        }
-
         // Búsqueda: el input del header lo escucha ProductFilters (filters.js),
         // que además toma el término de la URL al crearse: ?q= (buscador del
         // header, 404) o ?search= (SearchAction del JSON-LD del home). Lo
         // aplica cuando el catálogo termina de cargar (ver init()), sin
-        // disparar eventos ni recargar.
+        // disparar eventos ni recargar. La categoría de ?category= se aplica
+        // en el mismo momento (applyCategoryFromURL).
+        const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('q') || urlParams.get('search')) {
           // Vino con un término → el user quiere ver los resultados, no la
           // sidebar de filtros.
@@ -3633,21 +3662,28 @@
           if (window.productFilters) {
             let selectedCategory = document.querySelector('input[name="category"]:checked')?.value || 'all';
 
-            // Si "otros" está seleccionado, usar el valor del input de búsqueda
+            // "Otros": si se escribió una categoría se busca esa (por nombre o
+            // slug); si no, la categoría "otros" de la API.
             if (selectedCategory === 'otros') {
               const otrosInput = document.getElementById('otrosCategoryInput');
-              const otrosVal = otrosInput?.value?.trim().toLowerCase();
-              selectedCategory = otrosVal || 'all';
+              const otrosVal = otrosInput?.value?.trim();
+              selectedCategory = otrosVal || 'otros';
             }
 
-            const minPrice = document.getElementById('minPrice')?.value;
-            const maxPrice = document.getElementById('maxPrice')?.value;
+            // Precios: solo dígitos. "100.000" (con punto de miles) es 100000;
+            // parseFloat lo leía como 100.
+            const parsePrice = (v) => {
+              const digits = (v || '').replace(/\D/g, '');
+              return digits ? parseInt(digits, 10) : null;
+            };
+            const minPrice = parsePrice(document.getElementById('minPrice')?.value);
+            const maxPrice = parsePrice(document.getElementById('maxPrice')?.value);
             const selectedRating = document.querySelector('input[name="rating"]:checked')?.value || 'all';
             const selectedSort = document.getElementById('sortSelect')?.value || 'featured';
 
             window.productFilters.currentCategory = selectedCategory;
-            window.productFilters.minPrice = minPrice ? parseFloat(minPrice) : null;
-            window.productFilters.maxPrice = maxPrice ? parseFloat(maxPrice) : null;
+            window.productFilters.minPrice = minPrice;
+            window.productFilters.maxPrice = maxPrice;
             window.productFilters.currentRating = selectedRating;
             window.productFilters.currentSort = selectedSort;
 
@@ -3701,6 +3737,12 @@
           if (minPrice) minPrice.value = '';
           if (maxPrice) maxPrice.value = '';
 
+          // Cerrar el buscador de "Otros"
+          const otrosInput = document.getElementById('otrosCategoryInput');
+          const otrosPanel = document.getElementById('otrosCategorySearch');
+          if (otrosInput) otrosInput.value = '';
+          if (otrosPanel) otrosPanel.style.display = 'none';
+
           // Reset sort
           const sortSelect = document.getElementById('sortSelect');
           if (sortSelect) sortSelect.value = 'featured';
@@ -3710,9 +3752,21 @@
             window.productFilters.currentCategory = 'all';
             window.productFilters.minPrice = null;
             window.productFilters.maxPrice = null;
+            window.productFilters.currentRating = 'all';
             window.productFilters.currentSort = 'featured';
             window.productFilters.filterAndRender();
           }
+        });
+
+        // "Limpiar filtros" del estado vacío: además de los filtros borra el
+        // término buscado (si no, con una búsqueda sin resultados el botón no
+        // sacaba al usuario del estado vacío). No tenía listener.
+        document.getElementById('clearFilters')?.addEventListener('click', () => {
+          const searchInput = document.getElementById('searchInput');
+          if (searchInput) searchInput.value = '';
+          if (window.searchManager?.filterInPlace) window.searchManager.filterInPlace('');
+          else window.productFilters?.setSearchQuery?.('');
+          document.getElementById('clearAllFilters')?.click();
         });
       });
 
@@ -3723,15 +3777,13 @@
         const input       = document.getElementById('otrosCategoryInput');
         const suggestions = document.getElementById('otrosSuggestions');
 
+        // Sugerencias con el nombre de la categoría ("Hogar y jardín"), no el
+        // slug; ProductFilters matchea por cualquiera de los dos.
         function getCategories(query) {
           const catalogProds = window.productCatalog?.products || [];
           const filterProds = window.productFilters?.originalProducts || [];
-          let cats;
-          if (catalogProds.length) {
-            cats = [...new Set(catalogProds.map(p => p.category).filter(Boolean))];
-          } else {
-            cats = [...new Set(filterProds.map(p => p.category).filter(Boolean))];
-          }
+          const source = catalogProds.length ? catalogProds : filterProds;
+          const cats = [...new Set(source.map(p => p.categoryName || p.category).filter(Boolean))];
           return query
             ? cats.filter(c => c.toLowerCase().includes(query.toLowerCase()))
             : cats;
