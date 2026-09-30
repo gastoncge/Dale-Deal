@@ -2934,7 +2934,8 @@
     <script defer src="../JS/favorites.js"></script>
     <script defer src="../JS/notifications.js"></script>
     <script defer src="../JS/dropdown-fix.js"></script>
-    <script defer src="../JS/services-data.js"></script>
+    <!-- services-data.js (servicios de ejemplo) ya no se carga acá: el
+         catálogo muestra solo servicios reales de la API. -->
     <script src="../JS/component-loader.js" defer></script>
     <script>
       window.onFooterLoaded = function() {
@@ -3001,43 +3002,64 @@
             // se machacan mutuamente. Pendiente refactor de coordinación.
             this.showLoadingState();
 
-            // Intentar cargar desde la API real
-            if (window.DaleDeal?.api?.fetchServices) {
-              const apiServices = await window.DaleDeal.api.fetchServices();
-              if (apiServices && apiServices.length > 0) {
-                this.services = this.transformAPIServices(apiServices);
-                DaleDeal.log(`✅ ${this.services.length} servicios cargados desde la API`);
-              } else {
-                throw new Error('API sin datos, usando fallback');
-              }
-            } else {
-              throw new Error('API no disponible, usando fallback');
+            // Solo servicios reales de la API. Antes, si la API fallaba o
+            // devolvía 0, se mostraban los 13 servicios de ejemplo de
+            // services-data.js (con precios, calificaciones y "Certificado"
+            // inventados). Ahora: 0 servicios → estado vacío; error → aviso
+            // con "Reintentar".
+            if (!window.DaleDeal?.api?.fetchServices) {
+              throw new Error('API no disponible');
+            }
+            // limit=100 (máximo del backend): sin limit vienen 20
+            const apiServices = await window.DaleDeal.api.fetchServices({ limit: 100 });
+            this.services = this.transformAPIServices(apiServices || []);
+            DaleDeal.log(`✅ ${this.services.length} servicios cargados desde la API`);
+
+            this.hideLoadingState();
+            if (this.services.length === 0) {
+              this.showEmptyCatalog();
+              return;
             }
 
             this.filteredServices = [...this.services];
-            this.hideLoadingState();
             this.bindFilterEvents();
             this.renderFilteredServices();
 
           } catch (error) {
-            DaleDeal.warn('Fallback a datos locales:', error.message);
-            // Fallback a datos hardcodeados si la API no responde
-            try {
-              if (typeof servicesData !== 'undefined') {
-                this.services = this.transformServicesData(servicesData);
-                this.filteredServices = [...this.services];
-                this.hideLoadingState();
-                this.bindFilterEvents();
-                this.renderFilteredServices();
-              } else {
-                this.hideLoadingState();
-                this.showError('No se pudieron cargar los servicios. Por favor, intentá nuevamente.');
-              }
-            } catch (fallbackError) {
-              this.hideLoadingState();
-              this.showError('Error al cargar los servicios. Por favor, intentá nuevamente.');
-            }
+            DaleDeal.warn('No se pudieron cargar los servicios:', error.message);
+            this.hideLoadingState();
+            this.showError('No pudimos cargar los servicios. Revisá tu conexión y probá de nuevo.');
+            const countEl = document.getElementById('resultsCount');
+            if (countEl) countEl.textContent = '';
           }
+        }
+
+        // Todavía no hay servicios publicados: estado vacío (no es un error)
+        showEmptyCatalog() {
+          const emptyStateContainer = document.getElementById('emptyStateContainer');
+          const grid = document.getElementById('servicesGrid');
+          const noResults = document.getElementById('noResults');
+          const loadMore = document.getElementById('loadMoreContainer');
+
+          if (grid) grid.style.display = 'none';
+          if (loadMore) loadMore.style.display = 'none';
+          if (emptyStateContainer) emptyStateContainer.style.display = 'flex';
+          if (noResults) {
+            noResults.style.display = 'block';
+            noResults.innerHTML = `
+              <div class="empty-state-icon">
+                <i class="bi bi-tools"></i>
+              </div>
+              <h3 class="empty-state-title">Todavía no hay servicios publicados</h3>
+              <p class="empty-state-text">¿Ofrecés un servicio? Publicalo y aparecé acá.</p>
+              <div class="empty-state-actions">
+                <a class="btn btn-primary" href="./publicar.html">
+                  <i class="bi bi-plus-circle me-2"></i>Publicar un servicio
+                </a>
+              </div>
+            `;
+          }
+          this.updateResultsCount();
         }
 
         showLoadingState() {
@@ -3068,7 +3090,9 @@
             priceTo: service.priceTo,
             category: this.mapCategoryFromSlug(service.category),
             image: service.image || 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=400&h=300&fit=crop',
-            rating: service.rating || 4.5,
+            // Calificación real; sin reseñas es 0 (antes 4.5 inventado: se
+            // veían 4,5 estrellas al lado de "Sin reseñas aún").
+            rating: service.rating || 0,
             reviewCount: service.reviewCount || 0,
             location: service.location || 'Argentina',
             badges: service.badges || [],
@@ -3095,41 +3119,8 @@
           return map[slug] || 'consultation';
         }
 
-        // ===========================================
-        // DATA FETCHING & TRANSFORMATION
-        // ===========================================
-
-        transformServicesData(apiServices) {
-          return apiServices.map(service => ({
-            id: service.id,
-            title: service.title,
-            description: service.description || '',
-            price: service.price,
-            category: this.mapCategory(service.category),
-            image: service.image,
-            rating: service.rating,
-            reviewCount: service.reviewCount || 0,
-            location: service.location || 'CABA',
-            badges: service.badges || [],
-            featured: service.featured || false,
-            priceType: service.priceType || null,
-            topRated: service.topRated || false,
-            emergency: service.emergency || false,
-            nationwide: service.nationwide || false
-          }));
-        }
-
-        mapCategory(category) {
-          const categoryMap = {
-            'Instalación': 'installation',
-            'Reparación': 'repair',
-            'Mantenimiento': 'maintenance',
-            'Consultoría': 'consultation',
-            'Gastronomía': 'catering',
-            'Construcción': 'construction'
-          };
-          return categoryMap[category] || category?.toLowerCase() || 'general';
-        }
+        // (transformServicesData / mapCategory se fueron con el fallback a
+        // los servicios de ejemplo de services-data.js.)
 
         // ===========================================
         // FILTER EVENT BINDINGS

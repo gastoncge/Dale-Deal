@@ -176,7 +176,7 @@
               <div class="contact-info-icon"><i class="bi bi-envelope-fill"></i></div>
               <div>
                 <div class="contact-info-label">Email</div>
-                <div class="contact-info-value">contacto@daledeal.com</div>
+                <div class="contact-info-value">contacto@daledeal.com.ar</div>
               </div>
             </div>
             <div class="contact-info-item">
@@ -224,6 +224,12 @@
     <script defer src="../JS/notifications.js"></script>
     <script defer src="../JS/dropdown-fix.js"></script>
     <script src="../JS/component-loader.js" defer></script>
+    <!-- API: cart.js la necesita para "Ir a pagar" (crea la orden y abre
+         Mercado Pago); sin esto mostraba "API no disponible.". Mismo orden
+         que en productos.html. -->
+    <script defer src="../JS/api.js"></script>
+    <script defer src="../JS/api-messages.js"></script>
+    <script defer src="../JS/api-payments.js"></script>
     <script>
       // Wrapped en DOMContentLoaded: los scripts `defer` (AOS incluido)
       // se evalúan entre el cierre del body y el evento DOMContentLoaded.

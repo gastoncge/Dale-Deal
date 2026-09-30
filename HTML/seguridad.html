@@ -250,6 +250,12 @@
     <script defer src="../JS/notifications.js"></script>
     <script defer src="../JS/dropdown-fix.js"></script>
     <script src="../JS/component-loader.js" defer></script>
+    <!-- API: cart.js la necesita para "Ir a pagar" (crea la orden y abre
+         Mercado Pago); sin esto mostraba "API no disponible.". Mismo orden
+         que en productos.html. -->
+    <script defer src="../JS/api.js"></script>
+    <script defer src="../JS/api-messages.js"></script>
+    <script defer src="../JS/api-payments.js"></script>
     <script>
       // AOS dentro de DOMContentLoaded — los `defer` corren entre el cierre
       // del body y este evento, sino [data-aos] elements quedan invisibles.

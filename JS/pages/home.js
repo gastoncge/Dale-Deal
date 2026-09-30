@@ -201,7 +201,7 @@ function renderProductCard(product) {
           </div>
           <div class="product-location">
             <i class="bi bi-geo-alt-fill"></i>
-            <span>CABA</span>
+            <span>${esc(product.location || 'Argentina')}</span>
           </div>
         </div>
 
@@ -259,6 +259,7 @@ async function loadTrending() {
         images: { main: (p.images && p.images[0]) || '', gallery: p.images || [] },
         rating: p.avg_rating || 0,
         reviewCount: p.review_count || 0,
+        location: p.location,
         badges: [],
       };
       return renderProductCard(product);
@@ -327,7 +328,10 @@ async function loadProducts() {
     DaleDeal.log(`✓ ${products.length} productos cargados en el home`);
 
   } catch (error) {
-    DaleDeal.warn('API no disponible, usando datos locales:', error.message);
+    // Sin API avisamos. Antes se pintaban los productos de ejemplo de
+    // product-data.js (iPhones, precios y descuentos que no existen) como si
+    // fueran publicaciones reales.
+    DaleDeal.warn('No se pudieron cargar los productos:', error.message);
 
     const loadingContainer = document.getElementById('loadingContainer');
     if (loadingContainer) loadingContainer.style.display = 'none';
@@ -335,40 +339,109 @@ async function loadProducts() {
     const productsGrid = document.getElementById('productsGrid');
     if (!productsGrid) return;
 
-    // Fallback: datos estáticos de product-data.js
-    const fallbackProducts = typeof window.getAllProducts === 'function'
-      ? window.getAllProducts()
-      : [];
+    productsGrid.innerHTML = `
+      <div class="col-12">
+        <div class="alert alert-warning" role="alert">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          No pudimos cargar los productos. Revisá tu conexión y probá de nuevo.
+          <button type="button" class="btn btn-sm btn-outline-secondary ms-2" onclick="window.HomePageLoader.loadProducts()">
+            <i class="bi bi-arrow-clockwise me-1"></i>Reintentar
+          </button>
+        </div>
+      </div>
+    `;
+  }
+}
 
-    if (!fallbackProducts.length) {
-      productsGrid.innerHTML = `
-        <div class="col-12">
-          <div class="alert alert-warning" role="alert">
-            <i class="bi bi-exclamation-triangle me-2"></i>
-            No se pudo conectar con el servidor. Intentá de nuevo más tarde.
+/**
+ * Renderiza una tarjeta de servicio de la home con datos reales de la API
+ * (transformService de api.js). Solo muestra lo que el backend confirma: las
+ * insignias salen de la verificación aprobada del prestador y la calificación
+ * de sus reseñas; sin reseñas dice "Sin reseñas aún".
+ */
+function renderServiceCard(service) {
+  const esc = (v) => window.DaleDeal.utils.escapeHtml(String(v ?? ''));
+  const provider = service.provider || {};
+
+  const badges = [];
+  if (provider.verifiedIdentity) badges.push('<span class="badge-certified">Identidad verificada</span>');
+  if (provider.verifiedProfessional) badges.push('<span class="badge-certified">Profesional verificado</span>');
+  const badgesHTML = badges.length ? `<div class="service-badges">${badges.join('')}</div>` : '';
+
+  const reviewCount = service.reviewCount || 0;
+  const ratingHTML = reviewCount > 0
+    ? `<div class="stars">${renderStars(service.rating || 0)}</div>
+       <span class="service-rating-text">${(service.rating || 0).toFixed(1)} (${reviewCount.toLocaleString('es-AR')})</span>`
+    : '<span class="service-rating-text text-muted">Sin reseñas aún</span>';
+
+  // price_from del backend: por eso "Desde"
+  const priceText = service.price > 0
+    ? `Desde ${window.DaleDeal.utils.formatCurrency(service.price)}`
+    : 'Consultar precio';
+
+  const shortDescription = service.description && service.description.length > 90
+    ? service.description.substring(0, 90) + '...'
+    : (service.description || '');
+
+  const href = `/servicio?id=${encodeURIComponent(service.id)}`;
+
+  // El título es un link real (teclado / lectores de pantalla); el resto de
+  // la card navega por JS. El overlay "Reservar cita" de las cards viejas
+  // no va: components.css lo oculta y no hay sistema de reservas.
+  return `
+    <div class="service-card" data-id="${esc(service.id)}">
+      <div class="service-image-container">
+        <img src="${esc(service.image)}" alt="${esc(service.title)}" class="service-image" loading="lazy" />
+        ${badgesHTML}
+      </div>
+      <div class="service-info">
+        <h3 class="service-title"><a href="${esc(href)}" class="text-reset text-decoration-none">${esc(service.title)}</a></h3>
+        <p class="service-description">${esc(shortDescription)}</p>
+        <div class="service-meta">
+          <div class="service-rating">${ratingHTML}</div>
+          <div class="service-info-row">
+            <div class="service-location">
+              <i class="bi bi-geo-alt-fill"></i>
+              <span>${esc(service.location)}</span>
+            </div>
+            <span class="service-price-badge">${esc(priceText)}</span>
           </div>
         </div>
-      `;
-      return;
-    }
+      </div>
+    </div>
+  `;
+}
 
-    productsGrid.innerHTML = '';
-    const productsPerRow = 3;
-    for (let i = 0; i < Math.min(fallbackProducts.length, 6); i += productsPerRow) {
-      const row = document.createElement('div');
-      row.className = 'products-row';
-      row.innerHTML = fallbackProducts
-        .slice(i, i + productsPerRow)
-        .map(p => renderProductCard(p))
-        .join('');
-      productsGrid.appendChild(row);
-    }
+/**
+ * Servicios de la home: los últimos publicados (GET /services, mismo patrón
+ * y escape que los productos). Si la API falla o no hay servicios, la
+ * sección queda oculta: nunca mostramos servicios de ejemplo.
+ */
+async function loadHomeServices() {
+  const section = document.getElementById('servicesSection');
+  const grid = document.getElementById('servicesGrid');
+  if (!section || !grid || !window.DaleDeal?.api?.fetchServices) return;
 
-    initializeProductListeners();
-    document.dispatchEvent(new CustomEvent('products:loaded', {
-      detail: { count: Math.min(fallbackProducts.length, 6), source: 'fallback' }
-    }));
-    DaleDeal.log(`✓ ${Math.min(fallbackProducts.length, 6)} productos locales cargados como fallback`);
+  try {
+    // 6 = dos filas de 3 en desktop
+    const services = (await window.DaleDeal.api.fetchServices({ limit: 6 })).slice(0, 6);
+    if (services.length === 0) return;
+
+    grid.innerHTML = services.map(renderServiceCard).join('');
+
+    // Toda la card es clickeable (el título es un link real, para teclado)
+    grid.querySelectorAll('.service-card[data-id]').forEach(card => {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('a')) return;
+        window.location.href = `/servicio?id=${encodeURIComponent(card.dataset.id)}`;
+      });
+    });
+
+    section.style.display = '';
+    DaleDeal.log(`✓ ${services.length} servicios cargados en el home`);
+  } catch (err) {
+    DaleDeal.warn('No se pudieron cargar los servicios del home:', err.message);
   }
 }
 
@@ -411,24 +484,27 @@ function initializeProductListeners() {
 }
 
 /**
- * Inicializar cuando el DOM esté listo
+ * Inicializar cuando el DOM esté listo.
+ * productos.html también carga este archivo, pero solo por renderProductCard:
+ * ahí el grid es del catálogo de la página (isProductosPage, de search.js) y
+ * si lo cargáramos acá lo pisaríamos con otra copia de los productos.
  */
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    // Esperar a que la API esté disponible
-    if (window.DaleDeal?.api) {
-      loadProducts();
-    } else {
-      DaleDeal.error('API de productos no disponible');
-    }
-  });
-} else {
-  // DOM ya está listo
+function startHomeProducts() {
+  if (typeof isProductosPage === 'function' && isProductosPage()) return;
+  // Esperar a que la API esté disponible
   if (window.DaleDeal?.api) {
     loadProducts();
+    loadHomeServices();
   } else {
     DaleDeal.error('API de productos no disponible');
   }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startHomeProducts);
+} else {
+  // DOM ya está listo
+  startHomeProducts();
 }
 
 // Exportar para uso global
@@ -466,23 +542,8 @@ if (typeof window !== 'undefined') {
       window.location.href = '/servicios';
     });
 
-    // Service cards estáticas del home — cada card tiene data-id con el slug
-    // del servicio (`installation-tech`, `tech-support`, etc.) que SÍ existe
-    // en servicesData (mock data local). El detalle de servicio busca primero
-    // en backend (si el id es numérico) y luego en local (el caso de estos).
-    //
-    // Antes: las cards no eran clickeables ni los botones "Reservar cita"
-    //        tenían handler. Click → nada pasaba.
-    // Ahora: todo el card es clickeable, excepto el corazón (favoritos).
-    document.querySelectorAll('.service-card[data-id]').forEach(card => {
-      const id = card.dataset.id;
-      if (!id) return;
-      card.style.cursor = 'pointer';
-      card.addEventListener('click', (e) => {
-        if (e.target.closest('.action-heart')) return; // no robar el click del corazón
-        window.location.href = `/servicio?id=${encodeURIComponent(id)}`;
-      });
-    });
+    // Las service cards ya no son estáticas: las pinta loadHomeServices()
+    // con servicios reales y ahí mismo les pone el click.
 
     // Newsletter forms — POST real al backend (antes era animación fake).
     // Si el backend falla o está caído, mostramos error visible.
@@ -547,57 +608,8 @@ if (typeof window !== 'undefined') {
     document.getElementById('newsletterForm')?.addEventListener('submit', handleNewsletterSubmit);
     document.getElementById('footerNewsletterForm')?.addEventListener('submit', handleNewsletterSubmit);
 
-    // Filtros de servicios en la home
-    class ServiceFilters {
-      constructor() {
-        this.currentCategory = 'all';
-        this.currentSort = 'featured';
-        this.services = [];
-        this.loadServices();
-        this.bindEvents();
-      }
-
-      loadServices() {
-        this.services = Array.from(document.querySelectorAll('.service-card')).map(card => ({
-          element: card,
-          category: card.dataset.serviceCategory,
-          price: parseInt(card.dataset.servicePrice) || 0,
-          title: card.querySelector('.service-title')?.textContent || ''
-        }));
-      }
-
-      bindEvents() {
-        document.querySelectorAll('.service-filter-tab').forEach(tab => {
-          tab.addEventListener('click', (e) => {
-            e.preventDefault();
-            document.querySelectorAll('.service-filter-tab').forEach(t => t.classList.remove('active'));
-            e.currentTarget.classList.add('active');
-            this.currentCategory = e.currentTarget.dataset.serviceCategory;
-            this.filterAndRender();
-          });
-        });
-        document.getElementById('serviceSortBtn')?.addEventListener('click', () => {
-          this.currentSort = this.currentSort === 'price-asc' ? 'price-desc' : 'price-asc';
-          this.filterAndRender();
-        });
-      }
-
-      filterAndRender() {
-        let filtered = [...this.services];
-        if (this.currentCategory && this.currentCategory !== 'all') {
-          filtered = filtered.filter(s => s.category === this.currentCategory);
-        }
-        if (this.currentSort === 'price-asc') filtered.sort((a, b) => a.price - b.price);
-        else if (this.currentSort === 'price-desc') filtered.sort((a, b) => b.price - a.price);
-        this.services.forEach(s => { s.element.style.display = 'none'; });
-        filtered.forEach((s, i) => {
-          s.element.style.display = 'block';
-          s.element.style.animationDelay = `${i * 0.1}s`;
-        });
-      }
-    }
-
-    new ServiceFilters();
+    // (ServiceFilters se fue con las service cards estáticas: filtraba por
+    // tabs .service-filter-tab que no existen en index.html.)
   }
 
   if (document.readyState === 'loading') {

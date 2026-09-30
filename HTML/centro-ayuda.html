@@ -175,9 +175,9 @@
               </div>
             </div>
             <div class="accordion-item">
-              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pg2">¿Tienen cuotas sin interés?</button></h2>
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pg2">¿Puedo pagar en cuotas?</button></h2>
               <div id="pg2" class="accordion-collapse collapse" data-bs-parent="#accordionPagos">
-                <div class="accordion-body">Sí, ofrecemos hasta 12 cuotas sin interés con tarjetas seleccionadas. La disponibilidad de cuotas varía según el banco emisor y el monto de la compra.</div>
+                <div class="accordion-body">Podés pagar con los medios que ofrece Mercado Pago (tarjeta, dinero en cuenta, etc.); las cuotas y su costo los muestra Mercado Pago al pagar.</div>
               </div>
             </div>
             <div class="accordion-item">
@@ -234,6 +234,12 @@
     <script defer src="../JS/notifications.js"></script>
     <script defer src="../JS/dropdown-fix.js"></script>
     <script src="../JS/component-loader.js" defer></script>
+    <!-- API: cart.js la necesita para "Ir a pagar" (crea la orden y abre
+         Mercado Pago); sin esto mostraba "API no disponible.". Mismo orden
+         que en productos.html. -->
+    <script defer src="../JS/api.js"></script>
+    <script defer src="../JS/api-messages.js"></script>
+    <script defer src="../JS/api-payments.js"></script>
     <script>document.addEventListener('DOMContentLoaded', () => { if (window.AOS) AOS.init({ duration: 800, once: true, offset: 100 }); });</script>
   </body>
 </html>
