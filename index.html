@@ -549,19 +549,8 @@
                   </div>
                 </div>
 
-                <div class="footer-apps mt-3">
-                  <p class="footer-apps-title">Descargá la app</p>
-                  <div class="app-links">
-                    <a href="#" class="app-store-btn" aria-disabled="true" style="pointer-events:none;opacity:.5;" title="Próximamente">
-                      <i class="bi bi-google-play"></i>
-                      <span><small>Próximamente en</small><strong>Google Play</strong></span>
-                    </a>
-                    <a href="#" class="app-store-btn" aria-disabled="true" style="pointer-events:none;opacity:.5;" title="Próximamente">
-                      <i class="bi bi-apple"></i>
-                      <span><small>Próximamente en</small><strong>App Store</strong></span>
-                    </a>
-                  </div>
-                </div>
+                <!-- "Descargá la app" eliminado, igual que en el footer
+                     compartido: no hay app y "Próximamente" era una promesa. -->
               </div>
             </div>
           </div>
@@ -595,6 +584,33 @@
             </div>
           </div>
 
+          <!-- Compliance argentina (e-commerce — Resolución 424/2020 SCI):
+               la home tiene footer propio, así que estos links van copiados
+               tal cual del componente (HTML/components/footer.html). -->
+          <div class="footer-compliance mt-3 pt-3" style="border-top:1px solid rgba(255,255,255,.1);font-size:13px;">
+            <div class="row align-items-center">
+              <div class="col-md-7 mb-2 mb-md-0">
+                <a href="./HTML/arrepentimiento.html"
+                   class="legal-link me-3"
+                   title="Botón de arrepentimiento — derecho a desistir de la compra dentro de 10 días corridos">
+                  <i class="bi bi-arrow-counterclockwise me-1"></i>
+                  Botón de arrepentimiento
+                </a>
+                <a href="https://www.argentina.gob.ar/produccion/defensadelconsumidor/formulario"
+                   class="legal-link"
+                   target="_blank" rel="noopener noreferrer"
+                   title="Sitio oficial de Defensa de las y los Consumidores">
+                  <i class="bi bi-shield-check me-1"></i>
+                  Defensa de las y los Consumidores
+                </a>
+              </div>
+              <div class="col-md-5 text-md-end">
+                <!-- No usar .text-muted acá: sobre el footer oscuro queda ilegible -->
+                <span style="color:rgba(255,255,255,.6);">Defensa del consumidor: <strong style="color:rgba(255,255,255,.85);">0800-666-1518</strong></span>
+              </div>
+            </div>
+          </div>
+
           <!-- Footer Bottom -->
           <div class="footer-bottom">
             <div class="footer-bottom-content">
@@ -602,7 +618,7 @@
                 <div class="col-md-8">
                   <div class="footer-copyright">
                     <div class="copyright-main">
-                      <span class="copyright-year">© 2025</span>
+                      <span class="copyright-year">© 2026</span>
                       <span class="copyright-brand">Dale Deal</span>
                       <span class="copyright-text">Todos los derechos reservados.</span>
                     </div>
