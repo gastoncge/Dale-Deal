@@ -40,10 +40,17 @@ export default {
     const url = new URL(request.url);
     // HTTPS siempre en producción: Cloudflare también servía el sitio por http
     // (login incluido). Lo definitivo es activar "Always Use HTTPS" en el panel;
-    // esto cubre lo que pasa por el worker.
-    if (url.protocol === 'http:' && /(^|\.)daledeal\.com\.ar$/.test(url.hostname)) {
+    // esto cubre lo que pasa por el worker. El esquema real lo dice Cloudflare
+    // (CF-Visitor / X-Forwarded-Proto): en `wrangler dev` la URL llega como
+    // http://daledeal.com.ar y redirigir por eso armaba un bucle en local.
+    const viaHttp = /"scheme":"http"/.test(request.headers.get('cf-visitor') || '')
+      || request.headers.get('x-forwarded-proto') === 'http';
+    if (viaHttp && url.protocol === 'http:' && /(^|\.)daledeal\.com\.ar$/.test(url.hostname)) {
       url.protocol = 'https:';
       return Response.redirect(url.toString(), 301);
+    }
+    if (url.pathname === '/sitemap-products.xml' || url.pathname === '/sitemap-services.xml') {
+      return proxySitemap(url.pathname);
     }
     if (url.pathname.startsWith('/img/')) return serveImage(request, env, url);
     if (url.pathname === '/api/upload') return handleUpload(request, env, url);
@@ -54,6 +61,27 @@ export default {
     return env.ASSETS.fetch(request);
   },
 };
+
+// Sitemaps dinámicos (productos/servicios): los genera el backend, pero los
+// servimos desde este dominio porque un sitemap en otro host no vale dentro
+// del sitemap-index. Cache de 1 h en el borde.
+async function proxySitemap(path) {
+  try {
+    const upstream = await fetch(`https://api.daledeal.com.ar${path}`, {
+      cf: { cacheTtl: 3600, cacheEverything: true },
+    });
+    if (!upstream.ok) return new Response('Sitemap no disponible', { status: 502 });
+    return new Response(upstream.body, {
+      status: 200,
+      headers: {
+        'content-type': 'application/xml; charset=utf-8',
+        'cache-control': 'public, max-age=3600',
+      },
+    });
+  } catch (_) {
+    return new Response('Sitemap no disponible', { status: 502 });
+  }
+}
 
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {

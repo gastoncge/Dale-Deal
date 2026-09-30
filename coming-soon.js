@@ -27,7 +27,7 @@ export function comingSoonPage() {
 <meta property="og:image" content="https://daledeal.com.ar/IMG/og-home.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preload" href="/IMG/fonts/spacegrotesk-variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" crossorigin="anonymous">
 <style>
   @font-face { font-family: 'Space Grotesk'; src: url('/IMG/fonts/spacegrotesk-variable.woff2') format('woff2'); font-weight: 300 700; font-display: swap; }
   @font-face { font-family: 'Inter'; src: url('/IMG/fonts/inter-variable.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
