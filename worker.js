@@ -38,6 +38,13 @@ const MAX_BYTES = 8 * 1024 * 1024; // 8 MB por foto
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    // HTTPS siempre en producción: Cloudflare también servía el sitio por http
+    // (login incluido). Lo definitivo es activar "Always Use HTTPS" en el panel;
+    // esto cubre lo que pasa por el worker.
+    if (url.protocol === 'http:' && /(^|\.)daledeal\.com\.ar$/.test(url.hostname)) {
+      url.protocol = 'https:';
+      return Response.redirect(url.toString(), 301);
+    }
     if (url.pathname.startsWith('/img/')) return serveImage(request, env, url);
     if (url.pathname === '/api/upload') return handleUpload(request, env, url);
     if (env.COMING_SOON === '1') {
@@ -170,6 +177,7 @@ async function comingSoonGate(request, env, url) {
       'content-type': 'text/html; charset=utf-8',
       'cache-control': 'no-store',
       'x-robots-tag': 'noindex',
+      'strict-transport-security': 'max-age=31536000',
       'x-content-type-options': 'nosniff',
       'referrer-policy': 'strict-origin-when-cross-origin',
     },

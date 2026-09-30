@@ -386,6 +386,7 @@
             if (res.status === 401 || res.status === 403) {
               localStorage.removeItem(TOKEN_KEY);
               sessionStorage.removeItem(TOKEN_KEY);
+              localStorage.removeItem('daledealer_user');
               loadingState.classList.add('d-none');
               authRequired.classList.remove('d-none');
               return;
@@ -478,6 +479,9 @@
         logoutBtn?.addEventListener('click', () => {
           localStorage.removeItem(TOKEN_KEY);
           sessionStorage.removeItem(TOKEN_KEY);
+          // auth.js guarda el usuario en "daledealer_user": sin borrarlo, el
+          // header seguía mostrando la sesión abierta después de salir.
+          localStorage.removeItem('daledealer_user');
           localStorage.removeItem('daledeal_user');
           location.href = './login.html';
         });

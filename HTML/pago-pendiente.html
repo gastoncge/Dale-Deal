@@ -195,7 +195,7 @@
         </div>
 
         <div class="pago-actions">
-          <a href="./notificaciones.html#pedidos" class="btn-dd-primary">
+          <a href="./notificaciones.html#mis-compras" class="btn-dd-primary">
             <i class="bi bi-bag"></i>
             Ver mis compras
           </a>
@@ -215,7 +215,9 @@
     <script defer src="../JS/api.js"></script>
     <script defer src="../JS/api-payments.js"></script>
     <script>
-      (async function () {
+      // Espera a que carguen api.js y api-payments.js (son defer): antes corría
+      // de inmediato y window.DaleDeal.payments todavía no existía.
+      document.addEventListener('DOMContentLoaded', async function () {
         const params = new URLSearchParams(window.location.search);
         const orderId =
           params.get('order_id') ||
@@ -229,7 +231,11 @@
         }
 
         try {
-          const { order } = await window.DaleDeal.payments.getStatus(orderId);
+          const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+          // payment_id lo agrega MP al volver: si el webhook todavía no llegó,
+          // el backend le pregunta el pago a MP y la orden queda al día.
+          const mpPaymentId = params.get('payment_id') || params.get('collection_id');
+          const { order } = await window.DaleDeal.payments.getStatus(orderId, mpPaymentId);
           const fmt = (n) =>
             new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(n || 0);
 
@@ -237,11 +243,11 @@
             <div class="pago-details">
               <div class="pago-row">
                 <span class="label">Orden</span>
-                <span class="value">#${order.id}</span>
+                <span class="value">#${esc(order.id)}</span>
               </div>
               <div class="pago-row">
                 <span class="label">Producto</span>
-                <span class="value">${order.product_title || '—'}</span>
+                <span class="value">${esc(order.product_title || '—')}</span>
               </div>
               <div class="pago-row">
                 <span class="label">Estado</span>
@@ -262,7 +268,7 @@
 
         // Limpiar la orden en curso del storage
         localStorage.removeItem('dd_current_payment_order');
-      })();
+      });
     </script>
   </body>
 </html>

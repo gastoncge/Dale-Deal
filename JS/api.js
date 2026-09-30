@@ -92,7 +92,7 @@ async function apiFetch(path, options = {}) {
       // request en background (ej. el polling de notificaciones — si redirige
       // por cada poll cuando token caducó, el user no puede ni ver el aviso).
       const path = window.location.pathname;
-      const onAuthPage = /\/(login|signup|recuperar-contrasena)\.html$/.test(path);
+      const onAuthPage = /\/(login|signup|recuperar-contrasena)(\.html)?$/.test(path);
       const isBackground = options._background === true;
       if (!onAuthPage && !isBackground) {
         const ret = encodeURIComponent(path + window.location.search);
@@ -112,6 +112,11 @@ async function apiFetch(path, options = {}) {
   return res.json();
 }
 
+// Texto de usuarios: el backend lo guarda con & < > " ' escapados. Lo
+// devolvemos a lo que escribieron; al mostrarlo va con textContent o con
+// escapeHtml (nunca interpolado crudo en innerHTML).
+const decodeText = (v) => (v == null ? v : (window.DaleDeal?.utils?.decodeEntities?.(v) ?? v));
+
 // =====================================================
 // TRANSFORMAR PRODUCTO (formato backend → formato frontend)
 // =====================================================
@@ -126,10 +131,10 @@ function transformProduct(p) {
 
   return {
     id: p.id,
-    title: p.title,
-    category: p.category_name || 'Sin categoría',
+    title: decodeText(p.title),
+    category: decodeText(p.category_name) || 'Sin categoría',
     subcategory: p.category_slug || '',
-    description: p.description || '',
+    description: decodeText(p.description) || '',
     price: parseFloat(p.price),
     originalPrice: null,
     discount: null,
@@ -138,9 +143,9 @@ function transformProduct(p) {
     soldCount: 0,
     stock: p.stock || 0,
     condition: p.condition || 'new',
-    location: p.location || 'Argentina',
+    location: decodeText(p.location) || 'Argentina',
     seller_id: p.seller_id,
-    seller_name: p.seller_name,
+    seller_name: decodeText(p.seller_name),
     seller_avatar: p.seller_avatar,
     images: {
       main: mainImage,
@@ -152,13 +157,15 @@ function transformProduct(p) {
     features: [],
     specifications: {},
     badges: (p.stock > 0 && p.stock < 5) ? ['Stock limitado'] : [],
-    shipping: { free: parseFloat(p.price) > 50000 },
+    // "Envío gratis" solo si el vendedor ofrece envío y no lo cobra (antes se
+    // inventaba para todo lo que costara más de $50.000).
+    shipping: { free: !!p.shipping_required && !!p.offers_delivery && p.shipping_cost != null && parseFloat(p.shipping_cost) === 0 },
     // Campos de envío del sprint logística (migración 003)
     shipping_required: !!p.shipping_required,
     offers_delivery:   !!p.offers_delivery,
     offers_pickup:     !!p.offers_pickup,
     shipping_cost:     p.shipping_cost != null ? parseFloat(p.shipping_cost) : null,
-    pickup_address:    p.pickup_address || null,
+    pickup_address:    decodeText(p.pickup_address) || null,
   };
 }
 
@@ -177,10 +184,10 @@ function transformService(s) {
   const hasProvider = !!(s.provider_name || s.provider_avatar);
   const provider = hasProvider ? {
     id:           s.provider_id,
-    name:         s.provider_name,
+    name:         decodeText(s.provider_name),
     avatar:       s.provider_avatar,
     phone:        s.provider_phone,
-    location:     s.provider_location,
+    location:     decodeText(s.provider_location),
     memberSince:  s.provider_since ? String(s.provider_since).slice(0, 4) : null,
     // Insignias reales del backend (migrations 013/014). Solo true si el equipo
     // aprobó la verificación; nunca inventamos confianza.
@@ -197,8 +204,8 @@ function transformService(s) {
 
   return {
     id: s.id,
-    title: s.title,
-    description: s.description || '',
+    title: decodeText(s.title),
+    description: decodeText(s.description) || '',
     category: s.category_slug || 'otros-servicios',
     price: parseFloat(s.price_from) || 0,
     priceFrom: parseFloat(s.price_from) || null,
@@ -206,13 +213,13 @@ function transformService(s) {
     priceType: s.price_type || 'fixed',
     rating: realRating,
     reviewCount: realCount,
-    location: s.location || 'Argentina',
+    location: decodeText(s.location) || 'Argentina',
     image: images[0] || 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=400&h=300&fit=crop',
     gallery,                          // ← array real o null (no más mock)
     badges: [],
     provider,                         // ← objeto real o null
     provider_id: s.provider_id,       // campos planos para retrocompat
-    provider_name: s.provider_name,
+    provider_name: decodeText(s.provider_name),
     featured: true,
   };
 }
@@ -223,7 +230,8 @@ function transformService(s) {
 
 async function fetchProducts(filters = {}) {
   try {
-    const params = new URLSearchParams(filters).toString();
+    // Sin limit el backend devuelve 20 y el catálogo nunca mostraba más (máx. 100).
+    const params = new URLSearchParams({ limit: 100, ...filters }).toString();
     const data = await apiFetch(`/products${params ? '?' + params : ''}`);
     DaleDeal.log(`${(data.data || []).length} productos cargados desde la API`);
     return (data.data || []).map(transformProduct);
@@ -266,7 +274,7 @@ async function createProduct(productData) {
 
 async function fetchServices(filters = {}) {
   try {
-    const params = new URLSearchParams(filters).toString();
+    const params = new URLSearchParams({ limit: 100, ...filters }).toString();
     const data = await apiFetch(`/services${params ? '?' + params : ''}`);
     return (data.data || []).map(transformService);
   } catch (error) {

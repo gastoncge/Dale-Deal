@@ -57,7 +57,7 @@
     if (!localStorage.getItem('daledeal_token') || !apiFetch) {
       listEl.innerHTML = emptyState('bi-person-lock', 'Iniciá sesión para ver tus compras',
         'Tus pedidos, el seguimiento del envío y la confirmación de recepción aparecen acá.',
-        '<a href="./login.html?redirect=notificaciones" class="btn btn-primary"><i class="bi bi-box-arrow-in-right me-2"></i>Iniciar sesión</a>');
+        '<a href="./login.html?redirect=%2Fnotificaciones%23mis-compras" class="btn btn-primary"><i class="bi bi-box-arrow-in-right me-2"></i>Iniciar sesión</a>');
       return;
     }
 
@@ -99,7 +99,13 @@
     // la compra está cerrada y confirmar ya no cambia nada.
     const refunded    = o.payment_status === 'refunded' || o.release_status === 'refunded';
     const closed      = refunded || o.release_status === 'released';
-    const canConfirm  = !confirmed && !closed && (o.status === 'shipped' || o.status === 'delivered');
+    // Retiro en persona o sin envío: no hay "despachado", se confirma desde que está paga.
+    const noShipping  = o.shipping_method !== 'delivery';
+    const canConfirm  = !confirmed && !closed && (o.status === 'shipped' || o.status === 'delivered'
+      || (noShipping && o.status === 'confirmed' && o.payment_status === 'paid'));
+    // Orden sin pagar: se puede pagar (o reintentar) o cancelar para liberar el stock.
+    const inProcess   = ['in_process', 'authorized'].includes(o.payment_status);
+    const unpaid      = o.status === 'pending' && !inProcess && o.payment_status !== 'paid';
     const byCarrier   = o.status === 'delivered' && o.delivered_source === 'carrier';
     const carrierName = o.shipping_carrier_name || '';
 
@@ -109,7 +115,7 @@
       const trackingLine = o.tracking_number
         ? `<div class="mt-1">
              ${carrierName ? `${escape(carrierName)} · ` : ''}<span class="tracking-number">${escape(o.tracking_number)}</span>
-             ${o.tracking_url ? ` · <a href="${escape(o.tracking_url)}" target="_blank" rel="noopener">Seguir envío <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i></a>` : ''}
+             ${/^https:\/\//i.test(o.tracking_url || '') ? ` · <a href="${escape(o.tracking_url)}" target="_blank" rel="noopener">Seguir envío <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i></a>` : ''}
            </div>`
         : (o.status === 'pending' || o.status === 'cancelled'
             ? ''
@@ -136,7 +142,22 @@
     }
 
     let actions = '';
-    if (canConfirm) {
+    if (unpaid) {
+      const failed = ['rejected', 'cancelled'].includes(o.payment_status);
+      actions = `
+        <div class="order-actions">
+          ${failed ? '<span class="order-hint text-danger"><i class="bi bi-x-circle me-1" aria-hidden="true"></i>El último intento de pago no se acreditó.</span>' : ''}
+          <button type="button" class="btn btn-primary btn-sm" data-action="pay" data-order-id="${o.id}">
+            <i class="bi bi-credit-card me-1" aria-hidden="true"></i> ${failed ? 'Reintentar pago' : 'Pagar'}
+          </button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-action="cancel" data-order-id="${o.id}">Cancelar compra</button>
+        </div>`;
+    } else if (o.status === 'pending' && inProcess) {
+      actions = `
+        <div class="order-actions">
+          <span class="order-hint"><i class="bi bi-hourglass-split me-1" aria-hidden="true"></i>Tu pago se está procesando. Te avisamos por mail cuando se acredite.</span>
+        </div>`;
+    } else if (canConfirm) {
       actions = `
         <div class="order-actions">
           ${byCarrier ? `<span class="order-hint"><i class="bi bi-check2-circle me-1" aria-hidden="true"></i>${escape(carrierName || 'El correo')} informó que lo entregó.</span>` : ''}
@@ -188,6 +209,8 @@
     if (btn.dataset.action === 'reload')   return load();
     if (btn.dataset.action === 'timeline') return toggleTimeline(id, btn);
     if (btn.dataset.action === 'confirm')  return confirmDelivery(id, btn);
+    if (btn.dataset.action === 'pay')      return payOrder(id, btn);
+    if (btn.dataset.action === 'cancel')   return cancelOrder(id, btn);
   }
 
   async function toggleTimeline(orderId, btn) {
@@ -235,6 +258,32 @@
     }
   }
 
+  async function payOrder(orderId, btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Abriendo Mercado Pago…';
+    try {
+      await window.DaleDeal.payments.redirectToCheckout(orderId);
+    } catch (err) {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="bi bi-credit-card me-1" aria-hidden="true"></i> Pagar';
+      window.alert('No pudimos abrir el pago: ' + (err?.message || 'probá de nuevo.'));
+    }
+  }
+
+  async function cancelOrder(orderId, btn) {
+    if (!window.confirm('¿Cancelás esta compra?\n\nEl producto vuelve a quedar disponible y no se te cobra nada.')) return;
+    btn.disabled = true;
+    try {
+      await api()(`/orders/${orderId}/status`, { method: 'PATCH', body: JSON.stringify({ status: 'cancelled' }) });
+      orders = orders.map(o => (o.id === orderId ? { ...o, status: 'cancelled' } : o));
+      render();
+      if (window.DaleDeal?.toast) window.DaleDeal.toast('Cancelaste la compra.', 'success');
+    } catch (err) {
+      btn.disabled = false;
+      window.alert('No pudimos cancelar la compra: ' + (err?.message || 'probá de nuevo.'));
+    }
+  }
+
   // ── Helpers ─────────────────────────────────────────────────────────────
   function emptyState(icon, title, text, cta) {
     return `
@@ -246,9 +295,10 @@
       </div>`;
   }
 
+  // Decodifica primero: el texto de la API ya viene escapado (si no, "&amp;").
   function escape(s) {
     if (s == null) return '';
-    return String(s)
+    return (window.DaleDeal?.utils?.decodeEntities ? window.DaleDeal.utils.decodeEntities(s) : String(s))
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }

@@ -197,7 +197,7 @@
             <i class="bi bi-chat-dots"></i>
             Abrir chat con el vendedor
           </a>
-          <a href="./notificaciones.html#pedidos" class="btn-dd-ghost">
+          <a href="./notificaciones.html#mis-compras" class="btn-dd-ghost">
             <i class="bi bi-bag"></i>
             Ver mis compras
           </a>
@@ -222,7 +222,9 @@
     <script defer src="../JS/api.js"></script>
     <script defer src="../JS/api-payments.js"></script>
     <script>
-      (async function () {
+      // Espera a que carguen api.js y api-payments.js (son defer): antes corría
+      // de inmediato y window.DaleDeal.payments todavía no existía.
+      document.addEventListener('DOMContentLoaded', async function () {
         const params = new URLSearchParams(window.location.search);
         const orderId =
           params.get('order_id') ||
@@ -253,13 +255,18 @@
               <p style="color: var(--warning);">No pudimos identificar la orden. Revisá "Mis compras".</p>
             </div>
           `;
-          chatBtn.href = './notificaciones.html#pedidos';
+          chatBtn.href = './notificaciones.html#mis-compras';
           return;
         }
 
+        const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
         // Consultar estado actual
         try {
-          const { order } = await window.DaleDeal.payments.getStatus(orderId);
+          // payment_id lo agrega MP al volver: si el webhook todavía no llegó,
+          // el backend le pregunta el pago a MP y la orden queda al día.
+          const mpPaymentId = params.get('payment_id') || params.get('collection_id');
+          const { order } = await window.DaleDeal.payments.getStatus(orderId, mpPaymentId);
 
           const fmt = (n) =>
             new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(n || 0);
@@ -277,24 +284,24 @@
             <div class="pago-details">
               <div class="pago-row">
                 <span class="label">Orden</span>
-                <span class="value">#${order.id}</span>
+                <span class="value">#${esc(order.id)}</span>
               </div>
               <div class="pago-row">
                 <span class="label">Producto</span>
-                <span class="value">${order.product_title || '—'}</span>
+                <span class="value">${esc(order.product_title || '—')}</span>
               </div>
               <div class="pago-row">
                 <span class="label">Cantidad</span>
-                <span class="value">${order.quantity}</span>
+                <span class="value">${esc(order.quantity)}</span>
               </div>
               <div class="pago-row">
                 <span class="label">Estado del pago</span>
-                <span class="value" style="color: ${statusLabel.color}">${statusLabel.text}</span>
+                <span class="value" style="color: ${statusLabel.color}">${esc(statusLabel.text)}</span>
               </div>
               ${order.mp_payment_id ? `
               <div class="pago-row">
                 <span class="label">ID Mercado Pago</span>
-                <span class="value" style="font-family: monospace; font-size: 0.85rem;">${order.mp_payment_id}</span>
+                <span class="value" style="font-family: monospace; font-size: 0.85rem;">${esc(order.mp_payment_id)}</span>
               </div>` : ''}
               <div class="pago-row total">
                 <span class="label">Total</span>
@@ -305,7 +312,7 @@
 
           // Chat con el vendedor
           if (order.conversation_id) {
-            chatBtn.href = `./notificaciones.html?conv=${order.conversation_id}#mensajes`;
+            chatBtn.href = `./notificaciones.html?conv=${encodeURIComponent(order.conversation_id)}#mensajes`;
           } else {
             chatBtn.href = './notificaciones.html#mensajes';
           }
@@ -319,7 +326,7 @@
               </p>
             </div>
           `;
-          chatBtn.href = './notificaciones.html#pedidos';
+          chatBtn.href = './notificaciones.html#mis-compras';
         }
 
         // Limpiar la orden "en curso"
@@ -361,7 +368,7 @@
             });
           }
         } catch (_) {}
-      })();
+      });
     </script>
   </body>
 </html>

@@ -232,7 +232,7 @@ class ServicePage {
     // SEO
     document.title = `${s.title} - DALE DEAL`;
     document.querySelector('meta[name="description"]')?.setAttribute('content',
-      `${s.title} – ${s.description?.substring(0, 120) || ''} Contratá en Dale Deal.`
+      `${s.title} – ${DaleDeal.utils.htmlToText(s.description).substring(0, 120)} Contratá en Dale Deal.`
     );
 
     // Breadcrumb
@@ -263,8 +263,12 @@ class ServicePage {
         <strong>${s.rating}</strong> · ${s.reviewCount?.toLocaleString('es-AR') || 0} reseñas`;
     }
 
+    // Solo si hay un dato real (antes se inventaba "Responde en < 1h").
     const responseTimeEl = document.getElementById('providerResponseTime');
-    if (responseTimeEl) responseTimeEl.textContent = `Responde en ${p.responseTime || '< 1h'}`;
+    if (responseTimeEl) {
+      if (p.responseTime) responseTimeEl.textContent = `Responde en ${p.responseTime}`;
+      else responseTimeEl.closest('.provider-response-time')?.setAttribute('hidden', '');
+    }
 
     const locationEl = document.getElementById('providerLocation');
     if (locationEl) locationEl.textContent = s.location || 'CABA';
@@ -317,7 +321,8 @@ class ServicePage {
     // Availability
     const availEl = document.getElementById('serviceAvailability');
     if (availEl) {
-      availEl.innerHTML = `<span class="availability-dot available"></span> Disponible esta semana · Responde en ${window.DaleDeal.utils.escapeHtml(p.responseTime || '< 1h')}`;
+      // Sin agenda real del prestador no prometemos disponibilidad.
+      availEl.innerHTML = `<span class="availability-dot available"></span> Consultale disponibilidad por chat`;
     }
 
     // Price
@@ -343,13 +348,9 @@ class ServicePage {
     if (descEl) {
       // Sanitizar SIEMPRE: la descripción viene del editor Quill del prestador (HTML no confiable).
       // DOMPurify preserva el formato seguro y elimina <script>/onerror/etc. Fallback: escapar.
-      const raw = s.description || '';
-      if (window.DOMPurify) {
-        descEl.innerHTML = window.DOMPurify.sanitize(raw, { USE_PROFILES: { html: true } });
-      } else {
-        const escDesc = window.DaleDeal.utils.escapeHtml(raw);
-        descEl.innerHTML = `<p style="white-space:pre-line;line-height:1.8;color:var(--gray-700)">${escDesc}</p>`;
-      }
+      // La API la devuelve con las entidades escapadas: renderRichText las
+      // decodifica antes de sanitizar (si no, se veían las etiquetas como texto).
+      DaleDeal.utils.renderRichText(descEl, s.description || '');
     }
   }
 
@@ -962,22 +963,21 @@ class ServicePage {
     if (service.emergency) extraBadges += ' <span class="shipping-badge"><i class="bi bi-lightning-charge-fill"></i> Urgencias</span>';
     if (service.nationwide) extraBadges += ' <span class="shipping-badge"><i class="bi bi-truck"></i> Cobertura nacional</span>';
 
-    const shortDesc = service.description
-      ? (service.description.length > 80 ? service.description.substring(0, 80) + '...' : service.description)
-      : '';
+    const plainDesc = DaleDeal.utils.htmlToText(service.description);
+    const shortDesc = plainDesc.length > 80 ? plainDesc.substring(0, 80) + '...' : plainDesc;
 
     const provider = service.provider || {};
     const providerHTML = provider.name ? `
       <div class="product-provider">
-        <img src="${provider.avatar}" alt="${provider.name}" class="product-provider-avatar" />
-        <span class="product-provider-name">${provider.name}</span>
+        <img src="${esc(provider.avatar)}" alt="${esc(provider.name)}" class="product-provider-avatar" />
+        <span class="product-provider-name">${esc(provider.name)}</span>
         ${provider.verified ? '<i class="bi bi-patch-check-fill product-provider-verified"></i>' : ''}
       </div>` : '';
 
     return `
       <div class="product-card w-100" data-id="${service.id}" data-service-id="${service.id}" data-type="service" style="cursor:pointer;">
           <div class="product-image-container">
-            <img src="${service.image}" alt="${service.title}" class="product-image active" loading="lazy" />
+            <img src="${esc(service.image)}" alt="${esc(service.title)}" class="product-image active" loading="lazy" />
             ${badgesHTML}
             <div class="product-actions">
               <button class="action-heart" title="Guardar">
@@ -986,9 +986,9 @@ class ServicePage {
             </div>
           </div>
           <div class="product-info">
-            <h3 class="product-title">${service.title}</h3>
+            <h3 class="product-title">${esc(service.title)}</h3>
             ${providerHTML}
-            <p class="product-description">${shortDesc}</p>
+            <p class="product-description">${esc(shortDesc)}</p>
             <div class="product-meta-group">
               <div class="product-rating">
                 <div class="stars">${starsHTML}</div>
@@ -997,7 +997,7 @@ class ServicePage {
               </div>
               <div class="product-location">
                 <i class="bi bi-geo-alt-fill"></i>
-                <span>${service.location || 'CABA'}</span>
+                <span>${esc(service.location || 'CABA')}</span>
               </div>
             </div>
             <div class="product-pricing-wrapper">

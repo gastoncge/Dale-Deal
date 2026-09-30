@@ -496,9 +496,9 @@ class NotificationManager {
           <i class="${notification.icon} text-white"></i>
         </div>
         <div class="notification-content">
-          <h6>${notification.title}</h6>
-          <p>${notification.message}</p>
-          <small>${notification.time}</small>
+          <h6>${window.DaleDeal.utils.escapeHtml(String(notification.title ?? ''))}</h6>
+          <p>${window.DaleDeal.utils.escapeHtml(String(notification.message ?? ''))}</p>
+          <small>${window.DaleDeal.utils.escapeHtml(String(notification.time ?? ''))}</small>
           <div class="notification-actions">
             ${notification.actions.map(action => 
               `<button class="notification-action-btn" data-action="${action.action}">${action.label}</button>`

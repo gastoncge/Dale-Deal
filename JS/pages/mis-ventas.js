@@ -24,7 +24,7 @@
 
   document.addEventListener('DOMContentLoaded', async () => {
     if (!localStorage.getItem('daledeal_token')) {
-      window.location.href = './login.html?redirect=mis-ventas';
+      window.location.href = './login.html?redirect=%2Fmis-ventas';
       return;
     }
 
@@ -106,7 +106,10 @@
     const paid = o.payment_status === 'paid';
     const showShipActions = paid && o.shipping_method === 'delivery'
       && (o.status === 'confirmed' || o.status === 'shipped');
-    const showMarkDelivered = paid && o.status === 'shipped';
+    // Retiro en persona o sin envío: no hay "despachado", se entrega desde "confirmed"
+    // (antes no había ninguna acción y la venta no se cerraba nunca).
+    const handover = o.shipping_method !== 'delivery';
+    const showMarkDelivered = paid && (o.status === 'shipped' || (handover && o.status === 'confirmed'));
 
     let shipBlock = '';
     if (o.shipping_method === 'delivery') {
@@ -116,7 +119,7 @@
           <div>${escape(o.shipping_recipient_name || '—')} · ${escape(o.shipping_phone || '')}</div>
           <div>${escape(o.shipping_street || '')}, ${escape(o.shipping_city || '')}, ${escape(o.shipping_province || '')} ${o.shipping_postal_code ? `(CP ${escape(o.shipping_postal_code)})` : ''}</div>
           ${o.shipping_notes ? `<div class="text-muted mt-1">Nota: ${escape(o.shipping_notes)}</div>` : ''}
-          ${o.tracking_number ? `<div class="mt-1"><strong>Seguimiento</strong>${o.shipping_carrier_name ? escape(o.shipping_carrier_name) + ' · ' : ''}${escape(o.tracking_number)}${o.tracking_url ? ` · <a href="${escape(o.tracking_url)}" target="_blank" rel="noopener">Seguir envío <i class="bi bi-box-arrow-up-right"></i></a>` : ''}</div>` : ''}
+          ${o.tracking_number ? `<div class="mt-1"><strong>Seguimiento</strong>${o.shipping_carrier_name ? escape(o.shipping_carrier_name) + ' · ' : ''}${escape(o.tracking_number)}${/^https:\/\//i.test(o.tracking_url || '') ? ` · <a href="${escape(o.tracking_url)}" target="_blank" rel="noopener">Seguir envío <i class="bi bi-box-arrow-up-right"></i></a>` : ''}</div>` : ''}
           ${o.tracking_status_label ? `<div class="mt-1"><i class="bi bi-truck me-1"></i>${escape(o.tracking_status_label)}${o.tracking_status_at ? ' · ' + formatDate(o.tracking_status_at) : ''}${o.delivered_source === 'carrier' ? ' (confirmado por el correo)' : ''}</div>` : ''}
           <div class="text-muted mt-1">
             Costo del envío cobrado: ${formatPrice(o.shipping_cost || 0)}
@@ -161,7 +164,7 @@
             ` : ''}
             ${showMarkDelivered ? `
               <button class="btn btn-success btn-sm" data-action="delivered" data-order-id="${o.id}">
-                <i class="bi bi-check-circle me-1"></i> Marcar como entregada
+                <i class="bi bi-check-circle me-1"></i> ${handover && o.status === 'confirmed' ? 'Ya lo entregué' : 'Marcar como entregada'}
               </button>
             ` : ''}
           </div>
@@ -313,9 +316,10 @@
   }
 
   // ── Helpers ─────────────────────────────────────────────────────────────
+  // Decodifica primero: el texto de la API ya viene escapado (si no, "&amp;").
   function escape(s) {
     if (s == null) return '';
-    return String(s)
+    return (window.DaleDeal?.utils?.decodeEntities ? window.DaleDeal.utils.decodeEntities(s) : String(s))
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }

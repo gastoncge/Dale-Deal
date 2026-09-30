@@ -28,8 +28,9 @@
     return localStorage.getItem('daledeal_token') || sessionStorage.getItem('daledeal_token');
   }
 
+  // Decodifica primero: el texto de la API ya viene escapado (si no, "&amp;").
   function esc(s) {
-    return String(s == null ? '' : s)
+    return (window.DaleDeal?.utils?.decodeEntities ? window.DaleDeal.utils.decodeEntities(s) : String(s == null ? '' : s))
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }

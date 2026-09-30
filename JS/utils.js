@@ -82,7 +82,14 @@ DaleDeal.utils.formatCurrency = DaleDeal.utils.formatPrice;
  * @param {object} [opts] - { max=12, minMonthly=1000 }
  * @returns {{show:boolean, count?:number, monthly?:number, monthlyFormatted?:string}}
  */
+// "N cuotas sin interés" es una promesa: solo es cierta si la cuenta de Mercado
+// Pago de Dale Deal absorbe el interés (con interés, la Res. 915/2017 exige
+// informar CFT y TEA). Apagado hasta que se confirme; con true vuelve en toda
+// la web (cards, ficha de producto y de servicio).
+DaleDeal.utils.CUOTAS_SIN_INTERES = false;
+
 DaleDeal.utils.formatInstallments = (price, opts = {}) => {
+  if (!DaleDeal.utils.CUOTAS_SIN_INTERES) return { show: false };
   const max = opts.max || 12;
   const minMonthly = opts.minMonthly || 1000;
   if (!price || price <= 0) return { show: false };
@@ -413,17 +420,72 @@ DaleDeal.utils.getBootstrapAlertClass = (type) => {
 
 // ===== UTILIDADES DE SEGURIDAD =====
 /**
+ * El backend guarda el texto de los usuarios con & < > " ' escapados
+ * (sanitizeBody). Esto lo devuelve a lo que escribió el usuario, para mostrarlo
+ * con textContent sin que se vea "&amp;" o "&quot;". Solo esas 5 entidades, en
+ * el orden inverso al del backend (&amp; al final).
+ */
+DaleDeal.utils.decodeEntities = (str) => {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#0?39;/g, "'")
+    .replace(/&amp;/g, '&');
+};
+
+/**
  * Escapa caracteres HTML para evitar XSS en interpolaciones de innerHTML.
  * Usar siempre que se inserte texto de usuario en innerHTML.
+ * Decodifica primero: así un texto que ya vino escapado de la API no se ve
+ * como "&amp;amp;" y uno crudo queda igual de protegido.
  */
 DaleDeal.utils.escapeHtml = (str) => {
-  if (typeof str !== 'string') return '';
-  return str
+  if (str == null || typeof str === 'object') return '';
+  return DaleDeal.utils.decodeEntities(str)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+};
+
+/**
+ * Descripciones del editor (Quill): llegan como HTML y, desde la API, con las
+ * entidades escapadas. Se decodifican y se sanitizan con DOMPurify dejando solo
+ * formato básico. Sin DOMPurify se muestran como texto plano (nunca HTML crudo).
+ */
+DaleDeal.utils.renderRichText = (el, value) => {
+  if (!el) return;
+  const html = DaleDeal.utils.decodeEntities(value);
+  el.style.whiteSpace = 'pre-line';
+  if (window.DOMPurify) {
+    el.innerHTML = window.DOMPurify.sanitize(html, {
+      ALLOWED_TAGS: ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 's', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'blockquote', 'a'],
+      ALLOWED_ATTR: ['href'],
+      ALLOWED_URI_REGEXP: /^https?:\/\//i,
+    });
+    el.querySelectorAll('a').forEach((a) => {
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer nofollow ugc';
+    });
+    return;
+  }
+  // Documento inerte: no ejecuta scripts ni carga imágenes.
+  const doc = new DOMParser().parseFromString(
+    html.replace(/<\/(p|li|h[1-6]|blockquote)>|<br\s*\/?>/gi, '$&\n'), 'text/html');
+  el.textContent = (doc.body.textContent || '').replace(/\n{3,}/g, '\n\n').trim();
+};
+
+/**
+ * Texto plano de una descripción del editor (para extractos y meta tags).
+ */
+DaleDeal.utils.htmlToText = (value) => {
+  const html = DaleDeal.utils.decodeEntities(value);
+  if (!/[<&]/.test(html)) return html.trim();
+  const doc = new DOMParser().parseFromString(html.replace(/<\/(p|li|h[1-6])>|<br\s*\/?>/gi, "$& "), "text/html");
+  return (doc.body.textContent || "").replace(/\s+/g, " ").trim();
 };
 
 // ===== UTILIDADES DE UI =====

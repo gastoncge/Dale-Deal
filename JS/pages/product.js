@@ -25,6 +25,14 @@ class ProductPage {
       this.loadRecentlyViewed();
       this.saveToRecentlyViewed();
       this.loadAndRenderReviews();
+
+      // Viene de "Ir a pagar" del carrito: abrimos el mismo checkout que
+      // "Comprar ahora" (elige envío o retiro y paga).
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('comprar') === '1') {
+        this.setQuantity(parseInt(params.get('cantidad'), 10) || 1);
+        this.buyNow();
+      }
     });
   }
 
@@ -72,11 +80,6 @@ class ProductPage {
     let productData = null;
     if (window.DaleDeal?.api?.fetchProductById) {
       productData = await window.DaleDeal.api.fetchProductById(productId);
-    }
-
-    // 2. Fallback: buscar en el cache local (product-data.js)
-    if (!productData && window.getProductById) {
-      productData = window.getProductById(productId);
     }
 
     if (!productData) {
@@ -229,8 +232,12 @@ class ProductPage {
     if (ratingStars) ratingStars.innerHTML = this.renderProductStars(p.rating);
 
     // Sold count
+    // Solo con ventas reales (antes decía "+0 vendidos" en todas las fichas).
     const soldEl = document.querySelector('.product-sold span');
-    if (soldEl) soldEl.textContent = `+${p.salesCount} vendidos`;
+    if (soldEl) {
+      if (p.salesCount > 0) soldEl.textContent = `+${p.salesCount} vendidos`;
+      else soldEl.closest('.product-sold')?.setAttribute('hidden', '');
+    }
 
     // Prices
     const currentPriceEl = document.querySelector('.current-price');
@@ -304,11 +311,10 @@ class ProductPage {
     const SITE = 'https://daledeal.com.ar';
     const url  = `${SITE}/producto?id=${p.id}`;
     const img  = p.images?.main || `${SITE}/IMG/LOGO-2.png`;
-    const previewDesc = (p.description || '').length > 160
-      ? (p.description || '').substring(0, 160) + '…'
-      : (p.description || '');
+    const plainDesc = DaleDeal.utils.htmlToText(p.description);
+    const previewDesc = plainDesc.length > 160 ? plainDesc.substring(0, 160) + '…' : plainDesc;
     const fullDesc = previewDesc
-      ? `${previewDesc} Compralo en Dale Deal con cuotas sin interés y envío a todo el país.`
+      ? `${previewDesc} Compralo en Dale Deal con Compra Protegida.`
       : `${p.title} disponible en Dale Deal. Marketplace argentino de productos y servicios.`;
     const titleSEO = `${p.title} | DALE DEAL`;
 
@@ -587,19 +593,20 @@ class ProductPage {
     // selectedStorage already set in loadProductData
   }
 
-  // ── Description tab — plain text del vendedor ────────────────────────────
+  // ── Description tab — HTML del editor del vendedor, sanitizado ───────────
   updateDescriptionTab() {
     const descContent = document.querySelector('.description-content');
     if (!descContent) return;
 
-    const p = document.createElement('p');
-    p.id = 'product-description-text';
-    p.style.whiteSpace = 'pre-line';
-    p.style.lineHeight = '1.8';
-    p.textContent = this.currentProduct.description || '';
+    // Viene del editor Quill de publicar (HTML): antes se mostraba con
+    // textContent y la ficha decía "<p>Vendo <strong>…".
+    const div = document.createElement('div');
+    div.id = 'product-description-text';
+    div.style.lineHeight = '1.8';
+    DaleDeal.utils.renderRichText(div, this.currentProduct.description || '');
 
     descContent.innerHTML = '';
-    descContent.appendChild(p);
+    descContent.appendChild(div);
   }
 
   // ── Specifications tab — dynamic ───────────────────────────────────────────
@@ -1212,7 +1219,7 @@ class ProductPage {
               <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-              <p class="small text-muted mb-3">${p.title}</p>
+              <p class="small text-muted mb-3">${DaleDeal.utils.escapeHtml(p.title)}</p>
 
               <div class="mb-3">
                 <label class="form-label fw-semibold">Tu calificación *</label>

@@ -1520,9 +1520,10 @@
   function errorHTML(err) {
     return `<div class="admin-empty"><i class="bi bi-exclamation-triangle text-warning"></i><p class="mt-3">${esc(err?.message || 'Error al cargar')}</p></div>`;
   }
+  // Decodifica primero: el texto de la API ya viene escapado (si no, "&amp;").
   function esc(s) {
     if (s == null) return '';
-    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    return (window.DaleDeal?.utils?.decodeEntities ? window.DaleDeal.utils.decodeEntities(s) : String(s)).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
   function formatDate(d) {
     if (!d) return '—';

@@ -253,11 +253,16 @@ class AuthManager {
     try {
       const params = new URLSearchParams(window.location.search);
       const redirect = params.get('redirect');
-      // Validación: solo paths internos (empiezan con /) para evitar open
-      // redirect a sitios externos vía ?redirect=https://evil.com
-      if (redirect && redirect.startsWith('/') && !redirect.startsWith('//')) {
-        window.location.href = redirect;
-        return;
+      // Solo rutas del mismo sitio (evita open redirect vía ?redirect=https://evil.com).
+      // Resolvemos la URL y comparamos el origen: el chequeo anterior
+      // (startsWith("/")) dejaba pasar "/\evil.com", que el navegador toma como
+      // //evil.com. También acepta rutas relativas como "mis-ventas".
+      if (redirect) {
+        const target = new URL(redirect, window.location.origin + '/');
+        if (target.origin === window.location.origin) {
+          window.location.href = target.pathname + target.search + target.hash;
+          return;
+        }
       }
     } catch (_) { /* ignore parse errors */ }
 
@@ -981,6 +986,9 @@ document.addEventListener('submit', function(e) {
   setTimeout(() => { form.dataset.daledealNewsletterHandled = ''; }, 1000);
 
   e.preventDefault();
+  // Este handler es el único: los de cada página (home, productos) quedaban
+  // duplicados o solo simulaban la suscripción.
+  e.stopImmediatePropagation();
   const emailInput = form.querySelector('#newsletterEmail') || form.querySelector('input[type="email"]');
   const email = (emailInput?.value || '').trim();
   if (!email) return;
@@ -989,29 +997,34 @@ document.addEventListener('submit', function(e) {
   const originalHTML = btn ? btn.innerHTML : '';
   if (btn) {
     btn.disabled = true;
-    btn.innerHTML = '<i class="bi bi-check-circle"></i>';
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
   }
-  // TODO: hacer un POST real cuando exista /newsletter en el backend.
-  // Por ahora, persistimos local y mostramos confirmación.
-  try {
-    const list = JSON.parse(localStorage.getItem('daledeal_newsletter_subs') || '[]');
-    if (!list.includes(email)) list.push(email);
-    localStorage.setItem('daledeal_newsletter_subs', JSON.stringify(list));
-  } catch (_) {}
+  const notify = (msg, type) => window.DaleDeal?.utils?.showNotification?.(msg, type);
+  const body = JSON.stringify({ email, source: 'footer' });
+  const apiFetch = window.DaleDeal?.api?.apiFetch;
+  const request = apiFetch
+    ? apiFetch('/newsletter/subscribe', { method: 'POST', body })
+    : fetch(`${/^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:3000' : 'https://api.daledeal.com.ar'}/newsletter/subscribe`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body,
+      }).then((r) => r.json().then((data) => {
+        if (!r.ok || data.ok === false) throw new Error(data.error || 'HTTP ' + r.status);
+        return data;
+      }));
 
-  setTimeout(() => {
-    if (btn) {
-      btn.innerHTML = originalHTML;
-      btn.disabled = false;
-    }
-    form.reset();
-    if (window.DaleDeal?.utils?.showNotification) {
-      window.DaleDeal.utils.showNotification(
-        '¡Gracias por suscribirte! Te vamos a avisar de las mejores ofertas.',
-        'success'
-      );
-    }
-  }, 1200);
+  request
+    .then(() => {
+      form.reset();
+      notify('¡Gracias por suscribirte! Te vamos a avisar de las novedades.', 'success');
+    })
+    .catch((err) => {
+      notify(err?.message === 'Email inválido' ? 'Revisá el email.' : 'No pudimos suscribirte. Probá de nuevo en un rato.', 'error');
+    })
+    .finally(() => {
+      if (btn) {
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+      }
+    });
 }, true);
 
 // Exportar clase

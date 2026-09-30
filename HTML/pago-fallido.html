@@ -203,7 +203,7 @@
             <i class="bi bi-arrow-clockwise"></i>
             Intentar de nuevo
           </button>
-          <a href="./notificaciones.html#pedidos" class="btn-dd-ghost">
+          <a href="./notificaciones.html#mis-compras" class="btn-dd-ghost">
             <i class="bi bi-bag"></i>
             Ver mis órdenes
           </a>
@@ -221,7 +221,9 @@
     <script defer src="../JS/api.js"></script>
     <script defer src="../JS/api-payments.js"></script>
     <script>
-      (async function () {
+      // Espera a que carguen api.js y api-payments.js (son defer): antes corría
+      // de inmediato y window.DaleDeal.payments todavía no existía.
+      document.addEventListener('DOMContentLoaded', async function () {
         const params = new URLSearchParams(window.location.search);
         const orderId =
           params.get('order_id') ||
@@ -275,7 +277,7 @@
             alert('No se pudo iniciar el pago: ' + err.message);
           }
         });
-      })();
+      });
     </script>
   </body>
 </html>
