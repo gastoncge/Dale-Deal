@@ -62,23 +62,11 @@ class ProductsPageLoader {
       DaleDeal.log(`✓ ${this.allProducts.length} productos cargados`);
 
     } catch (error) {
-      DaleDeal.warn('API no disponible, usando datos locales:', error.message);
-
-      const loadingContainer = document.getElementById('loadingContainer');
-      if (loadingContainer) loadingContainer.style.display = 'none';
-
-      const fallbackProducts = typeof window.getAllProducts === 'function'
-        ? window.getAllProducts()
-        : [];
-
-      if (fallbackProducts.length) {
-        this.allProducts = fallbackProducts;
-        this.filteredProducts = [...this.allProducts];
-        this.renderProducts();
-        DaleDeal.log(`✓ ${this.allProducts.length} productos locales cargados como fallback`);
-      } else {
-        this.showError();
-      }
+      // Sin API mostramos el error con "Reintentar". Nunca caemos a los
+      // productos de ejemplo de product-data.js: serían publicaciones que no
+      // existen (precios, fotos y vendedores inventados).
+      DaleDeal.warn('API no disponible:', error.message);
+      this.showError();
     }
   }
 
@@ -268,7 +256,7 @@ class ProductsPageLoader {
         <div class="col-12">
           <div class="alert alert-danger" role="alert">
             <i class="bi bi-exclamation-triangle me-2"></i>
-            Error al cargar los productos. Por favor, intenta nuevamente más tarde.
+            No pudimos cargar los productos. Revisá tu conexión y probá de nuevo.
             <button class="btn btn-sm btn-outline-danger ms-3" onclick="window.productsPageLoader.loadProducts()">
               <i class="bi bi-arrow-clockwise me-1"></i>Reintentar
             </button>

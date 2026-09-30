@@ -328,7 +328,10 @@ async function loadProducts() {
     DaleDeal.log(`✓ ${products.length} productos cargados en el home`);
 
   } catch (error) {
-    DaleDeal.warn('API no disponible, usando datos locales:', error.message);
+    // Sin API avisamos. Antes se pintaban los productos de ejemplo de
+    // product-data.js (iPhones, precios y descuentos que no existen) como si
+    // fueran publicaciones reales.
+    DaleDeal.warn('No se pudieron cargar los productos:', error.message);
 
     const loadingContainer = document.getElementById('loadingContainer');
     if (loadingContainer) loadingContainer.style.display = 'none';
@@ -336,40 +339,17 @@ async function loadProducts() {
     const productsGrid = document.getElementById('productsGrid');
     if (!productsGrid) return;
 
-    // Fallback: datos estáticos de product-data.js
-    const fallbackProducts = typeof window.getAllProducts === 'function'
-      ? window.getAllProducts()
-      : [];
-
-    if (!fallbackProducts.length) {
-      productsGrid.innerHTML = `
-        <div class="col-12">
-          <div class="alert alert-warning" role="alert">
-            <i class="bi bi-exclamation-triangle me-2"></i>
-            No se pudo conectar con el servidor. Intentá de nuevo más tarde.
-          </div>
+    productsGrid.innerHTML = `
+      <div class="col-12">
+        <div class="alert alert-warning" role="alert">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          No pudimos cargar los productos. Revisá tu conexión y probá de nuevo.
+          <button type="button" class="btn btn-sm btn-outline-secondary ms-2" onclick="window.HomePageLoader.loadProducts()">
+            <i class="bi bi-arrow-clockwise me-1"></i>Reintentar
+          </button>
         </div>
-      `;
-      return;
-    }
-
-    productsGrid.innerHTML = '';
-    const productsPerRow = 3;
-    for (let i = 0; i < Math.min(fallbackProducts.length, 6); i += productsPerRow) {
-      const row = document.createElement('div');
-      row.className = 'products-row';
-      row.innerHTML = fallbackProducts
-        .slice(i, i + productsPerRow)
-        .map(p => renderProductCard(p))
-        .join('');
-      productsGrid.appendChild(row);
-    }
-
-    initializeProductListeners();
-    document.dispatchEvent(new CustomEvent('products:loaded', {
-      detail: { count: Math.min(fallbackProducts.length, 6), source: 'fallback' }
-    }));
-    DaleDeal.log(`✓ ${Math.min(fallbackProducts.length, 6)} productos locales cargados como fallback`);
+      </div>
+    `;
   }
 }
 

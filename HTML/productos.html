@@ -3120,41 +3120,14 @@
             }, 100);
 
           } catch (error) {
-            DaleDeal.warn('API no disponible, usando datos locales:', error.message);
+            // Sin API: aviso con "Reintentar". Antes caía a los productos de
+            // ejemplo de product-data.js (iPhones, precios y descuentos que no
+            // existen) como si fueran publicaciones reales.
+            DaleDeal.warn('No se pudieron cargar los productos:', error.message);
             this.showLoading(false);
-
-            const fallback = typeof window.getAllProducts === 'function' ? window.getAllProducts() : [];
-            if (fallback.length) {
-              this.products = fallback.map(p => ({
-                id: p.id,
-                title: p.title,
-                description: p.description || '',
-                price: p.price,
-                originalPrice: p.originalPrice || p.price,
-                discount: p.discount || 0,
-                category: (p.category || '').toLowerCase(),
-                images: Array.isArray(p.images) ? p.images : [p.images?.main || p.images],
-                image: p.images?.main || (Array.isArray(p.images) ? p.images[0] : p.images),
-                rating: p.rating || 0,
-                reviews: p.reviewCount || 0,
-                featured: (p.badges || []).some(b => /premium|vendido/i.test(b)),
-                isOffer: (p.discount || 0) > 0,
-                shipping: p.shipping || { free: true, speed: 'tomorrow' }
-              }));
-              this.createProductCards();
-              this.updateResultsCount();
-              setTimeout(() => {
-                if (window.productFilters) {
-                  window.productFilters.products = this.createFilterableProducts();
-                  window.productFilters.originalProducts = [...window.productFilters.products];
-                  window.productFilters.renderProducts = () => this.renderFilteredProducts();
-                  window.productFilters.filterAndRender();
-                }
-              }, 100);
-              DaleDeal.log(`✓ ${this.products.length} productos locales cargados como fallback`);
-            } else {
-              this.showError('Error al cargar los productos. Por favor, intenta nuevamente.');
-            }
+            this.showError('No pudimos cargar los productos. Revisá tu conexión y probá de nuevo.');
+            const countEl = document.getElementById('resultsCount');
+            if (countEl) countEl.textContent = '';
           }
         }
 
@@ -3358,6 +3331,15 @@
               loading.style.display = 'none';
               noResults.style.display = 'block';
               loadMore.style.display = 'none';
+              // Catálogo vacío (no es que los filtros no coincidan)
+              if (this.products.length === 0) {
+                const title = noResults.querySelector('.empty-state-title');
+                const text = noResults.querySelector('.empty-state-text');
+                const actions = noResults.querySelector('.empty-state-actions');
+                if (title) title.textContent = 'Todavía no hay productos publicados';
+                if (text) text.textContent = '¿Tenés algo para vender? Publicalo gratis y aparecé acá.';
+                if (actions) actions.innerHTML = '<a class="btn btn-primary" href="./publicar.html"><i class="bi bi-plus-circle me-2"></i>Publicar un producto</a>';
+              }
               this.updateResultsCount();
               return;
             }
