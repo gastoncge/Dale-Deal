@@ -719,8 +719,9 @@
                   <div id="contactSuccess" class="success-msg" style="display:none"><i class="bi bi-check-circle-fill"></i><b>¡Mensaje enviado!</b> Te contactaremos pronto.</div>
                   <form id="contactForm">
                     <div class="row g-3">
-                      <div class="col-md-6"><label class="form-label">Nombre *</label><input type="text" class="form-control" required></div>
-                      <div class="col-md-6"><label class="form-label">Email *</label><input type="email" class="form-control" required></div>
+                      <div class="col-md-4"><label class="form-label">Nombre *</label><input type="text" class="form-control" name="nombre" required></div>
+                      <div class="col-md-4"><label class="form-label">Apellido *</label><input type="text" class="form-control" name="apellido" required></div>
+                      <div class="col-md-4"><label class="form-label">Email *</label><input type="email" class="form-control" name="email" required></div>
                       <div class="col-12"><label class="form-label">Asunto *</label><select class="form-select" required><option value="">Seleccioná</option><option>Consulta sobre un pedido</option><option>Problema con un pago</option><option>Devolución o reembolso</option><option>Problema técnico</option><option>Publicidad en el sitio</option><option>Otro</option></select></div>
                       <div class="col-12"><label class="form-label">Mensaje *</label><textarea class="form-control" rows="4" required placeholder="Describí tu consulta..."></textarea></div>
                       <div class="col-12"><button type="submit" class="btn btn-primary w-100"><i class="bi bi-send me-2"></i>Enviar mensaje</button></div>
@@ -731,7 +732,6 @@
                   <div class="contact-info-item-row"><i class="bi bi-envelope"></i><div><small>Email</small><b>contacto@daledeal.com.ar</b></div></div>
                   <div class="contact-info-item-row"><i class="bi bi-telephone"></i><div><small>Teléfono</small><b>+54 9 11 3798-5881</b></div></div>
                   <div class="contact-info-item-row"><i class="bi bi-clock"></i><div><small>Horario</small><b>Lun–Vie 9:00–18:00 hs</b></div></div>
-                  <div class="contact-info-item-row"><i class="bi bi-geo-alt"></i><div><small>Dirección</small><b>Av. Corrientes 1234, CABA</b></div></div>
                 </div>
               </div>
             </div>
@@ -820,8 +820,8 @@
                 <div class="sec-card">
                   <div class="sec-card-head"><div class="sec-card-icon"><i class="bi bi-shield-check"></i></div><div><b>Autenticación y alertas</b><small>Capas adicionales de seguridad</small></div></div>
                   <div class="sec-card-body">
-                    <div class="toggle-row"><div><b class="d-block">Autenticación en dos pasos (2FA)</b><small class="text-muted">Requerí un código extra al iniciar desde nuevos dispositivos</small></div><div class="form-check form-switch ms-4"><input class="form-check-input" type="checkbox" style="width:44px;height:24px"></div></div>
-                    <div class="toggle-row"><div><b class="d-block">Alertas de inicio de sesión</b><small class="text-muted">Email al iniciar desde un dispositivo nuevo</small></div><div class="form-check form-switch ms-4"><input class="form-check-input" type="checkbox" checked style="width:44px;height:24px"></div></div>
+                    <div class="toggle-row"><div><b class="d-block">Autenticación en dos pasos (2FA)</b><small class="text-muted">Próximamente: un código extra al iniciar desde nuevos dispositivos</small></div><div class="form-check form-switch ms-4"><input class="form-check-input" type="checkbox" disabled aria-label="Próximamente" style="width:44px;height:24px"></div></div>
+                    <div class="toggle-row"><div><b class="d-block">Alertas de inicio de sesión</b><small class="text-muted">Próximamente: email al iniciar desde un dispositivo nuevo</small></div><div class="form-check form-switch ms-4"><input class="form-check-input" type="checkbox" disabled aria-label="Próximamente" style="width:44px;height:24px"></div></div>
                   </div>
                 </div>
                 <!-- Sesiones -->
@@ -858,6 +858,7 @@
     <!-- Custom JS -->
     <script defer src="../JS/theme.js"></script>
     <script defer src="../JS/utils.js"></script>
+    <script defer src="../JS/search.js"></script>
     <script defer src="../JS/sentry.js"></script>
     <script defer src="../JS/api.js"></script>
     <script defer src="../JS/api-messages.js"></script>
@@ -1209,11 +1210,35 @@
       document.querySelectorAll('.sev-btn').forEach(b => {
         b.addEventListener('click', () => { document.querySelectorAll('.sev-btn').forEach(x => x.classList.remove('active')); b.classList.add('active'); });
       });
-      document.getElementById('reportForm')?.addEventListener('submit', function(e) {
+      // Antes mostraba "¡Reporte enviado!" con un número de ticket al azar sin mandar nada.
+      const REPORT_CATEGORY = { pago: 'payment', pedido: 'shipping', cuenta: 'account', tecnico: 'technical', otro: 'other' };
+      document.getElementById('reportForm')?.addEventListener('submit', async function(e) {
         e.preventDefault();
-        document.getElementById('ticketNum').textContent = Math.floor(10000 + Math.random() * 90000);
-        this.closest('#reportFormState').style.display = 'none';
-        document.getElementById('reportSuccessState').style.display = '';
+        const notify = (m, t) => window.DaleDeal?.utils?.showNotification?.(m, t);
+        const type = this.querySelector('.prob-btn.active')?.dataset.type;
+        const severity = this.querySelector('.sev-btn.active')?.textContent.trim();
+        if (!type) { notify('Elegí el tipo de problema.', 'warning'); return; }
+        const btn = this.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        try {
+          const res = await window.DaleDeal.api.apiFetch('/reports', {
+            method: 'POST',
+            body: JSON.stringify({
+              category: REPORT_CATEGORY[type] || 'other',
+              subject: `${this.querySelector('.prob-btn.active')?.textContent.trim() || 'Problema'}${severity ? ' · ' + severity : ''}`,
+              body: this.querySelector('textarea')?.value.trim() || '',
+              reporter_email: this.querySelector('input[type="email"]')?.value.trim() || undefined,
+            }),
+          });
+          document.getElementById('ticketNum').textContent = res?.id ?? res?.report?.id ?? '—';
+          this.closest('#reportFormState').style.display = 'none';
+          document.getElementById('reportSuccessState').style.display = '';
+          this.reset();
+        } catch (err) {
+          notify(err.message || 'No pudimos enviar el reporte.', 'error');
+        } finally {
+          btn.disabled = false;
+        }
       });
 
       // ===== EMPRESA =====
@@ -1223,10 +1248,27 @@
       });
 
       // ===== CONTACTO =====
-      document.getElementById('contactForm')?.addEventListener('submit', function(e) {
+      // Antes mostraba "¡Mensaje enviado!" sin mandar nada.
+      document.getElementById('contactForm')?.addEventListener('submit', async function(e) {
         e.preventDefault();
-        document.getElementById('contactSuccess').style.display = 'flex';
-        this.reset();
+        const val = (n) => (this.querySelector(`[name="${n}"]`)?.value || '').trim();
+        const nombre = val('nombre'), apellido = val('apellido'), email = val('email');
+        const asunto = this.querySelector('select')?.value || '';
+        const mensaje = this.querySelector('textarea')?.value.trim() || '';
+        const btn = this.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        try {
+          await window.DaleDeal.api.apiFetch('/contact', {
+            method: 'POST',
+            body: JSON.stringify({ nombre, apellido, email, asunto, mensaje, tipo: 'general' }),
+          });
+          document.getElementById('contactSuccess').style.display = 'flex';
+          this.reset();
+        } catch (err) {
+          window.DaleDeal?.utils?.showNotification?.(err.message || 'No pudimos enviar el mensaje.', 'error');
+        } finally {
+          btn.disabled = false;
+        }
       });
 
       // ===== SEGURIDAD: medidor de contraseña =====
@@ -1243,12 +1285,26 @@
         if (fill) { fill.style.width = bars[s][0]; fill.style.background = bars[s][1]; }
         if (txt)  { txt.textContent = bars[s][2]; txt.style.color = bars[s][1]; }
       });
-      document.getElementById('passForm')?.addEventListener('submit', function(e) {
+      // Antes mostraba "Contraseña actualizada" sin llamar a la API.
+      document.getElementById('passForm')?.addEventListener('submit', async function(e) {
         e.preventDefault();
-        if (window.DaleDeal?.utils?.showNotification) {
-          window.DaleDeal.utils.showNotification('Contraseña actualizada correctamente', 'success');
+        const notify = (m, t) => window.DaleDeal?.utils?.showNotification?.(m, t);
+        const [current, nueva, confirmar] = [...this.querySelectorAll('input[type="password"]')].map(i => i.value);
+        if (nueva !== confirmar) { notify('Las contraseñas nuevas no coinciden.', 'error'); return; }
+        const btn = this.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        try {
+          await window.DaleDeal.api.apiFetch('/auth/change-password', {
+            method: 'POST',
+            body: JSON.stringify({ currentPassword: current, newPassword: nueva }),
+          });
+          notify('Contraseña actualizada correctamente', 'success');
+          this.reset();
+        } catch (err) {
+          notify(err.message || 'No pudimos cambiar la contraseña.', 'error');
+        } finally {
+          btn.disabled = false;
         }
-        this.reset();
       });
 
       // ===== MI PERFIL — conectado al backend =====
@@ -1451,11 +1507,15 @@
       });
 
       // ===== DIRECCIONES =====
-      let addresses = [
-        { calle: 'Av. Corrientes 1234', piso: 'Piso 3, Dpto B', cp: '1043', ciudad: 'Buenos Aires', provincia: 'CABA', tipo: 'principal' }
-      ];
+      // Se guardan en este navegador (todavía no hay endpoint). Antes arrancaba
+      // con una dirección de ejemplo ("Av. Corrientes 1234") para todos.
+      const ADDR_KEY = 'dd_addresses';
+      let addresses = [];
+      try { addresses = JSON.parse(localStorage.getItem(ADDR_KEY) || '[]'); } catch (_) { addresses = []; }
+      const escA = (v) => window.DaleDeal.utils.escapeHtml(String(v ?? ''));
 
       function renderAddresses() {
+        try { localStorage.setItem(ADDR_KEY, JSON.stringify(addresses)); } catch (_) {}
         const list = document.getElementById('addressList');
         if (!list) return;
         list.innerHTML = addresses.map((a, i) => `
@@ -1464,8 +1524,8 @@
               <i class="bi bi-${a.tipo === 'principal' ? 'star-fill' : 'geo-alt'}"></i>
               ${a.tipo === 'principal' ? 'Principal' : 'Secundaria'}
             </div>
-            <p class="address-line"><i class="bi bi-house me-2"></i>${a.calle}${a.piso ? ', ' + a.piso : ''}</p>
-            <p class="address-line"><i class="bi bi-geo me-2"></i>${a.ciudad}, ${a.provincia} · CP ${a.cp}</p>
+            <p class="address-line"><i class="bi bi-house me-2"></i>${escA(a.calle)}${a.piso ? ', ' + escA(a.piso) : ''}</p>
+            <p class="address-line"><i class="bi bi-geo me-2"></i>${escA(a.ciudad)}, ${escA(a.provincia)} · CP ${escA(a.cp)}</p>
             <div class="d-flex gap-2 mt-3">
               ${a.tipo !== 'principal' ? `<button class="btn btn-outline-secondary btn-sm" onclick="setAddressPrincipal(${i})"><i class="bi bi-star me-1"></i>Hacer principal</button>` : ''}
               <button class="btn btn-outline-secondary btn-sm" onclick="editAddress(${i})"><i class="bi bi-pencil me-1"></i>Editar</button>
@@ -1560,9 +1620,11 @@
         currentUserId: null
       };
 
+      // Decodifica y escapa (DaleDeal.utils.escapeHtml): los mensajes vienen
+      // escapados de la API y, escapados otra vez, se veían "&quot;" o "&amp;".
       function escapeHtml(s) {
         if (s == null) return '';
-        return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+        return window.DaleDeal.utils.escapeHtml(String(s));
       }
 
       function formatMensajesTime(iso) {

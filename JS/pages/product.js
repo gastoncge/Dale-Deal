@@ -453,7 +453,7 @@ class ProductPage {
     }
     if (name)     name.textContent = p.seller_name || 'Vendedor';
     if (sold)     sold.textContent = `${p.stock > 0 ? 'En stock' : 'Sin stock'}`;
-    if (location) location.textContent = p.location || 'Argentina';
+    if (location) location.textContent = p.seller_location || 'Argentina';
 
     // Rating real del vendedor (todos sus productos sumados)
     this.loadSellerRating(p.seller_id);
@@ -1090,16 +1090,16 @@ class ProductPage {
     if (!similarGrid || !this.currentProduct) return;
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 800));
-      const allProducts = window.getAllProducts ? window.getAllProducts() : [];
+      // Productos reales de la API (antes salían de product-data.js, que mezclaba
+      // productos de ejemplo si la sincronización no había terminado).
+      const allProducts = await window.DaleDeal.api.fetchProducts();
       let similar = allProducts
-        .filter(p => p.category === this.currentProduct.category && p.id !== this.currentProduct.id)
+        .filter(p => p.category === this.currentProduct.category && String(p.id) !== String(this.currentProduct.id))
         .slice(0, 4);
 
       if (similar.length === 0) {
         similar = allProducts
-          .filter(p => p.id !== this.currentProduct.id)
-          .sort(() => 0.5 - Math.random())
+          .filter(p => String(p.id) !== String(this.currentProduct.id))
           .slice(0, 4);
         this.renderSimilarProducts(similar, true);
       } else {
@@ -1319,7 +1319,7 @@ class ProductPage {
   }
 
   // ── Recently viewed ────────────────────────────────────────────────────────
-  loadRecentlyViewed() {
+  async loadRecentlyViewed() {
     const grid = document.getElementById('recentlyViewedGrid');
     if (!grid) return;
     try {
@@ -1329,9 +1329,10 @@ class ProductPage {
 
       if (!recentIds.length) return;
 
-      const productsData = recentIds
-        .map(id => window.getProductById ? window.getProductById(parseInt(id)) : null)
-        .filter(Boolean);
+      // Desde la API (antes: product-data.js, con productos de ejemplo).
+      const productsData = (await Promise.all(
+        recentIds.map(id => window.DaleDeal.api.fetchProductById(parseInt(id, 10)).catch(() => null))
+      )).filter(Boolean);
 
       if (productsData.length) this.renderRecentlyViewed(productsData);
     } catch (err) {

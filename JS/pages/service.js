@@ -765,15 +765,12 @@ class ServicePage {
     if (!section || !grid || !this.currentService) return;
 
     try {
-      await new Promise(r => setTimeout(r, 500));
-      const all = typeof servicesData !== 'undefined' ? servicesData : [];
-      const related = all
-        .filter(s => s.category === this.currentService.category && s.id !== this.currentService.id)
-        .slice(0, 8);
-
-      const items = related.length >= 2
-        ? related
-        : all.filter(s => s.id !== this.currentService.id).sort(() => 0.5 - Math.random()).slice(0, 8);
+      // Servicios reales de la API (antes salían de servicesData, con servicios
+      // y prestadores de ejemplo mezclados).
+      const all = await window.DaleDeal.api.fetchServices();
+      const others = all.filter(s => String(s.id) !== String(this.currentService.id));
+      const related = others.filter(s => s.category === this.currentService.category).slice(0, 8);
+      const items = related.length >= 2 ? related : others.slice(0, 8);
 
       if (items.length === 0) { section.style.display = 'none'; return; }
       section.style.display = '';
@@ -790,20 +787,13 @@ class ServicePage {
     if (!section || !grid || !this.currentService) return;
 
     try {
-      await new Promise(r => setTimeout(r, 300));
-      const all = typeof servicesData !== 'undefined' ? servicesData : [];
-      // Simular otros servicios del prestador por categorías relacionadas
-      const catMap = {
-        'installation': ['installation', 'repair'],
-        'repair': ['repair', 'installation', 'maintenance'],
-        'construction': ['construction', 'maintenance'],
-        'maintenance': ['maintenance', 'construction'],
-        'catering': ['catering'],
-        'consultation': ['consultation'],
-      };
-      const cats = catMap[this.currentService.category] || [this.currentService.category];
+      // Otros servicios REALES del mismo prestador (antes se "simulaban" con
+      // servicios de ejemplo de categorías parecidas).
+      const providerId = this.currentService.provider_id;
+      if (!providerId) { section.style.display = 'none'; return; }
+      const all = await window.DaleDeal.api.fetchServices();
       const providerServices = all
-        .filter(s => cats.includes(s.category) && s.id !== this.currentService.id)
+        .filter(s => String(s.provider_id) === String(providerId) && String(s.id) !== String(this.currentService.id))
         .slice(0, 8);
 
       if (providerServices.length === 0) { section.style.display = 'none'; return; }

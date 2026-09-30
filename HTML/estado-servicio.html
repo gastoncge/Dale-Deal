@@ -118,132 +118,38 @@
     <main id="main" class="main-content" tabindex="-1">
       <div class="container-fluid px-4 py-5">
 
-        <!-- Overall status -->
+        <!-- Estado general: lo calcula el script consultando /health de la API.
+             Antes era todo texto fijo (uptimes e incidentes inventados). -->
         <div class="overall-status" data-aos="fade-up">
-          <span class="overall-icon">✅</span>
-          <div class="overall-title">Todos los sistemas operacionales</div>
-          <div class="overall-subtitle">No hay incidencias activas en este momento</div>
-          <div class="updated-time"><i class="bi bi-arrow-repeat me-1"></i>Actualizado: 1 mar 2026, 14:32 hs</div>
+          <span class="overall-icon" id="overallIcon">⏳</span>
+          <div class="overall-title" id="overallTitle">Verificando el estado…</div>
+          <div class="overall-subtitle" id="overallSubtitle">Consultamos los servicios en este momento.</div>
+          <div class="updated-time"><i class="bi bi-arrow-repeat me-1"></i>Actualizado: <span id="overallTime">—</span></div>
         </div>
 
         <!-- Services -->
         <h4 class="fw-bold mb-4" data-aos="fade-up">Estado de los servicios</h4>
         <div class="services-grid" data-aos="fade-up">
-
           <div class="service-row">
             <div class="service-icon">🌐</div>
             <div class="service-info">
-              <div class="service-name">Sitio web principal</div>
+              <div class="service-name">Sitio web</div>
               <div class="service-desc">daledeal.com.ar y todas las páginas</div>
             </div>
-            <div class="uptime-bars">
-              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar"></div>
-              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar"></div>
-              <div class="uptime-bar"></div>
-            </div>
-            <div class="service-uptime">99.98% uptime</div>
             <div class="status-dot operational"></div>
             <span class="status-label label-operational">Operacional</span>
           </div>
-
           <div class="service-row">
-            <div class="service-icon">💳</div>
+            <div class="service-icon">⚙️</div>
             <div class="service-info">
-              <div class="service-name">Procesamiento de pagos</div>
-              <div class="service-desc">Tarjetas, transferencias y Mercado Pago</div>
+              <div class="service-name">Catálogo, cuentas y pedidos</div>
+              <div class="service-desc">Publicaciones, ingreso, compras, mensajes y pagos</div>
             </div>
-            <div class="uptime-bars">
-              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar"></div>
-              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar degraded"></div>
-              <div class="uptime-bar"></div>
-            </div>
-            <div class="service-uptime">99.81% uptime</div>
-            <div class="status-dot operational"></div>
-            <span class="status-label label-operational">Operacional</span>
-          </div>
-
-          <div class="service-row">
-            <div class="service-icon">🔔</div>
-            <div class="service-info">
-              <div class="service-name">Notificaciones</div>
-              <div class="service-desc">Email, push y SMS</div>
-            </div>
-            <div class="uptime-bars">
-              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar"></div>
-              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar"></div>
-              <div class="uptime-bar"></div>
-            </div>
-            <div class="service-uptime">100% uptime</div>
-            <div class="status-dot operational"></div>
-            <span class="status-label label-operational">Operacional</span>
-          </div>
-
-          <div class="service-row">
-            <div class="service-icon">📦</div>
-            <div class="service-info">
-              <div class="service-name">Gestión de pedidos</div>
-              <div class="service-desc">Creación, seguimiento y despacho</div>
-            </div>
-            <div class="uptime-bars">
-              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar"></div>
-              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar"></div>
-              <div class="uptime-bar"></div>
-            </div>
-            <div class="service-uptime">99.95% uptime</div>
-            <div class="status-dot operational"></div>
-            <span class="status-label label-operational">Operacional</span>
-          </div>
-
-          <div class="service-row">
-            <div class="service-icon">🔍</div>
-            <div class="service-info">
-              <div class="service-name">Motor de búsqueda</div>
-              <div class="service-desc">Búsqueda y filtros de productos</div>
-            </div>
-            <div class="uptime-bars">
-              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar"></div>
-              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar"></div>
-              <div class="uptime-bar"></div>
-            </div>
-            <div class="service-uptime">99.99% uptime</div>
-            <div class="status-dot operational"></div>
-            <span class="status-label label-operational">Operacional</span>
-          </div>
-
-          <div class="service-row">
-            <div class="service-icon">🔧</div>
-            <div class="service-info">
-              <div class="service-name">API de servicios técnicos</div>
-              <div class="service-desc">Agendamiento y gestión de servicios</div>
-            </div>
-            <div class="uptime-bars">
-              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar"></div>
-              <div class="uptime-bar"></div><div class="uptime-bar"></div><div class="uptime-bar"></div>
-              <div class="uptime-bar"></div>
-            </div>
-            <div class="service-uptime">99.90% uptime</div>
-            <div class="status-dot maintenance"></div>
-            <span class="status-label label-maintenance">Mantenimiento programado</span>
-          </div>
-
-        </div>
-
-        <!-- Incident history -->
-        <h4 class="fw-bold mb-4" data-aos="fade-up">Historial de incidencias (últimos 30 días)</h4>
-        <div data-aos="fade-up">
-          <div class="incident-card">
-            <div class="incident-date">24 Feb 2026 · 11:15 hs</div>
-            <div class="incident-title">Demoras en procesamiento de pagos con tarjetas Visa</div>
-            <div class="incident-update">Se detectaron demoras de hasta 45 segundos en la confirmación de pagos con tarjetas Visa. El problema fue aislado en el gateway de pagos.</div>
-            <div class="incident-resolved"><i class="bi bi-check-circle me-1"></i>Resuelto · Duración: 23 minutos</div>
-          </div>
-          <div class="incident-card">
-            <div class="incident-date">10 Feb 2026 · 03:00 hs</div>
-            <div class="incident-title">Mantenimiento programado — Actualización del sistema</div>
-            <div class="incident-update">Ventana de mantenimiento programada para actualizar la infraestructura de base de datos. El sitio estuvo en modo de solo lectura durante la ventana.</div>
-            <div class="incident-resolved"><i class="bi bi-check-circle me-1"></i>Completado · Duración: 2 horas</div>
+            <div class="status-dot" id="apiDot"></div>
+            <span class="status-label" id="apiLabel">Verificando…</span>
           </div>
         </div>
+        <p class="text-muted small mt-3" data-aos="fade-up">Los pagos los procesa Mercado Pago. Si algo no te anda, escribinos a <a href="mailto:contacto@daledeal.com.ar">contacto@daledeal.com.ar</a>.</p>
 
       </div>
     </main>
@@ -254,6 +160,7 @@
     <script defer src="https://unpkg.com/aos@2.3.1/dist/aos.js" integrity="sha384-wziAfh6b/qT+3LrqebF9WeK4+J5sehS6FA10J1t3a866kJ/fvU5UwofWnQyzLtwu" crossorigin="anonymous"></script>
     <script defer src="../JS/theme.js"></script>
     <script defer src="../JS/utils.js"></script>
+    <script defer src="../JS/search.js"></script>
     <script defer src="../JS/auth.js"></script>
     <script defer src="../JS/cart.js"></script>
     <script defer src="../JS/notifications.js"></script>
@@ -265,6 +172,27 @@
     <script defer src="../JS/api.js"></script>
     <script defer src="../JS/api-messages.js"></script>
     <script defer src="../JS/api-payments.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', async () => {
+        const $ = (id) => document.getElementById(id);
+        let ok = false;
+        try {
+          const base = window.DaleDeal?.CONFIG?.API_BASE_URL
+            || (/^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:3000' : 'https://api.daledeal.com.ar');
+          const res = await fetch(`${base}/health`, { cache: 'no-store' });
+          ok = res.ok && (await res.json().catch(() => ({})))?.status === 'ok';
+        } catch (_) { ok = false; }
+        $('overallIcon').textContent = ok ? '✅' : '⚠️';
+        $('overallTitle').textContent = ok ? 'Todos los sistemas operacionales' : 'Estamos teniendo problemas';
+        $('overallSubtitle').textContent = ok
+          ? 'No detectamos problemas en este momento.'
+          : 'Algunas funciones pueden no andar. Ya lo estamos revisando.';
+        $('apiDot').classList.add(ok ? 'operational' : 'outage');
+        $('apiLabel').classList.add(ok ? 'label-operational' : 'label-outage');
+        $('apiLabel').textContent = ok ? 'Operacional' : 'Con problemas';
+        $('overallTime').textContent = new Date().toLocaleString('es-AR', { dateStyle: 'medium', timeStyle: 'short' });
+      });
+    </script>
     <script>document.addEventListener('DOMContentLoaded', () => { if (window.AOS) AOS.init({ duration: 800, once: true, offset: 100 }); });</script>
   </body>
 </html>

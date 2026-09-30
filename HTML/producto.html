@@ -398,8 +398,8 @@
                   <div class="payment-icons">
                     <span role="img" aria-label="Tarjetas de crédito"><i class="bi bi-credit-card" aria-hidden="true"></i></span>
                     <span role="img" aria-label="Tarjetas de débito"><i class="bi bi-credit-card-2-front" aria-hidden="true"></i></span>
-                    <span role="img" aria-label="Transferencia bancaria"><i class="bi bi-bank" aria-hidden="true"></i></span>
-                    <span role="img" aria-label="Efectivo"><i class="bi bi-cash" aria-hidden="true"></i></span>
+                    <span role="img" aria-label="Dinero en cuenta de Mercado Pago"><i class="bi bi-wallet2" aria-hidden="true"></i></span>
+                    <span role="img" aria-label="Efectivo en Rapipago o Pago Fácil"><i class="bi bi-cash" aria-hidden="true"></i></span>
                   </div>
                 </div>
 
@@ -688,6 +688,7 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" integrity="sha384-wziAfh6b/qT+3LrqebF9WeK4+J5sehS6FA10J1t3a866kJ/fvU5UwofWnQyzLtwu" crossorigin="anonymous" defer></script>
     <script defer src="../JS/theme.js"></script>
     <script src="../JS/utils.js" defer></script>
+    <script defer src="../JS/search.js"></script>
     <script src="../JS/recently-viewed.js" defer></script>
     <script src="../JS/api.js" defer></script>
     <script src="../JS/api-messages.js" defer></script>
@@ -699,6 +700,8 @@
     <script src="../JS/favorites.js" defer></script>
     <script src="../JS/product-data.js" defer></script>
     <script src="../JS/product-carousel.js" defer></script>
+    <!-- DOMPurify: la descripción del vendedor es HTML del editor (renderRichText la sanitiza) -->
+    <script src="../JS/purify.min.js" defer></script>
     <script src="../JS/pages/product.js" defer></script>
     <!-- Form de reviews: monta UI cuando product.js cargó y sabemos el id -->
     <script src="../JS/reviews-form.js" defer></script>
