@@ -8,7 +8,7 @@
     <!-- SEO Meta Tags -->
     <meta
       name="description"
-      content="Encontrá productos al mejor precio en Dale Deal. Comprá con cuotas sin interés y envío a todo el país."
+      content="Comprá en Dale Deal con Compra Protegida: el vendedor cobra cuando confirmás que te llegó."
     />
     <meta
       name="keywords"
@@ -245,9 +245,12 @@
               <a href="../index.html"><i class="bi bi-house-door-fill"></i> Inicio</a>
             </li>
             <li class="breadcrumb-separator"><i class="bi bi-chevron-right"></i></li>
-            <li class="breadcrumb-item" id="bcCategory"><a href="#">Electrónicos</a></li>
-            <li class="breadcrumb-separator"><i class="bi bi-chevron-right"></i></li>
-            <li class="breadcrumb-item" id="bcSubcategory"><a href="#">Smartphones</a></li>
+            <!-- product.js cambia el texto de #bcCategory por la categoría del
+                 producto; el link queda al catálogo. La subcategoría arranca
+                 oculta: la API no trae una real (solo el slug de la categoría). -->
+            <li class="breadcrumb-item" id="bcCategory"><a href="./productos.html">Productos</a></li>
+            <li class="breadcrumb-separator" style="display:none"><i class="bi bi-chevron-right"></i></li>
+            <li class="breadcrumb-item" id="bcSubcategory" style="display:none"><a href="./productos.html"></a></li>
             <li class="breadcrumb-separator"><i class="bi bi-chevron-right"></i></li>
             <li class="breadcrumb-item active" id="bcProductTitle">Cargando…</li>
           </ol>
@@ -276,56 +279,14 @@
                     fetchpriority="high"
                     width="600" height="600"
                   />
-                  <span class="product-badge sale">15% OFF</span>
+                  <!-- Oculto hasta que product.js confirme un descuento real
+                       (antes decía "15% OFF" fijo mientras cargaba). -->
+                  <span class="product-badge sale" style="display:none"></span>
                 </div>
 
-                <!-- Thumbnails -->
-                <div class="thumbnail-container" role="group" aria-label="Fotos del producto">
-                  <img
-                    src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=100&h=100&fit=crop"
-                    alt="Foto 1 del producto"
-                    class="thumbnail active"
-                    data-full="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=600&fit=crop"
-                    role="button"
-                    tabindex="0"
-                    aria-pressed="true"
-                    loading="lazy"
-                    width="100" height="100"
-                  />
-                  <img
-                    src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=100&h=100&fit=crop"
-                    alt="Foto 2 del producto"
-                    class="thumbnail"
-                    data-full="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&h=600&fit=crop"
-                    role="button"
-                    tabindex="0"
-                    aria-pressed="false"
-                    loading="lazy"
-                    width="100" height="100"
-                  />
-                  <img
-                    src="https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=100&h=100&fit=crop"
-                    alt="Foto 3 del producto"
-                    class="thumbnail"
-                    data-full="https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=600&h=600&fit=crop"
-                    role="button"
-                    tabindex="0"
-                    aria-pressed="false"
-                    loading="lazy"
-                    width="100" height="100"
-                  />
-                  <img
-                    src="https://images.unsplash.com/photo-1567581935884-3349723552ca?w=100&h=100&fit=crop"
-                    alt="Foto 4 del producto"
-                    class="thumbnail"
-                    data-full="https://images.unsplash.com/photo-1567581935884-3349723552ca?w=600&h=600&fit=crop"
-                    role="button"
-                    tabindex="0"
-                    aria-pressed="false"
-                    loading="lazy"
-                    width="100" height="100"
-                  />
-                </div>
+                <!-- Thumbnails — las arma product.js con las fotos reales de la
+                     publicación (antes había 4 fotos de ejemplo de un iPhone). -->
+                <div class="thumbnail-container" role="group" aria-label="Fotos del producto"></div>
               </div>
             </div>
 
@@ -337,30 +298,27 @@
                 <div class="provider-card" id="sellerCard" data-aos="fade-left">
                   <img id="sellerCardAvatar" src="" alt="Vendedor" class="provider-avatar" />
                   <div class="provider-details">
+                    <!-- Solo datos reales: product.js completa nombre, ubicación
+                         y la calificación del vendedor (suma de sus reseñas).
+                         Antes había valores fijos que nadie reemplazaba o que se
+                         veían mientras cargaba: "4.8 · 2.847 reseñas" con 4,5
+                         estrellas, "Responde en < 1h", "Miembro desde 2023",
+                         "CABA" y la insignia de verificado. -->
                     <div class="provider-name-row">
                       <span class="provider-name provider-name-text" id="sellerCardName">Vendedor</span>
-                      <i class="bi bi-patch-check-fill provider-verified" id="sellerCardVerified" aria-label="Vendedor verificado"></i>
+                      <!-- Insignia oculta: la API de productos no informa si el
+                           vendedor está verificado. -->
+                      <i class="bi bi-patch-check-fill provider-verified" id="sellerCardVerified" aria-label="Vendedor verificado" style="display:none;"></i>
                       <span class="provider-member-badge" id="sellerCardProBadge" style="display:none;">Pro</span>
                     </div>
                     <div class="provider-stats" id="sellerCardStats">
-                      <span class="stars" role="img" aria-label="4.8 de 5 estrellas">
-                        <i class="bi bi-star-fill" aria-hidden="true"></i><i class="bi bi-star-fill" aria-hidden="true"></i>
-                        <i class="bi bi-star-fill" aria-hidden="true"></i><i class="bi bi-star-fill" aria-hidden="true"></i>
-                        <i class="bi bi-star-half" aria-hidden="true"></i>
-                      </span>
-                      <strong id="sellerCardRating">4.8</strong> · <span id="sellerCardReviews">2.847</span> reseñas
+                      <span class="stars" aria-hidden="true"><i class="bi bi-star-fill"></i></span>
+                      <strong id="sellerCardRating">—</strong> · <span id="sellerCardReviews">0</span> reseñas
                     </div>
-                    <div class="provider-response-time mb-1">
-                      <i class="bi bi-clock-fill" aria-hidden="true"></i>
-                      <span>Responde en &lt; 1h</span>
-                    </div>
+                    <!-- product.js escribe la ubicación en el último <span> -->
                     <div class="provider-location">
                       <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
-                      <span>CABA</span>
-                      &nbsp;·&nbsp;
-                      <span>Miembro desde 2023</span>
-                      &nbsp;·&nbsp;
-                      <span id="sellerCardSold">0 ventas</span>
+                      <span>Argentina</span>
                     </div>
                   </div>
                 </div>
@@ -445,27 +403,23 @@
                   </div>
                 </div>
 
-                <!-- Shipping Info -->
+                <!-- Garantías — iguales para todas las fichas, así que solo va lo
+                     que vale para cualquier compra. El envío (costo, retiro) lo
+                     informa product.js con los datos de cada publicación. Antes
+                     decía "Envío gratis" y "Devolución gratis — 30 días" fijos. -->
                 <div class="shipping-info">
-                  <div class="shipping-item">
-                    <i class="bi bi-truck" aria-hidden="true"></i>
-                    <div>
-                      <strong>Envío gratis</strong>
-                      <p>Consultá tiempos de entrega al confirmar la compra</p>
-                    </div>
-                  </div>
                   <div class="shipping-item">
                     <i class="bi bi-shield-check" aria-hidden="true"></i>
                     <div>
-                      <strong>Tu compra, protegida</strong>
-                      <p>Pagá con Mercado Pago de forma segura</p>
+                      <strong>Compra Protegida</strong>
+                      <p>Pagás con Mercado Pago y el vendedor cobra cuando confirmás que te llegó (o a los 7 días de la entrega si no hay reclamos).</p>
                     </div>
                   </div>
                   <div class="shipping-item">
-                    <i class="bi bi-arrow-return-left" aria-hidden="true"></i>
+                    <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
                     <div>
-                      <strong>Devolución gratis</strong>
-                      <p>Tenés 30 días desde que lo recibís</p>
+                      <strong>Botón de arrepentimiento</strong>
+                      <p>Tenés 10 días corridos para arrepentirte de la compra. <a href="./arrepentimiento.html">Cómo hacerlo</a></p>
                     </div>
                   </div>
                 </div>
