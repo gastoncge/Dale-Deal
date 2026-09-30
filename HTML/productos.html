@@ -566,8 +566,10 @@
                 </button>
               </div>
 
-              <!-- Products Grid -->
-              <div class="products-grid" id="productsGrid">
+              <!-- Products Grid — lo pinta ProductCatalog (script de abajo).
+                   data-catalog="inline" avisa a products.js y home.js que no
+                   carguen su propia copia de los productos acá. -->
+              <div class="products-grid" id="productsGrid" data-catalog="inline">
                 <!-- Products will be loaded here dynamically -->
               </div>
 
@@ -3574,16 +3576,6 @@
           catalog.loadMore();
         });
 
-        // Search functionality enhancement
-        const searchInput = document.getElementById('searchInput');
-        searchInput?.addEventListener('input', (e) => {
-          const searchTerm = e.target.value.toLowerCase();
-          if (window.productFilters) {
-            window.productFilters.searchTerm = searchTerm;
-            window.productFilters.filterAndRender();
-          }
-        });
-
         // Category filter from URL params
         const urlParams = new URLSearchParams(window.location.search);
         const categoryParam = urlParams.get('category');
@@ -3596,19 +3588,15 @@
           }, 500);
         }
 
-        // Search from URL params (?search=iphone)
-        // Esto cierra el flow del SearchAction que declaramos en JSON-LD del
-        // home (Google ofrece "buscar en Dale Deal" → trae al user acá con
-        // ?search=lo-que-buscó). También sirve para deep linking desde el
-        // hero ("Ver productos similares" → ?search=iphone).
-        const searchParam = urlParams.get('search');
-        if (searchParam && searchInput) {
-          searchInput.value = searchParam;
+        // Búsqueda: el input del header lo escucha ProductFilters (filters.js),
+        // que además toma el término de la URL al crearse: ?q= (buscador del
+        // header, 404) o ?search= (SearchAction del JSON-LD del home). Lo
+        // aplica cuando el catálogo termina de cargar (ver init()), sin
+        // disparar eventos ni recargar.
+        if (urlParams.get('q') || urlParams.get('search')) {
+          // Vino con un término → el user quiere ver los resultados, no la
+          // sidebar de filtros.
           setTimeout(() => {
-            // Trigger input event para que el handler de arriba corra
-            searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-            // Scroll a los resultados (porque la URL tenía el search → el user
-            // quiere ver los resultados, no la sidebar de filtros)
             document.getElementById('productsGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }, 500);
         }

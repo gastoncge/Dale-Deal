@@ -19,10 +19,9 @@ class ProductsPageLoader {
       // Bind eventos
       this.bindFilterEvents();
 
-      // Cargar búsqueda desde URL si existe
-      if (window.searchManager) {
-        window.searchManager.loadSearchFromURL();
-      }
+      // El término de ?q= / ?search= lo aplica ProductFilters (filters.js) al
+      // crearse. Acá antes se relanzaba la búsqueda, que en prod redirigía a
+      // /productos?q=… y volvía a entrar acá: recarga infinita.
 
       DaleDeal.log('✓ Products page initialized');
     } catch (error) {
@@ -280,22 +279,26 @@ class ProductsPageLoader {
   }
 }
 
-// Inicializar cuando el DOM esté listo
-// Cloudflare Pages a veces sirve productos.html como /HTML/productos (sin .html),
-// así que matcheamos también la versión sin extensión.
-function isProductosPage() {
-  const p = window.location.pathname;
-  return p.includes('productos.html') || /\/productos\/?$/.test(p);
+// Inicializar cuando el DOM esté listo.
+// isProductosPage() vive en search.js (se carga antes): acepta la URL limpia
+// de prod (/productos) y la de dev (/HTML/productos.html).
+// Si la página ya tiene su propio catálogo (productos.html marca el grid con
+// data-catalog="inline") no arrancamos: pedir y pintar los productos otra vez
+// duplicaba requests y pisaba el grid (y los filtros) del catálogo.
+function shouldStartProductsPageLoader() {
+  const onProductos = typeof isProductosPage === 'function' && isProductosPage();
+  const grid = document.getElementById('productsGrid');
+  return !!(window.DaleDeal?.api && onProductos && grid && grid.dataset.catalog !== 'inline');
 }
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    if (window.DaleDeal?.api && isProductosPage()) {
+    if (shouldStartProductsPageLoader()) {
       window.productsPageLoader = new ProductsPageLoader();
     }
   });
 } else {
-  if (window.DaleDeal?.api && isProductosPage()) {
+  if (shouldStartProductsPageLoader()) {
     window.productsPageLoader = new ProductsPageLoader();
   }
 }

@@ -411,24 +411,26 @@ function initializeProductListeners() {
 }
 
 /**
- * Inicializar cuando el DOM esté listo
+ * Inicializar cuando el DOM esté listo.
+ * productos.html también carga este archivo, pero solo por renderProductCard:
+ * ahí el grid es del catálogo de la página (isProductosPage, de search.js) y
+ * si lo cargáramos acá lo pisaríamos con otra copia de los productos.
  */
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    // Esperar a que la API esté disponible
-    if (window.DaleDeal?.api) {
-      loadProducts();
-    } else {
-      DaleDeal.error('API de productos no disponible');
-    }
-  });
-} else {
-  // DOM ya está listo
+function startHomeProducts() {
+  if (typeof isProductosPage === 'function' && isProductosPage()) return;
+  // Esperar a que la API esté disponible
   if (window.DaleDeal?.api) {
     loadProducts();
   } else {
     DaleDeal.error('API de productos no disponible');
   }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startHomeProducts);
+} else {
+  // DOM ya está listo
+  startHomeProducts();
 }
 
 // Exportar para uso global

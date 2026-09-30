@@ -3,11 +3,26 @@
  * Maneja el filtrado y búsqueda de productos
  */
 
+/**
+ * Minúsculas y sin tildes, para comparar texto como lo escribe la gente:
+ * "electronica" encuentra "Electrónica" y "Hogar y jardín" = "hogar y jardin".
+ */
+function normalizeText(value) {
+  return String(value ?? '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+}
+
 class ProductFilters {
   constructor() {
     this.currentCategory = 'all';
     this.currentSort = 'featured';
-    this.searchQuery = '';
+    // Término inicial desde la URL: ?q= (buscador del header) o ?search=
+    // (SearchAction del JSON-LD). Queda aplicado cuando el catálogo carga.
+    const params = new URLSearchParams(window.location.search);
+    this.searchQuery = normalizeText(params.get('q') || params.get('search') || '');
     this.onlyOffers = false;
     this.products = [];
     this.originalProducts = [];
@@ -169,8 +184,27 @@ class ProductFilters {
 
   // Manejar búsqueda
   handleSearch(e) {
-    this.searchQuery = e.target.value.toLowerCase().trim();
+    this.setSearchQuery(e.target.value);
+  }
+
+  // Aplica un término de búsqueda (lo usa también el buscador del header)
+  setSearchQuery(query) {
+    const q = normalizeText(query);
+    if (q === this.searchQuery) return;
+    this.searchQuery = q;
     this.filterAndRender();
+  }
+
+  // Búsqueda por palabras (todas tienen que aparecer) en título, descripción,
+  // categoría y badges. "bici trek" encuentra "Bicicleta de montaña Trek".
+  matchesSearch(product, query) {
+    const haystack = normalizeText([
+      product.title,
+      product.productData?.description,
+      product.categoryName,
+      ...(product.badges || []),
+    ].join(' '));
+    return query.split(/\s+/).every(word => haystack.includes(word));
   }
 
   // Filtrar productos
@@ -184,10 +218,7 @@ class ProductFilters {
 
     // Filtro por búsqueda
     if (this.searchQuery) {
-      filtered = filtered.filter(product => 
-        product.title.toLowerCase().includes(this.searchQuery) ||
-        product.badges.some(badge => badge.toLowerCase().includes(this.searchQuery))
-      );
+      filtered = filtered.filter(product => this.matchesSearch(product, this.searchQuery));
     }
 
     // Filtro solo ofertas
