@@ -10,12 +10,17 @@
  *                       Acá no vive ningún secreto.
  *   GET  /img/<key>   — sirve la imagen subida, con cache inmutable.
  *
+ * Pre-lanzamiento: con COMING_SOON = "1" (wrangler.toml) las páginas muestran
+ * "Próximamente" (coming-soon.js) salvo para el equipo (ver comingSoonGate).
+ *
  * Storage: Workers KV (binding IMAGES). R2 no está habilitado en la cuenta
  * (hay que activarlo a mano en el dashboard); KV viene incluido y su plan
  * free (1 GB, 1.000 escrituras/día) sobra para la etapa de validación.
  * Si el volumen crece: habilitar R2, copiar objetos y cambiar el binding —
  * la interfaz pública /img/<key> no cambia.
  */
+
+import { comingSoonPage } from "./coming-soon.js";
 
 const BACKEND = 'https://daledeal-backend-production.up.railway.app';
 
@@ -35,6 +40,10 @@ export default {
     const url = new URL(request.url);
     if (url.pathname.startsWith('/img/')) return serveImage(request, env, url);
     if (url.pathname === '/api/upload') return handleUpload(request, env, url);
+    if (env.COMING_SOON === '1') {
+      const gated = await comingSoonGate(request, env, url);
+      if (gated) return gated;
+    }
     return env.ASSETS.fetch(request);
   },
 };
@@ -117,4 +126,91 @@ async function serveImage(request, env, url) {
       'x-content-type-options': 'nosniff',
     },
   });
+}
+
+// ============================================================
+// Pre-lanzamiento (COMING_SOON = "1" en wrangler.toml)
+//
+// El público ve la página de Próximamente en cualquier página del sitio; los
+// estilos, scripts, imágenes y fotos pasan igual. El equipo entra con
+//   https://daledeal.com.ar/?acceso=<PREVIEW_KEY>
+// (queda una cookie por 30 días) y sale con ?acceso=salir.
+// PREVIEW_KEY es un secreto de Cloudflare (npx wrangler secret put PREVIEW_KEY):
+// no vive en el repo. Sin PREVIEW_KEY no entra nadie, ni el equipo.
+// ============================================================
+const PREVIEW_COOKIE = 'dd_preview';
+const PREVIEW_DAYS = 30;
+
+async function comingSoonGate(request, env, url) {
+  const key = String(env.PREVIEW_KEY || '').trim();
+  const token = key ? await sha256Hex('dd-preview:' + key) : null;
+  const acceso = url.searchParams.get('acceso');
+
+  if (acceso !== null) {
+    const clean = new URL(url);
+    clean.searchParams.delete('acceso');
+    const secure = url.protocol === 'https:' ? '; Secure' : '';
+    // Con Domain la cookie vale para daledeal.com.ar y www (en local, solo el host).
+    const domain = /(^|\.)daledeal\.com\.ar$/.test(url.hostname) ? '; Domain=daledeal.com.ar' : '';
+    if (acceso === 'salir') {
+      return redirectWithCookie(clean, `${PREVIEW_COOKIE}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax${secure}${domain}`);
+    }
+    if (token && await sameSecret(acceso, key)) {
+      return redirectWithCookie(clean, `${PREVIEW_COOKIE}=${token}; Path=/; Max-Age=${PREVIEW_DAYS * 86400}; HttpOnly; SameSite=Lax${secure}${domain}`);
+    }
+    // Clave incorrecta: sigue como cualquier visitante.
+  }
+
+  if (token && readCookie(request, PREVIEW_COOKIE) === token) return null; // equipo → sitio normal
+  if (!isPageRequest(request, url)) return null;                          // assets → pasan
+
+  return new Response(request.method === 'HEAD' ? null : comingSoonPage(), {
+    status: 200,
+    headers: {
+      'content-type': 'text/html; charset=utf-8',
+      'cache-control': 'no-store',
+      'x-robots-tag': 'noindex',
+      'x-content-type-options': 'nosniff',
+      'referrer-policy': 'strict-origin-when-cross-origin',
+    },
+  });
+}
+
+// Páginas = GET/HEAD a "/", *.html o URLs limpias sin extensión (/productos).
+function isPageRequest(request, url) {
+  if (request.method !== 'GET' && request.method !== 'HEAD') return false;
+  const last = url.pathname.split('/').pop();
+  return last === '' || /\.html?$/i.test(last) || !last.includes('.');
+}
+
+function redirectWithCookie(location, cookie) {
+  return new Response(null, {
+    status: 302,
+    headers: { location: location.toString(), 'set-cookie': cookie, 'cache-control': 'no-store' },
+  });
+}
+
+function readCookie(request, name) {
+  const header = request.headers.get('cookie') || '';
+  for (const part of header.split(';')) {
+    const i = part.indexOf('=');
+    if (i > 0 && part.slice(0, i).trim() === name) return part.slice(i + 1).trim();
+  }
+  return null;
+}
+
+async function sha256Bytes(text) {
+  return new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)));
+}
+
+async function sha256Hex(text) {
+  return [...await sha256Bytes(text)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Comparación en tiempo constante (sobre los hashes, que miden lo mismo).
+async function sameSecret(a, b) {
+  const [ha, hb] = await Promise.all([sha256Bytes(a), sha256Bytes(b)]);
+  let diff = 0;
+  for (let i = 0; i < ha.length; i++) diff |= ha[i] ^ hb[i];
+  return diff === 0;
 }

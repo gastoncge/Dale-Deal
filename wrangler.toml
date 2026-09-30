@@ -31,9 +31,21 @@ binding = "ASSETS"
 # en otra página y nos perdíamos analytics de URLs rotas).
 # dist/404.html lo genera build.js copiando HTML/404.html a la raíz del dist.
 not_found_handling = "404-page"
+# PRE-LANZAMIENTO: el script corre ANTES que los assets para las páginas, así
+# puede mostrar "Próximamente" (worker.js → comingSoonGate). CSS, JS e imágenes
+# siguen saliendo directo, sin pasar por el script. El día del lanzamiento se
+# borra esta línea junto con [vars] COMING_SOON.
+run_worker_first = ["/*", "!/CSS/*", "!/JS/*", "!/IMG/*"]
 
 # Fotos subidas desde publicar (ver worker.js). KV porque R2 no está
 # habilitado en la cuenta; si se habilita, migrar objetos y cambiar binding.
 [[kv_namespaces]]
 binding = "IMAGES"
 id = "4b6ebaf8d3a14d26aeccd02fa4f03151"
+
+# PRE-LANZAMIENTO: "1" = el público ve la página de Próximamente (coming-soon.js).
+# El equipo entra con https://daledeal.com.ar/?acceso=<clave>; la clave es el
+# secreto PREVIEW_KEY (npx wrangler secret put PREVIEW_KEY), no vive en el repo.
+# Para lanzar: borrar este bloque y el run_worker_first de [assets], y deployar.
+[vars]
+COMING_SOON = "1"
