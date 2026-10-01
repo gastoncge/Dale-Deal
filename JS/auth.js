@@ -327,11 +327,11 @@ class AuthManager {
     if (!this.isAuthenticated()) return;
 
     const name = this.currentUser.name || 'Usuario';
-    // Fallback de avatar a ui-avatars.com con iniciales — si el usuario no
-    // subió avatar propio (typical), generamos uno consistente con la marca
-    // (background rojo, iniciales blancas). Nunca queda src vacío/roto.
+    // Fallback de avatar con iniciales — si el usuario no subió avatar propio
+    // (typical), generamos uno consistente con la marca (background rojo,
+    // iniciales blancas) en el navegador. Nunca queda src vacío/roto.
     const avatarUrl = this.currentUser.avatar
-      || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=d63031&color=fff&size=80&font-size=0.5&bold=true`;
+      || window.DaleDeal.utils.initialsAvatar(name);
 
     // Actualiza TODOS los .profile-name del DOM (desktop dropdown trigger +
     // cualquier otro que aparezca). Antes usaba querySelector singular y solo

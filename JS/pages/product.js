@@ -447,8 +447,7 @@ class ProductPage {
     const chatName   = document.getElementById('chatProviderName');
 
     if (avatar) {
-      const sellerName = encodeURIComponent(p.seller_name || 'Vendedor');
-      avatar.src = p.seller_avatar || `https://ui-avatars.com/api/?name=${sellerName}&background=D63031&color=fff&size=128`;
+      avatar.src = p.seller_avatar || window.DaleDeal.utils.initialsAvatar(p.seller_name || 'Vendedor');
       avatar.alt = p.seller_name || 'Vendedor';
     }
     if (name)     name.textContent = p.seller_name || 'Vendedor';

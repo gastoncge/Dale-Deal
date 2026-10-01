@@ -787,7 +787,7 @@ class MessagesManager {
       const time = m.created_at ? this.relativeTime(m.created_at) : '';
       return `
         <div class="mensajes-msg ${isSent ? 'from-me' : 'from-them'}">
-          ${this.escapeHtml(m.body)}
+          <span class="mensajes-msg-text">${this.escapeHtml(m.body)}</span>
           <span class="mensajes-msg-time">${time}</span>
         </div>`;
     }).join('');

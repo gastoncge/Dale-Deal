@@ -488,6 +488,19 @@ DaleDeal.utils.htmlToText = (value) => {
   return (doc.body.textContent || "").replace(/\s+/g, " ").trim();
 };
 
+/**
+ * Avatar con iniciales generado en el navegador (SVG en data URI). Antes se
+ * pedía a ui-avatars.com: un tercero recibía el nombre de cada usuario y, si
+ * estaba lento o caído, las páginas tardaban en terminar de cargar.
+ */
+DaleDeal.utils.initialsAvatar = (name, bg = '#d63031') => {
+  const initials = String(name || 'U').trim().split(/\s+/).slice(0, 2)
+    .map((w) => w[0] || '').join('').toUpperCase() || 'U';
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80"><rect width="80" height="80" fill="${bg}"/>`
+    + `<text x="40" y="40" dy=".35em" text-anchor="middle" fill="#fff" font-family="Inter,Arial,sans-serif" font-size="34" font-weight="700">${DaleDeal.utils.escapeHtml(initials)}</text></svg>`;
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+};
+
 // ===== UTILIDADES DE UI =====
 /**
  * Renderiza estrellas de rating como HTML de Bootstrap Icons.

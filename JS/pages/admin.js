@@ -17,6 +17,7 @@
     reviews:  { page: 1, loading: false },
     reports:  { page: 1, status: '', category: '', loading: false },
     leads:    { page: 1, status: '', loading: false },
+    messages: { page: 1, tipo: '', loading: false },
     verifications: { status: 'pending', loading: false },
     payouts:  { view: 'all', loaded: false, pending: [], released: [] },
   };
@@ -99,6 +100,7 @@
       case 'reviews':  if (!state.reviews.loaded)  loadReviews();  break;
       case 'reports':  if (!state.reports.loaded)  loadReports();  break;
       case 'leads':    if (!state.leads.loaded)    loadLeads();    break;
+      case 'messages': if (!state.messages.loaded) loadMessages(); break;
       case 'verifications': if (!state.verifications.loaded) loadVerifications(); break;
       case 'payouts':  if (!state.payouts.loaded)  loadPayouts();  break;
     }
@@ -167,6 +169,12 @@
       state.leads.status = e.target.value;
       state.leads.page = 1;
       loadLeads();
+    });
+
+    document.getElementById('messages-tipo')?.addEventListener('change', e => {
+      state.messages.tipo = e.target.value;
+      state.messages.page = 1;
+      loadMessages();
     });
 
     document.getElementById('verif-status')?.addEventListener('change', e => {
@@ -1368,6 +1376,9 @@
 
   // ── Helpers ──────────────────────────────────────────────────────────────
   function paginatorHTML(scope, res) {
+    // Algunos endpoints mandan `pages` (leads, mensajes) y otros `totalPages`:
+    // con solo totalPages, leads nunca mostraba el paginador.
+    res = { ...res, totalPages: res.totalPages ?? res.pages };
     if (!res.totalPages || res.totalPages <= 1) return '';
     return `
       <div class="d-flex justify-content-between align-items-center mt-3">
@@ -1393,6 +1404,57 @@
         loader();
       });
     });
+  }
+
+  // ── MENSAJES DE CONTACTO ─────────────────────────────────────────────────
+  // GET /admin/contact-messages — todos los mensajes del formulario de contacto.
+  async function loadMessages() {
+    const c = document.getElementById('messages-content');
+    if (!c) return;
+    const params = new URLSearchParams({ page: state.messages.page, limit: 20 });
+    if (state.messages.tipo) params.set('tipo', state.messages.tipo);
+    try {
+      const res = await window.DaleDeal.api.apiFetch(`/admin/contact-messages?${params}`);
+      state.messages.loaded = true;
+      renderMessages(res);
+    } catch (err) {
+      c.innerHTML = errorHTML(err);
+    }
+  }
+
+  function renderMessages(res) {
+    const c = document.getElementById('messages-content');
+    if (!res.data || res.data.length === 0) {
+      c.innerHTML = emptyHTML('Todavía no llegó ningún mensaje por el formulario de contacto.');
+      return;
+    }
+    c.innerHTML = `
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Nombre</th><th>Email</th><th>Tel</th>
+              <th>Asunto</th><th>Mensaje</th><th>Tipo</th><th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${res.data.map(m => `
+              <tr>
+                <td>#${esc(m.id)}</td>
+                <td><strong>${esc(m.nombre)} ${esc(m.apellido)}</strong></td>
+                <td><a href="mailto:${esc(m.email)}">${esc(m.email)}</a></td>
+                <td style="white-space:nowrap;">${esc(m.telefono) || '—'}</td>
+                <td>${esc(m.asunto) || '—'}${m.pedido_id ? `<br><small class="text-muted">Pedido ${esc(m.pedido_id)}</small>` : ''}</td>
+                <td style="white-space:pre-line;min-width:260px;max-width:420px;">${esc(m.mensaje)}</td>
+                <td><span class="admin-pill ${m.tipo === 'empresa' ? 'admin-pill-info' : 'admin-pill-muted'}">${m.tipo === 'empresa' ? 'Empresa' : 'Consulta'}</span></td>
+                <td>${formatDate(m.created_at)}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+      ${paginatorHTML('messages', res)}
+    `;
+    bindPagination('messages', loadMessages);
   }
 
   // ── LEADS B2B ────────────────────────────────────────────────────────────

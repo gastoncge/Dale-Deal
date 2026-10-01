@@ -228,13 +228,26 @@ function transformService(s) {
 // PRODUCTOS
 // =====================================================
 
-async function fetchProducts(filters = {}) {
+// El backend devuelve 20 por defecto y hasta 100 por página. Con all = true
+// (el catálogo) se piden las páginas siguientes hasta traer todo (tope: 10
+// páginas), para que el listado no se corte al pasar las 100 publicaciones.
+async function fetchPaged(path, filters, all) {
+  const rows = [];
+  for (let page = 1; page <= (all ? 10 : 1); page++) {
+    const params = new URLSearchParams({ limit: 100, ...filters, ...(all ? { page } : {}) }).toString();
+    const data = await apiFetch(`${path}?${params}`);
+    const batch = data.data || [];
+    rows.push(...batch);
+    if (batch.length < 100) break;
+  }
+  return rows;
+}
+
+async function fetchProducts(filters = {}, { all = false } = {}) {
   try {
-    // Sin limit el backend devuelve 20 y el catálogo nunca mostraba más (máx. 100).
-    const params = new URLSearchParams({ limit: 100, ...filters }).toString();
-    const data = await apiFetch(`/products${params ? '?' + params : ''}`);
-    DaleDeal.log(`${(data.data || []).length} productos cargados desde la API`);
-    return (data.data || []).map(transformProduct);
+    const rows = await fetchPaged('/products', filters, all);
+    DaleDeal.log(`${rows.length} productos cargados desde la API`);
+    return rows.map(transformProduct);
   } catch (error) {
     DaleDeal.error('Error al cargar productos:', error.message);
     throw new Error('No se pudo conectar con el servidor. Verificá tu conexión.');
@@ -272,11 +285,9 @@ async function createProduct(productData) {
 // SERVICIOS
 // =====================================================
 
-async function fetchServices(filters = {}) {
+async function fetchServices(filters = {}, { all = false } = {}) {
   try {
-    const params = new URLSearchParams({ limit: 100, ...filters }).toString();
-    const data = await apiFetch(`/services${params ? '?' + params : ''}`);
-    return (data.data || []).map(transformService);
+    return (await fetchPaged('/services', filters, all)).map(transformService);
   } catch (error) {
     DaleDeal.error('Error al cargar servicios:', error.message);
     throw error;

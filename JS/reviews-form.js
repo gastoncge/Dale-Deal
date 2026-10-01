@@ -199,7 +199,7 @@
     const stars = '★'.repeat(review.rating || 5) + '☆'.repeat(5 - (review.rating || 5));
     const dateStr = 'Recién ahora';
     const userName = review.reviewer_name || 'Vos';
-    const avatar = review.reviewer_avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=D63031&color=fff&size=48`;
+    const avatar = review.reviewer_avatar || window.DaleDeal.utils.initialsAvatar(userName);
 
     const html = `
       <div class="review-item" style="animation: fadeIn .4s; border-left: 3px solid var(--primary-red, #d63031); padding-left: 12px;">
@@ -270,7 +270,7 @@
       : reviews.map(r => `
           <div class="review-item">
             <div class="review-header">
-              <img src="${esc(r.reviewer_avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(r.reviewer_name || 'U')}&background=D63031&color=fff&size=48`)}"
+              <img src="${esc(r.reviewer_avatar || window.DaleDeal.utils.initialsAvatar(r.reviewer_name))}"
                    alt="${esc(r.reviewer_name)}"
                    class="review-avatar" loading="lazy" decoding="async" width="48" height="48" />
               <div class="review-info">

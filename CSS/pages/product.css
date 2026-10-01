@@ -1080,6 +1080,7 @@
   font-size: var(--font-size-sm);
   line-height: 1.6;
   margin: 0;
+  white-space: pre-line; /* conserva los párrafos de la reseña */
 }
 
 .btn-load-more-reviews {
