@@ -12,6 +12,7 @@ Disallow: /HTML/signup.html
 Disallow: /HTML/recuperar-contrasena.html
 Disallow: /HTML/notificaciones.html
 Disallow: /HTML/mis-ventas.html
+Disallow: /HTML/mis-publicaciones.html
 Disallow: /HTML/admin.html
 Disallow: /HTML/pago-exitoso.html
 Disallow: /HTML/pago-fallido.html
@@ -23,6 +24,7 @@ Disallow: /signup
 Disallow: /recuperar-contrasena
 Disallow: /notificaciones
 Disallow: /mis-ventas
+Disallow: /mis-publicaciones
 Disallow: /mi-cuenta
 Disallow: /admin
 Disallow: /pago-exitoso

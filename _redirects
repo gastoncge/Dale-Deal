@@ -10,6 +10,7 @@
 /estado-servicio	/HTML/estado-servicio	200
 /login	/HTML/login	200
 /mi-cuenta	/HTML/mi-cuenta	200
+/mis-publicaciones	/HTML/mis-publicaciones	200
 /mis-ventas	/HTML/mis-ventas	200
 /notificaciones	/HTML/notificaciones	200
 /pago-exitoso	/HTML/pago-exitoso	200
@@ -36,6 +37,7 @@
 /estado-servicio.html	/estado-servicio	301
 /login.html	/login	301
 /mi-cuenta.html	/mi-cuenta	301
+/mis-publicaciones.html	/mis-publicaciones	301
 /mis-ventas.html	/mis-ventas	301
 /notificaciones.html	/notificaciones	301
 /pago-exitoso.html	/pago-exitoso	301
