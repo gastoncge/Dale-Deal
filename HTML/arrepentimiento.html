@@ -60,7 +60,11 @@
           <div class="mb-3">
             <label class="form-label" for="arr-orden">N.º de orden</label>
             <input type="text" class="form-control" id="arr-orden" required maxlength="40"
-                   placeholder="Ej: #1234" />
+                   placeholder="Ej: #1234" aria-describedby="arr-orden-help" />
+            <div class="form-text" id="arr-orden-help">
+              Es el número de tu compra (empieza con #). Lo encontrás en <a href="./notificaciones.html#mis-compras">Mis Compras</a>,
+              en la pantalla de "Pago exitoso" y en las notificaciones del pedido. Si no lo encontrás, dejá el nombre del producto y lo buscamos con tu email.
+            </div>
           </div>
 
           <div class="mb-3">
