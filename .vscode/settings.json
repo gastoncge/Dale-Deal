@@ -1,3 +1,6 @@
 {
-    "liveServer.settings.port": 5502
+    "liveServer.settings.port": 5502,
+    // Live Server no entiende las URLs limpias (/producto, /productos…):
+    // para lo que no encuentra sirve index.html, que redirige a HTML/<página>.html.
+    "liveServer.settings.file": "index.html"
 }

@@ -1366,6 +1366,41 @@
   color: var(--gray-600);
 }
 
+/* Pestañas de "Cómo funciona" */
+.how-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-2);
+  margin: 0 auto var(--spacing-4);
+}
+.how-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+  color: var(--gray-700);
+  font-weight: 700;
+  font-size: .92rem;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.how-tab:hover { border-color: var(--primary-red); color: var(--primary-red); }
+.how-tab.active { background: var(--gradient-primary); border-color: transparent; color: #fff; }
+.how-panel-lead {
+  text-align: center;
+  color: var(--gray-600);
+  margin: 0 auto var(--spacing-8);
+}
+@media (max-width: 575px) {
+  .how-tabs { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; padding-bottom: 4px; scrollbar-width: none; }
+  .how-tabs::-webkit-scrollbar { display: none; }
+  .how-tab { flex: none; padding: 8px 14px; font-size: .85rem; }
+}
+
 .how-it-works-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));

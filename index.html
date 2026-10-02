@@ -3,6 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Live Server (VS Code) no conoce las URLs limpias (/producto?id=1):
+         sirve este index y acá lo mandamos a HTML/producto.html. En producción
+         y con .local-dev/front.js esas URLs nunca llegan al index. -->
+    <script>
+      (function () {
+        var m = location.pathname.match(/^\/([a-z-]+)\/?$/);
+        if (m && m[1] !== 'index') location.replace('/HTML/' + m[1] + '.html' + location.search + location.hash);
+      })();
+    </script>
     <title>DALE DEAL - Tu Marketplace Favorito</title>
 
     <!-- SEO Meta Tags -->
@@ -341,46 +350,132 @@
       <!-- How It Works Section -->
       <section class="how-it-works-section" id="howItWorksSection">
         <div class="container">
-          <div class="section-header text-center mb-5" data-aos="fade-up">
+          <div class="section-header text-center mb-4" data-aos="fade-up">
             <h2 class="section-title">Cómo <span class="accent">funciona</span></h2>
-            <p class="section-subtitle">Comprar en Dale Deal es fácil y seguro</p>
+            <p class="section-subtitle">En Dale Deal comprás, vendés, contratás y ofrecés servicios</p>
           </div>
 
-          <div class="how-it-works-grid">
-            <div class="how-it-works-card" data-aos="fade-up" data-aos-delay="0">
-              <span class="how-step-number">1</span>
-              <div class="how-step-icon"><i class="bi bi-search"></i></div>
-              <h3 class="how-step-title">Buscá lo que necesitás</h3>
-              <p class="how-step-description">
-                Productos de vendedores de todo el país y servicios: eventos, oficios, clases y mucho más.
-              </p>
-            </div>
+          <div class="how-tabs" role="tablist" aria-label="Cómo funciona">
+            <button type="button" class="how-tab active" role="tab" id="how-tab-comprar" aria-controls="how-panel-comprar" aria-selected="true" data-how="comprar"><i class="bi bi-bag"></i>Comprar</button>
+            <button type="button" class="how-tab" role="tab" id="how-tab-vender" aria-controls="how-panel-vender" aria-selected="false" data-how="vender"><i class="bi bi-tag"></i>Vender</button>
+            <button type="button" class="how-tab" role="tab" id="how-tab-contratar" aria-controls="how-panel-contratar" aria-selected="false" data-how="contratar"><i class="bi bi-person-check"></i>Contratar un servicio</button>
+            <button type="button" class="how-tab" role="tab" id="how-tab-ofrecer" aria-controls="how-panel-ofrecer" aria-selected="false" data-how="ofrecer"><i class="bi bi-tools"></i>Ofrecer un servicio</button>
+          </div>
 
-            <div class="how-it-works-card" data-aos="fade-up" data-aos-delay="100">
-              <span class="how-step-number">2</span>
-              <div class="how-step-icon"><i class="bi bi-shield-lock"></i></div>
-              <h3 class="how-step-title">Pagá de forma segura</h3>
-              <p class="how-step-description">
-                Con Mercado Pago: tarjeta, dinero en cuenta o tu billetera virtual. Cualquier duda, la hablás con el vendedor por chat.
-              </p>
+          <div class="how-panel" role="tabpanel" id="how-panel-comprar" aria-labelledby="how-tab-comprar">
+            <p class="how-panel-lead">Comprar en Dale Deal es fácil y seguro</p>
+            <div class="how-it-works-grid">
+              <div class="how-it-works-card">
+                <span class="how-step-number">1</span>
+                <div class="how-step-icon"><i class="bi bi-search"></i></div>
+                <h3 class="how-step-title">Buscá lo que necesitás</h3>
+                <p class="how-step-description">Productos de vendedores de todo el país, con fotos, precio y ubicación claros.</p>
+              </div>
+              <div class="how-it-works-card">
+                <span class="how-step-number">2</span>
+                <div class="how-step-icon"><i class="bi bi-shield-lock"></i></div>
+                <h3 class="how-step-title">Pagá de forma segura</h3>
+                <p class="how-step-description">Con Mercado Pago: tarjeta, dinero en cuenta o tu billetera virtual. Tenés 2 hs para cancelar.</p>
+              </div>
+              <div class="how-it-works-card">
+                <span class="how-step-number">3</span>
+                <div class="how-step-icon"><i class="bi bi-truck"></i></div>
+                <h3 class="how-step-title">El vendedor despacha en 48 hs</h3>
+                <p class="how-step-description">Se encarga del envío y te pasa el número de seguimiento. Coordinás todo por chat.</p>
+              </div>
+              <div class="how-it-works-card">
+                <span class="how-step-number">4</span>
+                <div class="how-step-icon"><i class="bi bi-check2-circle"></i></div>
+                <h3 class="how-step-title">Recibís y recién ahí le pagamos</h3>
+                <p class="how-step-description">Tu plata queda protegida: el vendedor cobra cuando confirmás que te llegó.</p>
+              </div>
             </div>
-
-            <div class="how-it-works-card" data-aos="fade-up" data-aos-delay="200">
-              <span class="how-step-number">3</span>
-              <div class="how-step-icon"><i class="bi bi-truck"></i></div>
-              <h3 class="how-step-title">El vendedor despacha en 48 hs</h3>
-              <p class="how-step-description">
-                Se encarga del envío y te pasa el número de seguimiento.
-              </p>
+          </div>
+          <div class="how-panel" role="tabpanel" id="how-panel-vender" aria-labelledby="how-tab-vender" hidden>
+            <p class="how-panel-lead">Publicar es gratis: solo pagás 3% + impuestos cuando vendés</p>
+            <div class="how-it-works-grid">
+              <div class="how-it-works-card">
+                <span class="how-step-number">1</span>
+                <div class="how-step-icon"><i class="bi bi-pencil-square"></i></div>
+                <h3 class="how-step-title">Publicá tu producto</h3>
+                <p class="how-step-description">Título claro, categoría, ubicación, precio y stock. Hasta 10 fotos y 2 carteles.</p>
+              </div>
+              <div class="how-it-works-card">
+                <span class="how-step-number">2</span>
+                <div class="how-step-icon"><i class="bi bi-chat-dots"></i></div>
+                <h3 class="how-step-title">Respondé y coordiná</h3>
+                <p class="how-step-description">Contestá las consultas y, al vender, coordiná el envío o el retiro por chat privado.</p>
+              </div>
+              <div class="how-it-works-card">
+                <span class="how-step-number">3</span>
+                <div class="how-step-icon"><i class="bi bi-box-seam"></i></div>
+                <h3 class="how-step-title">Despachá en 48 hs</h3>
+                <p class="how-step-description">Se cuentan después de las 2 hs que tiene el comprador para cancelar. Cargá el seguimiento.</p>
+              </div>
+              <div class="how-it-works-card">
+                <span class="how-step-number">4</span>
+                <div class="how-step-icon"><i class="bi bi-cash-coin"></i></div>
+                <h3 class="how-step-title">Cobrá seguro</h3>
+                <p class="how-step-description">Cuando el comprador recibe, te liberamos el dinero menos el 3% de comisión + impuestos.</p>
+              </div>
             </div>
-
-            <div class="how-it-works-card" data-aos="fade-up" data-aos-delay="300">
-              <span class="how-step-number">4</span>
-              <div class="how-step-icon"><i class="bi bi-check2-circle"></i></div>
-              <h3 class="how-step-title">Recibís y recién ahí le pagamos</h3>
-              <p class="how-step-description">
-                Tu plata queda protegida: el vendedor cobra cuando confirmás que te llegó.
-              </p>
+          </div>
+          <div class="how-panel" role="tabpanel" id="how-panel-contratar" aria-labelledby="how-tab-contratar" hidden>
+            <p class="how-panel-lead">Sabés quién entra a tu casa o hace tu trabajo</p>
+            <div class="how-it-works-grid">
+              <div class="how-it-works-card">
+                <span class="how-step-number">1</span>
+                <div class="how-step-icon"><i class="bi bi-search"></i></div>
+                <h3 class="how-step-title">Buscá el servicio</h3>
+                <p class="how-step-description">Oficios, eventos, clases y más. Cada publicación muestra dónde trabaja y cómo cobra.</p>
+              </div>
+              <div class="how-it-works-card">
+                <span class="how-step-number">2</span>
+                <div class="how-step-icon"><i class="bi bi-patch-check"></i></div>
+                <h3 class="how-step-title">Elegí bien</h3>
+                <p class="how-step-description">Todos validan su DNI. La insignia de verificado indica que comprobamos su título.</p>
+              </div>
+              <div class="how-it-works-card">
+                <span class="how-step-number">3</span>
+                <div class="how-step-icon"><i class="bi bi-chat-dots"></i></div>
+                <h3 class="how-step-title">Consultá sin compromiso</h3>
+                <p class="how-step-description">Preguntale al prestador desde su publicación y acordá los detalles.</p>
+              </div>
+              <div class="how-it-works-card">
+                <span class="how-step-number">4</span>
+                <div class="how-step-icon"><i class="bi bi-star"></i></div>
+                <h3 class="how-step-title">Calificá el servicio</h3>
+                <p class="how-step-description">Las reseñas solo las dejan quienes contrataron. Si algo no está bien, avisanos.</p>
+              </div>
+            </div>
+          </div>
+          <div class="how-panel" role="tabpanel" id="how-panel-ofrecer" aria-labelledby="how-tab-ofrecer" hidden>
+            <p class="how-panel-lead">Publicá tus servicios por $3.000 por mes</p>
+            <div class="how-it-works-grid">
+              <div class="how-it-works-card">
+                <span class="how-step-number">1</span>
+                <div class="how-step-icon"><i class="bi bi-pencil-square"></i></div>
+                <h3 class="how-step-title">Armá tu publicación</h3>
+                <p class="how-step-description">Un título que diga todo, tu experiencia y las zonas donde trabajás.</p>
+              </div>
+              <div class="how-it-works-card">
+                <span class="how-step-number">2</span>
+                <div class="how-step-icon"><i class="bi bi-currency-dollar"></i></div>
+                <h3 class="how-step-title">Poné tu precio</h3>
+                <p class="how-step-description">Precio fijo, por hora o a consultar. También podés mostrar un rango.</p>
+              </div>
+              <div class="how-it-works-card">
+                <span class="how-step-number">3</span>
+                <div class="how-step-icon"><i class="bi bi-camera"></i></div>
+                <h3 class="how-step-title">Mostrá tu trabajo</h3>
+                <p class="how-step-description">Hasta 10 fotos y 2 carteles. Subí tu título para tener la insignia de verificado.</p>
+              </div>
+              <div class="how-it-works-card">
+                <span class="how-step-number">4</span>
+                <div class="how-step-icon"><i class="bi bi-calendar-check"></i></div>
+                <h3 class="how-step-title">Activá tu suscripción</h3>
+                <p class="how-step-description">$3.000 por mes. Tenés hasta el día 10 para renovar; si no, la publicación se da de baja.</p>
+              </div>
             </div>
           </div>
         </div>
@@ -749,5 +844,18 @@
     <script src="./JS/component-loader.js" defer></script>
     <script src="./JS/chat.js" defer></script>
     <script src="./JS/support-widget.js" defer></script>
+    <script>
+      // "Cómo funciona": pestañas Comprar / Vender / Contratar / Ofrecer
+      document.addEventListener('click', (e) => {
+        const tab = e.target.closest('[data-how]');
+        if (!tab) return;
+        document.querySelectorAll('.how-tab').forEach((t) => {
+          const on = t === tab;
+          t.classList.toggle('active', on);
+          t.setAttribute('aria-selected', on ? 'true' : 'false');
+          document.getElementById('how-panel-' + t.dataset.how).hidden = !on;
+        });
+      });
+    </script>
   </body>
 </html>
