@@ -853,10 +853,18 @@ class ServicePage {
     const plainDesc = DaleDeal.utils.htmlToText(service.description);
     const shortDesc = plainDesc.length > 80 ? plainDesc.substring(0, 80) + '...' : plainDesc;
 
+    // Igual que en el catálogo: sin reseñas dice "Sin reseñas aún", no "(0)".
+    const reviewCount = service.reviewCount || 0;
+    const reviewsHTML = reviewCount > 0
+      ? `<span class="reviews-count">(${reviewCount.toLocaleString('es-AR')})</span>`
+      : '<span class="reviews-count text-muted">Sin reseñas aún</span>';
+
     const provider = service.provider || {};
+    // Sin foto cargada van las iniciales (antes quedaba una imagen rota).
+    const providerAvatar = provider.avatar || DaleDeal.utils.initialsAvatar(provider.name);
     const providerHTML = provider.name ? `
       <div class="product-provider">
-        <img src="${esc(provider.avatar)}" alt="${esc(provider.name)}" class="product-provider-avatar" />
+        <img src="${esc(providerAvatar)}" alt="" class="product-provider-avatar" loading="lazy" />
         <span class="product-provider-name">${esc(provider.name)}</span>
         ${provider.verified ? '<i class="bi bi-patch-check-fill product-provider-verified"></i>' : ''}
       </div>` : '';
@@ -880,7 +888,7 @@ class ServicePage {
             <div class="product-meta-group">
               <div class="product-rating">
                 <div class="stars">${starsHTML}</div>
-                <span class="reviews-count">(${(service.reviewCount || 0).toLocaleString('es-AR')})</span>
+                ${reviewsHTML}
                 ${extraBadges}
               </div>
               <div class="product-location">

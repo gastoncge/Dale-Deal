@@ -261,9 +261,8 @@
               <h1 class="header-title">
                 Catálogo de Productos
               </h1>
-              <p class="header-description">
-                <span class="badge-count" id="headerProductCount">2000+ productos</span>
-              </p>
+              <!-- Sin insignia de cantidad acá: la cifra real se muestra en
+                   "N productos encontrados", arriba de la grilla. -->
             </div>
           </div>
         </div>
@@ -3505,11 +3504,10 @@
           `;
 
           // Descripción corta (si existe)
-          const shortDescription = product.description
-            ? (product.description.length > 80
-                ? product.description.substring(0, 80) + '...'
-                : product.description)
-            : '';
+          const plainDescription = window.DaleDeal.utils.htmlToText(product.description);
+          const shortDescription = plainDescription.length > 80
+            ? plainDescription.substring(0, 80) + '...'
+            : plainDescription;
 
           card.innerHTML = `
             <div class="product-image-container">

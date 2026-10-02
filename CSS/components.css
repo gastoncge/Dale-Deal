@@ -1598,6 +1598,38 @@ nav.navbar {
   background: var(--white);
 }
 
+/* Prestador dentro de la tarjeta de servicio (fichas): foto chica + nombre.
+   Sin esto la foto salía a tamaño real (128px) en medio de la tarjeta. */
+.product-provider {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-width: 0;
+  margin: var(--spacing-1) 0 var(--spacing-2);
+}
+
+.product-provider-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.product-provider-name {
+  font-size: var(--font-size-sm);
+  color: var(--gray-600);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-provider-verified {
+  color: #1d9bf0;
+  flex-shrink: 0;
+}
+
 .product-title {
   font-size: var(--font-size-base);
   font-weight: 600;

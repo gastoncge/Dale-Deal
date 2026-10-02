@@ -1114,7 +1114,14 @@ class ProductPage {
     const similarGrid = document.getElementById('similarProductsGrid');
     if (!similarGrid) return;
 
-    similarGrid.innerHTML = products.map(p => this.renderProductCard(p)).join('');
+    const cards = products.map(p => this.renderProductCard(p)).filter(Boolean);
+    if (cards.length === 0) {
+      // Sin otros productos para mostrar, la sección entera no aporta nada.
+      similarGrid.closest('.similar-products-section')?.style.setProperty('display', 'none');
+      return;
+    }
+    // similarGrid es un .hs-track (carrusel con scroll-snap; flechas en utils.js)
+    similarGrid.innerHTML = cards.join('');
     setTimeout(() => window.favoritesManager?.updateFavoriteButtons(), 100);
   }
 
@@ -1335,10 +1342,16 @@ class ProductPage {
     if (!Number.isFinite(pidNum) || pidNum <= 0) return '';
     const pid = pidNum;
     const imgSrc = String(product.images?.main || '').replace(/['"<>]/g, '');
-    const desc = product.description
-      ? (product.description.length > 80 ? product.description.substring(0, 80) + '…' : product.description)
-      : 'Producto de alta calidad.';
+    // Texto plano (la descripción viene del editor como HTML) y sin frase de
+    // relleno cuando no hay descripción.
+    const plainDesc = window.DaleDeal.utils.htmlToText(product.description);
+    const desc = plainDesc.length > 80 ? plainDesc.substring(0, 80) + '…' : plainDesc;
     const descSafe = esc(desc);
+    // Igual que en el catálogo: sin reseñas dice "Sin reseñas aún", no "(0)".
+    const reviewCount = Number(product.reviewCount) || 0;
+    const reviewsHTML = reviewCount > 0
+      ? `<span class="reviews-count">(${reviewCount.toLocaleString('es-AR')})</span>`
+      : '<span class="reviews-count text-muted">Sin reseñas aún</span>';
     return `
         <div class="product-card ${isRecent ? 'recent-product-card' : 'similar-product-card'}"
              data-id="${pid}" data-clickable="true">
@@ -1359,7 +1372,7 @@ class ProductPage {
             <div class="product-meta-group">
               <div class="product-rating">
                 <div class="stars">${this.renderProductStars(product.rating)}</div>
-                <span class="reviews-count">(${(product.reviewCount || 0).toLocaleString('es-AR')})</span>
+                ${reviewsHTML}
               </div>
             </div>
             <div class="product-pricing-wrapper">

@@ -712,22 +712,13 @@ svg,
 
 /* Override the inline 4-column grid for small screens */
 @media (max-width: 374px) {
-  .products-grid {
-    grid-template-columns: 1fr !important;
-    gap: var(--spacing-3) !important;
-  }
-
   .filters-sidebar {
     width: 85vw;
   }
 }
 
-@media (max-width: 479px) {
-  .products-grid {
-    grid-template-columns: 1fr !important;
-    gap: var(--spacing-3) !important;
-  }
-}
+/* Hasta 479px iba 1 tarjeta por fila: ahora 2 (ver "CATÁLOGO EN CELULAR" al
+   final del archivo, que también compacta la tarjeta). */
 
 @media (min-width: 480px) and (max-width: 767px) {
   .products-grid {
@@ -1224,11 +1215,6 @@ svg,
 
 /* ===== 414px BREAKPOINT (iPhone Plus/Max en portrait) ===== */
 @media (max-width: 414px) {
-  /* Productos: asegurar 1 columna hasta 414px */
-  .products-grid {
-    grid-template-columns: 1fr !important;
-  }
-
   /* Navbar search: dar más espacio en 414px */
   .search-container {
     flex: 1;
@@ -1333,3 +1319,185 @@ svg,
     min-height: 44px;
   }
 }
+
+/* =====================================================
+   CATÁLOGO EN CELULAR: 2 TARJETAS POR FILA
+   Pedido del equipo ("tipo Mercado Libre"): con una tarjeta por fila entraba
+   un solo producto por pantalla. Vale para la home, /productos y /servicios.
+   ===================================================== */
+
+/* Home: las tarjetas vienen agrupadas de a 3 en .products-row. Con
+   display:contents pasan a ser hijas directas de la grilla y fluyen de a 2 sin
+   dejar huecos (en tablet quedaba 2 + 1 por cada grupo). */
+@media (max-width: 991px) {
+  .products-section .products-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .products-section .products-grid .products-row {
+    display: contents;
+  }
+
+  .products-section .products-grid .products-row .product-card {
+    max-width: none;
+    min-width: 0;
+    flex: none;
+  }
+}
+
+/* Tarjeta compacta para media pantalla. Vale para las tarjetas de producto de
+   la home y de los catálogos (.products-grid .product-card), para las de
+   "Productos similares" de la ficha (.similar-product-card) y para las de
+   servicio de la home (.service-card).
+
+   En el sitio compilado este archivo va dentro de core.css, que se carga ANTES
+   que home.css, product.css y el <style> de /productos y /servicios: a igual
+   especificidad ganan ellos. Por eso los selectores de acá llevan un nivel más
+   que los de esas hojas. */
+@media (max-width: 575px) {
+  .products-grid,
+  .services-section .services-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: var(--spacing-3) !important;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* Tarjeta compacta: foto cuadrada, título en 2 líneas, reseñas, lugar y precio. */
+  .products-grid .product-card,
+  .products-section .products-grid .product-card,
+  .services-section .services-grid .service-card {
+    min-height: 0;
+    min-width: 0;
+    border-radius: var(--radius-xl);
+  }
+
+  /* min-height: 0 → una foto vertical no estira el cuadrado. */
+  :is(.products-grid .product-card, .similar-product-card) .product-image-container,
+  .services-section .services-grid .service-image-container {
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 1 / 1;
+  }
+
+  :is(.products-grid .product-card, .similar-product-card) .product-image,
+  .services-section .services-grid .service-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  :is(.products-grid .product-card, .similar-product-card) .product-info,
+  .services-section .services-grid .service-info {
+    padding: var(--spacing-2) var(--spacing-3) var(--spacing-3);
+  }
+
+  :is(.products-grid .product-card, .similar-product-card) .product-title,
+  .services-section .services-grid .service-title {
+    font-size: var(--font-size-sm);
+    line-height: 1.3;
+    min-height: 2.6em;
+    margin-bottom: var(--spacing-1);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* En media pantalla la descripción no entra. */
+  :is(.products-grid .product-card, .similar-product-card) .product-description,
+  .services-section .services-grid .service-description {
+    display: none;
+  }
+
+  :is(.products-grid .product-card, .similar-product-card) .product-meta-group {
+    gap: 2px;
+    margin-bottom: var(--spacing-1);
+  }
+
+  /* Reseñas siempre en un renglón. */
+  :is(.products-grid .product-card, .similar-product-card) .product-rating,
+  .services-section .services-grid .service-rating {
+    font-size: var(--font-size-xs);
+    gap: var(--spacing-1);
+    flex-wrap: nowrap;
+    margin-bottom: var(--spacing-1);
+    min-width: 0;
+  }
+
+  :is(.products-grid .product-card, .similar-product-card) .product-rating .stars i,
+  .services-section .services-grid .service-rating .stars i {
+    font-size: 0.7rem;
+  }
+
+  :is(.products-grid .product-card, .similar-product-card) .product-rating .reviews-count,
+  .services-section .services-grid .service-rating-text {
+    font-size: var(--font-size-xs);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Sin reseñas, las 5 estrellas vacías + "Sin reseñas aún" no entran en media
+     pantalla y partían el renglón en dos: queda solo el texto. */
+  :is(.products-grid .product-card, .similar-product-card) .product-rating:has(> .reviews-count.text-muted) .stars {
+    display: none;
+  }
+
+  :is(.products-grid .product-card, .similar-product-card) .product-location,
+  .services-section .services-grid .service-location {
+    font-size: var(--font-size-xs);
+    min-width: 0;
+  }
+
+  :is(.products-grid .product-card, .similar-product-card) .product-location span,
+  .services-section .services-grid .service-location span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  :is(.products-grid .product-card, .similar-product-card) .product-pricing {
+    margin-bottom: 0;
+  }
+
+  :is(.products-grid .product-card, .similar-product-card) .product-current-price {
+    font-size: var(--font-size-base);
+  }
+
+  .services-section .services-grid .service-info-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-1);
+  }
+
+  /* Corazón (44px: mínimo táctil) en la esquina de arriba a la derecha de la foto.
+     El botón de compartir por WhatsApp se sacó de todo el sitio. */
+  :is(.products-grid .product-card, .similar-product-card) .product-actions {
+    top: var(--spacing-2);
+    right: var(--spacing-2);
+  }
+
+  /* Las fotos se pasan tocando los puntitos; las flechas no entran. */
+  :is(.products-grid .product-card, .similar-product-card) .product-image-carousel .carousel-control {
+    display: none;
+  }
+
+  /* Puntitos de las fotos abajo a la izquierda y hasta 5: centrados, con muchas
+     fotos (se pueden cargar hasta 10) quedaban debajo de los carteles.
+     Las demás fotos se ven en la ficha. Los !important son porque home.css y
+     el <style> de los catálogos los centran con !important. */
+  :is(.products-grid .product-card, .similar-product-card) .carousel-indicators {
+    left: var(--spacing-3) !important;
+    transform: none !important;
+    justify-content: flex-start !important;
+  }
+
+  :is(.products-grid .product-card, .similar-product-card) .carousel-indicators .indicator:nth-child(n + 6) {
+    display: none;
+  }
+}
+

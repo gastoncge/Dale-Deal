@@ -2527,9 +2527,8 @@
               <h1 class="header-title">
                 Catálogo de Servicios
               </h1>
-              <p class="header-description">
-                <span class="badge-count" id="headerServiceCount">2000+ servicios</span>
-              </p>
+              <!-- Sin insignia de cantidad acá: la cifra real se muestra en
+                   "N servicios encontrados", arriba de la grilla. -->
             </div>
           </div>
         </div>
@@ -3604,9 +3603,9 @@
           ).join('');
           const badgesHTML = badgeSpans ? `<div class="service-badges">${badgeSpans}</div>` : '';
 
-          const shortDesc = service.description
-            ? (service.description.length > 80 ? service.description.substring(0, 80) + '...' : service.description)
-            : '';
+          // Texto plano: la descripción viene del editor como HTML.
+          const plainDesc = window.DaleDeal.utils.htmlToText(service.description);
+          const shortDesc = plainDesc.length > 80 ? plainDesc.substring(0, 80) + '...' : plainDesc;
 
           // Reseñas: si no hay reviews, "Sin reseñas aún" (matchea estilo cards productos)
           const reviewCount = service.reviewCount || 0;

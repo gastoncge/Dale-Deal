@@ -117,6 +117,13 @@ async function apiFetch(path, options = {}) {
 // escapeHtml (nunca interpolado crudo en innerHTML).
 const decodeText = (v) => (v == null ? v : (window.DaleDeal?.utils?.decodeEntities?.(v) ?? v));
 
+// Los listados traen la descripción cortada a 160 caracteres (LEFT en el SQL)
+// y todavía escapada: el corte puede caer en medio de una entidad y dejar un
+// resto al final ("…Nuevo &l", "…&amp"). Se descarta antes de decodificar.
+const decodeDescription = (v) => decodeText(
+  v == null ? v : String(v).replace(/&(?:a|am|amp|l|lt|g|gt|q|qu|quo|quot|#|#3|#39|#x|#x2|#x27)?$/, '')
+);
+
 // =====================================================
 // TRANSFORMAR PRODUCTO (formato backend → formato frontend)
 // =====================================================
@@ -134,7 +141,7 @@ function transformProduct(p) {
     title: decodeText(p.title),
     category: decodeText(p.category_name) || 'Sin categoría',
     subcategory: p.category_slug || '',
-    description: decodeText(p.description) || '',
+    description: decodeDescription(p.description) || '',
     price: parseFloat(p.price),
     originalPrice: null,
     discount: null,
@@ -208,7 +215,7 @@ function transformService(s) {
   return {
     id: s.id,
     title: decodeText(s.title),
-    description: decodeText(s.description) || '',
+    description: decodeDescription(s.description) || '',
     category: s.category_slug || 'otros-servicios',
     price: parseFloat(s.price_from) || 0,
     priceFrom: parseFloat(s.price_from) || null,

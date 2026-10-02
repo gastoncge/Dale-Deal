@@ -153,17 +153,19 @@ function renderProductCard(product) {
     : '';
 
   // Reseñas: si no hay reviews, mostrar "Sin reseñas aún" en lugar de "(0)"
-  const reviewCount = product.reviewCount || 0;
+  // El catálogo (/productos) manda la cantidad como `reviews`: sin leer los dos
+  // nombres, ahí todas las tarjetas decían "Sin reseñas aún" aunque tuvieran.
+  const reviewCount = product.reviewCount ?? product.reviews ?? 0;
   const reviewsHTML = reviewCount > 0
     ? `<span class="reviews-count">(${reviewCount.toLocaleString('es-AR')})</span>`
     : `<span class="reviews-count text-muted">Sin reseñas aún</span>`;
 
-  // Renderizar descripción corta (primeras 80 caracteres)
-  const shortDescription = product.description
-    ? (product.description.length > 80
-        ? product.description.substring(0, 80) + '...'
-        : product.description)
-    : '';
+  // Descripción corta (primeros 80 caracteres) en texto plano: la descripción
+  // viene del editor como HTML y sin esto la tarjeta mostraba "<p>Vendo <strong>…".
+  const plainDescription = window.DaleDeal.utils.htmlToText(product.description);
+  const shortDescription = plainDescription.length > 80
+    ? plainDescription.substring(0, 80) + '...'
+    : plainDescription;
 
   return `
     <div class="product-card ${hasDiscount ? 'has-offer' : ''}" data-id="${esc(product.id)}" data-clickable="true">
@@ -363,9 +365,10 @@ function renderServiceCard(service) {
     ? `Desde ${window.DaleDeal.utils.formatCurrency(service.price)}`
     : 'Consultar precio';
 
-  const shortDescription = service.description && service.description.length > 90
-    ? service.description.substring(0, 90) + '...'
-    : (service.description || '');
+  const plainDescription = window.DaleDeal.utils.htmlToText(service.description);
+  const shortDescription = plainDescription.length > 90
+    ? plainDescription.substring(0, 90) + '...'
+    : plainDescription;
 
   const href = `/servicio?id=${encodeURIComponent(service.id)}`;
 
