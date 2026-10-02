@@ -1364,9 +1364,12 @@ svg,
     padding-right: 0;
   }
 
-  /* Tarjeta compacta: foto cuadrada, título en 2 líneas, reseñas, lugar y precio. */
+  /* Tarjeta compacta: foto cuadrada, título en 2 líneas, reseñas, lugar y precio.
+     También las de los carruseles .hs (components.css), que en celular muestran
+     2 por pantalla: "Lo más visto", "Vistos recientemente" y los de las fichas. */
   .products-grid .product-card,
   .products-section .products-grid .product-card,
+  .hs-track .product-card,
   .services-section .services-grid .service-card {
     min-height: 0;
     min-width: 0;
@@ -1374,14 +1377,14 @@ svg,
   }
 
   /* min-height: 0 → una foto vertical no estira el cuadrado. */
-  :is(.products-grid .product-card, .similar-product-card) .product-image-container,
+  :is(.products-grid .product-card, .similar-product-card, .hs-track .product-card) .product-image-container,
   .services-section .services-grid .service-image-container {
     height: auto;
     min-height: 0;
     aspect-ratio: 1 / 1;
   }
 
-  :is(.products-grid .product-card, .similar-product-card) .product-image,
+  :is(.products-grid .product-card, .similar-product-card, .hs-track .product-card) .product-image,
   .services-section .services-grid .service-image {
     display: block;
     width: 100%;
@@ -1389,12 +1392,12 @@ svg,
     object-fit: cover;
   }
 
-  :is(.products-grid .product-card, .similar-product-card) .product-info,
+  :is(.products-grid .product-card, .similar-product-card, .hs-track .product-card) .product-info,
   .services-section .services-grid .service-info {
     padding: var(--spacing-2) var(--spacing-3) var(--spacing-3);
   }
 
-  :is(.products-grid .product-card, .similar-product-card) .product-title,
+  :is(.products-grid .product-card, .similar-product-card, .hs-track .product-card) .product-title,
   .services-section .services-grid .service-title {
     font-size: var(--font-size-sm);
     line-height: 1.3;
@@ -1407,18 +1410,18 @@ svg,
   }
 
   /* En media pantalla la descripción no entra. */
-  :is(.products-grid .product-card, .similar-product-card) .product-description,
+  :is(.products-grid .product-card, .similar-product-card, .hs-track .product-card) .product-description,
   .services-section .services-grid .service-description {
     display: none;
   }
 
-  :is(.products-grid .product-card, .similar-product-card) .product-meta-group {
+  :is(.products-grid .product-card, .similar-product-card, .hs-track .product-card) .product-meta-group {
     gap: 2px;
     margin-bottom: var(--spacing-1);
   }
 
   /* Reseñas siempre en un renglón. */
-  :is(.products-grid .product-card, .similar-product-card) .product-rating,
+  :is(.products-grid .product-card, .similar-product-card, .hs-track .product-card) .product-rating,
   .services-section .services-grid .service-rating {
     font-size: var(--font-size-xs);
     gap: var(--spacing-1);
@@ -1427,12 +1430,12 @@ svg,
     min-width: 0;
   }
 
-  :is(.products-grid .product-card, .similar-product-card) .product-rating .stars i,
+  :is(.products-grid .product-card, .similar-product-card, .hs-track .product-card) .product-rating .stars i,
   .services-section .services-grid .service-rating .stars i {
     font-size: 0.7rem;
   }
 
-  :is(.products-grid .product-card, .similar-product-card) .product-rating .reviews-count,
+  :is(.products-grid .product-card, .similar-product-card, .hs-track .product-card) .product-rating .reviews-count,
   .services-section .services-grid .service-rating-text {
     font-size: var(--font-size-xs);
     min-width: 0;
@@ -1443,28 +1446,28 @@ svg,
 
   /* Sin reseñas, las 5 estrellas vacías + "Sin reseñas aún" no entran en media
      pantalla y partían el renglón en dos: queda solo el texto. */
-  :is(.products-grid .product-card, .similar-product-card) .product-rating:has(> .reviews-count.text-muted) .stars {
+  :is(.products-grid .product-card, .similar-product-card, .hs-track .product-card) .product-rating:has(> .reviews-count.text-muted) .stars {
     display: none;
   }
 
-  :is(.products-grid .product-card, .similar-product-card) .product-location,
+  :is(.products-grid .product-card, .similar-product-card, .hs-track .product-card) .product-location,
   .services-section .services-grid .service-location {
     font-size: var(--font-size-xs);
     min-width: 0;
   }
 
-  :is(.products-grid .product-card, .similar-product-card) .product-location span,
+  :is(.products-grid .product-card, .similar-product-card, .hs-track .product-card) .product-location span,
   .services-section .services-grid .service-location span {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  :is(.products-grid .product-card, .similar-product-card) .product-pricing {
+  :is(.products-grid .product-card, .similar-product-card, .hs-track .product-card) .product-pricing {
     margin-bottom: 0;
   }
 
-  :is(.products-grid .product-card, .similar-product-card) .product-current-price {
+  :is(.products-grid .product-card, .similar-product-card, .hs-track .product-card) .product-current-price {
     font-size: var(--font-size-base);
   }
 
@@ -1476,13 +1479,13 @@ svg,
 
   /* Corazón (44px: mínimo táctil) en la esquina de arriba a la derecha de la foto.
      El botón de compartir por WhatsApp se sacó de todo el sitio. */
-  :is(.products-grid .product-card, .similar-product-card) .product-actions {
+  :is(.products-grid .product-card, .similar-product-card, .hs-track .product-card) .product-actions {
     top: var(--spacing-2);
     right: var(--spacing-2);
   }
 
   /* Las fotos se pasan tocando los puntitos; las flechas no entran. */
-  :is(.products-grid .product-card, .similar-product-card) .product-image-carousel .carousel-control {
+  :is(.products-grid .product-card, .similar-product-card, .hs-track .product-card) .product-image-carousel .carousel-control {
     display: none;
   }
 
@@ -1490,13 +1493,13 @@ svg,
      fotos (se pueden cargar hasta 10) quedaban debajo de los carteles.
      Las demás fotos se ven en la ficha. Los !important son porque home.css y
      el <style> de los catálogos los centran con !important. */
-  :is(.products-grid .product-card, .similar-product-card) .carousel-indicators {
+  :is(.products-grid .product-card, .similar-product-card, .hs-track .product-card) .carousel-indicators {
     left: var(--spacing-3) !important;
     transform: none !important;
     justify-content: flex-start !important;
   }
 
-  :is(.products-grid .product-card, .similar-product-card) .carousel-indicators .indicator:nth-child(n + 6) {
+  :is(.products-grid .product-card, .similar-product-card, .hs-track .product-card) .carousel-indicators .indicator:nth-child(n + 6) {
     display: none;
   }
 }

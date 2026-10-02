@@ -451,7 +451,10 @@ textarea.form-control {
 .hs-btn[disabled] { opacity: 0; pointer-events: none; }
 @media (max-width: 1199px) { .hs-track { --hs-per: 3; } }
 @media (max-width: 991px)  { .hs-track { --hs-per: 2; --hs-gap: 16px; } .hs-prev { left: -8px; } .hs-next { right: -8px; } }
-@media (max-width: 575px)  { .hs-track { --hs-per: 1.15; --hs-gap: 12px; } .hs-btn { display: none; } }
+/* Celular: 2 cards enteras y el borde de la tercera (para que se note que
+   sigue). Con 1.15 se veía un solo producto por pantalla, y el equipo pidió
+   "2 o 3, tipo Mercado Libre". La card compacta está en responsive.css. */
+@media (max-width: 575px)  { .hs-track { --hs-per: 2.15; --hs-gap: 12px; } .hs-btn { display: none; } }
 
 /* Cards de "Vistos recientemente": son <a>, sin subrayado */
 a.rv-card, a.rv-card:hover { text-decoration: none; color: inherit; }
