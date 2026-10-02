@@ -302,6 +302,8 @@
       .plan-btn-outline { background: none; border: 2px solid var(--gray-200); color: var(--gray-400); cursor: default; }
       .plan-btn-primary { background: #e8f4fd; color: #009ee3; }
       .plan-btn-primary:hover { background: #009ee3; color: white; }
+      .plan-btn-soon { background: var(--gray-100); color: var(--gray-500); cursor: not-allowed; }
+      [data-theme="dark"] .plan-btn-soon { background: rgba(255,255,255,.08); color: var(--gray-500); }
       .plan-btn-red { background: var(--gradient-primary); color: white; position: relative; overflow: hidden; }
       .plan-btn-red:hover { transform: translateY(-2px); box-shadow: var(--shadow-xl); }
       .plan-btn-red::before { content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s; pointer-events: none; z-index: 1; }
@@ -498,6 +500,12 @@
             <button class="theme-toggle" id="themeToggle" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">
               <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
             </button>
+          </div>
+          <!-- Mi Centro -->
+          <div class="action-item d-none d-md-flex">
+            <a href="./mi-cuenta.html" class="action-btn" id="miCentroBtn" title="Mi Centro" aria-label="Ir a Mi Centro">
+              <i class="bi bi-grid-fill" aria-hidden="true"></i>
+            </a>
           </div>
 
           <!-- Notifications -->
@@ -1047,7 +1055,7 @@
           <div class="text-center mb-5">
             <span class="promo-badge"><i class="bi bi-bag me-2"></i>Planes para productos</span>
             <h2 class="promo-title">Publicá tu producto y llegá a más compradores</h2>
-            <p class="promo-subtitle">Publicar es gratis y solo pagás una comisión del 3% + impuestos cuando vendés. Los planes Premium suman visibilidad y duran 1 mes.</p>
+            <p class="promo-subtitle">Publicar es gratis y solo pagás una comisión del 3% + impuestos cuando vendés. Muy pronto vas a poder sumar visibilidad con los planes Premium (duran 1 mes).</p>
           </div>
           <div class="row g-4 justify-content-center mb-5">
 
@@ -1086,7 +1094,7 @@
                   <li><i class="bi bi-check-circle-fill text-success"></i> Más exposición de tu perfil</li>
                   <li><i class="bi bi-check-circle-fill text-success"></i> Acceso a promociones y espacios promocionales</li>
                 </ul>
-                <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Premium', 4990)">Contratar</button>
+                <button class="plan-btn plan-btn-soon" type="button" disabled title="Los planes de visibilidad llegan muy pronto">Próximamente</button>
               </div>
             </div>
 
@@ -1106,13 +1114,13 @@
                   <li><i class="bi bi-check-circle-fill text-success"></i> Exposición superior de tu perfil</li>
                   <li><i class="bi bi-check-circle-fill text-success"></i> Más presencia en los espacios promocionales</li>
                 </ul>
-                <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Premium Plus', 9990)">Contratar</button>
+                <button class="plan-btn plan-btn-soon" type="button" disabled title="Los planes de visibilidad llegan muy pronto">Próximamente</button>
               </div>
             </div>
 
             <div class="col-md-6 col-lg-3">
               <div class="plan-card plan-card-featured">
-                <div class="plan-badge-rec">Máxima exposición</div>
+                <div class="plan-badge-rec">Próximamente</div>
                 <div class="plan-header">
                   <div class="plan-icon plan-icon-red"><i class="bi bi-star-fill"></i></div>
                   <h3 class="plan-name">Premium Pro</h3>
@@ -1127,7 +1135,7 @@
                   <li><i class="bi bi-check-circle-fill text-success"></i> Espacios publicitarios internos</li>
                   <li><i class="bi bi-check-circle-fill text-success"></i> Herramientas comerciales adicionales</li>
                 </ul>
-                <button class="plan-btn plan-btn-red" onclick="seleccionarPlan('Premium Pro', 19990)">Contratar</button>
+                <button class="plan-btn plan-btn-soon" type="button" disabled title="Los planes de visibilidad llegan muy pronto">Próximamente</button>
               </div>
             </div>
 
@@ -1139,7 +1147,7 @@
           <div class="text-center mb-5">
             <span class="promo-badge"><i class="bi bi-megaphone-fill me-2"></i>Planes para servicios</span>
             <h2 class="promo-title">Publicá tu servicio y llegá a más clientes</h2>
-            <p class="promo-subtitle">Todos los planes incluyen la publicación. Sumá visibilidad con los planes Premium.</p>
+            <p class="promo-subtitle">Publicá con el plan Servicio. Los planes Premium, para sumar visibilidad, llegan muy pronto.</p>
             <p class="promo-subtitle small mb-0"><i class="bi bi-calendar-check me-1"></i>Los planes se pagan por mes: si al <strong>día 10</strong> no está renovado, la publicación del servicio se da de baja hasta que lo renueves.</p>
           </div>
           <div class="row g-4 justify-content-center mb-4">
@@ -1180,13 +1188,13 @@
                   <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas de visitas</li>
                   <li><i class="bi bi-check-circle-fill text-success"></i> Insignia de Prestador Premium</li>
                 </ul>
-                <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Servicio Premium', 6990)">Contratar</button>
+                <button class="plan-btn plan-btn-soon" type="button" disabled title="Los planes de visibilidad llegan muy pronto">Próximamente</button>
               </div>
             </div>
 
             <div class="col-md-6 col-lg-3">
               <div class="plan-card plan-card-featured">
-                <div class="plan-badge-rec">Máxima exposición</div>
+                <div class="plan-badge-rec">Próximamente</div>
                 <div class="plan-header">
                   <div class="plan-icon plan-icon-red"><i class="bi bi-star-fill"></i></div>
                   <h3 class="plan-name">Servicio Premium Plus</h3>
@@ -1201,12 +1209,13 @@
                   <li><i class="bi bi-check-circle-fill text-success"></i> Espacios promocionales y promociones especiales</li>
                   <li><i class="bi bi-check-circle-fill text-success"></i> Insignia de Prestador Premium Plus</li>
                 </ul>
-                <button class="plan-btn plan-btn-red" onclick="seleccionarPlan('Servicio Premium Plus', 11990)">Contratar</button>
+                <button class="plan-btn plan-btn-soon" type="button" disabled title="Los planes de visibilidad llegan muy pronto">Próximamente</button>
               </div>
             </div>
 
           </div>
           <ul class="plan-legal">
+            <li><i class="bi bi-megaphone"></i> ¿Querés publicitar tu negocio con un banner o una publicación destacada? Escribinos a <a href="mailto:contacto@daledeal.com?subject=PUBLICIDAD">contacto@daledeal.com</a> con el asunto PUBLICIDAD y armamos una propuesta a tu medida.</li>
             <li><i class="bi bi-star-half"></i> Las calificaciones con estrellas no dependen del plan: pagar un plan no permite comprar ni modificar tu reputación.</li>
             <li><i class="bi bi-patch-check"></i> Contratar un plan no reemplaza la verificación. Según el servicio, podemos pedirte identidad, título, matrícula u otra documentación.</li>
             <li><i class="bi bi-info-circle"></i> Los planes aumentan tu visibilidad, pero no garantizan una cantidad de visitas, consultas, contrataciones ni ingresos.</li>

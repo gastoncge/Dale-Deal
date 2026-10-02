@@ -175,7 +175,25 @@
 }
 
 .product-header {
-  margin-bottom: var(--spacing-8);
+  margin-bottom: var(--spacing-3);
+}
+
+/* El título de la ficha hereda de .product-title de las cards (components.css)
+ * un min-height de 2 líneas y el recorte a 2 líneas: acá no van, dejaban
+ * un hueco grande debajo de títulos de una línea. */
+.product-header .product-title {
+  min-height: 0;
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+  margin-bottom: var(--spacing-2);
+}
+
+.product-header .product-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-2) var(--spacing-4);
 }
 
 .product-title {
@@ -227,8 +245,8 @@
 
 /* ===== SECCIÓN DE PRECIO ===== */
 .price-section {
-  padding: var(--spacing-4) 0;
-  margin-bottom: var(--spacing-6);
+  padding: 0 0 var(--spacing-2);
+  margin-bottom: var(--spacing-4);
 }
 
 .current-price {
@@ -243,8 +261,8 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
-  margin-bottom: var(--spacing-3);
 }
+.price-details:has(> :not([style*="none"])) { margin-bottom: var(--spacing-3); }
 
 .original-price {
   font-size: var(--font-size-xl);

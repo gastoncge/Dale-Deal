@@ -60,6 +60,15 @@
       }
       .success-banner.show { display: block; }
       .success-banner i { font-size: 40px; color: #16a34a; display: block; margin-bottom: var(--spacing-2); }
+          .contact-subjects { margin-top: 1.25rem; }
+      /* Va sobre el panel naranja de contacto: todo en blanco */
+      .contact-subjects-hint { font-size: .85rem; color: rgba(255,255,255,.9); margin: .25rem 0 .75rem; }
+      .contact-subject { display: flex; align-items: center; gap: .75rem; padding: .7rem .8rem; border: 1px solid rgba(255,255,255,.35); border-radius: 12px; margin-bottom: .5rem; color: #fff; text-decoration: none; background: rgba(255,255,255,.08); transition: background .15s ease; }
+      .contact-subject:hover { background: rgba(255,255,255,.18); color: #fff; }
+      .contact-subject > i { color: #fff; font-size: 1.2rem; flex: none; }
+      .contact-subject strong { display: block; font-size: .92rem; }
+      .contact-subject small { display: block; color: rgba(255,255,255,.85); font-size: .8rem; line-height: 1.35; }
+      .contact-subject-tag { margin-left: auto; flex: none; font-size: .72rem; font-weight: 800; letter-spacing: .03em; padding: .25rem .55rem; border-radius: 6px; background: #161616; color: var(--primary-yellow, #ffc629); white-space: nowrap; }
     </style>
   </head>
   <body>
@@ -197,9 +206,39 @@
 
             <div class="contact-hours">
               <div class="contact-hours-title"><i class="bi bi-clock me-2"></i>Horario de atención</div>
-              <div class="contact-hours-row"><span>Lunes a Viernes</span><span>9:00 – 18:00 hs</span></div>
-              <div class="contact-hours-row"><span>Sábados</span><span>10:00 – 14:00 hs</span></div>
-              <div class="contact-hours-row"><span>Domingos</span><span>Cerrado</span></div>
+              <div class="contact-hours-row"><span>Lunes a Viernes</span><span>18:00 – 22:00 hs</span></div>
+              <div class="contact-hours-row"><span>Sábados y domingos</span><span>Cerrado</span></div>
+            </div>
+
+            <!-- Asuntos de mail (historia destacada "Ayuda" de Instagram) -->
+            <div class="contact-subjects">
+              <div class="contact-hours-title"><i class="bi bi-envelope me-2"></i>Escribinos con el asunto que corresponda</div>
+              <p class="contact-subjects-hint">Así tu consulta llega más rápido. Incluí tu número de pedido si tenés uno.</p>
+                <a class="contact-subject" href="mailto:contacto@daledeal.com?subject=PEDIDO">
+                  <i class="bi bi-box-seam" aria-hidden="true"></i>
+                  <span><strong>Tu pedido</strong><small>No te llegó, llegó dañado o distinto a lo publicado.</small></span>
+                  <span class="contact-subject-tag">PEDIDO</span>
+                </a>
+                <a class="contact-subject" href="mailto:contacto@daledeal.com?subject=PAGO%20/%20COBRO">
+                  <i class="bi bi-credit-card" aria-hidden="true"></i>
+                  <span><strong>Pagos y cobros</strong><small>Un cobro que no reconocés o un pago que no te llegó.</small></span>
+                  <span class="contact-subject-tag">PAGO / COBRO</span>
+                </a>
+                <a class="contact-subject" href="mailto:contacto@daledeal.com?subject=MI%20CUENTA">
+                  <i class="bi bi-person" aria-hidden="true"></i>
+                  <span><strong>Tu cuenta</strong><small>No podés ingresar, cambiar datos o recuperar tu acceso.</small></span>
+                  <span class="contact-subject-tag">MI CUENTA</span>
+                </a>
+                <a class="contact-subject" href="mailto:contacto@daledeal.com?subject=REPORTE%20DE%20BUGS">
+                  <i class="bi bi-bug" aria-hidden="true"></i>
+                  <span><strong>Error en la web</strong><small>Contanos qué pasó, en qué sección, los pasos que seguiste y una captura si podés.</small></span>
+                  <span class="contact-subject-tag">REPORTE DE BUGS</span>
+                </a>
+                <a class="contact-subject" href="mailto:contacto@daledeal.com?subject=PUBLICIDAD">
+                  <i class="bi bi-megaphone" aria-hidden="true"></i>
+                  <span><strong>Publicitar en Dale Deal</strong><small>Armamos una propuesta a tu medida: dónde aparecer, por cuánto tiempo, en qué formato y a quién llegar.</small></span>
+                  <span class="contact-subject-tag">PUBLICIDAD</span>
+                </a>
             </div>
           </div>
 
@@ -318,5 +357,7 @@
         });
       });
     </script>
+      <!-- Botón flotante de ayuda (?) — mismo widget que el resto del sitio -->
+    <script src="../JS/support-widget.js" defer></script>
   </body>
 </html>

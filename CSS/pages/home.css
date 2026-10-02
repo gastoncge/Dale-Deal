@@ -1368,9 +1368,9 @@
 
 .how-it-works-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   gap: var(--spacing-6);
-  max-width: 1000px;
+  max-width: 1160px;
   margin: 0 auto;
 }
 
@@ -1473,27 +1473,17 @@
   color: var(--primary-red);
 }
 
-.how-step-number::after {
-  content: "";
-  position: absolute;
-  inset: -5px;
-  border-radius: 50%;
-  border: 2px solid var(--primary-yellow);
-  opacity: 0;
-  pointer-events: none;
-}
-
-.how-it-works-card:hover .how-step-number::after {
+/* Aro que pulsa al pasar el mouse: box-shadow en el mismo círculo, así
+ * queda siempre centrado (el ::after escalado se veía corrido/ovalado). */
+.how-it-works-card:hover .how-step-number {
   animation: stepRingPulse 1.3s ease-out infinite;
 }
 
 @keyframes stepRingPulse {
   0% {
-    transform: scale(0.85);
-    opacity: 0.7;
+    box-shadow: var(--shadow-md), 0 0 0 0 rgba(255, 198, 41, 0.75);
   }
   100% {
-    transform: scale(1.6);
-    opacity: 0;
+    box-shadow: var(--shadow-md), 0 0 0 14px rgba(255, 198, 41, 0);
   }
 }

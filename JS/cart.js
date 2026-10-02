@@ -211,9 +211,11 @@ class CartManager {
       .map(
         (item) => `
       <div class="cart-item" data-id="${esc(item.id)}">
-        <img src="${esc(item.image)}" alt="${esc(item.title)}" class="cart-item-image">
+        <a href="/producto?id=${encodeURIComponent(item.id)}" class="cart-item-link" tabindex="-1" aria-hidden="true">
+          <img src="${esc(item.image)}" alt="${esc(item.title)}" class="cart-item-image">
+        </a>
         <div class="cart-item-info">
-          <h6 class="cart-item-title">${esc(item.title)}</h6>
+          <h6 class="cart-item-title"><a href="/producto?id=${encodeURIComponent(item.id)}" class="cart-item-link">${esc(item.title)}</a></h6>
           <div class="cart-item-price">${esc(item.priceText || this.formatPrice(item.price))}</div>
           <div class="cart-item-controls">
             <div class="quantity-control">

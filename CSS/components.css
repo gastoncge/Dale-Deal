@@ -942,6 +942,10 @@ nav.navbar {
   flex: 1;
 }
 
+/* Imagen y título del ítem llevan a la ficha del producto */
+.cart-item-link { color: inherit; text-decoration: none; flex: none; }
+.cart-item-link:hover { color: var(--primary-red); }
+
 .cart-item-title {
   font-size: var(--font-size-sm);
   font-weight: 600;
