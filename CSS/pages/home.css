@@ -34,6 +34,44 @@
   }
 }
 
+/* Altura pareja entre slides. Cada slide medía distinto (según cuánto texto
+   lleva y cómo se parte en cada pantalla) y, al rotar, el carrusel crecía o se
+   achicaba y empujaba la página. Todos los slides se apilan en la misma celda
+   de una grilla: la celda mide lo que el slide más alto, en cualquier ancho.
+   Bootstrap los sigue moviendo con transform; los que no están en pantalla
+   quedan invisibles en vez de display:none. */
+#heroCarousel .carousel-inner {
+  display: grid;
+}
+
+#heroCarousel .carousel-item {
+  grid-area: 1 / 1;
+  display: block;
+  float: none;
+  margin-right: 0;
+  visibility: hidden;
+}
+
+#heroCarousel .carousel-item.active,
+#heroCarousel .carousel-item-next,
+#heroCarousel .carousel-item-prev {
+  visibility: visible;
+}
+
+#heroCarousel .hero-slide {
+  height: 100%;
+}
+
+/* Hasta 991px el texto y la foto van apilados. Sin el gutter de Bootstrap: el
+   reset global `* { max-width: 100% }` (responsive.css) no deja que .row se
+   pase del contenedor, y todo quedaba ~11px corrido a la izquierda en vez de
+   centrado. */
+@media (max-width: 991px) {
+  #heroCarousel .hero-slide > .container > .row {
+    --bs-gutter-x: 0;
+  }
+}
+
 .hero-slide-main {
   background: var(--gradient-primary);
   color: #fff;
@@ -974,6 +1012,61 @@
   max-width: calc(33.333% - var(--spacing-4));
 }
 
+/* ===== VISTOS RECIENTEMENTE =====
+   Tarjetas chicas, varias por fila (las arma JS/recently-viewed.js, cada una
+   es un <a>). Sin estilo propio heredaban la grilla de productos, que espera
+   filas .products-row: en escritorio salía una tarjeta gigante por fila y el
+   título y el precio quedaban subrayados como link.
+   El !important es porque responsive.css fija las columnas de toda
+   .products-grid con !important (pensado para el catálogo). */
+#recentlyViewedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)) !important;
+  gap: var(--spacing-4);
+}
+
+@media (max-width: 575px) {
+  #recentlyViewedGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+#recentlyViewedGrid .rv-card {
+  min-height: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+#recentlyViewedGrid .rv-card .product-image-container {
+  height: auto;
+  min-height: 0;
+  aspect-ratio: 1 / 1;
+}
+
+#recentlyViewedGrid .rv-card .product-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#recentlyViewedGrid .rv-card .product-info {
+  padding: var(--spacing-3);
+}
+
+#recentlyViewedGrid .rv-card .product-title {
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-1);
+}
+
+#recentlyViewedGrid .rv-card .product-pricing {
+  margin-bottom: 0;
+}
+
+#recentlyViewedGrid .rv-card .product-current-price {
+  font-size: var(--font-size-base);
+}
+
 /* ===== SERVICE CARDS EN HOME ===== */
 .services-section .services-grid {
   display: grid;
@@ -1043,7 +1136,11 @@
   width: auto !important;
 }
 
-/* ===== RESPONSIVE PARA CARDS EN HOME ===== */
+/* ===== RESPONSIVE PARA CARDS EN HOME =====
+   OJO: hasta 991px la grilla de productos la arma responsive.css (bloque
+   "CATÁLOGO EN CELULAR": 2 tarjetas por fila, .products-row con
+   display:contents). Las reglas de .products-row de acá abajo quedan solo como
+   respaldo y los comentarios que hablan de "1 columna" son de antes de eso. */
 @media (max-width: 1200px) {
   .services-section .services-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1091,7 +1188,7 @@
     font-size: var(--font-size-lg);
   }
 
-  /* Servicios: pasar a 1 columna a 576px, no a 768px */
+  /* Servicios: siguen de a 2 por fila (también en celular) */
   .services-section .service-card {
     min-height: 380px;
   }
@@ -1114,9 +1211,11 @@
 }
 
 @media (max-width: 576px) {
+  /* 2 por fila también en celular (antes 1); la tarjeta compacta está en
+     responsive.css. */
   .services-section .services-grid {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-4);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-3);
   }
 }
 

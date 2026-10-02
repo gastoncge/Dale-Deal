@@ -3498,11 +3498,10 @@
           `;
 
           // Descripción corta (si existe)
-          const shortDescription = product.description
-            ? (product.description.length > 80
-                ? product.description.substring(0, 80) + '...'
-                : product.description)
-            : '';
+          const plainDescription = window.DaleDeal.utils.htmlToText(product.description);
+          const shortDescription = plainDescription.length > 80
+            ? plainDescription.substring(0, 80) + '...'
+            : plainDescription;
 
           card.innerHTML = `
             <div class="product-image-container">

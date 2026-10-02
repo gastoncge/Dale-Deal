@@ -3597,9 +3597,9 @@
           ).join('');
           const badgesHTML = badgeSpans ? `<div class="service-badges">${badgeSpans}</div>` : '';
 
-          const shortDesc = service.description
-            ? (service.description.length > 80 ? service.description.substring(0, 80) + '...' : service.description)
-            : '';
+          // Texto plano: la descripción viene del editor como HTML.
+          const plainDesc = window.DaleDeal.utils.htmlToText(service.description);
+          const shortDesc = plainDesc.length > 80 ? plainDesc.substring(0, 80) + '...' : plainDesc;
 
           // Reseñas: si no hay reviews, "Sin reseñas aún" (matchea estilo cards productos)
           const reviewCount = service.reviewCount || 0;

@@ -1257,6 +1257,13 @@
 }
 
 @media (max-width: 767px) {
+  /* Columnas apiladas: sin el gutter de Bootstrap. El reset global
+     `* { max-width: 100% }` no deja que .row se pase del contenedor y todo
+     quedaba corrido a la izquierda (igual que en la ficha de producto). */
+  .service-hero > .container > .row {
+    --bs-gutter-x: 0;
+  }
+
   .svc-info {
     margin-top: var(--spacing-6);
   }

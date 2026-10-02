@@ -170,7 +170,10 @@
 }
 
 /* ===== INFORMACIÓN DEL PRODUCTO ===== */
-.product-info {
+/* Siempre con .product-hero adelante: las tarjetas (similares, catálogo,
+   servicios) usan la misma clase .product-info y estas reglas, sueltas, les
+   corrían el texto y les abrían un hueco entre la foto y el título. */
+.product-hero .product-info {
   padding-left: var(--spacing-8);
 }
 
@@ -1323,7 +1326,7 @@
 
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 1200px) {
-  .product-info {
+  .product-hero .product-info {
     padding-left: var(--spacing-6);
   }
 }
@@ -1333,7 +1336,7 @@
     padding: var(--spacing-8) 0;
   }
 
-  .product-info {
+  .product-hero .product-info {
     padding-left: 0;
     /*
      * Con col-md-6, a 768–991px las columnas están LADO A LADO.
@@ -1365,9 +1368,23 @@
   }
 }
 
+/* Celular (columnas apiladas): sin el gutter de Bootstrap. El reset global
+   `* { max-width: 100% }` no deja que .row se pase del contenedor, y la foto,
+   los datos y los botones quedaban corridos a la izquierda, con ~35px de más
+   a la derecha. */
+@media (max-width: 767px) {
+  .product-hero > .container > .row {
+    --bs-gutter-x: 0;
+  }
+
+  .product-hero .product-info {
+    padding-right: 0;
+  }
+}
+
 @media (max-width: 768px) {
   /* col-md-6 se apilan: galería arriba, info abajo */
-  .product-info {
+  .product-hero .product-info {
     margin-top: var(--spacing-6);
     padding-left: 0;
   }
@@ -1694,8 +1711,8 @@
   transition: all var(--transition-base);
   border: 1px solid var(--gray-200);
   height: 100% !important;
+  /* Sin max-height: con el tope de 320px el precio quedaba cortado. */
   min-height: 320px;
-  max-height: 320px;
   display: flex;
   flex-direction: column;
   width: 100% !important;
@@ -2384,12 +2401,17 @@
 }
 
 /* ===== Carousel productos similares y recientes ===== */
+/* Solo la diapositiva activa: con display:flex en TODAS, las que Bootstrap
+   deja ocultas aparecían encimadas (margin-right: -100%). */
 #similarProductsCarousel .carousel-inner,
-#similarProductsCarousel .carousel-item {
+#similarProductsCarousel .carousel-item.active {
   display: flex;
   align-items: stretch;
 }
-#similarProductsCarousel .carousel-item .row { width: 100%; }
+#similarProductsCarousel .carousel-item.active { flex-wrap: wrap; }
+/* Márgenes en 0: con width:100% los márgenes negativos de .row corrían todas
+   las tarjetas hacia la izquierda y quedaban descentradas. */
+#similarProductsCarousel .carousel-item .row { width: 100%; margin-left: 0; margin-right: 0; }
 #similarProductsCarousel .carousel-item .col-lg-3 .product-card { height: 100%; }
 #similarProductsCarousel .carousel-control-prev,
 #similarProductsCarousel .carousel-control-next,
@@ -2397,4 +2419,27 @@
 #recentlyViewedCarousel .carousel-control-next {
   top: 160px;
   transform: translateY(-50%);
+}
+
+/* ===== FICHA EN CELULAR: SIMILARES Y "MÁS DEL VENDEDOR" DE A 2 POR FILA =====
+   El interior compacto de la tarjeta (foto cuadrada, título, precio) está en
+   responsive.css, bloque "CATÁLOGO EN CELULAR". */
+@media (max-width: 575px) {
+  #similarProductsCarousel .carousel-item {
+    min-height: 0;
+  }
+
+  #similarProductsCarousel .carousel-item .row {
+    --bs-gutter-x: var(--spacing-3);
+  }
+
+  .similar-product-card {
+    min-height: 0;
+    margin-bottom: 0;
+  }
+
+  .custom-carousel .carousel-inner {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-3);
+  }
 }

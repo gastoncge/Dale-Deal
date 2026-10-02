@@ -1120,26 +1120,31 @@ class ProductPage {
     const similarGrid = document.getElementById('similarProductsGrid');
     if (!similarGrid) return;
 
-    const pps = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 4;
-    const slides = [];
-    for (let i = 0; i < products.length; i += pps) {
-      const batch = products.slice(i, i + pps);
-      slides.push(`
-        <div class="carousel-item ${i === 0 ? 'active' : ''}">
+    const cards = products.map(p => this.renderProductCard(p)).filter(Boolean);
+    if (cards.length === 0) {
+      // Sin otros productos para mostrar, la sección entera no aporta nada.
+      similarGrid.closest('.similar-products-section')?.style.setProperty('display', 'none');
+      return;
+    }
+
+    // Todas las tarjetas en un solo bloque. Antes se partían en "diapositivas"
+    // (1 por diapositiva en celular, 2 en tablet), pero este carrusel no tiene
+    // flechas y el CSS las mostraba todas a la vez, encimadas. Las columnas de
+    // la tarjeta (col-6 / col-lg-3) arman 2 por fila en celular y 4 en escritorio.
+    similarGrid.innerHTML = `
+        <div class="carousel-item active">
           <div class="row justify-content-center">
-            ${batch.map(p => this.renderProductCard(p)).join('')}
+            ${cards.join('')}
           </div>
-          ${isRandom && i === 0 ? `
-            <div class="text-center mt-3">
+          ${isRandom ? `
+            <div class="w-100 text-center mt-3">
               <small class="text-muted">
                 <i class="bi bi-info-circle me-1"></i>
                 Productos recomendados
               </small>
             </div>` : ''}
-        </div>`);
-    }
-    similarGrid.innerHTML = slides.join('');
-    this._toggleCarouselControls('similarProductsCarousel', slides.length);
+        </div>`;
+    this._toggleCarouselControls('similarProductsCarousel', 1);
     setTimeout(() => window.favoritesManager?.updateFavoriteButtons(), 100);
   }
 
@@ -1372,12 +1377,18 @@ class ProductPage {
     if (!Number.isFinite(pidNum) || pidNum <= 0) return '';
     const pid = pidNum;
     const imgSrc = String(product.images?.main || '').replace(/['"<>]/g, '');
-    const desc = product.description
-      ? (product.description.length > 80 ? product.description.substring(0, 80) + '…' : product.description)
-      : 'Producto de alta calidad.';
+    // Texto plano (la descripción viene del editor como HTML) y sin frase de
+    // relleno cuando no hay descripción.
+    const plainDesc = window.DaleDeal.utils.htmlToText(product.description);
+    const desc = plainDesc.length > 80 ? plainDesc.substring(0, 80) + '…' : plainDesc;
     const descSafe = esc(desc);
+    // Igual que en el catálogo: sin reseñas dice "Sin reseñas aún", no "(0)".
+    const reviewCount = Number(product.reviewCount) || 0;
+    const reviewsHTML = reviewCount > 0
+      ? `<span class="reviews-count">(${reviewCount.toLocaleString('es-AR')})</span>`
+      : '<span class="reviews-count text-muted">Sin reseñas aún</span>';
     return `
-      <div class="col-12 col-md-6 col-lg-3 mb-4 d-flex">
+      <div class="col-6 col-lg-3 mb-4 d-flex">
         <div class="product-card ${isRecent ? 'recent-product-card' : 'similar-product-card'} w-100"
              data-id="${pid}" data-clickable="true">
           <div class="product-image-container">
@@ -1396,7 +1407,7 @@ class ProductPage {
             <div class="product-meta-group">
               <div class="product-rating">
                 <div class="stars">${this.renderProductStars(product.rating)}</div>
-                <span class="reviews-count">(${product.reviewCount.toLocaleString('es-AR')})</span>
+                ${reviewsHTML}
               </div>
             </div>
             <div class="product-pricing-wrapper">
