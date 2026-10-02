@@ -147,6 +147,7 @@ function transformProduct(p) {
     seller_id: p.seller_id,
     seller_name: decodeText(p.seller_name),
     seller_avatar: p.seller_avatar,
+    seller_badges: { verifiedIdentity: !!p.seller_verified_identity, verifiedProfessional: !!p.seller_verified_professional, badges: Array.isArray(p.seller_badges) ? p.seller_badges : [] },
     images: {
       main: mainImage,
       gallery: images.length > 0 ? images : [mainImage],
@@ -196,6 +197,7 @@ function transformService(s) {
     verifiedProfessional: !!s.provider_verified_professional,
     verifiedBackground:   !!s.provider_verified_background,
     verified:     !!(s.provider_verified_identity || s.provider_verified_professional || s.provider_verified_background),
+    badges:       Array.isArray(s.provider_badges) ? s.provider_badges : [],
   } : null;
 
   // Galería REAL del backend — si el servicio tiene 1 sola imagen, no caemos

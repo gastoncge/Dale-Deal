@@ -292,7 +292,7 @@
           <thead>
             <tr>
               <th>ID</th><th>Nombre</th><th>Email</th><th>Rol</th><th>Estado</th>
-              <th>Pubs</th><th>Compras</th><th>Alta</th><th>Acciones</th>
+              <th>Insignias</th><th>Pubs</th><th>Compras</th><th>Alta</th><th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -321,6 +321,7 @@
         <td>${esc(u.email)}</td>
         <td>${rolePill}</td>
         <td>${status}</td>
+        <td>${window.DaleDeal.utils.renderUserBadges({ verifiedIdentity: u.verified_identity, verifiedProfessional: u.verified_professional, badges: u.badges }) || '<small class="text-muted">—</small>'}</td>
         <td>${pubs}</td>
         <td>${u.purchase_count || 0}</td>
         <td>${formatDate(u.created_at)}</td>
@@ -330,6 +331,7 @@
               <i class="bi bi-${u.is_active ? 'pause' : 'play'}-fill"></i>
               ${u.is_active ? 'Suspender' : 'Reactivar'}
             </button>
+            <button class="btn btn-sm btn-outline-warning" data-action="badges" data-id="${u.id}" data-badges="${esc((u.badges || []).join(','))}"><i class="bi bi-award"></i> Insignias</button>
             ${u.role !== 'admin'
               ? `<button class="btn btn-sm btn-outline-primary" data-action="promote" data-id="${u.id}"><i class="bi bi-shield-check"></i> Hacer admin</button>`
               : `<button class="btn btn-sm btn-outline-secondary" data-action="demote" data-id="${u.id}"><i class="bi bi-shield-slash"></i> Quitar admin</button>`}
@@ -347,6 +349,10 @@
         let payload = null;
         let confirmMsg = '';
 
+        if (action === 'badges') {
+          openBadgesEditor(id, (btn.dataset.badges || '').split(',').filter(Boolean));
+          return;
+        }
         if (action === 'toggle-active') {
           const wasActive = btn.dataset.active === 'true';
           payload = { is_active: !wasActive };
@@ -927,7 +933,7 @@
         <table class="admin-table">
           <thead>
             <tr>
-              <th>ID</th><th>Prestador</th><th>Tipo</th><th>Datos de contacto</th>
+              <th>ID</th><th>Usuario</th><th>Tipo</th><th>Documentos</th>
               <th>Estado</th><th>Fecha</th><th>Acciones</th>
             </tr>
           </thead>
@@ -962,7 +968,7 @@
         <td>#${v.id}</td>
         <td>${provider}</td>
         <td><span class="admin-pill admin-pill-info"><i class="bi ${typeIcon}"></i> ${typeLabel}</span></td>
-        <td style="max-width:320px;"><small>${v.contact_note ? esc(v.contact_note) : '<span class="text-muted">—</span>'}</small></td>
+        <td style="max-width:340px;">${docsCell(v)}</td>
         <td><span class="admin-pill ${stClass}">${stLabel}</span></td>
         <td>${formatDate(v.created_at)}</td>
         <td>${actions}</td>
@@ -970,7 +976,21 @@
     `;
   }
 
+  function docsCell(v) {
+    const label = { dni_front: 'DNI frente', dni_back: 'DNI dorso', selfie: 'Foto de la cara', title: 'Título' };
+    const docs = v.documents || [];
+    if (!docs.length) return `<small>${v.contact_note ? esc(v.contact_note) : '<span class="text-muted">—</span>'}</small>`;
+    return `<div class="d-flex flex-wrap gap-1">${docs.map((d) => `
+      <button type="button" class="btn btn-sm btn-outline-secondary" data-action="verif-doc" data-doc="${d.id}">
+        <i class="bi ${d.mime === 'application/pdf' ? 'bi-file-earmark-pdf' : 'bi-image'}"></i> ${label[d.kind] || d.kind}
+      </button>`).join('')}</div>
+      <small class="text-muted d-block mt-1">Compará nombre y DNI entre los documentos antes de aprobar.</small>`;
+  }
+
   function bindVerifActions() {
+    document.querySelectorAll('#verif-content [data-action="verif-doc"]').forEach(btn => {
+      btn.addEventListener('click', () => openVerifDocument(btn.dataset.doc));
+    });
     document.querySelectorAll('#verif-content [data-action="verif-review"]').forEach(btn => {
       btn.addEventListener('click', async () => {
         const id = btn.dataset.id;
@@ -991,6 +1011,69 @@
         }
       });
     });
+  }
+
+  // Editor de insignias de un usuario (las que asigna el admin; "Verificado"
+  // y "Título" salen de aprobar la verificación con documentos).
+  function openBadgesEditor(userId, current) {
+    document.getElementById('badgesModal')?.remove();
+    const C = window.DaleDeal.utils.USER_BADGES;
+    const keys = Object.keys(C).filter((k) => k !== 'verificado' && k !== 'titulo');
+    const wrap = document.createElement('div');
+    wrap.id = 'badgesModal';
+    wrap.className = 'modal fade';
+    wrap.tabIndex = -1;
+    wrap.innerHTML = `
+      <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title"><i class="bi bi-award me-2"></i>Insignias del usuario #${esc(userId)}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+        <div class="modal-body">
+          <p class="small text-muted">Verificado y Título se activan al aprobar su verificación.</p>
+          ${keys.map((k) => `
+            <label class="d-flex align-items-center gap-2 py-1">
+              <input type="checkbox" class="form-check-input m-0" value="${k}" ${current.includes(k) ? 'checked' : ''}>
+              <i class="bi ${C[k].icon}" style="color:${C[k].color}"></i>
+              <span><strong>${C[k].label}</strong> <small class="text-muted">— ${C[k].desc}</small></span>
+            </label>`).join('')}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="badgesSave">Guardar</button>
+        </div>
+      </div></div>`;
+    document.body.appendChild(wrap);
+    const modal = new bootstrap.Modal(wrap);
+    wrap.querySelector('#badgesSave').addEventListener('click', async (e) => {
+      const badges = [...wrap.querySelectorAll('input:checked')].map((i) => i.value);
+      e.target.disabled = true;
+      try {
+        await window.DaleDeal.api.apiFetch(`/admin/users/${userId}`, { method: 'PATCH', body: JSON.stringify({ badges }) });
+        modal.hide();
+        loadUsers();
+      } catch (err) {
+        alert('Error: ' + (err.message || 'no se pudieron guardar las insignias'));
+        e.target.disabled = false;
+      }
+    });
+    modal.show();
+  }
+
+  // Documentos de verificación: privados, se piden con el token del admin y
+  // se muestran como blob (nunca hay una URL pública).
+  async function openVerifDocument(docId, mime) {
+    const base = (window.DaleDeal?.CONFIG?.API_BASE_URL || '').replace(/\/$/, '');
+    const token = localStorage.getItem('daledeal_token');
+    const win = window.open('', '_blank');
+    try {
+      const r = await fetch(`${base}/admin/verification-documents/${docId}`, { headers: { Authorization: `Bearer ${token}` } });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const url = URL.createObjectURL(await r.blob());
+      if (win) win.location = url; else window.location = url;
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+    } catch (err) {
+      if (win) win.close();
+      alert('No se pudo abrir el documento: ' + err.message);
+    }
   }
 
   // ── RETENCIONES (escrow / Compra Protegida) ──────────────────────────────

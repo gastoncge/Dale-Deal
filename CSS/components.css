@@ -494,6 +494,54 @@ a.rv-card, a.rv-card:hover { text-decoration: none; color: inherit; }
 /* Menú de usuario sin sesión: solo Iniciar sesión y Registrarse */
 html.dd-guest [aria-labelledby="profileDropdown"] > li:not(.guest-item) { display: none !important; }
 
+/* Insignias de usuario (DaleDeal.utils.renderUserBadges) */
+.user-badges { position: relative; display: inline-flex; align-items: center; gap: 4px; cursor: default; outline: none; vertical-align: middle; }
+.user-badge-main {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 999px;
+  background: color-mix(in srgb, var(--ub) 14%, transparent); color: var(--ub);
+  font-size: .72rem; font-weight: 800; white-space: nowrap;
+}
+.user-badge-more { font-size: .72rem; font-weight: 800; color: var(--gray-600); background: var(--gray-100); padding: 2px 7px; border-radius: 999px; }
+.user-badges-pop {
+  position: absolute; top: calc(100% + 8px); left: 0; z-index: 30;
+  width: max-content; min-width: 230px; max-width: 280px; padding: 10px 12px; border-radius: 12px;
+  background: var(--white); border: 1px solid var(--gray-200); box-shadow: var(--shadow-lg);
+  opacity: 0; visibility: hidden; transform: translateY(-4px);
+  transition: opacity .15s ease, transform .15s ease, visibility .15s;
+}
+.user-badges:hover .user-badges-pop, .user-badges:focus-within .user-badges-pop, .user-badges:focus .user-badges-pop { opacity: 1; visibility: visible; transform: none; }
+/* La tarjeta del vendedor/prestador queda arriba del título para que no tape la lista */
+.provider-card:has(.user-badges) { position: relative; z-index: 6; }
+.user-badges-pop-title { display: block; font-size: .7rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 6px; }
+.user-badges-pop ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.user-badges-pop li { display: flex; gap: 8px; align-items: flex-start; }
+.user-badges-pop li i { font-size: 1rem; margin-top: 1px; }
+.user-badges-pop strong { display: block; font-size: .82rem; color: var(--gray-900); }
+.user-badges-pop small { display: block; font-size: .74rem; color: var(--gray-500); line-height: 1.3; }
+
+/* ===== DOCUMENTOS DE VERIFICACIÓN (registro y Mi Centro) (JS/verification-docs.js) ===== */
+.vdoc-section { border: 1px solid var(--gray-200); border-radius: 14px; padding: 14px 14px 10px; margin: 6px 0 18px; }
+.vdoc-title { float: none; width: auto; padding: 0 6px; margin: 0 0 4px -6px; font-size: 1rem; font-weight: 800; color: var(--gray-900); }
+.vdoc-title i { color: var(--primary-red); }
+.vdoc-lead { font-size: .85rem; color: var(--gray-600); margin-bottom: 10px; }
+.vdoc-fields { display: grid; gap: 8px; }
+.vdoc-field { display: flex; align-items: center; gap: 12px; padding: 10px; border: 1.5px dashed var(--gray-300); border-radius: 12px; cursor: pointer; transition: border-color .15s ease, background .15s ease; margin: 0; }
+.vdoc-field:hover { border-color: var(--primary-red); background: var(--primary-red-light); }
+.vdoc-field.is-done { border-style: solid; border-color: #10b981; }
+.vdoc-field.is-invalid { border-color: #ef4444; background: #fef2f2; }
+.vdoc-thumb { flex: none; width: 52px; height: 52px; border-radius: 10px; background: var(--gray-100); display: flex; align-items: center; justify-content: center; overflow: hidden; color: var(--primary-red); font-size: 1.4rem; }
+.vdoc-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.vdoc-text { display: flex; flex-direction: column; min-width: 0; }
+.vdoc-text strong { font-size: .9rem; color: var(--gray-900); }
+.vdoc-text small { font-size: .78rem; color: var(--gray-500); line-height: 1.3; }
+.vdoc-status { font-size: .75rem; color: var(--primary-red); font-weight: 600; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vdoc-field.is-done .vdoc-status { color: #059669; }
+.vdoc-consent { display: flex; gap: 8px; align-items: flex-start; font-size: .8rem; color: var(--gray-600); margin: 10px 0 4px; cursor: pointer; }
+.vdoc-consent input { flex: none; margin-top: 2px; }
+.vdoc-error { font-size: .82rem; color: #dc2626; font-weight: 600; min-height: 1em; }
+[data-theme="dark"] .vdoc-field.is-invalid { background: rgba(239, 68, 68, .12); }
+
 .heart-animate {
   animation: heartBeat 0.6s ease-in-out;
 }

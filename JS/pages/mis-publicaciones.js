@@ -151,6 +151,7 @@
             ? '<button type="button" class="btn btn-outline-success btn-sm" data-action="activate"><i class="bi bi-play-circle me-1" aria-hidden="true"></i>Reactivar</button>'
             : ''}
           <button type="button" class="btn btn-outline-danger btn-sm" data-action="delete"><i class="bi bi-trash me-1" aria-hidden="true"></i>Eliminar</button>
+          <button type="button" class="btn btn-outline-warning btn-sm" disabled title="Muy pronto vas a poder darle publicidad a tu publicación para aparecer más arriba"><i class="bi bi-megaphone me-1" aria-hidden="true"></i>Promocionar · Próximamente</button>
         </div>
       </article>`;
   }
@@ -213,6 +214,13 @@
     $('edit-price-label').textContent = isProduct ? 'Precio' : 'Precio desde';
     $('edit-stock-group').hidden = !isProduct;
     $('edit-stock').value = isProduct ? (parseInt(it.stock, 10) || 0) : '';
+    $('edit-description').value = decode(it.description || '');
+    const badges = Array.isArray(it.badges) ? it.badges : [];
+    [1, 2].forEach((n) => {
+      const b = badges[n - 1];
+      $(`edit-badge-${n}-text`).value = b ? decode(b.text) : '';
+      $(`edit-badge-${n}-color`).value = b?.color || (n === 1 ? '#ef4444' : '#10b981');
+    });
     showEditError(hint || '');
     editModal.show();
   }
@@ -235,6 +243,10 @@
     if (!Number.isFinite(price) || price <= 0) return showEditError('El precio tiene que ser mayor a 0.');
 
     const body = { title };
+    body.description = $('edit-description').value.trim();
+    body.badges = [1, 2]
+      .map((n) => ({ text: $(`edit-badge-${n}-text`).value.trim(), color: $(`edit-badge-${n}-color`).value }))
+      .filter((b) => b.text);
     if (isProduct) {
       const stock = parseInt($('edit-stock').value, 10);
       if (!Number.isInteger(stock) || stock < 0) return showEditError('El stock tiene que ser 0 o más.');

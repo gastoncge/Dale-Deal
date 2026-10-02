@@ -167,6 +167,19 @@
               <div class="invalid-feedback"></div>
             </div>
 
+            <!-- Verificación de identidad (historia "Creá tu cuenta" · paso 2 y 3).
+                 Los campos los arma JS/verification-docs.js. -->
+            <fieldset class="vdoc-section" id="signupVerification">
+              <legend class="vdoc-title"><i class="bi bi-shield-check"></i> Verificá tu identidad</legend>
+              <p class="vdoc-lead">Así sabemos que detrás de cada cuenta hay una persona real y todos compran y venden más tranquilos.</p>
+              <div class="vdoc-fields" id="signupDocFields"></div>
+              <label class="vdoc-consent">
+                <input type="checkbox" class="form-check-input" id="docsConsent" />
+                <span>Acepto que Dale Deal use estas fotos solo para verificar mi identidad. Las ve únicamente el equipo de verificación y no se publican.</span>
+              </label>
+              <div class="vdoc-error" id="signupDocsError" role="alert"></div>
+            </fieldset>
+
             <!-- Terms Checkbox -->
             <div class="auth-terms-check">
               <input
@@ -314,7 +327,16 @@
     <script defer src="../JS/utils.js"></script>
     <script defer src="../JS/sentry.js"></script>
     <script defer src="../JS/api.js"></script>
+    <script defer src="../JS/verification-docs.js"></script>
     <script defer src="../JS/auth.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const box = document.getElementById('signupDocFields');
+        if (box && window.DDVerificationDocs) {
+          box.innerHTML = DDVerificationDocs.fieldsHTML('su', ['dni_front', 'dni_back', 'selfie', 'title'], { required: ['dni_front', 'dni_back', 'selfie'] });
+        }
+      });
+    </script>
     <!-- signup.js NO existe — toda la lógica del formulario vive en auth.js
          (setupSignupForm). Antes este <script> tiraba 404 → Cloudflare devolvía
          el HTML del SPA fallback → el parser lo leía como JS y rompía con

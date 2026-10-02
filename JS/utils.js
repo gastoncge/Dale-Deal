@@ -570,6 +570,48 @@ DaleDeal.utils.parsePostBadges = function (raw) {
   return raw.filter((b) => b && b.text).slice(0, 2).map((b) => ({ text: decode(String(b.text)), color: b.color }));
 };
 
+/**
+ * Insignias de usuario. "verificado" y "titulo" salen de la verificación
+ * aprobada (DNI / título); el resto las asigna un admin (backend:
+ * USER_BADGES en adminController.js — mismas claves).
+ */
+DaleDeal.utils.USER_BADGES = {
+  verificado:         { label: 'Verificado',            icon: 'bi-patch-check-fill', color: '#1d9bf0', desc: 'Validó su identidad con DNI' },
+  titulo:             { label: 'Título verificado',     icon: 'bi-mortarboard-fill', color: '#7c3aed', desc: 'Comprobamos que su título coincide con su DNI' },
+  ceo:                { label: 'CEO',                   icon: 'bi-star-fill',        color: '#111827', desc: 'CEO de Dale Deal' },
+  fundador:           { label: 'Fundador',              icon: 'bi-gem',              color: '#d63031', desc: 'Fundador de Dale Deal' },
+  equipo:             { label: 'Equipo Dale Deal',      icon: 'bi-people-fill',      color: '#d63031', desc: 'Parte del equipo de Dale Deal' },
+  vendedor_fundador:  { label: 'Vendedor Fundador',     icon: 'bi-award-fill',       color: '#f59e0b', desc: 'De los primeros vendedores de Dale Deal' },
+  empresa_verificada: { label: 'Empresa verificada',    icon: 'bi-building-check',   color: '#0ea5e9', desc: 'Validamos los datos de la empresa' },
+  mejor_vendedor:     { label: 'Mejor vendedor',        icon: 'bi-trophy-fill',      color: '#f59e0b', desc: 'Destacado por sus ventas y reseñas' },
+  mejor_servicio_mes: { label: 'Mejor servicio del mes', icon: 'bi-stars',           color: '#10b981', desc: 'Elegido el mejor servicio del mes' },
+  top_ventas:         { label: 'Top ventas',            icon: 'bi-graph-up-arrow',   color: '#ef4444', desc: 'Entre los que más venden' },
+  respuesta_rapida:   { label: 'Responde rápido',       icon: 'bi-lightning-charge-fill', color: '#f97316', desc: 'Contesta las consultas enseguida' },
+  envios_rapidos:     { label: 'Envíos rápidos',        icon: 'bi-truck',            color: '#14b8a6', desc: 'Despacha antes de las 48 hs' },
+};
+
+/**
+ * Insignias de un usuario: muestra la principal (Verificado si lo está) y un
+ * "+N"; al pasar el mouse (o tocar/enfocar) se abre la lista completa.
+ * user = { verifiedIdentity, verifiedProfessional, badges: ['fundador', …] }
+ */
+DaleDeal.utils.renderUserBadges = function (user) {
+  if (!user) return '';
+  const C = DaleDeal.utils.USER_BADGES;
+  const keys = [];
+  if (user.verifiedIdentity) keys.push('verificado');
+  if (user.verifiedProfessional) keys.push('titulo');
+  (Array.isArray(user.badges) ? user.badges : []).forEach((k) => { if (C[k] && !keys.includes(k)) keys.push(k); });
+  if (!keys.length) return '';
+  const main = C[keys[0]];
+  const rest = keys.length - 1;
+  const items = keys.map((k) => `<li><i class="bi ${C[k].icon}" style="color:${C[k].color}" aria-hidden="true"></i><span><strong>${C[k].label}</strong><small>${C[k].desc}</small></span></li>`).join('');
+  return `<span class="user-badges" tabindex="0" aria-label="Insignias: ${keys.map((k) => C[k].label).join(', ')}">
+      <span class="user-badge-main" style="--ub:${main.color}"><i class="bi ${main.icon}" aria-hidden="true"></i>${main.label}</span>${rest ? `<span class="user-badge-more">+${rest}</span>` : ''}
+      <span class="user-badges-pop" role="tooltip"><span class="user-badges-pop-title">Insignias</span><ul>${items}</ul></span>
+    </span>`;
+};
+
 DaleDeal.utils.PLACEHOLDER_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%23f0f0f0'/%3E%3Crect x='150' y='90' width='100' height='80' rx='8' fill='%23d0d0d0'/%3E%3Ccircle cx='175' cy='115' r='12' fill='%23b0b0b0'/%3E%3Cpolygon points='150,170 190,130 220,155 250,120 300,170' fill='%23b0b0b0'/%3E%3Ctext x='200' y='210' text-anchor='middle' font-family='sans-serif' font-size='14' fill='%23999'%3EImagen no disponible%3C/text%3E%3C/svg%3E";
 
 /**

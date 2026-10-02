@@ -624,6 +624,25 @@ class AuthManager {
       return;
     }
 
+    // Documentos de verificación (DNI frente/dorso + cara obligatorios, título
+    // opcional). Se leen ANTES de crear la cuenta: si falta algo, no se crea.
+    const docsBox = form.querySelector('#signupVerification');
+    const docsErr = form.querySelector('#signupDocsError');
+    let docs = null;
+    if (docsBox && window.DDVerificationDocs) {
+      if (docsErr) docsErr.textContent = '';
+      try {
+        if (!form.querySelector('#docsConsent')?.checked) {
+          throw new Error('Tenés que aceptar el uso de las fotos para verificar tu identidad.');
+        }
+        docs = await window.DDVerificationDocs.collect(docsBox);
+      } catch (err) {
+        if (docsErr) docsErr.textContent = err.message;
+        docsBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+    }
+
     // Mostrar loading
     this.setButtonLoading(submitBtn, true);
 
@@ -631,9 +650,29 @@ class AuthManager {
       const result = await this.register(userData);
 
       if (result.success) {
+        // Con la cuenta creada (ya hay token), subimos los documentos.
+        let docsOk = true;
+        if (docs) {
+          try {
+            await window.DDVerificationDocs.upload(docs);
+          } catch (err) {
+            docsOk = false;
+            DaleDeal.warn('No se pudieron subir los documentos:', err.message);
+          }
+        }
+
         // Limpiar formulario
         form.reset();
         this.clearAllValidations(form);
+
+        if (!docsOk) {
+          this.showNotification('Tu cuenta se creó, pero no pudimos subir los documentos. Subilos desde Mi Centro → Verificá tu cuenta.', 'warning');
+          setTimeout(() => { window.location.href = '/mi-cuenta#verificacion'; }, 2500);
+          return;
+        }
+        if (docs) {
+          this.showNotification('¡Listo! Recibimos tus documentos: te avisamos cuando tu cuenta esté verificada.', 'success');
+        }
 
         // Redirigir después de un breve delay
         setTimeout(() => {

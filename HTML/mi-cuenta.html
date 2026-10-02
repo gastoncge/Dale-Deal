@@ -209,7 +209,7 @@
         </div>
 
         <!-- Card: Verificá tu cuenta -->
-        <div class="account-card">
+        <div class="account-card" id="verificacion">
           <div class="account-card-header">
             <div class="account-card-icon"><i class="bi bi-patch-check-fill"></i></div>
             <div>
@@ -283,6 +283,7 @@
     <script defer src="../JS/search.js"></script>
     <script defer src="../JS/auth.js"></script>
     <script defer src="../JS/cart.js"></script>
+    <script defer src="../JS/verification-docs.js"></script>
     <script defer src="../JS/notifications.js"></script>
     <script defer src="../JS/dropdown-fix.js"></script>
     <script src="../JS/component-loader.js" defer></script>
@@ -520,8 +521,8 @@
         const esc = (s) => (window.DaleDeal?.utils?.escapeHtml ? window.DaleDeal.utils.escapeHtml(String(s ?? '')) : String(s ?? ''));
 
         const TYPES = [
-          { key: 'identity',     label: 'Identidad verificada',   icon: 'bi-person-badge', ask: '¿Cómo te contactamos para una videollamada corta de verificación? (ej: WhatsApp + horario)' },
-          { key: 'professional', label: 'Profesional verificado', icon: 'bi-mortarboard',   ask: 'Indicá tu matrícula o título y el colegio/ente/universidad que lo emite (lo chequeamos en el registro público).' },
+          { key: 'identity',     label: 'Identidad verificada (DNI + foto)', icon: 'bi-person-badge' },
+          { key: 'professional', label: 'Título verificado',      icon: 'bi-mortarboard' },
           { key: 'background',   label: 'Antecedentes verificados', icon: 'bi-shield-check', ask: 'Sacá tu Certificado de Antecedentes Penales desde Mi Argentina (tarda minutos) y pasanos el código de verificación del certificado — lo validamos contra la fuente oficial, sin guardar el documento.' },
         ];
 
@@ -553,7 +554,41 @@
           body.querySelectorAll('[data-verif]').forEach((b) => b.addEventListener('click', () => openForm(b.dataset.verif)));
         }
 
+        // Identidad y título: con documentos (JS/verification-docs.js), igual que en el registro.
+        function openDocsForm(type) {
+          const area = document.getElementById('verifFormArea');
+          const kinds = type === 'identity' ? ['dni_front', 'dni_back', 'selfie'] : ['title'];
+          area.innerHTML = `
+            <div class="p-3 rounded" id="verifDocsBox" style="background:rgba(0,0,0,.03);border:1px solid var(--gray-200,#e5e7eb);">
+              <div class="vdoc-fields mb-2">${DDVerificationDocs.fieldsHTML('mc', kinds, { required: kinds })}</div>
+              <label class="vdoc-consent"><input type="checkbox" class="form-check-input" id="verifConsent"><span>Acepto que Dale Deal use estos documentos solo para verificar mi cuenta. No se publican.</span></label>
+              <div class="d-flex gap-2 mt-2">
+                <button class="btn btn-sm btn-primary" id="verifSend">Enviar</button>
+                <button class="btn btn-sm btn-outline-secondary" id="verifCancel">Cancelar</button>
+              </div>
+              <div class="small mt-2" id="verifFormMsg"></div>
+            </div>`;
+          document.getElementById('verifCancel').onclick = () => { area.innerHTML = ''; };
+          document.getElementById('verifSend').onclick = async () => {
+            const msg = document.getElementById('verifFormMsg');
+            const btn = document.getElementById('verifSend');
+            msg.className = 'small mt-2 text-danger';
+            if (!document.getElementById('verifConsent').checked) { msg.textContent = 'Tenés que aceptar el uso de los documentos.'; return; }
+            btn.disabled = true;
+            try {
+              const docs = await DDVerificationDocs.collect(document.getElementById('verifDocsBox'));
+              if (type === 'professional' && !docs.title) throw new Error('Subí la foto o el PDF de tu título.');
+              msg.className = 'small mt-2 text-muted'; msg.textContent = 'Enviando…';
+              await DDVerificationDocs.upload(docs);
+              await load();
+            } catch (err) {
+              msg.className = 'small mt-2 text-danger'; msg.textContent = err.message || 'No se pudo enviar.'; btn.disabled = false;
+            }
+          };
+        }
+
         function openForm(type) {
+          if ((type === 'identity' || type === 'professional') && window.DDVerificationDocs) return openDocsForm(type);
           const tp = TYPES.find((t) => t.key === type);
           const area = document.getElementById('verifFormArea');
           area.innerHTML = `

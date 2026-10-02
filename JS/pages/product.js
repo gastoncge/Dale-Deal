@@ -116,6 +116,8 @@ class ProductPage {
       seller_id:     productData.seller_id,
       seller_name:   productData.seller_name,
       seller_avatar: productData.seller_avatar,
+      seller_badges: productData.seller_badges,
+      postBadges:    productData.postBadges || [],
       seller_location: productData.location,
       // Campos de envío (vienen del backend tras la migración 003)
       shipping_required: !!productData.shipping_required,
@@ -454,6 +456,8 @@ class ProductPage {
       avatar.alt = p.seller_name || 'Vendedor';
     }
     if (name)     name.textContent = p.seller_name || 'Vendedor';
+    const badgesEl = document.getElementById('sellerCardBadges');
+    if (badgesEl) badgesEl.innerHTML = window.DaleDeal.utils.renderUserBadges(p.seller_badges);
     if (sold)     sold.textContent = `${p.stock > 0 ? 'En stock' : 'Sin stock'}`;
     if (location) location.textContent = p.seller_location || 'Argentina';
 

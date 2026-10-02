@@ -121,6 +121,7 @@ class ServicePage {
       verifiedIdentity:     !!real.verifiedIdentity,
       verifiedProfessional: !!real.verifiedProfessional,
       verifiedBackground:   !!real.verifiedBackground,
+      badges:        real.badges || [],
       phone:         real.phone,
       location:      real.location,
     };
@@ -176,11 +177,8 @@ class ServicePage {
     // si el equipo aprobó la verificación del prestador (no inventamos confianza).
     const badgesEl = document.getElementById('providerBadges');
     if (badgesEl) {
-      let bhtml = '';
-      if (p.verifiedIdentity)     bhtml += '<span class="verif-badge verif-identity" title="Identidad verificada por Dale Deal"><i class="bi bi-patch-check-fill"></i> Identidad</span>';
-      if (p.verifiedProfessional) bhtml += '<span class="verif-badge verif-pro" title="Matrícula o título verificado"><i class="bi bi-mortarboard-fill"></i> Profesional</span>';
-      if (p.verifiedBackground)   bhtml += '<span class="verif-badge verif-bg" title="Certificado de antecedentes penales validado contra la fuente oficial"><i class="bi bi-shield-check"></i> Antecedentes</span>';
-      badgesEl.innerHTML = bhtml;
+      // Verificado y título primero; al pasar el mouse se ven todas.
+      badgesEl.innerHTML = window.DaleDeal.utils.renderUserBadges(p);
     }
 
     const providerStatEl = document.getElementById('providerStats');
