@@ -3158,7 +3158,8 @@
             location: product.location || '',
             featured: product.badges?.includes('Premium') || product.badges?.includes('MÁS VENDIDO') || false,
             isOffer: product.discount > 0,
-            shipping: product.shipping || null
+            shipping: product.shipping || null,
+            postBadges: product.postBadges || []
           }));
         }
 

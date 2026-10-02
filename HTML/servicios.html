@@ -3102,6 +3102,7 @@
             reviewCount: service.reviewCount || 0,
             location: service.location || 'Argentina',
             badges: service.badges || [],
+            postBadges: service.postBadges || [],
             featured: true,
             priceType: service.priceType || 'fixed',
             provider_id: service.provider_id,
@@ -3617,6 +3618,7 @@
             <div class="product-image-container">
               <img src="${service.image}" alt="${titleSafe}" class="product-image active" loading="lazy" />
               ${badgesHTML}
+              ${window.DaleDeal.utils.renderPostBadges(service.postBadges)}
               <div class="product-actions">
                 <button class="action-heart" title="Agregar a favoritos" data-product-id="${service.id}">
                   <i class="bi bi-heart"></i>

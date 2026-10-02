@@ -285,7 +285,10 @@ class ProductPage {
     }
 
     // Guardar en "vistos recientemente" (localStorage, para el carrusel del home)
-    window.DDRecentlyViewed?.track({ id: p.id, type: 'product', title: p.title, price: p.basePrice, image: p.images?.main });
+    window.DDRecentlyViewed?.track({
+      id: p.id, type: 'product', title: p.title, price: p.basePrice, image: p.images?.main,
+      description: p.description, location: p.location, rating: p.rating, reviewCount: p.reviewCount, postBadges: p.postBadges,
+    });
 
     // Quantity max
     const qtyInput = document.getElementById('quantityInput');
@@ -1339,6 +1342,7 @@ class ProductPage {
             <img src="${imgSrc}" alt="${titleSafe}" class="product-image" loading="lazy" decoding="async" />
             ${product.discount ? `<div class="product-badges"><span class="badge-offer">-${Number(product.discount) || 0}%</span></div>` : ''}
             ${isRecent ? `<div class="recently-viewed-badge"><i class="bi bi-clock-history"></i></div>` : ''}
+            ${window.DaleDeal.utils.renderPostBadges(product.postBadges)}
             <div class="product-actions">
               <button class="action-heart" title="Agregar a favoritos" data-product-id="${pid}">
                 <i class="bi bi-heart"></i>

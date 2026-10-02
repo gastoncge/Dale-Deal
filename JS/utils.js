@@ -546,6 +546,30 @@ DaleDeal.utils.renderStars = (rating) => {
 
 // ===== FALLBACK DE IMAGEN ROTA =====
 // SVG placeholder mostrado cuando una imagen de producto/servicio no carga
+/**
+ * Carteles de la publicación (hasta 2, los carga el vendedor en Publicar):
+ * [{ text, color }] → HTML para poner adentro de .product-image-container.
+ * El color solo pasa si es hex, para que no se cuele CSS.
+ */
+DaleDeal.utils.renderPostBadges = function (list) {
+  if (!Array.isArray(list) || !list.length) return '';
+  const esc = (v) => DaleDeal.utils.escapeHtml(String(v ?? ''));
+  const spans = list.slice(0, 2)
+    .filter((b) => b && b.text)
+    .map((b) => {
+      const color = /^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(b.color || '') ? b.color : '#ef4444';
+      return `<span class="post-badge" style="background:${color}">${esc(b.text)}</span>`;
+    }).join('');
+  return spans ? `<div class="post-badges">${spans}</div>` : '';
+};
+
+/** Normaliza los carteles que vienen de la API (texto escapado por el backend). */
+DaleDeal.utils.parsePostBadges = function (raw) {
+  if (!Array.isArray(raw)) return [];
+  const decode = DaleDeal.utils.decodeEntities || ((t) => { const el = document.createElement('textarea'); el.innerHTML = t; return el.value; });
+  return raw.filter((b) => b && b.text).slice(0, 2).map((b) => ({ text: decode(String(b.text)), color: b.color }));
+};
+
 DaleDeal.utils.PLACEHOLDER_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%23f0f0f0'/%3E%3Crect x='150' y='90' width='100' height='80' rx='8' fill='%23d0d0d0'/%3E%3Ccircle cx='175' cy='115' r='12' fill='%23b0b0b0'/%3E%3Cpolygon points='150,170 190,130 220,155 250,120 300,170' fill='%23b0b0b0'/%3E%3Ctext x='200' y='210' text-anchor='middle' font-family='sans-serif' font-size='14' fill='%23999'%3EImagen no disponible%3C/text%3E%3C/svg%3E";
 
 /**

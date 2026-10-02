@@ -157,6 +157,7 @@ function transformProduct(p) {
     features: [],
     specifications: {},
     badges: (p.stock > 0 && p.stock < 5) ? ['Stock limitado'] : [],
+    postBadges: window.DaleDeal.utils.parsePostBadges(p.badges),
     // "Envío gratis" solo si el vendedor ofrece envío y no lo cobra (antes se
     // inventaba para todo lo que costara más de $50.000).
     shipping: { free: !!p.shipping_required && !!p.offers_delivery && p.shipping_cost != null && parseFloat(p.shipping_cost) === 0 },
@@ -217,6 +218,7 @@ function transformService(s) {
     image: images[0] || 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=400&h=300&fit=crop',
     gallery,                          // ← array real o null (no más mock)
     badges: [],
+    postBadges: window.DaleDeal.utils.parsePostBadges(s.badges),
     provider,                         // ← objeto real o null
     provider_id: s.provider_id,       // campos planos para retrocompat
     provider_name: decodeText(s.provider_name),

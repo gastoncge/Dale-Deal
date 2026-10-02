@@ -17,6 +17,9 @@
       ? `#loginLink { display: none !important; }`
       : `.profile-dropdown, #logoutBtn { display: none !important; }
          .profile-name { visibility: hidden; }`;
+    // Sin sesión, el menú de usuario solo muestra Iniciar sesión / Registrarse
+    // (components.css: html.dd-guest). updateUI() lo mantiene al día.
+    document.documentElement.classList.toggle('dd-guest', !hasToken);
     const style = document.createElement('style');
     style.id = 'daledeal-auth-flash-fix';
     style.textContent = css;
@@ -61,6 +64,20 @@ class AuthManager {
 
   getCurrentUser() {
     return this.currentUser;
+  }
+
+  /** Agrega "Registrarse" debajo de "Iniciar sesión" en el menú de usuario
+   *  (los navbars propios de algunas páginas no lo traen). */
+  ensureSignupLink(loginLink) {
+    const li = loginLink?.closest('li');
+    if (!li) return;
+    li.classList.add('guest-item');
+    if (li.parentElement.querySelector('#signupLink')) return;
+    const href = loginLink.getAttribute('href').replace(/login(\.html)?$/, (m, ext) => 'signup' + (ext || ''));
+    const item = document.createElement('li');
+    item.className = 'guest-item';
+    item.innerHTML = `<a class="dropdown-item fw-semibold" href="${href}" id="signupLink"><i class="bi bi-person-plus me-2"></i>Registrarse</a>`;
+    li.after(item);
   }
 
   isAuthenticated() {
@@ -298,6 +315,9 @@ class AuthManager {
     const loginLinkMobile   = document.getElementById("loginLinkMobile");
     const logoutBtnMobile   = document.getElementById("logoutBtnMobile");
     const profileDropdown   = document.querySelector(".profile-dropdown");
+
+    document.documentElement.classList.toggle('dd-guest', !this.isAuthenticated());
+    this.ensureSignupLink(loginLink);
 
     if (this.isAuthenticated()) {
       // Usuario autenticado

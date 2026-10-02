@@ -170,6 +170,7 @@ function renderProductCard(product) {
       <div class="product-image-container">
         ${imagesHTML}
         ${badgesHTML}
+        ${window.DaleDeal.utils.renderPostBadges(product.postBadges)}
         <div class="product-actions">
           <button class="action-heart" title="Agregar a favoritos" data-product-id="${esc(product.id)}">
             <i class="bi bi-heart"></i>
@@ -244,6 +245,7 @@ async function loadTrending() {
         reviewCount: p.review_count || 0,
         location: p.location,
         badges: [],
+        postBadges: window.DaleDeal.utils.parsePostBadges(p.badges),
       };
       return renderProductCard(product);
     }).join('');
@@ -375,6 +377,7 @@ function renderServiceCard(service) {
       <div class="service-image-container">
         <img src="${esc(service.image)}" alt="${esc(service.title)}" class="service-image" loading="lazy" />
         ${badgesHTML}
+        ${window.DaleDeal.utils.renderPostBadges(service.postBadges)}
       </div>
       <div class="service-info">
         <h3 class="service-title"><a href="${esc(href)}" class="text-reset text-decoration-none">${esc(service.title)}</a></h3>

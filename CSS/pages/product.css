@@ -1726,7 +1726,7 @@
 
 .similar-product-card .product-image-container {
   position: relative;
-  height: 200px;
+  height: 160px;
   overflow: hidden;
 }
 
@@ -2043,7 +2043,7 @@
 
 .recent-product-card .product-image-container {
   position: relative;
-  height: 200px;
+  height: 160px;
   overflow: hidden;
   flex-shrink: 0;
 }

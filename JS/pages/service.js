@@ -265,7 +265,10 @@ class ServicePage {
     }
 
     // Guardar en "vistos recientemente" (localStorage, para el carrusel del home)
-    window.DDRecentlyViewed?.track({ id: s.id, type: 'service', title: s.title, price: s.price, image: s.images?.main });
+    window.DDRecentlyViewed?.track({
+      id: s.id, type: 'service', title: s.title, price: s.price, image: s.images?.main || s.image,
+      description: s.description, location: s.location, rating: s.rating, reviewCount: s.reviewCount, postBadges: s.postBadges,
+    });
 
     // Description tab
     const descEl = document.querySelector('.service-description-text');
@@ -865,6 +868,7 @@ class ServicePage {
           <div class="product-image-container">
             <img src="${esc(service.image)}" alt="${esc(service.title)}" class="product-image active" loading="lazy" />
             ${badgesHTML}
+            ${window.DaleDeal.utils.renderPostBadges(service.postBadges)}
             <div class="product-actions">
               <button class="action-heart" title="Guardar">
                 <i class="bi bi-heart"></i>

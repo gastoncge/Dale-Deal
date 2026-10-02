@@ -263,6 +263,7 @@ async function submitProduct() {
     offers_pickup:     shippingRequired && offersPickup,
     shipping_cost:     shippingRequired && offersDelivery ? parseFloat(shippingCostRaw) || 0 : null,
     pickup_address:    shippingRequired && offersPickup ? pickupAddress : null,
+    badges: readBadges('p'),
   };
 
   setLoading(btn, true, 'Publicando...');
@@ -346,6 +347,7 @@ async function submitService() {
     zones_covered: zones,
     images: getServiceImages(),
     currency: 'ARS',
+    badges: readBadges('s'),
   };
 
   setLoading(btn, true, 'Publicando...');
@@ -581,6 +583,14 @@ window.handleMediaUpload = handleMediaUpload;
  * Actualiza el preview visual del cartel (badge) cuando el usuario
  * cambia el texto o el color en publicar.
  */
+/** Carteles cargados en el form (prefijo 'p' producto, 's' servicio). Los vacíos no van. */
+function readBadges(prefix) {
+  return [1, 2].map((n) => ({
+    text:  (document.getElementById(`${prefix}-badge-${n}-text`)?.value || '').trim(),
+    color: document.getElementById(`${prefix}-badge-${n}-color`)?.value || '#ef4444',
+  })).filter((b) => b.text);
+}
+
 function updateBadgePreview(badgeId) {
   const text  = document.getElementById(`${badgeId}-text`)?.value || 'VISTA';
   const color = document.getElementById(`${badgeId}-color`)?.value || '#ef4444';
