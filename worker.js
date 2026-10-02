@@ -56,6 +56,7 @@ export default {
     if (url.pathname === '/api/upload') return handleUpload(request, env, url);
     if (env.COMING_SOON === '1') {
       const gated = await comingSoonGate(request, env, url);
+      if (gated === TEAM_PAGE) return teamPage(request, env);
       if (gated) return gated;
     }
     return env.ASSETS.fetch(request);
@@ -196,8 +197,8 @@ async function comingSoonGate(request, env, url) {
     // Clave incorrecta: sigue como cualquier visitante.
   }
 
-  if (token && readCookie(request, PREVIEW_COOKIE) === token) return null; // equipo → sitio normal
   if (!isPageRequest(request, url)) return null;                          // assets → pasan
+  if (token && readCookie(request, PREVIEW_COOKIE) === token) return TEAM_PAGE; // equipo → sitio normal, con aviso
 
   return new Response(request.method === 'HEAD' ? null : comingSoonPage(), {
     status: 200,
@@ -210,6 +211,40 @@ async function comingSoonGate(request, env, url) {
       'referrer-policy': 'strict-origin-when-cross-origin',
     },
   });
+}
+
+// El equipo (cookie válida) ve el sitio normal, con un aviso chico abajo a la
+// izquierda: sin él, quien entró una vez con la clave ve el sitio durante 30
+// días y cree que Próximamente "se cayó". El aviso recuerda que el público
+// sigue viendo Próximamente y deja salir de la vista de equipo con un clic.
+const TEAM_PAGE = Symbol('team-page');
+// (el ancho deja libre la esquina derecha, donde está el botón de ayuda).
+const TEAM_NOTICE = `
+<div id="dd-team-notice" style="position:fixed;left:12px;bottom:12px;z-index:2147483000;max-width:min(520px,calc(100vw - 104px));display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;padding:8px 10px 8px 14px;border-radius:14px;background:#111827;color:#fff;font:600 12px/1.35 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;box-shadow:0 6px 20px rgba(0,0,0,.28)">
+  <span>Vista del equipo · el público ve «Próximamente»</span>
+  <a href="/?acceso=salir" style="color:#fbbf24;text-decoration:underline;white-space:nowrap">Ver como el público</a>
+  <button type="button" aria-label="Ocultar aviso" onclick="this.parentNode.remove()" style="all:unset;cursor:pointer;padding:0 6px;font-size:16px;line-height:1;color:#9ca3af">&times;</button>
+</div>`;
+
+async function teamPage(request, env) {
+  // Sin If-None-Match / If-Modified-Since: un 304 haría que el navegador use
+  // su copia guardada (sin el aviso).
+  const req = new Request(request);
+  req.headers.delete('if-none-match');
+  req.headers.delete('if-modified-since');
+  const res = await env.ASSETS.fetch(req);
+  if (!res.body || !(res.headers.get('content-type') || '').includes('text/html')) return res;
+
+  const out = new HTMLRewriter()
+    .on('body', { element(el) { el.append(TEAM_NOTICE, { html: true }); } })
+    .transform(res);
+  // no-store y sin validadores: el día del lanzamiento nadie se queda con una
+  // copia guardada que todavía muestre el aviso.
+  const headers = new Headers(out.headers);
+  headers.set('cache-control', 'no-store');
+  headers.delete('etag');
+  headers.delete('last-modified');
+  return new Response(out.body, { status: out.status, statusText: out.statusText, headers });
 }
 
 // Páginas = GET/HEAD a "/", *.html o URLs limpias sin extensión (/productos).
