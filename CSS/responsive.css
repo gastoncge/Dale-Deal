@@ -1489,5 +1489,19 @@ svg,
   :is(.products-grid .product-card, .similar-product-card) .product-image-carousel .carousel-control {
     display: none;
   }
+
+  /* Puntitos de las fotos abajo a la izquierda y hasta 5: centrados, con muchas
+     fotos (se pueden cargar hasta 10) quedaban debajo del botón de WhatsApp.
+     Las demás fotos se ven en la ficha. Los !important son porque home.css y
+     el <style> de los catálogos los centran con !important. */
+  :is(.products-grid .product-card, .similar-product-card) .carousel-indicators {
+    left: var(--spacing-3) !important;
+    transform: none !important;
+    justify-content: flex-start !important;
+  }
+
+  :is(.products-grid .product-card, .similar-product-card) .carousel-indicators .indicator:nth-child(n + 6) {
+    display: none;
+  }
 }
 
