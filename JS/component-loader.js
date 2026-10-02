@@ -241,6 +241,15 @@ async function loadAllComponents() {
       // AOS.init() hasta que el navbar (con sus [data-aos]) ya esté en el DOM.
       document.dispatchEvent(new CustomEvent('daledeal:header-loaded'));
     }, 100);
+  } else {
+    // Sin placeholder el navbar ya está en el DOM: lo inyectó build.js (sitio
+    // compilado / producción) o la página trae el suyo. El aviso se manda
+    // igual: 10 páginas esperan este evento para llamar a AOS.init() y, sin
+    // él, en el sitio compilado AOS no arrancaba nunca y todo lo que tiene
+    // data-aos (menú, textos del carrusel, títulos) quedaba invisible en
+    // pantallas de más de 768px. Con Live Server no se notaba porque ahí el
+    // placeholder existe.
+    document.dispatchEvent(new CustomEvent('daledeal:header-loaded'));
   }
 
   // Cargar footer
