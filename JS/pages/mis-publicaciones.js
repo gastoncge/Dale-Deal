@@ -206,6 +206,27 @@
   }
 
   // ── Editar ──────────────────────────────────────────────────────────────
+  // La descripción se guarda como HTML del editor de Publicar (un <p> por
+  // renglón). Acá se edita en un campo de texto simple: se muestra sin
+  // etiquetas y, solo si el vendedor la cambia, se vuelve a guardar con el
+  // mismo formato de párrafos. Si no la toca no se manda, así no pierde las
+  // negritas ni las listas que haya puesto al publicar.
+  let editDescOriginal = '';
+
+  function descToText(html) {
+    if (!/<[a-z/!]/i.test(html)) return html.trim();
+    // Documento inerte: no ejecuta scripts ni carga imágenes.
+    const doc = new DOMParser().parseFromString(
+      html.replace(/<br\s*\/?>/gi, '\n').replace(/<li[^>]*>/gi, '• ').replace(/<\/(p|div|li|h[1-6]|blockquote)>/gi, '$&\n'),
+      'text/html');
+    return (doc.body.textContent || '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+  }
+
+  function textToDesc(text) {
+    if (!text) return '';
+    return text.split('\n').map((line) => `<p>${line.trim() ? escape(line.trim()) : '<br>'}</p>`).join('');
+  }
+
   function openEdit(it, hint) {
     editing = it;
     const isProduct = it.kind === 'product';
@@ -214,7 +235,8 @@
     $('edit-price-label').textContent = isProduct ? 'Precio' : 'Precio desde';
     $('edit-stock-group').hidden = !isProduct;
     $('edit-stock').value = isProduct ? (parseInt(it.stock, 10) || 0) : '';
-    $('edit-description').value = decode(it.description || '');
+    editDescOriginal = descToText(decode(it.description || ''));
+    $('edit-description').value = editDescOriginal;
     const badges = Array.isArray(it.badges) ? it.badges : [];
     [1, 2].forEach((n) => {
       const b = badges[n - 1];
@@ -243,7 +265,9 @@
     if (!Number.isFinite(price) || price <= 0) return showEditError('El precio tiene que ser mayor a 0.');
 
     const body = { title };
-    body.description = $('edit-description').value.trim();
+    // La descripción solo viaja si el vendedor la cambió (ver descToText).
+    const descText = $('edit-description').value.trim();
+    if (descText !== editDescOriginal) body.description = textToDesc(descText);
     body.badges = [1, 2]
       .map((n) => ({ text: $(`edit-badge-${n}-text`).value.trim(), color: $(`edit-badge-${n}-color`).value }))
       .filter((b) => b.text);
