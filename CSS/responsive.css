@@ -1475,14 +1475,17 @@ svg,
     gap: var(--spacing-1);
   }
 
-  /* Sobre la foto queda solo el corazón (44px: mínimo táctil); compartir por
-     WhatsApp está en la ficha. */
+  /* Corazón arriba y compartir por WhatsApp abajo, en las esquinas derechas de
+     la foto (44px cada uno: mínimo táctil). Apilados como en escritorio
+     tapaban media foto. Compartir se queda: es el único lugar donde está. */
   :is(.products-grid .product-card, .similar-product-card) .product-actions {
     top: var(--spacing-2);
     right: var(--spacing-2);
+    bottom: var(--spacing-2);
+    justify-content: space-between;
   }
 
-  :is(.products-grid .product-card, .similar-product-card) .action-share,
+  /* Las fotos se pasan tocando los puntitos; las flechas no entran. */
   :is(.products-grid .product-card, .similar-product-card) .product-image-carousel .carousel-control {
     display: none;
   }
