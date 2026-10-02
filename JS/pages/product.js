@@ -310,7 +310,7 @@ class ProductPage {
   updateSEOMeta(p) {
     const SITE = 'https://daledeal.com.ar';
     const url  = `${SITE}/producto?id=${p.id}`;
-    const img  = p.images?.main || `${SITE}/IMG/LOGO-2.png`;
+    const img  = p.images?.main || `${SITE}/IMG/og-home.jpg`;
     const plainDesc = DaleDeal.utils.htmlToText(p.description);
     const previewDesc = plainDesc.length > 160 ? plainDesc.substring(0, 160) + '…' : plainDesc;
     const fullDesc = previewDesc

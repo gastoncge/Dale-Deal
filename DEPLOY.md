@@ -243,7 +243,7 @@ Con el dominio funcionando:
 # Frontend
 curl -I https://daledeal.com.ar/
 curl -I https://daledeal.com.ar/HTML/productos.html
-curl -I https://daledeal.com.ar/IMG/LOGO.png
+curl -I https://daledeal.com.ar/IMG/logo-color.png
 
 # Backend
 curl https://api.daledeal.com.ar/health

@@ -78,7 +78,7 @@ function fixHeaderPaths() {
   // Corregir logo image
   const logoImage = document.getElementById('logoImage');
   if (logoImage) {
-    logoImage.src = isRoot ? './IMG/LOGO-2.png' : '../IMG/LOGO-2.png';
+    logoImage.src = isRoot ? './IMG/logo-nav.png' : '../IMG/logo-nav.png';
   }
 
   if (isRoot) {
@@ -105,7 +105,7 @@ function fixFooterPaths() {
   // Always fix logo path explicitly
   const footerLogoImg = document.querySelector('#footer-placeholder .footer-logo-img');
   if (footerLogoImg) {
-    footerLogoImg.src = isRoot ? './IMG/LOGO-2.png' : '../IMG/LOGO-2.png';
+    footerLogoImg.src = isRoot ? './IMG/logo-blanco-sm.png' : '../IMG/logo-blanco-sm.png';
   }
 
   if (isRoot) {

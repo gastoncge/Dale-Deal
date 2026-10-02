@@ -385,7 +385,7 @@ class CartManager {
 
       // Imagen por defecto si no hay imagen
       if (!image || image === '') {
-        image = './IMG/LOGO.png'; // Usar logo como imagen por defecto
+        image = './IMG/isotipo.png'; // Usar isotipo como imagen por defecto
       }
 
       if (!title || !priceText) {

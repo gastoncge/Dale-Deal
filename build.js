@@ -265,7 +265,7 @@ function inlineNavbarInHtmls() {
     //   - Cuando se inyecta en index.html (raíz) → hay que prefijar ./HTML/
     //     a los hrefs locales, sino daledeal.com.ar/productos.html (no existe)
     //     en lugar de daledeal.com.ar/HTML/productos.html.
-    //   - Y src="./IMG/LOGO-2.png" funciona desde raíz pero NO desde /HTML/
+    //   - Y src="./IMG/logo-nav.png" funciona desde raíz pero NO desde /HTML/
     //     (tiene que ser ../IMG/).
     //
     // Bug previo: el rewrite estaba al revés (suponía que header asumía root).

@@ -19,7 +19,8 @@ export function comingSoonPage() {
 <meta name="description" content="Comprá, vendé y contratá en Argentina, con tu plata protegida hasta que recibís. Muy pronto.">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#d63031">
-<link rel="icon" href="/IMG/LOGO-2.png">
+<link rel="icon" href="/IMG/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/IMG/apple-touch-icon.png">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://daledeal.com.ar/">
 <meta property="og:title" content="Dale Deal · Próximamente">
@@ -50,7 +51,7 @@ export function comingSoonPage() {
   .deco .line { position: absolute; height: 7px; border-radius: 7px; background: rgba(255,255,255,.12); transform: rotate(-16deg); }
   .deco .box { position: absolute; border: 2px solid rgba(255,255,255,.14); border-radius: 12px; transform: rotate(-12deg); }
   .wrap { position: relative; flex: 1; width: 100%; max-width: 760px; margin: 0 auto; padding: 40px 20px 28px; display: flex; flex-direction: column; align-items: center; text-align: center; }
-  .logo { width: 76px; height: 76px; border-radius: 18px; box-shadow: 0 14px 34px rgba(80,10,10,.35); }
+  .logo { width: min(240px, 60vw); height: auto; filter: drop-shadow(0 10px 24px rgba(80,10,10,.35)); }
   .chip { margin-top: 26px; display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.25); font-size: .86rem; font-weight: 600; letter-spacing: .02em; }
   .chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amarillo); box-shadow: 0 0 0 0 rgba(255,198,41,.7); animation: pulse 2s infinite; }
   @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255,198,41,.7); } 70% { box-shadow: 0 0 0 10px rgba(255,198,41,0); } 100% { box-shadow: 0 0 0 0 rgba(255,198,41,0); } }
@@ -101,7 +102,7 @@ export function comingSoonPage() {
   </div>
 
   <main class="wrap">
-    <img class="logo" src="/IMG/LOGO-2.png" alt="Dale Deal" width="76" height="76">
+    <img class="logo" src="/IMG/logo-blanco.png" alt="Dale Deal" width="640" height="413">
     <p class="chip"><span class="dot" aria-hidden="true"></span>Muy pronto en Argentina</p>
     <h1>Próximamente</h1>
     <svg class="arrow" viewBox="0 0 360 44" aria-hidden="true">

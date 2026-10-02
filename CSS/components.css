@@ -543,7 +543,7 @@ nav.navbar {
 }
 
 .logo-navbar {
-  height: 32px; /* Reducido de 40px */
+  height: 50px; /* logo completo (Dale Deal + bolsa), sin texto aparte */
   width: auto;
   filter: drop-shadow(var(--shadow-sm));
   transform-origin: center;
@@ -2333,7 +2333,7 @@ nav.navbar {
 
 @media (max-width: 576px) {
   .logo-navbar {
-    height: 28px;
+    height: 40px;
   }
 
   .brand-text {
@@ -3430,9 +3430,8 @@ nav.navbar {
 }
 
 .footer-logo-img {
-  height: 36px;
+  height: 64px;
   width: auto;
-  border-radius: 6px;
 }
 
 .footer-brand-text {
@@ -4558,7 +4557,7 @@ nav.navbar {
 
   /* Navbar */
   .logo-navbar {
-    height: 24px;
+    height: 40px;
   }
 
   .brand-text {
@@ -5216,7 +5215,7 @@ nav.navbar {
  * prefers-reduced-motion lo neutraliza. */
 .navbar-brand:hover .logo-navbar,
 .navbar-brand:focus-visible .logo-navbar {
-  transform: scale(1.14) rotate(-4deg);
+  transform: scale(1.06) rotate(-2deg);
   filter: drop-shadow(0 0 10px rgba(214, 48, 49, 0.5));
 }
 
