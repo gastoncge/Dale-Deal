@@ -599,8 +599,10 @@ window.updateBadgePreview = updateBadgePreview;
 function seleccionarPlan(nombrePlan, precio) {
   window.__daledealPlanSeleccionado = { nombre: nombrePlan, precio: Number(precio) || 0 };
   // Mostrar mensaje claro
-  if (precio > 0) {
-    const ok = confirm(`Plan "${nombrePlan}" ($${precio.toLocaleString('es-AR')}/mes).\n\nLa monetización de planes destacados está en activación. Por ahora podés seguir publicando con el plan Estándar (gratis). ¿Querés volver a la publicación gratuita?`);
+  if (nombrePlan === 'Servicio') {
+    alert(`Plan Servicio: $${precio.toLocaleString('es-AR')} por mes.\n\nSe renueva todos los meses: si al día 10 no está renovado, la publicación del servicio se da de baja hasta que lo renueves.`);
+  } else if (precio > 0) {
+    const ok = confirm(`Plan "${nombrePlan}" ($${precio.toLocaleString('es-AR')}/mes).\n\nLa monetización de los planes Premium está en activación. Por ahora podés seguir publicando con el plan base. ¿Querés volver al formulario de publicación?`);
     if (ok) document.querySelector('#publishTabs .nav-link.active')?.click();
   } else {
     alert(`Elegiste el plan "${nombrePlan}" — gratis. Completá el formulario y dale a "Publicar".`);

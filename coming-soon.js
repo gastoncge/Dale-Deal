@@ -75,6 +75,22 @@ export function comingSoonPage() {
   .msg.err { color: #fff3c4; }
   .ok { margin-top: 12px; display: flex; align-items: center; gap: 10px; justify-content: center; font-weight: 600; }
   .ok i { color: var(--amarillo); font-size: 1.4rem; }
+  /* Programa Vendedor Fundador (historias destacadas de Instagram) */
+  .fund { margin-top: 22px; width: 100%; max-width: 520px; padding: 24px 22px; border-radius: 20px; background: #161616; color: #fff; text-align: left; box-shadow: 0 20px 50px rgba(40,6,6,.35); }
+  .fund .tag { display: inline-block; padding: 5px 12px; border-radius: 999px; background: var(--amarillo); color: #161616; font-size: .78rem; font-weight: 800; letter-spacing: .04em; }
+  .fund h2 { margin-top: 12px; font-family: 'Space Grotesk', 'Inter', sans-serif; font-size: 1.5rem; font-weight: 700; line-height: 1.15; }
+  .fund h2 span { color: var(--amarillo); }
+  .fund p { margin-top: 8px; font-size: .95rem; line-height: 1.55; opacity: .9; }
+  .fund ul { list-style: none; padding: 0; margin-top: 14px; display: grid; gap: 10px; }
+  .fund li { display: flex; gap: 10px; align-items: flex-start; font-size: .95rem; }
+  .fund li i { flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--rojo); display: inline-flex; align-items: center; justify-content: center; font-size: .8rem; margin-top: 1px; }
+  .fund li b { display: block; }
+  .fund li small { opacity: .75; font-size: .85rem; }
+  .fund .cta { margin-top: 18px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+  .fund .cta strong { font-size: .95rem; }
+  .fund .cta strong em { font-style: normal; color: var(--amarillo); }
+  .fund a.dm { display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 18px; border-radius: 12px; background: var(--rojo); color: #fff; font-weight: 800; text-decoration: none; letter-spacing: .02em; }
+  .fund a.dm:hover { filter: brightness(1.08); }
   .social { margin-top: 26px; display: inline-flex; align-items: center; gap: 8px; color: #fff; font-weight: 600; text-decoration: none; padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,.3); transition: background .15s ease; }
   .social:hover { background: rgba(255,255,255,.12); }
   footer { position: relative; padding: 18px 20px 24px; text-align: center; font-size: .84rem; opacity: .85; }
@@ -130,10 +146,25 @@ export function comingSoonPage() {
       <p class="ok" id="ok" hidden><i class="bi bi-check-circle-fill" aria-hidden="true"></i>¡Listo! Te avisamos apenas abramos.</p>
     </section>
 
+    <section class="fund" aria-labelledby="fundador">
+      <span class="tag">NUEVO PROGRAMA</span>
+      <h2 id="fundador">¿Querés ser <span>Vendedor Fundador</span>?</h2>
+      <p>Son los primeros vendedores y profesionales que se suman a Dale Deal antes del lanzamiento, vendan productos u ofrezcan un servicio. Arrancan con nosotros desde el día uno y crecen junto a la plataforma.</p>
+      <ul>
+        <li><i class="bi bi-check-lg" aria-hidden="true"></i><span><b>Insignia de Fundador</b><small>Visible en tu perfil, para siempre.</small></span></li>
+        <li><i class="bi bi-check-lg" aria-hidden="true"></i><span><b>Visibilidad destacada</b><small>Aparecés primero en el lanzamiento.</small></span></li>
+        <li><i class="bi bi-check-lg" aria-hidden="true"></i><span><b>Te mostramos en nuestras redes</b><small>Tu marca frente a toda la comunidad.</small></span></li>
+      </ul>
+      <div class="cta">
+        <strong>Solo <em>25 lugares</em>. Escribinos por DM:</strong>
+        <a class="dm" href="https://ig.me/m/daledeal.ar" target="_blank" rel="noopener"><i class="bi bi-instagram" aria-hidden="true"></i>FUNDADOR</a>
+      </div>
+    </section>
+
     <a class="social" href="https://www.instagram.com/daledeal.ar/" target="_blank" rel="noopener"><i class="bi bi-instagram" aria-hidden="true"></i>Seguinos en @daledeal.ar</a>
   </main>
 
-  <footer>© 2026 Dale Deal · <a href="mailto:hola@daledeal.com.ar">hola@daledeal.com.ar</a></footer>
+  <footer>© 2026 Dale Deal · <a href="mailto:contacto@daledeal.com">contacto@daledeal.com</a></footer>
 
   <script>
     (function () {

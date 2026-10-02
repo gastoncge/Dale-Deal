@@ -1306,7 +1306,6 @@ svg,
   button.btn,
   a.btn,
   .action-heart,
-  .action-share,
   .nav-mobile-link {
     min-height: 44px;
     display: inline-flex;

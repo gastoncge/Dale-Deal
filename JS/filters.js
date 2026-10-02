@@ -57,9 +57,11 @@ class ProductFilters {
     this.renderProducts();
   }
 
-  // Cargar productos desde el DOM
+  // Cargar productos desde el DOM. Solo los del catálogo (#productsGrid):
+  // con document.querySelectorAll también agarraba las cards de "Vistos
+  // recientemente" y "Lo más visto", y las clonaba adentro de destacados.
   loadProducts() {
-    const productCards = document.querySelectorAll('.product-card');
+    const productCards = document.querySelectorAll('#productsGrid .product-card');
     this.products = Array.from(productCards).map(card => {
       const id = card.dataset.id;
       const title = card.querySelector('.product-title')?.textContent || '';

@@ -528,20 +528,7 @@ class ProductPage {
     // pero acá voy por el fix mínimo.
     const esc = (s) => (window.DaleDeal?.utils?.escapeHtml ? DaleDeal.utils.escapeHtml(s) : String(s ?? ''));
     // Filtramos items sin id válido — antes generábamos `?id=0` que rompía.
-    grid.innerHTML = others
-      .filter(prod => Number.isFinite(Number(prod.id)) && Number(prod.id) > 0)
-      .map(prod => {
-        const pid = Number(prod.id);
-        const titleSafe = esc(prod.title);
-        const imgSrc    = String(prod.images?.main || prod.image || '').replace(/['"<>]/g, '');
-        return `
-          <div class="product-card-mini" onclick="location.href='/producto?id=${pid}'" style="cursor:pointer;">
-            <img src="${imgSrc}" alt="${titleSafe}" loading="lazy" style="width:100%;height:140px;object-fit:cover;border-radius:8px;">
-            <p style="margin:8px 0 4px;font-size:13px;font-weight:600;">${titleSafe}</p>
-            <p style="color:var(--primary-red);font-weight:700;">$${(prod.price || prod.basePrice || 0).toLocaleString('es-AR')}</p>
-          </div>
-        `;
-      }).join('');
+    grid.innerHTML = others.map(prod => this.renderProductCard(prod)).join('');
 
     section.style.display = '';
   }
@@ -1120,26 +1107,7 @@ class ProductPage {
     const similarGrid = document.getElementById('similarProductsGrid');
     if (!similarGrid) return;
 
-    const pps = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 4;
-    const slides = [];
-    for (let i = 0; i < products.length; i += pps) {
-      const batch = products.slice(i, i + pps);
-      slides.push(`
-        <div class="carousel-item ${i === 0 ? 'active' : ''}">
-          <div class="row justify-content-center">
-            ${batch.map(p => this.renderProductCard(p)).join('')}
-          </div>
-          ${isRandom && i === 0 ? `
-            <div class="text-center mt-3">
-              <small class="text-muted">
-                <i class="bi bi-info-circle me-1"></i>
-                Productos recomendados
-              </small>
-            </div>` : ''}
-        </div>`);
-    }
-    similarGrid.innerHTML = slides.join('');
-    this._toggleCarouselControls('similarProductsCarousel', slides.length);
+    similarGrid.innerHTML = products.map(p => this.renderProductCard(p)).join('');
     setTimeout(() => window.favoritesManager?.updateFavoriteButtons(), 100);
   }
 
@@ -1343,19 +1311,7 @@ class ProductPage {
     const grid = document.getElementById('recentlyViewedGrid');
     if (!grid) return;
 
-    const pps = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 4;
-    const slides = [];
-    for (let i = 0; i < products.length; i += pps) {
-      const batch = products.slice(i, i + pps);
-      slides.push(`
-        <div class="carousel-item ${i === 0 ? 'active' : ''}">
-          <div class="row justify-content-center">
-            ${batch.map(p => this.renderProductCard(p, true)).join('')}
-          </div>
-        </div>`);
-    }
-    grid.innerHTML = slides.join('');
-    this._toggleCarouselControls('recentlyViewedCarousel', slides.length);
+    grid.innerHTML = products.map(p => this.renderProductCard(p, true)).join('');
     setTimeout(() => window.favoritesManager?.updateFavoriteButtons(), 100);
   }
 
@@ -1377,8 +1333,7 @@ class ProductPage {
       : 'Producto de alta calidad.';
     const descSafe = esc(desc);
     return `
-      <div class="col-12 col-md-6 col-lg-3 mb-4 d-flex">
-        <div class="product-card ${isRecent ? 'recent-product-card' : 'similar-product-card'} w-100"
+        <div class="product-card ${isRecent ? 'recent-product-card' : 'similar-product-card'}"
              data-id="${pid}" data-clickable="true">
           <div class="product-image-container">
             <img src="${imgSrc}" alt="${titleSafe}" class="product-image" loading="lazy" decoding="async" />
@@ -1396,7 +1351,7 @@ class ProductPage {
             <div class="product-meta-group">
               <div class="product-rating">
                 <div class="stars">${this.renderProductStars(product.rating)}</div>
-                <span class="reviews-count">(${product.reviewCount.toLocaleString('es-AR')})</span>
+                <span class="reviews-count">(${(product.reviewCount || 0).toLocaleString('es-AR')})</span>
               </div>
             </div>
             <div class="product-pricing-wrapper">
@@ -1406,8 +1361,7 @@ class ProductPage {
               </div>
             </div>
           </div>
-        </div>
-      </div>`;
+        </div>`;
   }
 
   _toggleCarouselControls(carouselId, slideCount) {

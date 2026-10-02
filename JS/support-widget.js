@@ -68,19 +68,19 @@
   const FAQ = [
     {
       q: '¿Cómo publico un producto o servicio?',
-      a: 'Hacé clic en <b>Publicar</b> arriba a la derecha y completá el formulario con título, fotos, descripción y precio. Es gratis.'
+      a: 'Hacé clic en <b>Publicar</b> arriba a la derecha y completá el formulario con título, fotos, descripción y precio. Publicar productos es gratis; los servicios tienen un plan mensual.'
     },
     {
       q: '¿Cuánto cuesta usar Dale Deal?',
-      a: 'Publicar es <b>gratis</b>. Solo cobramos una comisión del <b>5%</b> sobre las ventas concretadas.'
+      a: 'Publicar productos es <b>gratis</b>: solo cobramos una comisión del <b>3% + impuestos</b> cuando vendés. Publicar un servicio cuesta <b>$3.000 por mes</b>; si al día 10 no renovaste, la publicación se da de baja.'
     },
     {
       q: '¿Cómo funcionan los pagos?',
-      a: 'Los cobros se procesan por <b>Mercado Pago</b>. Recibís el dinero en tu cuenta 7 días después de que el comprador confirme la recepción.'
+      a: 'Los pagos se procesan por <b>Mercado Pago</b>: tarjeta, dinero en cuenta o cualquier billetera virtual (no Rapipago ni Pago Fácil). Como vendedor, recibís el dinero 7 días después de que el comprador confirme la recepción.'
     },
     {
       q: '¿Cómo coordino el envío?',
-      a: 'Chateás directo con el comprador desde la sección <b>Mensajes</b> de tu perfil. También podés ofrecer retiro en persona.'
+      a: 'El envío lo organiza el <b>vendedor</b>: se encarga de la logística y lo coordina con el comprador desde la sección <b>Mensajes</b>. También puede ofrecer retiro en persona.'
     },
     {
       q: 'Tengo un problema con una compra',

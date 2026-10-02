@@ -213,20 +213,6 @@ class ServicePage {
       locationRow.hidden = parts.length === 0;
     }
 
-    // WhatsApp directo al prestador (solo si tiene teléfono). Normalización AR best-effort.
-    const waBtn = document.getElementById('svcWhatsapp');
-    if (waBtn) {
-      const digits = (p.phone || '').replace(/\D/g, '');
-      if (digits.length >= 8) {
-        const intl = digits.startsWith('54') ? digits : `549${digits.replace(/^0/, '')}`;
-        const txt = encodeURIComponent(`Hola${p.name ? ' ' + p.name : ''}, te contacto desde Dale Deal por el servicio "${s.title}".`);
-        waBtn.href = `https://wa.me/${intl}?text=${txt}`;
-        waBtn.classList.remove('d-none');
-      } else {
-        waBtn.classList.add('d-none');
-      }
-    }
-
     // Service title + meta
     const titleEl = document.querySelector('.svc-title');
     if (titleEl) titleEl.textContent = s.title;
@@ -805,46 +791,18 @@ class ServicePage {
   }
 
   // ── Construir carrusel de tarjetas de servicio ─────────────────────────────
-  _buildCarousel(carouselId, gridId, services, prevId, nextId) {
-    const carousel = document.getElementById(carouselId);
+  _buildCarousel(carouselId, gridId, services) {
     const grid = document.getElementById(gridId);
-    if (!carousel || !grid || !services.length) return;
-
-    const visible = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 3;
-    const cardPct = 100 / visible;
-    let current = 0;
-    const maxIndex = Math.max(0, services.length - visible);
-
-    const track = document.createElement('div');
-    track.className = 'carousel-track';
-    track.innerHTML = services.map(s =>
-      `<div class="carousel-slide-item" style="width:${cardPct}%">${this._renderServiceCard(s)}</div>`
-    ).join('');
-    grid.innerHTML = '';
-    grid.appendChild(track);
-    // El padre `.custom-carousel .carousel-inner` define `display: grid` con
-    // minmax(220px, 1fr) en product.css. Eso comprimía el `.carousel-track`
-    // (flex container) a 220px y todas las cards salían como tiritas verticales
-    // angostas. Forzamos display:block para que el track ocupe todo el ancho.
-    grid.style.display = 'block';
-
-    track.querySelectorAll('.product-card').forEach(card => {
+    if (!grid || !services.length) return;
+    // grid es un .hs-track (carrusel con scroll-snap; flechas en utils.js)
+    grid.innerHTML = services.map(s => this._renderServiceCard(s)).join('');
+    grid.querySelectorAll('.product-card').forEach(card => {
       card.addEventListener('click', (e) => {
         if (e.target.closest('.action-heart')) return;
         const id = card.dataset.serviceId;
         if (id) window.location.href = `/servicio?id=${id}`;
       });
     });
-
-    const updateTrack = () => {
-      track.style.transform = `translateX(-${current * cardPct}%)`;
-    };
-
-    const container = carousel.parentElement;
-    const prev = container?.querySelector(`#${prevId}`) || container?.querySelector('.section-nav-prev');
-    const next = container?.querySelector(`#${nextId}`) || container?.querySelector('.section-nav-next');
-    if (prev) prev.onclick = () => { current = Math.max(0, current - 1); updateTrack(); };
-    if (next) next.onclick = () => { current = Math.min(maxIndex, current + 1); updateTrack(); };
   }
 
   // ── Renderizar tarjeta de servicio ─────────────────────────────────────────
@@ -903,7 +861,7 @@ class ServicePage {
       </div>` : '';
 
     return `
-      <div class="product-card w-100" data-id="${service.id}" data-service-id="${service.id}" data-type="service" style="cursor:pointer;">
+      <div class="product-card" data-id="${service.id}" data-service-id="${service.id}" data-type="service" style="cursor:pointer;">
           <div class="product-image-container">
             <img src="${esc(service.image)}" alt="${esc(service.title)}" class="product-image active" loading="lazy" />
             ${badgesHTML}

@@ -11,6 +11,31 @@
 // (Railway: daledeal-backend-production.up.railway.app).
 const __HOST = window.location.hostname;
 const __IS_LOCAL = __HOST === "localhost" || __HOST === "127.0.0.1" || __HOST === "";
+// Carruseles .hs: las flechas avanzan una "página" y se apagan en los bordes.
+// Delegado en document, así sirve para carruseles que se llenan después.
+(function () {
+  const sync = (track) => {
+    const wrap = track.closest('.hs');
+    if (!wrap) return;
+    const max = track.scrollWidth - track.clientWidth - 2;
+    wrap.querySelector('[data-hs="prev"]')?.toggleAttribute('disabled', track.scrollLeft <= 2);
+    wrap.querySelector('[data-hs="next"]')?.toggleAttribute('disabled', track.scrollLeft >= max);
+  };
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-hs]');
+    const track = btn?.closest('.hs')?.querySelector('.hs-track');
+    if (!track) return;
+    track.scrollBy({ left: (btn.dataset.hs === 'next' ? 1 : -1) * track.clientWidth, behavior: 'smooth' });
+  });
+  document.addEventListener('scroll', (e) => {
+    if (e.target.classList?.contains('hs-track')) sync(e.target);
+  }, true);
+  const syncAll = () => document.querySelectorAll('.hs-track').forEach(sync);
+  new MutationObserver(() => requestAnimationFrame(syncAll))
+    .observe(document.documentElement, { childList: true, subtree: true });
+  window.addEventListener('resize', syncAll);
+})();
+
 window.DaleDeal = {
   CONFIG: {
     DEBUG: __IS_LOCAL,

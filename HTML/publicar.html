@@ -291,8 +291,13 @@
       .plan-price { font-size: 1.8rem; font-weight: 800; color: var(--gray-900); }
       .plan-price span { font-size: 0.9rem; font-weight: 400; color: var(--gray-500); }
       .plan-features { list-style: none; padding: 0; margin: 0 0 1.5rem; flex: 1; }
-      .plan-features li { display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 0; font-size: 0.9rem; color: var(--gray-600); }
+      .plan-features li { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.4rem 0; font-size: 0.9rem; color: var(--gray-600); }
       .plan-features li i { font-size: 0.9rem; flex-shrink: 0; }
+      .plan-features li i { margin-top: 0.2rem; }
+      .plan-meta { margin: 0.35rem 0 0; font-size: 0.85rem; font-weight: 600; color: var(--primary-red); }
+      .plan-legal { list-style: none; max-width: 760px; margin: 0 auto 2rem; padding: 0; }
+      .plan-legal li { display: flex; gap: 0.6rem; padding: 0.35rem 0; font-size: 0.85rem; color: var(--gray-500); }
+      .plan-legal li i { color: var(--gray-400); margin-top: 0.15rem; }
       .plan-btn { width: 100%; padding: 0.7rem; border-radius: 10px; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; }
       .plan-btn-outline { background: none; border: 2px solid var(--gray-200); color: var(--gray-400); cursor: default; }
       .plan-btn-primary { background: #e8f4fd; color: #009ee3; }
@@ -1021,7 +1026,7 @@
 
                 <hr class="my-3">
                 <div class="text-muted small">
-                  <i class="bi bi-credit-card text-warning me-1"></i> Publicar requiere un plan mensual<br>
+                  <i class="bi bi-credit-card text-warning me-1"></i> Publicar requiere un plan mensual (desde $3.000)<br>
                   <i class="bi bi-people text-info me-1 mt-1"></i> Miles de usuarios buscan servicios
                 </div>
               </div>
@@ -1042,65 +1047,87 @@
           <div class="text-center mb-5">
             <span class="promo-badge"><i class="bi bi-bag me-2"></i>Planes para productos</span>
             <h2 class="promo-title">Publicá tu producto y llegá a más compradores</h2>
-            <p class="promo-subtitle">Todos los planes incluyen la publicación. Sumá visibilidad con los planes superiores.</p>
+            <p class="promo-subtitle">Publicar es gratis y solo pagás una comisión del 3% + impuestos cuando vendés. Los planes Premium suman visibilidad y duran 1 mes.</p>
           </div>
           <div class="row g-4 justify-content-center mb-5">
 
-            <!-- Producto: Plan Estándar -->
-            <div class="col-md-4 col-lg-3">
+            <div class="col-md-6 col-lg-3">
               <div class="plan-card">
                 <div class="plan-header">
                   <div class="plan-icon"><i class="bi bi-box-seam"></i></div>
                   <h3 class="plan-name">Estándar</h3>
                   <div class="plan-price">Gratis<span></span></div>
+                  <p class="plan-meta">Publicación común</p>
                 </div>
                 <ul class="plan-features">
                   <li><i class="bi bi-check-circle-fill text-success"></i> Publicación activa de tu producto</li>
                   <li><i class="bi bi-check-circle-fill text-success"></i> Visible en el catálogo</li>
                   <li><i class="bi bi-check-circle-fill text-success"></i> Hasta 10 fotos y videos</li>
                   <li><i class="bi bi-check-circle-fill text-success"></i> Consultas de compradores</li>
-                  <li><i class="bi bi-x-circle-fill text-muted"></i> Sin posición prioritaria</li>
+                  <li><i class="bi bi-percent text-warning"></i> Comisión del 3% + impuestos solo cuando vendés</li>
                 </ul>
                 <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Estándar Producto', 0)">Seleccioná</button>
               </div>
             </div>
 
-            <!-- Producto: Plan Destacado -->
-            <div class="col-md-4 col-lg-3">
+            <div class="col-md-6 col-lg-3">
               <div class="plan-card">
                 <div class="plan-header">
                   <div class="plan-icon plan-icon-blue"><i class="bi bi-rocket"></i></div>
-                  <h3 class="plan-name">Destacado</h3>
-                  <div class="plan-price">$4.999<span>/mes</span></div>
+                  <h3 class="plan-name">Premium</h3>
+                  <div class="plan-price">$4.990<span>/mes</span></div>
+                  <p class="plan-meta">Hasta 3 publicaciones destacadas</p>
                 </div>
                 <ul class="plan-features">
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Todo lo del plan Estándar</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Etiqueta "Destacado"</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Mejor posición en búsquedas</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Más visibilidad que una publicación común</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Prioridad en los resultados</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Insignia Premium</li>
                   <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas básicas</li>
-                  <li><i class="bi bi-x-circle-fill text-muted"></i> Sin publicidad ni banner</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Más exposición de tu perfil</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Acceso a promociones y espacios promocionales</li>
                 </ul>
-                <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Destacado Producto', 4999)">Contratar</button>
+                <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Premium', 4990)">Contratar</button>
               </div>
             </div>
 
-            <!-- Producto: Plan Pro -->
-            <div class="col-md-4 col-lg-3">
-              <div class="plan-card plan-card-featured">
-                <div class="plan-badge-rec">Recomendado</div>
+            <div class="col-md-6 col-lg-3">
+              <div class="plan-card">
                 <div class="plan-header">
-                  <div class="plan-icon plan-icon-red"><i class="bi bi-star-fill"></i></div>
-                  <h3 class="plan-name">Pro</h3>
-                  <div class="plan-price">$7.999<span>/mes</span></div>
+                  <div class="plan-icon plan-icon-blue"><i class="bi bi-lightning-charge-fill"></i></div>
+                  <h3 class="plan-name">Premium Plus</h3>
+                  <div class="plan-price">$9.990<span>/mes</span></div>
+                  <p class="plan-meta">Hasta 6 publicaciones destacadas</p>
                 </div>
                 <ul class="plan-features">
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Todo lo del plan Destacado</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Publicidad en páginas de búsqueda</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Banner en página de inicio</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Prioridad máxima en búsquedas</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas avanzadas</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Más prioridad en resultados que Premium</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Mayor nivel de exposición</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Insignia Premium Plus</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas ampliadas</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Exposición superior de tu perfil</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Más presencia en los espacios promocionales</li>
                 </ul>
-                <button class="plan-btn plan-btn-red" onclick="seleccionarPlan('Pro Producto', 7999)">Contratar</button>
+                <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Premium Plus', 9990)">Contratar</button>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+              <div class="plan-card plan-card-featured">
+                <div class="plan-badge-rec">Máxima exposición</div>
+                <div class="plan-header">
+                  <div class="plan-icon plan-icon-red"><i class="bi bi-star-fill"></i></div>
+                  <h3 class="plan-name">Premium Pro</h3>
+                  <div class="plan-price">$19.990<span>/mes</span></div>
+                  <p class="plan-meta">Hasta 9 publicaciones destacadas</p>
+                </div>
+                <ul class="plan-features">
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Máxima prioridad: siempre entre los primeros resultados</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Máxima exposición de tu perfil</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Insignia Premium Pro</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas avanzadas</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Espacios publicitarios internos</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Herramientas comerciales adicionales</li>
+                </ul>
+                <button class="plan-btn plan-btn-red" onclick="seleccionarPlan('Premium Pro', 19990)">Contratar</button>
               </div>
             </div>
 
@@ -1112,69 +1139,78 @@
           <div class="text-center mb-5">
             <span class="promo-badge"><i class="bi bi-megaphone-fill me-2"></i>Planes para servicios</span>
             <h2 class="promo-title">Publicá tu servicio y llegá a más clientes</h2>
-            <p class="promo-subtitle">Todos los planes incluyen la publicación. Sumá visibilidad con los planes superiores.</p>
+            <p class="promo-subtitle">Todos los planes incluyen la publicación. Sumá visibilidad con los planes Premium.</p>
+            <p class="promo-subtitle small mb-0"><i class="bi bi-calendar-check me-1"></i>Los planes se pagan por mes: si al <strong>día 10</strong> no está renovado, la publicación del servicio se da de baja hasta que lo renueves.</p>
           </div>
-          <div class="row g-4 justify-content-center mb-5">
+          <div class="row g-4 justify-content-center mb-4">
 
-            <!-- Servicio: Plan Estándar -->
-            <div class="col-md-4 col-lg-3">
+            <div class="col-md-6 col-lg-3">
               <div class="plan-card">
                 <div class="plan-header">
                   <div class="plan-icon"><i class="bi bi-tools"></i></div>
-                  <h3 class="plan-name">Estándar</h3>
+                  <h3 class="plan-name">Servicio</h3>
                   <div class="plan-price">$3.000<span>/mes</span></div>
+                  <p class="plan-meta">Plan base para prestadores</p>
                 </div>
                 <ul class="plan-features">
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Publicación activa de tu servicio</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Visible en el catálogo</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Hasta 10 fotos y videos</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Contacto directo con clientes</li>
-                  <li><i class="bi bi-x-circle-fill text-muted"></i> Sin posición prioritaria</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Perfil de prestador</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Publicación de tus servicios</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Consultas de clientes</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Calificación con estrellas</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Verificación de identidad</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Aparición normal en búsquedas</li>
                 </ul>
-                <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Estándar Servicio', 3000)">Contratar</button>
+                <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Servicio', 3000)">Contratar</button>
               </div>
             </div>
 
-            <!-- Servicio: Plan Destacado -->
-            <div class="col-md-4 col-lg-3">
+            <div class="col-md-6 col-lg-3">
               <div class="plan-card">
                 <div class="plan-header">
                   <div class="plan-icon plan-icon-blue"><i class="bi bi-rocket"></i></div>
-                  <h3 class="plan-name">Destacado</h3>
-                  <div class="plan-price">$5.999<span>/mes</span></div>
+                  <h3 class="plan-name">Servicio Premium</h3>
+                  <div class="plan-price">$6.990<span>/mes</span></div>
+                  <p class="plan-meta">Perfil destacado</p>
                 </div>
                 <ul class="plan-features">
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Todo lo del plan Estándar</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Etiqueta "Destacado"</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Mejor posición en búsquedas</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas básicas</li>
-                  <li><i class="bi bi-x-circle-fill text-muted"></i> Sin publicidad ni banner</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Todo lo del plan Servicio</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Más exposición en búsquedas y en tu zona</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Prioridad sobre los perfiles del plan base</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Servicios destacados</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas de visitas</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Insignia de Prestador Premium</li>
                 </ul>
-                <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Destacado Servicio', 5999)">Contratar</button>
+                <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Servicio Premium', 6990)">Contratar</button>
               </div>
             </div>
 
-            <!-- Servicio: Plan Pro -->
-            <div class="col-md-4 col-lg-3">
+            <div class="col-md-6 col-lg-3">
               <div class="plan-card plan-card-featured">
-                <div class="plan-badge-rec">Recomendado</div>
+                <div class="plan-badge-rec">Máxima exposición</div>
                 <div class="plan-header">
                   <div class="plan-icon plan-icon-red"><i class="bi bi-star-fill"></i></div>
-                  <h3 class="plan-name">Pro</h3>
-                  <div class="plan-price">$9.999<span>/mes</span></div>
+                  <h3 class="plan-name">Servicio Premium Plus</h3>
+                  <div class="plan-price">$11.990<span>/mes</span></div>
+                  <p class="plan-meta">Máxima exposición para prestadores</p>
                 </div>
                 <ul class="plan-features">
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Todo lo del plan Destacado</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Publicidad en páginas de búsqueda</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Banner en página de inicio</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Prioridad máxima en búsquedas</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Todo lo del plan Servicio Premium</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Más presencia dentro de tu categoría</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Más servicios destacados</li>
                   <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas avanzadas</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Espacios promocionales y promociones especiales</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Insignia de Prestador Premium Plus</li>
                 </ul>
-                <button class="plan-btn plan-btn-red" onclick="seleccionarPlan('Pro Servicio', 9999)">Contratar</button>
+                <button class="plan-btn plan-btn-red" onclick="seleccionarPlan('Servicio Premium Plus', 11990)">Contratar</button>
               </div>
             </div>
 
           </div>
+          <ul class="plan-legal">
+            <li><i class="bi bi-star-half"></i> Las calificaciones con estrellas no dependen del plan: pagar un plan no permite comprar ni modificar tu reputación.</li>
+            <li><i class="bi bi-patch-check"></i> Contratar un plan no reemplaza la verificación. Según el servicio, podemos pedirte identidad, título, matrícula u otra documentación.</li>
+            <li><i class="bi bi-info-circle"></i> Los planes aumentan tu visibilidad, pero no garantizan una cantidad de visitas, consultas, contrataciones ni ingresos.</li>
+          </ul>
         </div>
 
         <!-- Modal de pago -->
@@ -1340,7 +1376,7 @@
                   </div>
                   <div class="contact-item">
                     <i class="bi bi-envelope"></i>
-                    <span>contacto@daledeal.com.ar</span>
+                    <span>contacto@daledeal.com</span>
                   </div>
                   <div class="contact-item">
                     <i class="bi bi-geo-alt"></i>

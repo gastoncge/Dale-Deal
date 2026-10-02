@@ -1693,12 +1693,11 @@
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-base);
   border: 1px solid var(--gray-200);
-  height: 100% !important;
-  min-height: 320px;
-  max-height: 320px;
+  /* Alto según el contenido: el max-height de 320px cortaba el precio */
+  height: 100%;
+  position: relative;
   display: flex;
   flex-direction: column;
-  width: 100% !important;
 }
 
 .similar-product-card:hover {
@@ -1709,7 +1708,7 @@
 
 .similar-product-card .product-image-container {
   position: relative;
-  height: 160px;
+  height: 200px;
   overflow: hidden;
 }
 
@@ -2011,13 +2010,11 @@
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-base);
   border: 1px solid var(--gray-200);
-  height: 100% !important;
-  min-height: 320px;
-  max-height: 320px;
+  /* Alto según el contenido: el max-height de 320px cortaba el precio */
+  height: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 100% !important;
 }
 
 .recent-product-card:hover {
@@ -2028,7 +2025,7 @@
 
 .recent-product-card .product-image-container {
   position: relative;
-  height: 160px;
+  height: 200px;
   overflow: hidden;
   flex-shrink: 0;
 }

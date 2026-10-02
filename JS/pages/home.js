@@ -158,11 +158,6 @@ function renderProductCard(product) {
     ? `<span class="reviews-count">(${reviewCount.toLocaleString('es-AR')})</span>`
     : `<span class="reviews-count text-muted">Sin reseñas aún</span>`;
 
-  // WhatsApp share — el link contiene URL del producto + título
-  const shareUrl = `${window.location.origin}/producto?id=${product.id}`;
-  const shareText = encodeURIComponent(`Mirá esto en Dale Deal: ${product.title} — ${shareUrl}`);
-  const whatsappHref = `https://wa.me/?text=${shareText}`;
-
   // Renderizar descripción corta (primeras 80 caracteres)
   const shortDescription = product.description
     ? (product.description.length > 80
@@ -179,15 +174,6 @@ function renderProductCard(product) {
           <button class="action-heart" title="Agregar a favoritos" data-product-id="${esc(product.id)}">
             <i class="bi bi-heart"></i>
           </button>
-          <a href="${whatsappHref}"
-             class="action-share"
-             title="Compartir por WhatsApp"
-             target="_blank"
-             rel="noopener noreferrer"
-             onclick="event.stopPropagation()"
-             aria-label="Compartir ${esc(product.title)} por WhatsApp">
-            <i class="bi bi-whatsapp"></i>
-          </a>
         </div>
       </div>
       <div class="product-info">
@@ -232,9 +218,9 @@ async function loadTrending() {
   if (!section || !grid) return;
 
   try {
-    // 4 productos = 1 fila completa de 4 columnas en desktop
+    // Hasta 12 productos en carrusel (4 visibles en desktop)
     const apiBase = (window.DaleDeal?.CONFIG?.API_BASE_URL || 'https://daledeal-backend-production.up.railway.app').replace(/\/$/, '');
-    const res = await fetch(`${apiBase}/products?sort=views&order=desc&limit=4`);
+    const res = await fetch(`${apiBase}/products?sort=views&order=desc&limit=12`);
     const data = await res.json().catch(() => ({}));
     const items = (data.data || []).filter(p => (p.views || 0) > 0);
 
@@ -244,10 +230,7 @@ async function loadTrending() {
     }
 
     // Render con la misma función que usamos para destacados (consistencia visual)
-    grid.innerHTML = '';
-    const row = document.createElement('div');
-    row.className = 'products-row';
-    row.innerHTML = items.map(p => {
+    grid.innerHTML = items.map(p => {
       // El backend devuelve campos planos (images: [URL], views: N).
       // renderProductCard espera el shape de api.js transformProduct →
       // hacemos un mini-transform inline para no acoplar.
@@ -264,7 +247,6 @@ async function loadTrending() {
       };
       return renderProductCard(product);
     }).join('');
-    grid.appendChild(row);
     section.style.display = '';
     initializeProductListeners();
     DaleDeal.log(`✓ Trending cargado: ${items.length} items`);

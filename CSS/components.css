@@ -301,36 +301,6 @@ textarea.form-control {
   z-index: 10;
 }
 
-/* WhatsApp share button — sibling al heart, mismo look pero verde de WhatsApp */
-.action-share {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.95);
-  color: #25d366; /* WhatsApp green */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all var(--transition-base, 0.2s ease);
-  box-shadow: var(--shadow-md);
-  text-decoration: none;
-  font-size: 18px;
-  border: none;
-}
-
-.action-share:hover {
-  background: #25d366;
-  color: #ffffff;
-  transform: scale(1.1);
-  text-decoration: none;
-}
-
-.action-share:focus-visible {
-  outline: 2px solid #25d366;
-  outline-offset: 2px;
-}
-
 /* Cuotas sin interés — chip discreto bajo el precio */
 .product-installments {
   margin-top: 4px;
@@ -424,24 +394,67 @@ textarea.form-control {
 }
 .cart-trust i { color: #15803d; }
 
-/* Botón "Contactar por WhatsApp" en la ficha de servicio (verde de WhatsApp) */
-.btn-whatsapp-provider {
-  display: inline-flex;
+/* ===== CARRUSEL HORIZONTAL (.hs) =====
+ * Fila deslizable con scroll-snap: con el dedo en celular, con las flechas
+ * en compu (JS/utils.js). 4 cards visibles en desktop, 3/2 en pantallas
+ * medianas y 1 + un pedacito de la siguiente en celular (invita a deslizar). */
+.hs { position: relative; }
+.hs-track {
+  --hs-gap: 24px;
+  --hs-per: 4;
+  display: flex;
+  gap: var(--hs-gap);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  padding: 6px 4px 14px;
+  margin: 0 -4px;
+}
+.hs-track::-webkit-scrollbar { display: none; }
+/* Con pocas cards, centradas (margin auto no rompe el scroll como justify-content) */
+.hs-track > :first-child { margin-left: auto; }
+.hs-track > :last-child { margin-right: auto; }
+.hs-track > * {
+  flex: 0 0 calc((100% - (var(--hs-per) - 1) * var(--hs-gap)) / var(--hs-per));
+  min-width: 0;
+  max-width: none;
+  scroll-snap-align: start;
+}
+.hs-btn {
+  position: absolute;
+  top: 40%;
+  z-index: 3;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+  color: var(--primary-red);
+  box-shadow: var(--shadow-md);
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  width: 100%;
-  background: #25d366;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 12px 16px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: background 0.15s ease;
-  min-height: 44px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: opacity .2s ease, transform .2s ease;
 }
-.btn-whatsapp-provider:hover { background: #1ebe5d; color: #fff; }
+.hs-btn:hover { transform: scale(1.08); }
+.hs-prev { left: -22px; }
+.hs-next { right: -22px; }
+.hs-btn[disabled] { opacity: 0; pointer-events: none; }
+@media (max-width: 1199px) { .hs-track { --hs-per: 3; } }
+@media (max-width: 991px)  { .hs-track { --hs-per: 2; --hs-gap: 16px; } .hs-prev { left: -8px; } .hs-next { right: -8px; } }
+@media (max-width: 575px)  { .hs-track { --hs-per: 1.15; --hs-gap: 12px; } .hs-btn { display: none; } }
+
+/* Cards de "Vistos recientemente": son <a>, sin subrayado */
+a.rv-card, a.rv-card:hover { text-decoration: none; color: inherit; }
+
+/* Prestador dentro de una card de servicio */
+.product-provider { display: flex; align-items: center; gap: 8px; margin: 6px 0 8px; min-width: 0; }
+.product-provider-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex: none; }
+.product-provider-name { font-size: .85rem; font-weight: 600; color: var(--gray-700); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.product-provider-verified { color: #0ea5e9; font-size: .85rem; }
 
 .heart-animate {
   animation: heartBeat 0.6s ease-in-out;

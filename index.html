@@ -57,7 +57,7 @@
             "@type": "ContactPoint",
             "telephone": "+54-9-11-3798-5881",
             "contactType": "customer service",
-            "email": "contacto@daledeal.com.ar",
+            "email": "contacto@daledeal.com",
             "availableLanguage": ["Spanish"]
           },
           "sameAs": [
@@ -258,7 +258,7 @@
                         <h1 class="hero-title">Publicá tus productos gratis</h1>
                         <p class="hero-subtitle">
                           Con el plan Estándar publicar un producto no tiene costo:
-                          solo se cobra una comisión cuando vendés.
+                          solo se cobra una comisión del 3% + impuestos cuando vendés.
                         </p>
                         <div class="hero-actions">
                           <a href="HTML/publicar.html" class="btn btn-primary btn-lg">
@@ -393,7 +393,11 @@
             </h2>
             <p class="text-muted">Lo que más están explorando los usuarios</p>
           </div>
-          <div class="products-grid" id="trendingGrid"></div>
+          <div class="hs">
+            <button class="hs-btn hs-prev" type="button" data-hs="prev" aria-label="Anterior"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>
+            <div class="hs-track" id="trendingGrid"></div>
+            <button class="hs-btn hs-next" type="button" data-hs="next" aria-label="Siguiente"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+          </div>
         </div>
       </section>
 
@@ -407,7 +411,11 @@
             </h2>
             <p class="text-muted">Seguí donde dejaste</p>
           </div>
-          <div class="products-grid" id="recentlyViewedGrid"></div>
+          <div class="hs">
+            <button class="hs-btn hs-prev" type="button" data-hs="prev" aria-label="Anterior"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>
+            <div class="hs-track" id="recentlyViewedGrid"></div>
+            <button class="hs-btn hs-next" type="button" data-hs="next" aria-label="Siguiente"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+          </div>
         </div>
       </section>
 
@@ -541,7 +549,7 @@
                   </div>
                   <div class="contact-item">
                     <i class="bi bi-envelope"></i>
-                    <span>contacto@daledeal.com.ar</span>
+                    <span>contacto@daledeal.com</span>
                   </div>
                   <div class="contact-item">
                     <i class="bi bi-geo-alt"></i>
