@@ -10,9 +10,16 @@ compatibility_date = "2025-05-27"
 # todos los accounts del user (los tokens scoped a un solo Worker fallan
 # ese check). Sacado del dashboard CF.
 account_id = "b453287b1595aee108969bc617ecf4a0"
-# Habilita URLs de preview por versión (wrangler versions upload) para testear
-# en una URL temporal sin tocar producción.
-preview_urls = true
+# PRE-LANZAMIENTO: URLs de preview por versión APAGADAS. Con esto prendido,
+# cada versión vieja del worker sigue viva en
+# <versión>-dale-deal.<cuenta>.workers.dev, y las anteriores al filtro de
+# Próximamente muestran el sitio entero a cualquiera que tenga el link (pasaba
+# con la demo de agosto). Para probar algo antes de publicarlo se entra al
+# dominio real con la clave del equipo. Después del lanzamiento se puede
+# volver a poner en true.
+preview_urls = false
+# El sitio solo se sirve desde el dominio propio, no desde dale-deal.*.workers.dev.
+workers_dev = false
 
 # Custom domains — Cloudflare auto-crea el DNS record y mapea SSL.
 # IMPORTANTE: 'routes' debe ir ANTES de cualquier [tabla] (regla TOML).
