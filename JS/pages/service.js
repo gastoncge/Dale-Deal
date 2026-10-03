@@ -895,6 +895,7 @@ class ServicePage {
                 <i class="bi bi-geo-alt-fill"></i>
                 <span>${esc(service.location || 'CABA')}</span>
               </div>
+              ${window.DaleDeal.utils.renderServiceFeatures(service)}
             </div>
             <div class="product-pricing-wrapper">
               <div class="product-pricing">

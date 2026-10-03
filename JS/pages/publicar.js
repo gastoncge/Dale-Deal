@@ -77,8 +77,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const target = tab.dataset.tab;
       document.getElementById('form-producto').style.display = target === 'producto' ? 'block' : 'none';
       document.getElementById('form-servicio').style.display = target === 'servicio' ? 'block' : 'none';
+      // Los planes de abajo acompañan a la pestaña elegida
+      const planesProducto = document.getElementById('planes-producto');
+      const planesServicio = document.getElementById('planes-servicio');
+      if (planesProducto) planesProducto.style.display = target === 'producto' ? '' : 'none';
+      if (planesServicio) planesServicio.style.display = target === 'servicio' ? '' : 'none';
     });
   });
+
+  // ?tab=servicio (desde el aviso de "Necesitás el plan Servicio")
+  if (new URLSearchParams(location.search).get('tab') === 'servicio') {
+    document.getElementById('tab-servicio')?.click();
+  }
+
+  // ── Cuenta verificada y plan Servicio ────────────────────────────────
+  document.getElementById('btnPlanCheckout')?.addEventListener('click', startServicePlanCheckout);
+  if (isLogged) initAccountGates();
 
   // ── Condición del producto ───────────────────────────────────────────
   document.querySelectorAll('.condition-btn').forEach(btn => {
@@ -348,6 +362,8 @@ async function submitService() {
     images: getServiceImages(),
     currency: 'ARS',
     badges: readBadges('s'),
+    has_warranty:   !!document.getElementById('s-warranty')?.checked,
+    available_24_7: !!document.getElementById('s-247')?.checked,
   };
 
   setLoading(btn, true, 'Publicando...');
@@ -606,11 +622,120 @@ window.updateBadgePreview = updateBadgePreview;
  * Por ahora todos los planes se cobran después del MVP — guardamos la
  * elección y la mostramos en el modal de pago.
  */
+// =====================================================
+// CUENTA VERIFICADA + PLAN SERVICIO
+// =====================================================
+// El backend es el que frena (requireVerified / PLAN_REQUIRED); acá solo
+// avisamos antes, para que nadie complete el formulario entero en vano.
+let accountState = null; // { verified, planActive, planUntil, admin }
+
+async function initAccountGates() {
+  const api = window.DaleDeal?.api;
+  if (!api?.apiFetch) return;
+
+  // Volviendo del checkout del plan: aplicar/consultar el pago primero.
+  await handlePlanReturn();
+
+  try {
+    const me = await api.apiFetch('/users/me', { _background: true });
+    accountState = {
+      admin: me.role === 'admin',
+      verified: me.role === 'admin' || me.verified_identity === true,
+      planActive: me.role === 'admin' || me.service_plan_active === true,
+      planUntil: me.service_plan_until || null,
+    };
+  } catch (_) {
+    return; // sin datos no bloqueamos: el backend igual valida al publicar
+  }
+  renderAccountGates();
+}
+
+function renderAccountGates() {
+  if (!accountState) return;
+  const { verified, planActive, planUntil, admin } = accountState;
+  const btnProduct = document.getElementById('btn-publish-product');
+  const btnService = document.getElementById('btn-publish-service');
+
+  const verifyWarning = document.getElementById('verifyWarning');
+  if (verifyWarning) verifyWarning.style.display = verified ? 'none' : 'flex';
+  if (!verified) btnProduct?.setAttribute('disabled', true);
+
+  const planWarning = document.getElementById('planWarning');
+  const planNote = document.getElementById('planActiveNote');
+  // Sin verificar ya lo dice verifyWarning; el plan se paga después.
+  if (planWarning) planWarning.style.display = verified && !planActive ? 'flex' : 'none';
+  if (planNote) {
+    planNote.hidden = !(planActive && !admin && planUntil);
+    if (!planNote.hidden) {
+      const fecha = new Date(planUntil).toLocaleDateString('es-AR', { day: 'numeric', month: 'long' });
+      planNote.querySelector('span').textContent = `Plan Servicio activo hasta el ${fecha}.`;
+    }
+  }
+  if (!verified || !planActive) btnService?.setAttribute('disabled', true);
+}
+
+async function startServicePlanCheckout() {
+  const api = window.DaleDeal?.api;
+  if (!localStorage.getItem('daledeal_token')) {
+    window.location.href = `./login.html?redirect=${encodeURIComponent(location.pathname + '?tab=servicio')}`;
+    return;
+  }
+  if (accountState && !accountState.verified) {
+    window.DaleDeal.utils.showAccessGate('NOT_VERIFIED');
+    return;
+  }
+  const btn = document.getElementById('btnPlanCheckout');
+  const original = btn?.innerHTML;
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Abriendo Mercado Pago…'; }
+  try {
+    const r = await api.apiFetch('/plans/service/checkout', { method: 'POST' });
+    const url = (r.is_sandbox && r.sandbox_init_point) || r.init_point;
+    if (!url) throw new Error('Mercado Pago no devolvió el link de pago.');
+    window.location.href = url;
+  } catch (err) {
+    // NOT_VERIFIED ya lo muestra apiFetch con su aviso
+    if (err.code !== 'NOT_VERIFIED') alert(err.message || 'No pudimos iniciar el pago del plan.');
+    if (btn) { btn.disabled = false; btn.innerHTML = original; }
+  }
+}
+
+/** Vuelta del checkout: ?plan=ok|error|pendiente&plan_payment=ID&payment_id=… */
+async function handlePlanReturn() {
+  const qs = new URLSearchParams(location.search);
+  const result = qs.get('plan');
+  const ppId = parseInt(qs.get('plan_payment'), 10);
+  if (!result || !Number.isInteger(ppId)) return;
+
+  document.getElementById('tab-servicio')?.click();
+  let msg;
+  try {
+    const paymentId = qs.get('payment_id') || qs.get('collection_id') || '';
+    const st = await window.DaleDeal.api.apiFetch(
+      `/plans/payments/${ppId}/status${paymentId ? `?payment_id=${encodeURIComponent(paymentId)}` : ''}`,
+      { _background: true }
+    );
+    if (st.status === 'approved') {
+      const fecha = st.plan_until ? new Date(st.plan_until).toLocaleDateString('es-AR', { day: 'numeric', month: 'long' }) : '';
+      msg = `¡Listo! Tu plan Servicio está activo${fecha ? ` hasta el ${fecha}` : ''}. Ya podés publicar tus servicios.`;
+    } else if (result === 'error' || st.status === 'rejected' || st.status === 'cancelled') {
+      msg = 'El pago del plan no se completó. Podés intentarlo de nuevo cuando quieras.';
+    } else {
+      msg = 'Estamos esperando la confirmación de Mercado Pago. Apenas se acredite, el plan se activa solo.';
+    }
+  } catch (_) {
+    msg = 'No pudimos confirmar el pago todavía. Si ya pagaste, el plan se activa apenas Mercado Pago lo confirme.';
+  }
+  // Limpiar la URL para que un refresh no repita el aviso
+  history.replaceState(null, '', location.pathname + '?tab=servicio');
+  setTimeout(() => alert(msg), 50);
+}
+
 function seleccionarPlan(nombrePlan, precio) {
   window.__daledealPlanSeleccionado = { nombre: nombrePlan, precio: Number(precio) || 0 };
   // Mostrar mensaje claro
   if (nombrePlan === 'Servicio') {
-    alert(`Plan Servicio: $${precio.toLocaleString('es-AR')} por mes.\n\nSe renueva todos los meses: si al día 10 no está renovado, la publicación del servicio se da de baja hasta que lo renueves.`);
+    // El plan Servicio se paga con Mercado Pago y habilita publicar servicios.
+    startServicePlanCheckout();
   } else if (precio > 0) {
     const ok = confirm(`Plan "${nombrePlan}" ($${precio.toLocaleString('es-AR')}/mes).\n\nLa monetización de los planes Premium está en activación. Por ahora podés seguir publicando con el plan base. ¿Querés volver al formulario de publicación?`);
     if (ok) document.querySelector('#publishTabs .nav-link.active')?.click();

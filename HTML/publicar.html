@@ -240,10 +240,14 @@
         display: none;
         align-items: center;
         gap: 1rem;
+        flex-wrap: wrap;
         margin-bottom: 1.5rem;
       }
       .auth-warning i { font-size: 1.5rem; color: var(--warning); }
       .auth-warning a { color: var(--primary-red); font-weight: 600; }
+      .auth-warning .btn { flex-shrink: 0; }
+      .plan-active-note { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; font-weight: 600; color: var(--success); }
+      .plan-active-note[hidden] { display: none; }
 
       .success-msg {
         background: var(--success-light);
@@ -295,7 +299,10 @@
       .plan-features li i { font-size: 0.9rem; flex-shrink: 0; }
       .plan-features li i { margin-top: 0.2rem; }
       .plan-meta { margin: 0.35rem 0 0; font-size: 0.85rem; font-weight: 600; color: var(--primary-red); }
-      .plan-legal { list-style: none; max-width: 760px; margin: 0 auto 2rem; padding: 0; }
+      .plan-includes { margin: -0.75rem 0 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--gray-700); }
+      .plan-legal-box { max-width: 760px; margin: 0 auto 2rem; }
+      .plan-legal-title { font-size: 1rem; font-weight: 700; color: var(--gray-700); margin-bottom: 0.5rem; }
+      .plan-legal { list-style: none; max-width: 760px; margin: 0 auto; padding: 0; }
       .plan-legal li { display: flex; gap: 0.6rem; padding: 0.35rem 0; font-size: 0.85rem; color: var(--gray-500); }
       .plan-legal li i { color: var(--gray-400); margin-top: 0.15rem; }
       .plan-btn { width: 100%; padding: 0.7rem; border-radius: 10px; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; }
@@ -628,6 +635,15 @@
         </div>
       </div>
 
+      <!-- Sin DNI aprobado no se publica (publicar.js lo muestra con /users/me) -->
+      <div class="auth-warning" id="verifyWarning">
+        <i class="bi bi-person-badge"></i>
+        <div>
+          <strong>Tu cuenta todavía no está verificada.</strong>
+          <br>Para vender, comprar y contratar necesitamos aprobar tu DNI. <a href="./mi-cuenta.html#verificacion">Ver mi verificación</a>
+        </div>
+      </div>
+
       <!-- Tabs: Producto / Servicio -->
       <ul class="nav publish-tabs border-bottom mb-4" id="publishTabs">
         <li class="nav-item">
@@ -865,6 +881,18 @@
       <!-- FORMULARIO SERVICIO -->
       <!-- ============================================================ -->
       <div id="form-servicio" style="display:none;">
+        <!-- Publicar servicios requiere el plan Servicio activo (publicar.js) -->
+        <div class="auth-warning mb-4" id="planWarning">
+          <i class="bi bi-megaphone-fill"></i>
+          <div class="flex-grow-1">
+            <strong>Para publicar servicios necesitás el plan Servicio activo.</strong>
+            <br>Cuesta $3.000 por mes y se renueva hasta el día 10 de cada mes. Los servicios no pagan comisión.
+          </div>
+          <button type="button" class="btn btn-primary btn-sm" id="btnPlanCheckout">Contratar plan Servicio</button>
+        </div>
+        <div class="plan-active-note mb-4" id="planActiveNote" hidden>
+          <i class="bi bi-check-circle-fill"></i> <span></span>
+        </div>
         <form id="serviceForm" novalidate>
           <div class="row g-4">
 
@@ -908,6 +936,19 @@
                   <label class="form-label">Zonas de cobertura</label>
                   <input type="text" class="form-control" id="s-zones" placeholder="Ej: CABA, GBA Norte, GBA Sur" />
                   <div class="form-text">Separadas por coma</div>
+                </div>
+
+                <div class="mt-3">
+                  <label class="form-label">Lo que ofrecés</label>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="s-warranty" />
+                    <label class="form-check-label" for="s-warranty">Con garantía en el trabajo</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="s-247" />
+                    <label class="form-check-label" for="s-247">Disponible 24/7 (urgencias)</label>
+                  </div>
+                  <div class="form-text">Se muestran en tu publicación. "Certificado" aparece solo cuando verificamos tu título desde tu perfil.</div>
                 </div>
               </div>
 
@@ -1055,7 +1096,8 @@
           <div class="text-center mb-5">
             <span class="promo-badge"><i class="bi bi-bag me-2"></i>Planes para productos</span>
             <h2 class="promo-title">Publicá tu producto y llegá a más compradores</h2>
-            <p class="promo-subtitle">Publicar es gratis y solo pagás una comisión del 3% + impuestos cuando vendés. Muy pronto vas a poder sumar visibilidad con los planes Premium (duran 1 mes).</p>
+            <p class="promo-subtitle">Publicar es gratis. En todos los planes pagás una comisión del 3% + impuestos solo cuando vendés. Los planes Premium suman visibilidad y herramientas durante 1 mes.</p>
+            <p class="promo-subtitle small mb-0"><i class="bi bi-calendar-check me-1"></i>Tenés hasta el <strong>día 10</strong> de cada mes para renovar; si no renovás, el plan se da de baja.</p>
           </div>
           <div class="row g-4 justify-content-center mb-5">
 
@@ -1063,15 +1105,16 @@
               <div class="plan-card">
                 <div class="plan-header">
                   <div class="plan-icon"><i class="bi bi-box-seam"></i></div>
-                  <h3 class="plan-name">Estándar</h3>
+                  <h3 class="plan-name">Producto Estándar</h3>
                   <div class="plan-price">Gratis<span></span></div>
                   <p class="plan-meta">Publicación común</p>
                 </div>
                 <ul class="plan-features">
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Publicación activa de tu producto</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Visible en el catálogo</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Hasta 10 fotos y videos</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Consultas de compradores</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Publicaciones activas en el catálogo y en las búsquedas</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Hasta 10 fotos y videos por publicación</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Consultas de compradores desde la publicación</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Chat privado con el comprador después de la venta</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Pago protegido: el dinero se libera al confirmarse la entrega</li>
                   <li><i class="bi bi-percent text-warning"></i> Comisión del 3% + impuestos solo cuando vendés</li>
                 </ul>
                 <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Estándar Producto', 0)">Seleccioná</button>
@@ -1082,17 +1125,38 @@
               <div class="plan-card">
                 <div class="plan-header">
                   <div class="plan-icon plan-icon-blue"><i class="bi bi-rocket"></i></div>
-                  <h3 class="plan-name">Premium</h3>
+                  <h3 class="plan-name">Producto Premium</h3>
                   <div class="plan-price">$4.990<span>/mes</span></div>
-                  <p class="plan-meta">Hasta 3 publicaciones destacadas</p>
+                  <p class="plan-meta">Más visibilidad para tus publicaciones</p>
                 </div>
+                <p class="plan-includes">Todo lo de Estándar, más:</p>
                 <ul class="plan-features">
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Más visibilidad que una publicación común</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Prioridad en los resultados</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Insignia Premium</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas básicas</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Más exposición de tu perfil</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Acceso a promociones y espacios promocionales</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Mejor ubicación que una publicación común en búsquedas y en tu categoría</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Insignia Premium en tus publicaciones</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas por publicación: visitas, consultas y ventas</li>
+                  <li><i class="bi bi-percent text-warning"></i> Comisión del 3% + impuestos por venta</li>
+                </ul>
+                <button class="plan-btn plan-btn-soon" type="button" disabled title="Los planes de visibilidad llegan muy pronto">Próximamente</button>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+              <div class="plan-card plan-card-featured">
+                <div class="plan-badge-rec">Más elegido</div>
+                <div class="plan-header">
+                  <div class="plan-icon plan-icon-blue"><i class="bi bi-lightning-charge-fill"></i></div>
+                  <h3 class="plan-name">Producto Premium Plus</h3>
+                  <div class="plan-price">$9.990<span>/mes</span></div>
+                  <p class="plan-meta">Más prioridad y herramientas para vender</p>
+                </div>
+                <p class="plan-includes">Todo lo de Premium, más:</p>
+                <ul class="plan-features">
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Prioridad por encima de Premium en los resultados</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Presencia en el carrusel de la home</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Insignia Premium Plus en tus publicaciones</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas de conversión (de visitas a ventas) y comparación semana a semana</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Respuestas rápidas guardadas para consultas frecuentes</li>
+                  <li><i class="bi bi-percent text-warning"></i> Comisión del 3% + impuestos por venta</li>
                 </ul>
                 <button class="plan-btn plan-btn-soon" type="button" disabled title="Los planes de visibilidad llegan muy pronto">Próximamente</button>
               </div>
@@ -1101,39 +1165,21 @@
             <div class="col-md-6 col-lg-3">
               <div class="plan-card">
                 <div class="plan-header">
-                  <div class="plan-icon plan-icon-blue"><i class="bi bi-lightning-charge-fill"></i></div>
-                  <h3 class="plan-name">Premium Plus</h3>
-                  <div class="plan-price">$9.990<span>/mes</span></div>
-                  <p class="plan-meta">Hasta 6 publicaciones destacadas</p>
-                </div>
-                <ul class="plan-features">
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Más prioridad en resultados que Premium</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Mayor nivel de exposición</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Insignia Premium Plus</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas ampliadas</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Exposición superior de tu perfil</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Más presencia en los espacios promocionales</li>
-                </ul>
-                <button class="plan-btn plan-btn-soon" type="button" disabled title="Los planes de visibilidad llegan muy pronto">Próximamente</button>
-              </div>
-            </div>
-
-            <div class="col-md-6 col-lg-3">
-              <div class="plan-card plan-card-featured">
-                <div class="plan-badge-rec">Próximamente</div>
-                <div class="plan-header">
                   <div class="plan-icon plan-icon-red"><i class="bi bi-star-fill"></i></div>
-                  <h3 class="plan-name">Premium Pro</h3>
+                  <h3 class="plan-name">Producto Premium Pro</h3>
                   <div class="plan-price">$19.990<span>/mes</span></div>
-                  <p class="plan-meta">Hasta 9 publicaciones destacadas</p>
+                  <p class="plan-meta">La máxima visibilidad de la plataforma</p>
                 </div>
+                <p class="plan-includes">Todo lo de Premium Plus, más:</p>
                 <ul class="plan-features">
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Máxima prioridad: siempre entre los primeros resultados</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Máxima exposición de tu perfil</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Insignia Premium Pro</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas avanzadas</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Espacios publicitarios internos</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Herramientas comerciales adicionales</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> La mayor prioridad de ubicación disponible en la plataforma</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Mayor frecuencia en el carrusel de la home</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Insignia Premium Pro en tus publicaciones</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas avanzadas: de dónde llegan tus visitas, en qué horarios y exportación a planilla</li>
+                  <li><i class="bi bi-instagram text-danger"></i> 1 historia al mes en nuestro Instagram @daledeal.ar con una de tus publicaciones (exclusivo de este plan)</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Descuentos y ofertas programadas en tus publicaciones</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Atención prioritaria en el horario de soporte</li>
+                  <li><i class="bi bi-percent text-warning"></i> Comisión del 3% + impuestos por venta</li>
                 </ul>
                 <button class="plan-btn plan-btn-soon" type="button" disabled title="Los planes de visibilidad llegan muy pronto">Próximamente</button>
               </div>
@@ -1147,10 +1193,10 @@
           <div class="text-center mb-5">
             <span class="promo-badge"><i class="bi bi-megaphone-fill me-2"></i>Planes para servicios</span>
             <h2 class="promo-title">Publicá tu servicio y llegá a más clientes</h2>
-            <p class="promo-subtitle">Publicá con el plan Servicio. Los planes Premium, para sumar visibilidad, llegan muy pronto.</p>
-            <p class="promo-subtitle small mb-0"><i class="bi bi-calendar-check me-1"></i>Los planes se pagan por mes: si al <strong>día 10</strong> no está renovado, la publicación del servicio se da de baja hasta que lo renueves.</p>
+            <p class="promo-subtitle">Ofrecé tus servicios y conseguí más clientes en tu zona. Los servicios no pagan comisión: solo pagás la mensualidad de tu plan para publicar.</p>
+            <p class="promo-subtitle small mb-0"><i class="bi bi-calendar-check me-1"></i>Tenés hasta el <strong>día 10</strong> de cada mes para renovar; si no renovás, el plan se da de baja.</p>
           </div>
-          <div class="row g-4 justify-content-center mb-4">
+          <div class="row g-4 justify-content-center mb-5">
 
             <div class="col-md-6 col-lg-3">
               <div class="plan-card">
@@ -1158,67 +1204,76 @@
                   <div class="plan-icon"><i class="bi bi-tools"></i></div>
                   <h3 class="plan-name">Servicio</h3>
                   <div class="plan-price">$3.000<span>/mes</span></div>
-                  <p class="plan-meta">Plan base para prestadores</p>
+                  <p class="plan-meta">Tus servicios publicados</p>
                 </div>
                 <ul class="plan-features">
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Perfil de prestador</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Publicación de tus servicios</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Consultas de clientes</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Calificación con estrellas</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Verificación de identidad</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Aparición normal en búsquedas</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Publicación de tus servicios en el catálogo y en las búsquedas</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Descripción, rubro y zona de cobertura en cada publicación</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Fotos y videos de trabajos realizados</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Días y horarios de atención visibles en la publicación</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Consultas de clientes desde la publicación</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Insignia de verificado si cargás tu título (opcional)</li>
                 </ul>
                 <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Servicio', 3000)">Contratar</button>
               </div>
             </div>
 
             <div class="col-md-6 col-lg-3">
-              <div class="plan-card">
+              <div class="plan-card plan-card-featured">
+                <div class="plan-badge-rec">Más elegido</div>
                 <div class="plan-header">
                   <div class="plan-icon plan-icon-blue"><i class="bi bi-rocket"></i></div>
                   <h3 class="plan-name">Servicio Premium</h3>
                   <div class="plan-price">$6.990<span>/mes</span></div>
-                  <p class="plan-meta">Perfil destacado</p>
+                  <p class="plan-meta">Más visibilidad en tu rubro y zona</p>
                 </div>
+                <p class="plan-includes">Todo lo de Servicio, más:</p>
                 <ul class="plan-features">
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Todo lo del plan Servicio</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Más exposición en búsquedas y en tu zona</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Prioridad sobre los perfiles del plan base</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Servicios destacados</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas de visitas</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Insignia de Prestador Premium</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Mejor ubicación en las búsquedas de tu rubro y zona</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Insignia Servicio Premium en tus publicaciones</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas por publicación: visitas, consultas y clics en contacto</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Respuestas rápidas guardadas para consultas frecuentes</li>
                 </ul>
                 <button class="plan-btn plan-btn-soon" type="button" disabled title="Los planes de visibilidad llegan muy pronto">Próximamente</button>
               </div>
             </div>
 
             <div class="col-md-6 col-lg-3">
-              <div class="plan-card plan-card-featured">
-                <div class="plan-badge-rec">Próximamente</div>
+              <div class="plan-card">
                 <div class="plan-header">
                   <div class="plan-icon plan-icon-red"><i class="bi bi-star-fill"></i></div>
-                  <h3 class="plan-name">Servicio Premium Plus</h3>
+                  <h3 class="plan-name">Servicio Premium Pro</h3>
                   <div class="plan-price">$11.990<span>/mes</span></div>
-                  <p class="plan-meta">Máxima exposición para prestadores</p>
+                  <p class="plan-meta">Máxima exposición profesional</p>
                 </div>
+                <p class="plan-includes">Todo lo de Servicio Premium, más:</p>
                 <ul class="plan-features">
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Todo lo del plan Servicio Premium</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Más presencia dentro de tu categoría</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Más servicios destacados</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas avanzadas</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Espacios promocionales y promociones especiales</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Insignia de Prestador Premium Plus</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> La mayor prioridad de ubicación disponible en tu rubro y zona</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Presencia en el carrusel de servicios de la home</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Insignia Servicio Premium Pro en tus publicaciones</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas avanzadas: de dónde llegan tus visitas y en qué horarios</li>
+                  <li><i class="bi bi-instagram text-danger"></i> 1 historia al mes en nuestro Instagram @daledeal.ar con uno de tus servicios (exclusivo de este plan)</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Atención prioritaria en el horario de soporte</li>
                 </ul>
                 <button class="plan-btn plan-btn-soon" type="button" disabled title="Los planes de visibilidad llegan muy pronto">Próximamente</button>
               </div>
             </div>
 
           </div>
+        </div>
+
+        <!-- Letra chica: vale para los planes de productos y de servicios -->
+        <div class="plan-legal-box">
+          <h3 class="plan-legal-title">Condiciones y letra chica</h3>
           <ul class="plan-legal">
-            <li><i class="bi bi-megaphone"></i> ¿Querés publicitar tu negocio con un banner o una publicación destacada? Escribinos a <a href="mailto:contacto@daledeal.com?subject=PUBLICIDAD">contacto@daledeal.com</a> con el asunto PUBLICIDAD y armamos una propuesta a tu medida.</li>
-            <li><i class="bi bi-star-half"></i> Las calificaciones con estrellas no dependen del plan: pagar un plan no permite comprar ni modificar tu reputación.</li>
-            <li><i class="bi bi-patch-check"></i> Contratar un plan no reemplaza la verificación. Según el servicio, podemos pedirte identidad, título, matrícula u otra documentación.</li>
-            <li><i class="bi bi-info-circle"></i> Los planes aumentan tu visibilidad, pero no garantizan una cantidad de visitas, consultas, contrataciones ni ingresos.</li>
+            <li><i class="bi bi-calendar-check"></i> Todos los planes duran 1 mes. Hay tiempo hasta el día 10 de cada mes para renovar; si no se renueva, el plan se da de baja.</li>
+            <li><i class="bi bi-star-half"></i> Pagar un plan no compra reputación ni garantiza ventas o resultados.</li>
+            <li><i class="bi bi-patch-check"></i> La insignia de verificado no se vende: depende de la verificación de identidad y, en servicios, de cargar el título.</li>
+            <li><i class="bi bi-instagram"></i> La historia en Instagram es exclusiva del plan más alto de cada tipo: Premium Pro en productos y Servicio Premium Pro en servicios. Ningún otro plan la incluye. Es solo historia: no hay publicaciones en el feed.</li>
+            <li><i class="bi bi-clock-history"></i> La historia se solicita dentro del mes del plan y no se acumula. Dale Deal la diseña con su plantilla y la publica en @daledeal.ar.</li>
+            <li><i class="bi bi-shield-x"></i> Dale Deal puede rechazar contenido que no cumpla las políticas de la plataforma.</li>
+            <li><i class="bi bi-graph-up"></i> No se promete alcance ni cantidad de visitas.</li>
+            <li><i class="bi bi-stars"></i> Los beneficios que todavía no estén desarrollados se suman como "Nuevo" cuando estén disponibles, nunca antes.</li>
           </ul>
         </div>
 

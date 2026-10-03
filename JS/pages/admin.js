@@ -332,6 +332,13 @@
               ${u.is_active ? 'Suspender' : 'Reactivar'}
             </button>
             <button class="btn btn-sm btn-outline-warning" data-action="badges" data-id="${u.id}" data-badges="${esc((u.badges || []).join(','))}"><i class="bi bi-award"></i> Insignias</button>
+            ${(() => {
+              // Plan Servicio (para quien pagó por fuera de Mercado Pago)
+              const until = u.service_plan_until ? new Date(u.service_plan_until) : null;
+              const active = until && until > new Date();
+              const label = active ? `Plan hasta ${until.toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })}` : 'Plan Servicio';
+              return `<button class="btn btn-sm btn-outline-${active ? 'success' : 'secondary'}" data-action="service-plan" data-id="${u.id}" data-active="${active ? 'true' : 'false'}" data-label="${esc(label)}"><i class="bi bi-megaphone"></i> ${esc(label)}</button>`;
+            })()}
             ${u.role !== 'admin'
               ? `<button class="btn btn-sm btn-outline-primary" data-action="promote" data-id="${u.id}"><i class="bi bi-shield-check"></i> Hacer admin</button>`
               : `<button class="btn btn-sm btn-outline-secondary" data-action="demote" data-id="${u.id}"><i class="bi bi-shield-slash"></i> Quitar admin</button>`}
@@ -351,6 +358,25 @@
 
         if (action === 'badges') {
           openBadgesEditor(id, (btn.dataset.badges || '').split(',').filter(Boolean));
+          return;
+        }
+        if (action === 'service-plan') {
+          const active = btn.dataset.active === 'true';
+          if (confirm(active
+            ? `${btn.dataset.label}.\n\n¿Sumarle un mes más (hasta el día 10 del mes siguiente)?`
+            : '¿Activar el plan Servicio a mano? Queda activo hasta el día 10 del mes siguiente.\nUsalo solo si pagó por fuera de Mercado Pago.')) {
+            payload = { service_plan_extend: true };
+          } else if (active && confirm('¿Dar de baja el plan Servicio ahora? No va a poder publicar servicios nuevos.')) {
+            payload = { service_plan_until: null };
+          } else {
+            return;
+          }
+          try {
+            await window.DaleDeal.api.apiFetch(`/admin/users/${id}`, { method: 'PATCH', body: JSON.stringify(payload) });
+            loadUsers();
+          } catch (err) {
+            alert('Error: ' + (err.message || 'no se pudo actualizar el plan'));
+          }
           return;
         }
         if (action === 'toggle-active') {

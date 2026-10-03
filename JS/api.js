@@ -74,6 +74,11 @@ async function apiFetch(path, options = {}) {
     const err = new Error(friendlyError(res.status, errBody?.error));
     err.status = res.status;
     err.body   = errBody;
+    err.code   = errBody?.code;
+    // Cuenta sin DNI aprobado o sin plan Servicio: aviso con el paso a seguir.
+    if ((err.code === 'NOT_VERIFIED' || err.code === 'PLAN_REQUIRED') && options._background !== true) {
+      window.DaleDeal?.utils?.showAccessGate?.(err.code, errBody.error);
+    }
     // Auto-logout si el token expiró + flash + redirect a login.
     // Antes solo limpiaba el token y dejaba al usuario en el aire (la página
     // seguía rota porque su UI era para usuario loggeado). Ahora le avisamos
@@ -228,6 +233,11 @@ function transformService(s) {
     gallery,                          // ← array real o null (no más mock)
     badges: [],
     postBadges: window.DaleDeal.utils.parsePostBadges(s.badges),
+    // Certificaciones (cards y filtros de /servicios). "Certificado" = título
+    // aprobado por el equipo; garantía y 24/7 los marca el prestador (020).
+    certified:    !!s.provider_verified_professional,
+    hasWarranty:  !!s.has_warranty,
+    available247: !!s.available_24_7,
     provider,                         // ← objeto real o null
     provider_id: s.provider_id,       // campos planos para retrocompat
     provider_name: decodeText(s.provider_name),

@@ -564,6 +564,95 @@ DaleDeal.utils.renderPostBadges = function (list) {
   return spans ? `<div class="post-badges">${spans}</div>` : '';
 };
 
+/**
+ * Renglón de las cards con el estado (Nuevo / Usado) y cómo llega el
+ * producto: envío gratis / con costo, retiro, o "a coordinar" cuando el
+ * vendedor no cargó envío (lo arreglan por chat).
+ * Usa los campos de transformProduct (condition, shipping_required…).
+ */
+DaleDeal.utils.renderCardTags = function (p) {
+  if (!p) return '';
+  const condition = p.condition === 'used'
+    ? '<span class="card-tag-condition">Usado</span>'
+    : '<span class="card-tag-condition is-new">Nuevo</span>';
+
+  let icon = 'bi-chat-dots';
+  let text = 'Entrega a coordinar';
+  let cls = '';
+  if (p.shipping_required && p.offers_delivery) {
+    const cost = Number(p.shipping_cost) || 0;
+    icon = 'bi-truck';
+    text = cost > 0 ? `Envío ${DaleDeal.utils.formatCurrency(cost)}` : 'Envío gratis';
+    if (cost === 0) cls = ' is-free';
+    if (p.offers_pickup) text += ' · o retiro';
+  } else if (p.shipping_required && p.offers_pickup) {
+    icon = 'bi-shop';
+    text = 'Retiro en persona';
+  }
+  const shipping = `<span class="card-tag-shipping${cls}"><i class="bi ${icon}" aria-hidden="true"></i><span>${text}</span></span>`;
+
+  return `<div class="product-card-tags">${condition}${shipping}</div>`;
+};
+
+/**
+ * Certificaciones de un servicio para las cards: mismas que los filtros de
+ * /servicios (Certificado, Con garantía, Disponible 24/7). Usa los campos de
+ * transformService (certified, hasWarranty, available247).
+ */
+DaleDeal.utils.renderServiceFeatures = function (s) {
+  if (!s) return '';
+  const items = [];
+  if (s.certified)    items.push(['is-certified', 'bi-patch-check-fill', 'Certificado']);
+  if (s.hasWarranty)  items.push(['is-warranty',  'bi-shield-fill-check', 'Con garantía']);
+  if (s.available247) items.push(['is-247',       'bi-clock-fill',        'Disponible 24/7']);
+  if (!items.length) return '';
+  return `<div class="service-certs">${items.map(([cls, icon, text]) =>
+    `<span class="service-feature ${cls}"><i class="bi ${icon}" aria-hidden="true"></i>${text}</span>`
+  ).join('')}</div>`;
+};
+
+/**
+ * Aviso cuando el backend frena una acción por la cuenta:
+ *  - NOT_VERIFIED: sin DNI aprobado no se compra, vende ni contrata.
+ *  - PLAN_REQUIRED: sin plan Servicio activo no se publican servicios.
+ * Lo dispara apiFetch con el `code` de la respuesta; también se puede llamar
+ * antes de intentar (publicar.js lo usa al cargar).
+ */
+DaleDeal.utils.showAccessGate = function (code, message) {
+  const inHtml = window.location.pathname.includes('/HTML/');
+  const link = (page, hash) => (inHtml ? `./${page}.html` : `/${page}`) + hash;
+  const cfg = code === 'PLAN_REQUIRED'
+    ? { icon: 'bi-megaphone-fill', title: 'Necesitás el plan Servicio',
+        text: message || 'Para publicar servicios necesitás el plan Servicio activo ($3.000 por mes).',
+        cta: 'Ver el plan Servicio', href: link('publicar', '?tab=servicio#planes-servicio') }
+    : { icon: 'bi-person-badge', title: 'Tu cuenta todavía no está verificada',
+        text: message || 'Cuando aprobemos tu DNI vas a poder comprar, vender y contratar.',
+        cta: 'Ver mi verificación', href: link('mi-cuenta', '#verificacion') };
+
+  document.getElementById('dd-access-gate')?.remove();
+  const esc = (v) => DaleDeal.utils.escapeHtml(String(v ?? ''));
+  const wrap = document.createElement('div');
+  wrap.id = 'dd-access-gate';
+  wrap.className = 'dd-gate-backdrop';
+  wrap.innerHTML = `
+    <div class="dd-gate" role="dialog" aria-modal="true" aria-labelledby="dd-gate-title">
+      <i class="bi ${cfg.icon} dd-gate-icon" aria-hidden="true"></i>
+      <h3 id="dd-gate-title">${esc(cfg.title)}</h3>
+      <p>${esc(cfg.text)}</p>
+      <div class="dd-gate-actions">
+        <a class="btn btn-primary" href="${esc(cfg.href)}">${esc(cfg.cta)}</a>
+        <button type="button" class="btn btn-outline-secondary" data-close>Ahora no</button>
+      </div>
+    </div>`;
+  const close = () => wrap.remove();
+  wrap.addEventListener('click', (e) => { if (e.target === wrap || e.target.closest('[data-close]')) close(); });
+  document.addEventListener('keydown', function onKey(e) {
+    if (e.key === 'Escape') { close(); document.removeEventListener('keydown', onKey); }
+  });
+  document.body.appendChild(wrap);
+  wrap.querySelector('.btn-primary')?.focus();
+};
+
 /** Normaliza los carteles que vienen de la API (texto escapado por el backend). */
 DaleDeal.utils.parsePostBadges = function (raw) {
   if (!Array.isArray(raw)) return [];

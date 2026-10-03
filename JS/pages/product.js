@@ -1374,6 +1374,11 @@ class ProductPage {
                 <div class="stars">${this.renderProductStars(product.rating)}</div>
                 ${reviewsHTML}
               </div>
+              <div class="product-location">
+                <i class="bi bi-geo-alt-fill"></i>
+                <span>${esc(product.location || 'Argentina')}</span>
+              </div>
+              ${window.DaleDeal.utils.renderCardTags(product)}
             </div>
             <div class="product-pricing-wrapper">
               <div class="product-pricing">

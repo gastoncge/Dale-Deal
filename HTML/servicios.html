@@ -2993,8 +2993,8 @@
             priceMax: null,
             rating: null,
             certified: false,
-            verified: false,
-            warranty: false
+            warranty: false,
+            available247: false
           };
 
           this.init();
@@ -3102,6 +3102,9 @@
             location: service.location || 'Argentina',
             badges: service.badges || [],
             postBadges: service.postBadges || [],
+            certified: !!service.certified,
+            hasWarranty: !!service.hasWarranty,
+            available247: !!service.available247,
             featured: true,
             priceType: service.priceType || 'fixed',
             provider_id: service.provider_id,
@@ -3185,9 +3188,11 @@
           });
 
           // --- Certification checkboxes ---
+          // Los ids vienen del catálogo de productos: freeShipping = Certificado,
+          // conditionNew = Con garantía, conditionUsed = Disponible 24/7.
           const certifiedCb = document.getElementById('freeShipping');
-          const verifiedCb = document.getElementById('conditionNew');
-          const warrantyCb = document.getElementById('conditionUsed');
+          const warrantyCb = document.getElementById('conditionNew');
+          const available247Cb = document.getElementById('conditionUsed');
 
           if (certifiedCb) {
             certifiedCb.addEventListener('change', (e) => {
@@ -3195,9 +3200,9 @@
               self.applyFilters();
             });
           }
-          if (verifiedCb) {
-            verifiedCb.addEventListener('change', (e) => {
-              self.filters.verified = e.target.checked;
+          if (available247Cb) {
+            available247Cb.addEventListener('change', (e) => {
+              self.filters.available247 = e.target.checked;
               self.applyFilters();
             });
           }
@@ -3330,21 +3335,9 @@
           }
 
           // Certifications
-          if (this.filters.certified) {
-            filtered = filtered.filter(s =>
-              s.badges?.some(b => b.includes('Certificado') || b.includes('Matriculado'))
-            );
-          }
-          if (this.filters.verified) {
-            filtered = filtered.filter(s =>
-              s.badges?.some(b => b.includes('Verificado')) || s.featured
-            );
-          }
-          if (this.filters.warranty) {
-            filtered = filtered.filter(s =>
-              s.badges?.some(b => b.includes('Garantía'))
-            );
-          }
+          if (this.filters.certified)    filtered = filtered.filter(s => s.certified);
+          if (this.filters.warranty)     filtered = filtered.filter(s => s.hasWarranty);
+          if (this.filters.available247) filtered = filtered.filter(s => s.available247);
 
           // Sort
           switch (this.currentSort) {
@@ -3379,8 +3372,8 @@
             priceMax: null,
             rating: null,
             certified: false,
-            verified: false,
-            warranty: false
+            warranty: false,
+            available247: false
           };
 
           // Reset UI elements
@@ -3636,6 +3629,7 @@
                   <i class="bi bi-geo-alt-fill"></i>
                   <span>${locationSafe}</span>
                 </div>
+                ${window.DaleDeal.utils.renderServiceFeatures(service)}
               </div>
               <div class="product-pricing-wrapper">
                 <div class="product-pricing">

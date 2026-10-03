@@ -406,7 +406,7 @@
   background: var(--gray-100);
   border-radius: var(--radius-lg);
   padding: var(--spacing-1);
-  margin-bottom: var(--spacing-2);
+  margin-bottom: var(--spacing-5);
 }
 
 .quantity-btn {
@@ -474,7 +474,7 @@
 .purchase-actions {
   display: flex;
   gap: var(--spacing-4);
-  margin-bottom: var(--spacing-8);
+  margin-bottom: var(--spacing-5);
   flex-wrap: wrap;
 }
 

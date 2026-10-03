@@ -235,6 +235,9 @@
     $('edit-price-label').textContent = isProduct ? 'Precio' : 'Precio desde';
     $('edit-stock-group').hidden = !isProduct;
     $('edit-stock').value = isProduct ? (parseInt(it.stock, 10) || 0) : '';
+    $('edit-features-group').hidden = isProduct;
+    $('edit-warranty').checked = !isProduct && !!it.has_warranty;
+    $('edit-247').checked = !isProduct && !!it.available_24_7;
     editDescOriginal = descToText(decode(it.description || ''));
     $('edit-description').value = editDescOriginal;
     const badges = Array.isArray(it.badges) ? it.badges : [];
@@ -281,6 +284,8 @@
       if (stock > 0 && it.status === 'sold')     body.status = 'active';
     } else {
       body.price_from = price;
+      body.has_warranty = $('edit-warranty').checked;
+      body.available_24_7 = $('edit-247').checked;
     }
 
     const btn = $('edit-save-btn');

@@ -192,6 +192,7 @@ function renderProductCard(product) {
             <i class="bi bi-geo-alt-fill"></i>
             <span>${esc(product.location || 'Argentina')}</span>
           </div>
+          ${window.DaleDeal.utils.renderCardTags(product)}
         </div>
 
         <div class="product-pricing-wrapper">
@@ -350,8 +351,8 @@ function renderServiceCard(service) {
   const provider = service.provider || {};
 
   const badges = [];
+  // El título verificado ya sale abajo como "Certificado" (renderServiceFeatures)
   if (provider.verifiedIdentity) badges.push('<span class="badge-certified">Identidad verificada</span>');
-  if (provider.verifiedProfessional) badges.push('<span class="badge-certified">Profesional verificado</span>');
   const badgesHTML = badges.length ? `<div class="service-badges">${badges.join('')}</div>` : '';
 
   const reviewCount = service.reviewCount || 0;
@@ -387,6 +388,7 @@ function renderServiceCard(service) {
         <p class="service-description">${esc(shortDescription)}</p>
         <div class="service-meta">
           <div class="service-rating">${ratingHTML}</div>
+          ${window.DaleDeal.utils.renderServiceFeatures(service)}
           <div class="service-info-row">
             <div class="service-location">
               <i class="bi bi-geo-alt-fill"></i>
