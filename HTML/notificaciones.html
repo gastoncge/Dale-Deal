@@ -19,8 +19,9 @@
     />
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
-    <link rel="apple-touch-icon" href="../IMG/LOGO.png" />
+    <link rel="icon" href="../IMG/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="../IMG/icon-192.png" type="image/png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="../IMG/apple-touch-icon.png" />
     <link rel="manifest" href="../manifest.json" />
     <!-- Preconnect a CDNs externos: warmea conexiones DNS+TCP+TLS en paralelo al parse del HTML, ahorra 100-300ms. -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -59,8 +60,7 @@
       <div class="container-fluid px-4">
         <!-- Logo -->
         <a class="navbar-brand" href="../index.html" data-aos="fade-right">
-          <img src="../IMG/LOGO-2.png" alt="Dale Deal" class="logo-navbar" />
-          <span class="brand-text">DALE DEAL</span>
+          <img src="../IMG/logo-nav.png" alt="Dale Deal" class="logo-navbar" />
         </a>
 
         <!-- Search Bar -->
@@ -86,6 +86,12 @@
             <button class="theme-toggle" id="themeToggle" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">
               <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
             </button>
+          </div>
+          <!-- Mi Centro -->
+          <div class="action-item d-none d-md-flex">
+            <a href="./mi-cuenta.html" class="action-btn" id="miCentroBtn" title="Mi Centro" aria-label="Ir a Mi Centro">
+              <i class="bi bi-grid-fill" aria-hidden="true"></i>
+            </a>
           </div>
 
           <!-- Products Link -->
@@ -175,7 +181,7 @@
           <!-- Profile -->
           <div class="action-item dropdown">
             <button class="action-btn profile-btn" id="profileDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" title="Mi cuenta">
-              <img src="https://ui-avatars.com/api/?name=U&amp;background=d63031&amp;color=fff&amp;size=80&amp;font-size=0.5&amp;bold=true" alt="Mi perfil" class="profile-image" id="profileAvatar" />
+              <img src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2080%2080%22%3E%3Crect%20width%3D%2280%22%20height%3D%2280%22%20fill%3D%22%23d63031%22%2F%3E%3Ctext%20x%3D%2240%22%20y%3D%2240%22%20dy%3D%22.35em%22%20text-anchor%3D%22middle%22%20fill%3D%22%23fff%22%20font-family%3D%22Inter%2CArial%2Csans-serif%22%20font-size%3D%2234%22%20font-weight%3D%22700%22%3EU%3C%2Ftext%3E%3C%2Fsvg%3E" alt="Mi perfil" class="profile-image" id="profileAvatar" />
               <span class="profile-name">Usuario</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
@@ -404,7 +410,7 @@
               <!-- Avatar + stats -->
               <div class="perfil-hero">
                 <div class="perfil-avatar-wrap">
-                  <img src="https://ui-avatars.com/api/?name=Usuario&background=e53e3e&color=fff&size=128" alt="Avatar" class="perfil-avatar" id="perfilAvatarImg">
+                  <img src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2080%2080%22%3E%3Crect%20width%3D%2280%22%20height%3D%2280%22%20fill%3D%22%23d63031%22%2F%3E%3Ctext%20x%3D%2240%22%20y%3D%2240%22%20dy%3D%22.35em%22%20text-anchor%3D%22middle%22%20fill%3D%22%23fff%22%20font-family%3D%22Inter%2CArial%2Csans-serif%22%20font-size%3D%2234%22%20font-weight%3D%22700%22%3EU%3C%2Ftext%3E%3C%2Fsvg%3E" alt="Avatar" class="perfil-avatar" id="perfilAvatarImg">
                   <button class="perfil-avatar-edit" title="Cambiar foto" onclick="document.getElementById('avatarInput').click()">
                     <i class="bi bi-camera-fill"></i>
                   </button>
@@ -548,10 +554,9 @@
                   <button class="filter-tab" data-order-filter="cancelled">Cancelados</button>
                 </div>
               </div>
-              <!-- Listado dinámico: JS/pages/notifications.js debe poblar este contenedor
-                   con los pedidos reales del usuario desde el backend (GET /api/orders/mine).
-                   Mientras no haya integración, mostramos estado vacío en lugar de
-                   mockups falsos (#12345, iPhone, etc.) que confundían al usuario. -->
+              <!-- Listado dinámico: JS/pages/mis-compras.js lo puebla con los pedidos
+                   reales (GET /orders/my), el seguimiento del envío y el botón
+                   "Recibí el producto". El estado vacío de abajo es el placeholder inicial. -->
               <div class="orders-list" id="misComprasList">
                 <div class="empty-state">
                   <i class="bi bi-bag empty-state-icon" aria-hidden="true"></i>
@@ -702,8 +707,7 @@
               <div class="accordion mt-4" id="faqAcc">
                 <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#fq1">¿Cómo realizo un pedido?</button></h2><div id="fq1" class="accordion-collapse collapse show" data-bs-parent="#faqAcc"><div class="accordion-body">Seleccioná el producto, hacé clic en "Agregar al carrito" y seguí los pasos del checkout. Necesitás una cuenta activa para finalizar la compra.</div></div></div>
                 <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fq2">¿Puedo cancelar un pedido?</button></h2><div id="fq2" class="accordion-collapse collapse" data-bs-parent="#faqAcc"><div class="accordion-body">Podés cancelar dentro de las primeras 2 horas de haberlo realizado, siempre que no haya sido despachado. Ingresá a "Mis compras" y seleccioná la opción.</div></div></div>
-                <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fq3">¿Qué métodos de pago aceptan?</button></h2><div id="fq3" class="accordion-collapse collapse" data-bs-parent="#faqAcc"><div class="accordion-body">Aceptamos tarjetas de crédito y débito (Visa, Mastercard, Amex), transferencia bancaria, Mercado Pago y efectivo por Rapipago o Pago Fácil.</div></div></div>
-                <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fq4">¿Cómo rastreo mi pedido?</button></h2><div id="fq4" class="accordion-collapse collapse" data-bs-parent="#faqAcc"><div class="accordion-body">Vas a recibir un email con el número de seguimiento una vez despachado. También podés rastrearlo desde "Mis compras" → "Rastrear envío".</div></div></div>
+                <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fq3">¿Qué métodos de pago aceptan?</button></h2><div id="fq3" class="accordion-collapse collapse" data-bs-parent="#faqAcc"><div class="accordion-body">Pagás con Mercado Pago: tarjetas de crédito y débito, dinero en cuenta o cualquier billetera virtual. No se aceptan pagos en efectivo por Rapipago ni Pago Fácil. Las cuotas disponibles las muestra Mercado Pago al pagar.</div></div></div>
                 <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fq5">¿Cómo cambio mi contraseña?</button></h2><div id="fq5" class="accordion-collapse collapse" data-bs-parent="#faqAcc"><div class="accordion-body">Ingresá a Mi Centro → Seguridad → Cambiar contraseña. Vas a necesitar tu contraseña actual para confirmar el cambio.</div></div></div>
               </div>
             </div>
@@ -720,8 +724,9 @@
                   <div id="contactSuccess" class="success-msg" style="display:none"><i class="bi bi-check-circle-fill"></i><b>¡Mensaje enviado!</b> Te contactaremos pronto.</div>
                   <form id="contactForm">
                     <div class="row g-3">
-                      <div class="col-md-6"><label class="form-label">Nombre *</label><input type="text" class="form-control" required></div>
-                      <div class="col-md-6"><label class="form-label">Email *</label><input type="email" class="form-control" required></div>
+                      <div class="col-md-4"><label class="form-label">Nombre *</label><input type="text" class="form-control" name="nombre" required></div>
+                      <div class="col-md-4"><label class="form-label">Apellido *</label><input type="text" class="form-control" name="apellido" required></div>
+                      <div class="col-md-4"><label class="form-label">Email *</label><input type="email" class="form-control" name="email" required></div>
                       <div class="col-12"><label class="form-label">Asunto *</label><select class="form-select" required><option value="">Seleccioná</option><option>Consulta sobre un pedido</option><option>Problema con un pago</option><option>Devolución o reembolso</option><option>Problema técnico</option><option>Publicidad en el sitio</option><option>Otro</option></select></div>
                       <div class="col-12"><label class="form-label">Mensaje *</label><textarea class="form-control" rows="4" required placeholder="Describí tu consulta..."></textarea></div>
                       <div class="col-12"><button type="submit" class="btn btn-primary w-100"><i class="bi bi-send me-2"></i>Enviar mensaje</button></div>
@@ -732,7 +737,6 @@
                   <div class="contact-info-item-row"><i class="bi bi-envelope"></i><div><small>Email</small><b>contacto@daledeal.com</b></div></div>
                   <div class="contact-info-item-row"><i class="bi bi-telephone"></i><div><small>Teléfono</small><b>+54 9 11 3798-5881</b></div></div>
                   <div class="contact-info-item-row"><i class="bi bi-clock"></i><div><small>Horario</small><b>Lun–Vie 9:00–18:00 hs</b></div></div>
-                  <div class="contact-info-item-row"><i class="bi bi-geo-alt"></i><div><small>Dirección</small><b>Av. Corrientes 1234, CABA</b></div></div>
                 </div>
               </div>
             </div>
@@ -786,7 +790,7 @@
               </div>
               <div class="overall-ok"><i class="bi bi-check-circle-fill"></i><div><b>Todos los sistemas operacionales</b><p>No hay incidencias activas · Actualizado: 1 mar 2026, 14:32 hs</p></div></div>
               <div class="services-list">
-                <div class="svc-row"><i class="bi bi-globe2 svc-icon"></i><div class="svc-info"><b>Sitio web principal</b><small>daledeal.com y todas las páginas</small></div><span class="uptime-pct">99.98%</span><span class="svc-dot operational"></span><span class="svc-lbl lbl-ok">Operacional</span></div>
+                <div class="svc-row"><i class="bi bi-globe2 svc-icon"></i><div class="svc-info"><b>Sitio web principal</b><small>daledeal.com.ar y todas las páginas</small></div><span class="uptime-pct">99.98%</span><span class="svc-dot operational"></span><span class="svc-lbl lbl-ok">Operacional</span></div>
                 <div class="svc-row"><i class="bi bi-credit-card svc-icon"></i><div class="svc-info"><b>Procesamiento de pagos</b><small>Tarjetas, transferencias y Mercado Pago</small></div><span class="uptime-pct">99.81%</span><span class="svc-dot operational"></span><span class="svc-lbl lbl-ok">Operacional</span></div>
                 <div class="svc-row"><i class="bi bi-bell svc-icon"></i><div class="svc-info"><b>Notificaciones</b><small>Email, push y SMS</small></div><span class="uptime-pct">100%</span><span class="svc-dot operational"></span><span class="svc-lbl lbl-ok">Operacional</span></div>
                 <div class="svc-row"><i class="bi bi-box-seam svc-icon"></i><div class="svc-info"><b>Gestión de pedidos</b><small>Creación, seguimiento y despacho</small></div><span class="uptime-pct">99.95%</span><span class="svc-dot operational"></span><span class="svc-lbl lbl-ok">Operacional</span></div>
@@ -821,18 +825,22 @@
                 <div class="sec-card">
                   <div class="sec-card-head"><div class="sec-card-icon"><i class="bi bi-shield-check"></i></div><div><b>Autenticación y alertas</b><small>Capas adicionales de seguridad</small></div></div>
                   <div class="sec-card-body">
-                    <div class="toggle-row"><div><b class="d-block">Autenticación en dos pasos (2FA)</b><small class="text-muted">Requerí un código extra al iniciar desde nuevos dispositivos</small></div><div class="form-check form-switch ms-4"><input class="form-check-input" type="checkbox" style="width:44px;height:24px"></div></div>
-                    <div class="toggle-row"><div><b class="d-block">Alertas de inicio de sesión</b><small class="text-muted">Email al iniciar desde un dispositivo nuevo</small></div><div class="form-check form-switch ms-4"><input class="form-check-input" type="checkbox" checked style="width:44px;height:24px"></div></div>
+                    <div class="toggle-row"><div><b class="d-block">Autenticación en dos pasos (2FA)</b><small class="text-muted">Próximamente: un código extra al iniciar desde nuevos dispositivos</small></div><div class="form-check form-switch ms-4"><input class="form-check-input" type="checkbox" disabled aria-label="Próximamente" style="width:44px;height:24px"></div></div>
+                    <div class="toggle-row"><div><b class="d-block">Alertas de inicio de sesión</b><small class="text-muted">Próximamente: email al iniciar desde un dispositivo nuevo</small></div><div class="form-check form-switch ms-4"><input class="form-check-input" type="checkbox" disabled aria-label="Próximamente" style="width:44px;height:24px"></div></div>
                   </div>
                 </div>
                 <!-- Sesiones -->
                 <div class="sec-card">
                   <div class="sec-card-head"><div class="sec-card-icon"><i class="bi bi-laptop"></i></div><div><b>Sesiones activas</b><small>Dispositivos con sesión iniciada</small></div></div>
-                  <div class="sec-card-body">
-                    <div class="session-row"><i class="bi bi-laptop sess-icon"></i><div><b>Windows · Chrome 122 <span class="current-badge">Este dispositivo</span></b><small class="text-muted d-block">Buenos Aires · Ahora</small></div></div>
-                    <div class="session-row"><i class="bi bi-phone sess-icon"></i><div><b>iPhone 15 · Safari</b><small class="text-muted d-block">Buenos Aires · Hace 2 horas</small></div><button class="btn btn-outline-danger btn-sm ms-auto" onclick="this.closest('.session-row').remove()">Cerrar</button></div>
-                    <div class="session-row"><i class="bi bi-phone sess-icon"></i><div><b>Android · Chrome Mobile</b><small class="text-muted d-block">Córdoba · Hace 3 días</small></div><button class="btn btn-outline-danger btn-sm ms-auto" onclick="this.closest('.session-row').remove()">Cerrar</button></div>
-                    <button class="btn btn-outline-danger btn-sm mt-3"><i class="bi bi-box-arrow-right me-2"></i>Cerrar todas las otras sesiones</button>
+                  <div class="sec-card-body" id="sessionsCardBody">
+                    <div class="session-row" id="currentSessionRow">
+                      <i class="bi bi-laptop sess-icon" id="currentSessionIcon"></i>
+                      <div>
+                        <b><span id="currentSessionLabel">Este dispositivo</span> <span class="current-badge">Activo</span></b>
+                        <small class="text-muted d-block" id="currentSessionMeta">Detectando…</small>
+                      </div>
+                    </div>
+                    <p class="text-muted small mt-3 mb-0">La gestión de otras sesiones estará disponible próximamente.</p>
                   </div>
                 </div>
               </div>
@@ -855,6 +863,7 @@
     <!-- Custom JS -->
     <script defer src="../JS/theme.js"></script>
     <script defer src="../JS/utils.js"></script>
+    <script defer src="../JS/search.js"></script>
     <script defer src="../JS/sentry.js"></script>
     <script defer src="../JS/api.js"></script>
     <script defer src="../JS/api-messages.js"></script>
@@ -865,6 +874,7 @@
     <script defer src="../JS/dropdown-fix.js"></script>
     <script defer src="../JS/component-loader.js"></script>
     <script defer src="../JS/pages/notifications.js"></script>
+    <script defer src="../JS/pages/mis-compras.js"></script>
     <script src="../JS/chat.js" defer></script>
     <script src="../JS/support-widget.js" defer></script>
 
@@ -1025,7 +1035,7 @@
       .svc-info { flex: 1; }
       .svc-info b { display: block; font-weight: 700; color: var(--gray-900); }
       .svc-info small { color: var(--gray-500); font-size: var(--font-size-xs); }
-      .uptime-pct { font-size: var(--font-size-xs); color: var(--gray-400); font-weight: 600; white-space: nowrap; }
+      .uptime-pct { font-size: var(--font-size-xs); color: var(--gray-500); font-weight: 600; white-space: nowrap; }
       .svc-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
       .svc-dot.operational { background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,.25); }
       .svc-dot.maintenance { background: #3b82f6; }
@@ -1057,12 +1067,28 @@
 
     <script>
       // Inicializar AOS dentro de DOMContentLoaded porque los scripts
-      // `defer` se evalúan ENTRE el cierre de </body> y este evento. Si
+      // `defer` se evalúan entre el cierre del body y este evento. Si
       // corre antes, AOS no está cargado y los elementos con [data-aos]
       // quedan invisibles (opacity:0 por CSS de AOS, sin init que los
       // saque).
       document.addEventListener('DOMContentLoaded', function() {
         if (typeof AOS !== 'undefined') AOS.init({ duration: 800, once: true, offset: 100 });
+
+        (function initCurrentSession() {
+          var label = document.getElementById('currentSessionLabel');
+          var meta = document.getElementById('currentSessionMeta');
+          var icon = document.getElementById('currentSessionIcon');
+          if (!label || !meta) return;
+          var ua = navigator.userAgent;
+          var os = /iPhone|iPad|iPod/.test(ua) ? 'iOS' : /Android/.test(ua) ? 'Android' : /Mac OS X/.test(ua) ? 'Mac' : /Windows/.test(ua) ? 'Windows' : /Linux/.test(ua) ? 'Linux' : 'Dispositivo';
+          var browser = /Edg\//.test(ua) ? 'Edge' : /Chrome\//.test(ua) && !/Edg\//.test(ua) ? 'Chrome' : /Firefox\//.test(ua) ? 'Firefox' : /Safari\//.test(ua) && !/Chrome\//.test(ua) ? 'Safari' : 'Navegador';
+          label.textContent = os + ' · ' + browser;
+          meta.textContent = 'Sesión activa · Ahora';
+          if (icon && /iPhone|iPad|Android/.test(ua)) {
+            icon.classList.remove('bi-laptop');
+            icon.classList.add('bi-phone');
+          }
+        })();
       });
 
       // ===== NAVEGACIÓN DE SECCIONES =====
@@ -1189,11 +1215,35 @@
       document.querySelectorAll('.sev-btn').forEach(b => {
         b.addEventListener('click', () => { document.querySelectorAll('.sev-btn').forEach(x => x.classList.remove('active')); b.classList.add('active'); });
       });
-      document.getElementById('reportForm')?.addEventListener('submit', function(e) {
+      // Antes mostraba "¡Reporte enviado!" con un número de ticket al azar sin mandar nada.
+      const REPORT_CATEGORY = { pago: 'payment', pedido: 'shipping', cuenta: 'account', tecnico: 'technical', otro: 'other' };
+      document.getElementById('reportForm')?.addEventListener('submit', async function(e) {
         e.preventDefault();
-        document.getElementById('ticketNum').textContent = Math.floor(10000 + Math.random() * 90000);
-        this.closest('#reportFormState').style.display = 'none';
-        document.getElementById('reportSuccessState').style.display = '';
+        const notify = (m, t) => window.DaleDeal?.utils?.showNotification?.(m, t);
+        const type = this.querySelector('.prob-btn.active')?.dataset.type;
+        const severity = this.querySelector('.sev-btn.active')?.textContent.trim();
+        if (!type) { notify('Elegí el tipo de problema.', 'warning'); return; }
+        const btn = this.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        try {
+          const res = await window.DaleDeal.api.apiFetch('/reports', {
+            method: 'POST',
+            body: JSON.stringify({
+              category: REPORT_CATEGORY[type] || 'other',
+              subject: `${this.querySelector('.prob-btn.active')?.textContent.trim() || 'Problema'}${severity ? ' · ' + severity : ''}`,
+              body: this.querySelector('textarea')?.value.trim() || '',
+              reporter_email: this.querySelector('input[type="email"]')?.value.trim() || undefined,
+            }),
+          });
+          document.getElementById('ticketNum').textContent = res?.id ?? res?.report?.id ?? '—';
+          this.closest('#reportFormState').style.display = 'none';
+          document.getElementById('reportSuccessState').style.display = '';
+          this.reset();
+        } catch (err) {
+          notify(err.message || 'No pudimos enviar el reporte.', 'error');
+        } finally {
+          btn.disabled = false;
+        }
       });
 
       // ===== EMPRESA =====
@@ -1203,10 +1253,27 @@
       });
 
       // ===== CONTACTO =====
-      document.getElementById('contactForm')?.addEventListener('submit', function(e) {
+      // Antes mostraba "¡Mensaje enviado!" sin mandar nada.
+      document.getElementById('contactForm')?.addEventListener('submit', async function(e) {
         e.preventDefault();
-        document.getElementById('contactSuccess').style.display = 'flex';
-        this.reset();
+        const val = (n) => (this.querySelector(`[name="${n}"]`)?.value || '').trim();
+        const nombre = val('nombre'), apellido = val('apellido'), email = val('email');
+        const asunto = this.querySelector('select')?.value || '';
+        const mensaje = this.querySelector('textarea')?.value.trim() || '';
+        const btn = this.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        try {
+          await window.DaleDeal.api.apiFetch('/contact', {
+            method: 'POST',
+            body: JSON.stringify({ nombre, apellido, email, asunto, mensaje, tipo: 'general' }),
+          });
+          document.getElementById('contactSuccess').style.display = 'flex';
+          this.reset();
+        } catch (err) {
+          window.DaleDeal?.utils?.showNotification?.(err.message || 'No pudimos enviar el mensaje.', 'error');
+        } finally {
+          btn.disabled = false;
+        }
       });
 
       // ===== SEGURIDAD: medidor de contraseña =====
@@ -1223,12 +1290,26 @@
         if (fill) { fill.style.width = bars[s][0]; fill.style.background = bars[s][1]; }
         if (txt)  { txt.textContent = bars[s][2]; txt.style.color = bars[s][1]; }
       });
-      document.getElementById('passForm')?.addEventListener('submit', function(e) {
+      // Antes mostraba "Contraseña actualizada" sin llamar a la API.
+      document.getElementById('passForm')?.addEventListener('submit', async function(e) {
         e.preventDefault();
-        if (window.DaleDeal?.utils?.showNotification) {
-          window.DaleDeal.utils.showNotification('Contraseña actualizada correctamente', 'success');
+        const notify = (m, t) => window.DaleDeal?.utils?.showNotification?.(m, t);
+        const [current, nueva, confirmar] = [...this.querySelectorAll('input[type="password"]')].map(i => i.value);
+        if (nueva !== confirmar) { notify('Las contraseñas nuevas no coinciden.', 'error'); return; }
+        const btn = this.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        try {
+          await window.DaleDeal.api.apiFetch('/auth/change-password', {
+            method: 'POST',
+            body: JSON.stringify({ currentPassword: current, newPassword: nueva }),
+          });
+          notify('Contraseña actualizada correctamente', 'success');
+          this.reset();
+        } catch (err) {
+          notify(err.message || 'No pudimos cambiar la contraseña.', 'error');
+        } finally {
+          btn.disabled = false;
         }
-        this.reset();
       });
 
       // ===== MI PERFIL — conectado al backend =====
@@ -1246,8 +1327,7 @@
 
         const avatarImg = document.getElementById('perfilAvatarImg');
         if (avatarImg) {
-          avatarImg.src = u.avatar
-            || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name || 'Usuario')}&background=e53e3e&color=fff&size=128`;
+          avatarImg.src = u.avatar || window.DaleDeal.utils.initialsAvatar(u.name || 'Usuario');
         }
 
         // Cargar stats reales en paralelo (silencioso si falla)
@@ -1304,10 +1384,47 @@
       function showPerfilStatus(msg, type) {
         const el = document.getElementById('perfilFormStatus');
         if (!el) return;
-        el.className = `alert alert-${type === 'error' ? 'danger' : 'success'} mb-3`;
+        const cls = type === 'error' ? 'danger' : (type === 'warning' ? 'warning' : 'success');
+        el.className = `alert alert-${cls} mb-3`;
         el.textContent = msg;
         el.classList.remove('d-none');
-        setTimeout(() => el.classList.add('d-none'), 4000);
+        clearTimeout(showPerfilStatus._timer);
+        showPerfilStatus._timer = setTimeout(() => el.classList.add('d-none'), type === 'warning' ? 8000 : 4000);
+      }
+
+      // ── Foto de perfil ──
+      // Antes la foto se mandaba como data URL en avatar_url y el backend solo
+      // acepta URLs http(s) → 400, y tampoco se guardaban nombre ni teléfono.
+      // Ahora se sube igual que las fotos de publicar (uploadImageFile en
+      // JS/pages/publicar.js): POST /api/upload al Worker del mismo dominio,
+      // que devuelve la URL pública /img/<key>, y esa URL va en avatar_url.
+      const AVATAR_MAX_BYTES = 8 * 1024 * 1024; // espejo del límite del Worker
+      const AVATAR_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
+      let pendingAvatarFile = null;   // se sube recién al guardar
+      let avatarPreviewUrl = null;
+
+      async function uploadAvatarFile(file) {
+        const token = localStorage.getItem('daledeal_token');
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token || ''}`,
+            'Content-Type': file.type,
+          },
+          body: file,
+        });
+        let data = null;
+        try { data = await res.json(); } catch (_) { /* respuesta no-JSON (p.ej. 404 en dev local) */ }
+        if (!res.ok || !data?.ok || !data.url) {
+          throw new Error(data?.error || 'No se pudo subir la imagen.');
+        }
+        return data.url;
+      }
+
+      function clearAvatarPreview() {
+        pendingAvatarFile = null;
+        if (avatarPreviewUrl) URL.revokeObjectURL(avatarPreviewUrl);
+        avatarPreviewUrl = null;
       }
 
       document.getElementById('perfilForm')?.addEventListener('submit', async function(e) {
@@ -1323,12 +1440,20 @@
         try {
           const payload = {
             name:     document.getElementById('perfilName').value.trim() || null,
-            phone:    document.getElementById('perfilPhone').value.trim() || null,
-            location: document.getElementById('perfilLocation').value.trim() || null,
+            // '' borra el dato en el backend (con null quedaba el valor viejo y
+            // no había forma de quitar el teléfono ni la ubicación).
+            phone:    document.getElementById('perfilPhone').value.trim(),
+            location: document.getElementById('perfilLocation').value.trim(),
           };
-          // Si hay avatar nuevo en pendingAvatarDataURL, lo mandamos
-          if (window._pendingAvatarDataURL) {
-            payload.avatar_url = window._pendingAvatarDataURL;
+          // Foto nueva: primero se sube. Si la subida falla, el resto del
+          // perfil se guarda igual y se avisa el error de la foto.
+          let avatarError = null;
+          if (pendingAvatarFile) {
+            try {
+              payload.avatar_url = await uploadAvatarFile(pendingAvatarFile);
+            } catch (err) {
+              avatarError = err.message || 'No se pudo subir la imagen.';
+            }
           }
           const updated = await apiFetch('/users/me', {
             method: 'PUT',
@@ -1349,9 +1474,15 @@
             if (window.authManager) window.authManager.currentUser = merged;
           } catch (_) {}
 
-          window._pendingAvatarDataURL = null;
+          // loadPerfilData vuelve a mostrar la foto guardada: si la subida
+          // falló, la vista previa no queda como si se hubiera guardado.
+          clearAvatarPreview();
           loadPerfilData();
-          showPerfilStatus('Perfil actualizado correctamente', 'success');
+          if (avatarError) {
+            showPerfilStatus(`Guardamos tus datos, pero no pudimos subir la foto: ${avatarError}`, 'warning');
+          } else {
+            showPerfilStatus('Perfil actualizado correctamente', 'success');
+          }
           // refrescar UI global (avatar en navbar, nombre, etc.)
           if (window.authManager?.updateUI) window.authManager.updateUI();
         } catch (err) {
@@ -1364,29 +1495,33 @@
 
       document.getElementById('avatarInput')?.addEventListener('change', function() {
         const file = this.files[0];
+        this.value = ''; // permite volver a elegir el mismo archivo
         if (!file) return;
-        // Tamaño máximo 2MB para avatar como data URL
-        if (file.size > 2 * 1024 * 1024) {
-          showPerfilStatus('La imagen es muy grande (máx 2MB)', 'error');
+        if (!AVATAR_TYPES.includes(file.type)) {
+          showPerfilStatus('Formato no soportado. Usá JPG, PNG, WebP, GIF o AVIF.', 'error');
           return;
         }
-        const reader = new FileReader();
-        reader.onload = e => {
-          const dataUrl = e.target.result;
-          document.getElementById('perfilAvatarImg').src = dataUrl;
-          // Guardar para mandar en el próximo submit
-          window._pendingAvatarDataURL = dataUrl;
-          showPerfilStatus('Foto cargada — apretá "Guardar cambios" para confirmar', 'success');
-        };
-        reader.readAsDataURL(file);
+        if (file.size > AVATAR_MAX_BYTES) {
+          showPerfilStatus('La imagen es muy grande (máx 8 MB)', 'error');
+          return;
+        }
+        clearAvatarPreview();
+        pendingAvatarFile = file;
+        avatarPreviewUrl = URL.createObjectURL(file);
+        document.getElementById('perfilAvatarImg').src = avatarPreviewUrl;
+        showPerfilStatus('Foto cargada — apretá "Guardar cambios" para confirmar', 'success');
       });
 
       // ===== DIRECCIONES =====
-      let addresses = [
-        { calle: 'Av. Corrientes 1234', piso: 'Piso 3, Dpto B', cp: '1043', ciudad: 'Buenos Aires', provincia: 'CABA', tipo: 'principal' }
-      ];
+      // Se guardan en este navegador (todavía no hay endpoint). Antes arrancaba
+      // con una dirección de ejemplo ("Av. Corrientes 1234") para todos.
+      const ADDR_KEY = 'dd_addresses';
+      let addresses = [];
+      try { addresses = JSON.parse(localStorage.getItem(ADDR_KEY) || '[]'); } catch (_) { addresses = []; }
+      const escA = (v) => window.DaleDeal.utils.escapeHtml(String(v ?? ''));
 
       function renderAddresses() {
+        try { localStorage.setItem(ADDR_KEY, JSON.stringify(addresses)); } catch (_) {}
         const list = document.getElementById('addressList');
         if (!list) return;
         list.innerHTML = addresses.map((a, i) => `
@@ -1395,8 +1530,8 @@
               <i class="bi bi-${a.tipo === 'principal' ? 'star-fill' : 'geo-alt'}"></i>
               ${a.tipo === 'principal' ? 'Principal' : 'Secundaria'}
             </div>
-            <p class="address-line"><i class="bi bi-house me-2"></i>${a.calle}${a.piso ? ', ' + a.piso : ''}</p>
-            <p class="address-line"><i class="bi bi-geo me-2"></i>${a.ciudad}, ${a.provincia} · CP ${a.cp}</p>
+            <p class="address-line"><i class="bi bi-house me-2"></i>${escA(a.calle)}${a.piso ? ', ' + escA(a.piso) : ''}</p>
+            <p class="address-line"><i class="bi bi-geo me-2"></i>${escA(a.ciudad)}, ${escA(a.provincia)} · CP ${escA(a.cp)}</p>
             <div class="d-flex gap-2 mt-3">
               ${a.tipo !== 'principal' ? `<button class="btn btn-outline-secondary btn-sm" onclick="setAddressPrincipal(${i})"><i class="bi bi-star me-1"></i>Hacer principal</button>` : ''}
               <button class="btn btn-outline-secondary btn-sm" onclick="editAddress(${i})"><i class="bi bi-pencil me-1"></i>Editar</button>
@@ -1491,9 +1626,11 @@
         currentUserId: null
       };
 
+      // Decodifica y escapa (DaleDeal.utils.escapeHtml): los mensajes vienen
+      // escapados de la API y, escapados otra vez, se veían "&quot;" o "&amp;".
       function escapeHtml(s) {
         if (s == null) return '';
-        return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+        return window.DaleDeal.utils.escapeHtml(String(s));
       }
 
       function formatMensajesTime(iso) {
@@ -1638,7 +1775,7 @@
         }
         msgsBox.innerHTML = msgs.map(m => {
           const fromMe = m.sender_id === myId;
-          return `<div class="mensajes-msg ${fromMe ? 'from-me' : 'from-them'}">${escapeHtml(m.body)}<span class="mensajes-msg-time">${formatMensajesFullTime(m.created_at)}</span></div>`;
+          return `<div class="mensajes-msg ${fromMe ? 'from-me' : 'from-them'}"><span class="mensajes-msg-text">${escapeHtml(m.body)}</span><span class="mensajes-msg-time">${formatMensajesFullTime(m.created_at)}</span></div>`;
         }).join('');
         msgsBox.scrollTop = msgsBox.scrollHeight;
       }

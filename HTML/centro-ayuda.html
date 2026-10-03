@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Centro de Ayuda - DALE DEAL</title>
-    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
+    <link rel="icon" href="../IMG/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="../IMG/icon-192.png" type="image/png" sizes="192x192" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous" />
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" integrity="sha384-/rJKQnzOkEo+daG0jMjU1IwwY9unxt1NBw3Ef2fmOJ3PW/TfAg2KXVoWwMZQZtw9" crossorigin="anonymous" rel="stylesheet" />
@@ -132,6 +133,16 @@
             <span class="help-category-name">Envíos</span>
             <span class="help-category-count">5 artículos</span>
           </a>
+          <a href="#seguridad" class="help-category-card">
+            <span class="help-category-icon">🛡️</span>
+            <span class="help-category-name">Comprá seguro</span>
+            <span class="help-category-count">7 artículos</span>
+          </a>
+          <a href="#vender" class="help-category-card">
+            <span class="help-category-icon">🏷️</span>
+            <span class="help-category-name">Vender y publicar</span>
+            <span class="help-category-count">5 artículos</span>
+          </a>
           <a href="#devoluciones" class="help-category-card">
             <span class="help-category-icon">🔄</span>
             <span class="help-category-name">Devoluciones</span>
@@ -152,13 +163,13 @@
             <div class="accordion-item">
               <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#p2">¿Puedo modificar o cancelar un pedido?</button></h2>
               <div id="p2" class="accordion-collapse collapse" data-bs-parent="#accordionPedidos">
-                <div class="accordion-body">Podés modificar o cancelar un pedido dentro de las primeras 2 horas de haberlo realizado, siempre que no haya sido despachado aún. Ingresá a "Mis Compras" y seleccioná la opción deseada.</div>
+                <div class="accordion-body">Tenés 2 horas desde la compra para cancelarla, sin dar explicaciones y con reembolso total. Ingresá a "Mis Compras" y elegí la opción. Pasado ese plazo, el vendedor tiene 48 hs para despachar.</div>
               </div>
             </div>
             <div class="accordion-item">
               <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#p3">¿Cómo rastreo mi pedido?</button></h2>
               <div id="p3" class="accordion-collapse collapse" data-bs-parent="#accordionPedidos">
-                <div class="accordion-body">Una vez despachado tu pedido, recibirás un email con el número de seguimiento. También podés rastrearlo desde "Mis Compras" haciendo clic en "Rastrear envío".</div>
+                <div class="accordion-body">El envío lo organiza el vendedor: se encarga de la logística, despacha dentro de las <strong>48 hs</strong> y te pasa el número de seguimiento. Si tenés dudas sobre tu pedido, escribile desde el chat de la compra. Recién cuando lo recibís, le pagamos al vendedor.</div>
               </div>
             </div>
           </div>
@@ -171,19 +182,105 @@
             <div class="accordion-item">
               <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pg1">¿Qué métodos de pago aceptan?</button></h2>
               <div id="pg1" class="accordion-collapse collapse" data-bs-parent="#accordionPagos">
-                <div class="accordion-body">Aceptamos tarjetas de crédito y débito (Visa, Mastercard, American Express), transferencia bancaria, Mercado Pago y efectivo mediante Rapipago o Pago Fácil.</div>
+                <div class="accordion-body">Pagás con Mercado Pago: tarjetas de crédito y débito, dinero en cuenta o cualquier billetera virtual. No se aceptan pagos en efectivo por Rapipago ni Pago Fácil. Las cuotas disponibles las muestra Mercado Pago al pagar.</div>
               </div>
             </div>
             <div class="accordion-item">
-              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pg2">¿Tienen cuotas sin interés?</button></h2>
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pg2">¿Puedo pagar en cuotas?</button></h2>
               <div id="pg2" class="accordion-collapse collapse" data-bs-parent="#accordionPagos">
-                <div class="accordion-body">Sí, ofrecemos hasta 12 cuotas sin interés con tarjetas seleccionadas. La disponibilidad de cuotas varía según el banco emisor y el monto de la compra.</div>
+                <div class="accordion-body">Podés pagar con los medios que ofrece Mercado Pago (tarjeta, dinero en cuenta, etc.); las cuotas y su costo los muestra Mercado Pago al pagar.</div>
               </div>
             </div>
             <div class="accordion-item">
               <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pg3">¿Cómo proceso una devolución?</button></h2>
               <div id="pg3" class="accordion-collapse collapse" data-bs-parent="#accordionPagos">
-                <div class="accordion-body">Si tu compra califica para devolución, el reembolso se procesa en 3 a 5 días hábiles una vez recibido el producto. El dinero se acredita al mismo medio de pago utilizado.</div>
+                <div class="accordion-body">Si corresponde una devolución, la procesamos por Mercado Pago y el dinero vuelve al mismo medio de pago que usaste. Según tu banco o billetera, puede tardar de 1 a 5 días hábiles en verse acreditado.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ Seguridad (historia destacada "Seguridad" de Instagram) -->
+        <div class="faq-section" id="seguridad" data-aos="fade-up">
+          <div class="faq-section-title"><i class="bi bi-shield-check"></i> Comprá seguro</div>
+          <div class="accordion" id="accordionSeguridad">
+            <div class="accordion-item">
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#s1">¿Puedo cancelar una compra?</button></h2>
+              <div id="s1" class="accordion-collapse collapse" data-bs-parent="#accordionSeguridad">
+                <div class="accordion-body">Sí. Tenés <strong>2 horas desde la compra</strong> para cancelarla, sin dar explicaciones, y te devolvemos todo lo que pagaste.</div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#s2">¿Cuánto tarda el vendedor en despachar?</button></h2>
+              <div id="s2" class="accordion-collapse collapse" data-bs-parent="#accordionSeguridad">
+                <div class="accordion-body">El vendedor tiene <strong>48 hs para despachar</strong>, que se cuentan después de las 2 hs que tenés para cancelar. Carga el código de seguimiento y coordinás la entrega por el chat privado de la compra.</div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#s3">¿Qué es el Botón de Arrepentimiento?</button></h2>
+              <div id="s3" class="accordion-collapse collapse" data-bs-parent="#accordionSeguridad">
+                <div class="accordion-body">Por la Ley de Defensa del Consumidor tenés <strong>10 días corridos desde que recibís el producto</strong> para arrepentirte de la compra, sin dar explicaciones. Usá el <a href="./arrepentimiento.html">Botón de Arrepentimiento</a>. Es un derecho tuyo, además de las 2 hs para cancelar.</div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#s4">¿Cómo me protege Dale Deal?</button></h2>
+              <div id="s4" class="accordion-collapse collapse" data-bs-parent="#accordionSeguridad">
+                <div class="accordion-body">Pagás con Mercado Pago o cualquier billetera virtual y tu plata queda en custodia. Recién cuando confirmás que recibiste tu pedido, se la liberamos al vendedor. Si algo sale mal, tu plata sigue a salvo.</div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#s5">¿Puedo pagarle directo al vendedor?</button></h2>
+              <div id="s5" class="accordion-collapse collapse" data-bs-parent="#accordionSeguridad">
+                <div class="accordion-body">No. La protección funciona solo si pagás dentro de Dale Deal: no transfieras directo al vendedor aunque te ofrezca un descuento, y no compartas tus claves (Dale Deal nunca te las va a pedir).</div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#s6">¿Cómo sé que un prestador es confiable?</button></h2>
+              <div id="s6" class="accordion-collapse collapse" data-bs-parent="#accordionSeguridad">
+                <div class="accordion-body">Todos los prestadores validan su identidad con su DNI, de frente y dorso. Los que tienen la insignia de <strong>Verificado</strong> además subieron su título o certificación y comprobamos que coincide con su DNI. Las reseñas solo las pueden dejar quienes contrataron el servicio.</div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#s7">Algo no está bien, ¿a quién le aviso?</button></h2>
+              <div id="s7" class="accordion-collapse collapse" data-bs-parent="#accordionSeguridad">
+                <div class="accordion-body">Si un vendedor o prestador no cumplió, o viste algo raro en una publicación, escribinos a <a href="mailto:contacto@daledeal.com">contacto@daledeal.com</a> o desde <a href="./reportar-problema.html">Reportar un problema</a>. Revisamos cada caso y podemos suspender perfiles que no respeten las reglas. Atendemos de lunes a viernes de 18 a 22 hs.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ Vender -->
+        <div class="faq-section" id="vender" data-aos="fade-up">
+          <div class="faq-section-title"><i class="bi bi-tag-fill"></i> Vender y publicar</div>
+          <div class="accordion" id="accordionVender">
+            <div class="accordion-item">
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#v1">¿Cuánto cuesta vender un producto?</button></h2>
+              <div id="v1" class="accordion-collapse collapse" data-bs-parent="#accordionVender">
+                <div class="accordion-body">Publicar productos es gratis. Cuando vendés, Dale Deal cobra una comisión del <strong>3% + impuestos</strong> sobre el precio del producto (sin contar el envío), que se descuenta de lo que te liquidamos.</div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#v2">¿Cuánto cuesta publicar un servicio?</button></h2>
+              <div id="v2" class="accordion-collapse collapse" data-bs-parent="#accordionVender">
+                <div class="accordion-body">Publicar un servicio requiere un plan mensual. El plan Servicio cuesta <strong>$3.000 por mes</strong>; los planes Servicio Premium ($6.990) y Servicio Premium Pro ($11.990) suman más visibilidad. Los servicios no pagan comisión.</div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#v3">¿Qué pasa si no renuevo mi plan de servicios?</button></h2>
+              <div id="v3" class="accordion-collapse collapse" data-bs-parent="#accordionVender">
+                <div class="accordion-body">El plan se renueva mes a mes. Si al <strong>día 10 de cada mes</strong> no está renovado, la publicación del servicio se da de baja. Cuando lo renovás, vuelve a estar visible.</div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#v4">¿Qué son los planes Premium para productos?</button></h2>
+              <div id="v4" class="accordion-collapse collapse" data-bs-parent="#accordionVender">
+                <div class="accordion-body">Muy pronto: van a sumar visibilidad a tus publicaciones durante 1 mes. Premium ($4.990 por mes), Premium Plus ($9.990) y Premium Pro ($19.990). En todos los planes se paga la comisión del 3% + impuestos solo cuando vendés. Más visibilidad no garantiza ventas.</div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#v5">¿Puedo pagar para mejorar mis calificaciones?</button></h2>
+              <div id="v5" class="accordion-collapse collapse" data-bs-parent="#accordionVender">
+                <div class="accordion-body">No. Las estrellas las ponen los clientes y no dependen del plan que tengas. Pagar un plan no permite comprar ni modificar tu reputación.</div>
               </div>
             </div>
           </div>
@@ -229,11 +326,20 @@
     <script defer src="https://unpkg.com/aos@2.3.1/dist/aos.js" integrity="sha384-wziAfh6b/qT+3LrqebF9WeK4+J5sehS6FA10J1t3a866kJ/fvU5UwofWnQyzLtwu" crossorigin="anonymous"></script>
     <script defer src="../JS/theme.js"></script>
     <script defer src="../JS/utils.js"></script>
+    <script defer src="../JS/search.js"></script>
     <script defer src="../JS/auth.js"></script>
     <script defer src="../JS/cart.js"></script>
     <script defer src="../JS/notifications.js"></script>
     <script defer src="../JS/dropdown-fix.js"></script>
     <script src="../JS/component-loader.js" defer></script>
-    <script>document.addEventListener('DOMContentLoaded', () => { if (window.AOS) AOS.init({ duration: 800, once: true, offset: 100 }); });</script>
+    <!-- API: cart.js la necesita para "Ir a pagar" (crea la orden y abre
+         Mercado Pago); sin esto mostraba "API no disponible.". Mismo orden
+         que en productos.html. -->
+    <script defer src="../JS/api.js"></script>
+    <script defer src="../JS/api-messages.js"></script>
+    <script defer src="../JS/api-payments.js"></script>
+    <script>document.addEventListener('daledeal:header-loaded', () => { if (window.AOS) AOS.init({ duration: 800, once: true, offset: 100 }); }, { once: true });</script>
+      <!-- Botón flotante de ayuda (?) — mismo widget que el resto del sitio -->
+    <script src="../JS/support-widget.js" defer></script>
   </body>
 </html>

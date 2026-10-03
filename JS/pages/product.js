@@ -25,6 +25,14 @@ class ProductPage {
       this.loadRecentlyViewed();
       this.saveToRecentlyViewed();
       this.loadAndRenderReviews();
+
+      // Viene de "Ir a pagar" del carrito: abrimos el mismo checkout que
+      // "Comprar ahora" (elige envío o retiro y paga).
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('comprar') === '1') {
+        this.setQuantity(parseInt(params.get('cantidad'), 10) || 1);
+        this.buyNow();
+      }
     });
   }
 
@@ -64,7 +72,7 @@ class ProductPage {
       if (window.DaleDeal?.utils?.showNotification) {
         DaleDeal.utils.showNotification('Producto inválido. Te llevamos al catálogo…', 'error');
       }
-      setTimeout(() => { window.location.href = './productos.html'; }, 1500);
+      setTimeout(() => { window.location.href = '/productos'; }, 1500);
       return false;
     }
 
@@ -72,11 +80,6 @@ class ProductPage {
     let productData = null;
     if (window.DaleDeal?.api?.fetchProductById) {
       productData = await window.DaleDeal.api.fetchProductById(productId);
-    }
-
-    // 2. Fallback: buscar en el cache local (product-data.js)
-    if (!productData && window.getProductById) {
-      productData = window.getProductById(productId);
     }
 
     if (!productData) {
@@ -87,7 +90,7 @@ class ProductPage {
           'error'
         );
       }
-      setTimeout(() => { window.location.href = './productos.html'; }, 2000);
+      setTimeout(() => { window.location.href = '/productos'; }, 2000);
       return false;
     }
 
@@ -113,6 +116,8 @@ class ProductPage {
       seller_id:     productData.seller_id,
       seller_name:   productData.seller_name,
       seller_avatar: productData.seller_avatar,
+      seller_badges: productData.seller_badges,
+      postBadges:    productData.postBadges || [],
       seller_location: productData.location,
       // Campos de envío (vienen del backend tras la migración 003)
       shipping_required: !!productData.shipping_required,
@@ -229,8 +234,12 @@ class ProductPage {
     if (ratingStars) ratingStars.innerHTML = this.renderProductStars(p.rating);
 
     // Sold count
+    // Solo con ventas reales (antes decía "+0 vendidos" en todas las fichas).
     const soldEl = document.querySelector('.product-sold span');
-    if (soldEl) soldEl.textContent = `+${p.salesCount} vendidos`;
+    if (soldEl) {
+      if (p.salesCount > 0) soldEl.textContent = `+${p.salesCount} vendidos`;
+      else soldEl.closest('.product-sold')?.setAttribute('hidden', '');
+    }
 
     // Prices
     const currentPriceEl = document.querySelector('.current-price');
@@ -259,12 +268,29 @@ class ProductPage {
     // Installments
     const installmentsEl = document.querySelector('.installments');
     if (installmentsEl) {
-      installmentsEl.innerHTML = `Hasta <strong>12 cuotas sin interés</strong> de ${this.formatPrice(p.basePrice / 12)}`;
+      const inst = window.DaleDeal.utils.formatInstallments(p.basePrice);
+      installmentsEl.innerHTML = inst.show
+        ? `Hasta <strong>${inst.count} cuotas sin interés</strong> de ${inst.monthlyFormatted}`
+        : '';
     }
 
-    // Stock
+    // Stock — con urgencia honesta si quedan pocas (1-5), solo con stock real
     const stockInfo = document.querySelector('.stock-info');
-    if (stockInfo) stockInfo.textContent = `Stock disponible: ${p.stock} unidades`;
+    if (stockInfo) {
+      if (p.stock > 0 && p.stock <= 5) {
+        stockInfo.innerHTML = `<span class="stock-low"><i class="bi bi-fire"></i> ${p.stock === 1 ? '¡Última unidad disponible!' : `¡Solo quedan ${p.stock}!`}</span>`;
+      } else if (p.stock > 0) {
+        stockInfo.textContent = `Stock disponible: ${p.stock} unidades`;
+      } else {
+        stockInfo.textContent = 'Sin stock';
+      }
+    }
+
+    // Guardar en "vistos recientemente" (localStorage, para el carrusel del home)
+    window.DDRecentlyViewed?.track({
+      id: p.id, type: 'product', title: p.title, price: p.basePrice, image: p.images?.main,
+      description: p.description, location: p.location, rating: p.rating, reviewCount: p.reviewCount, postBadges: p.postBadges,
+    });
 
     // Quantity max
     const qtyInput = document.getElementById('quantityInput');
@@ -278,16 +304,6 @@ class ProductPage {
     this.updateDescriptionTab();
     this.updateSpecificationsTab();
 
-    // Reviews tab — actualización inicial. La data real la trae loadAndRenderReviews()
-    // y reemplaza el contenido entero del tab. Acá solo seteamos lo básico para
-    // que no se vea rara la pantalla mientras carga.
-    const overallRatingEl = document.querySelector('.overall-rating .rating-number');
-    if (overallRatingEl) overallRatingEl.textContent = p.rating ? p.rating.toFixed(1) : '—';
-    const reviewCountEl = document.querySelector('.overall-rating .rating-count');
-    if (reviewCountEl) reviewCountEl.textContent = `${p.reviewCount.toLocaleString('es-AR')} reseña${p.reviewCount === 1 ? '' : 's'}`;
-    const reviewStarsEl = document.querySelector('.overall-rating .rating-stars');
-    if (reviewStarsEl) reviewStarsEl.innerHTML = this.renderProductStars(p.rating);
-
     // Seller card
     this.updateSellerCard();
 
@@ -298,13 +314,12 @@ class ProductPage {
   // ── SEO: actualiza title, meta description, OG, Twitter, JSON-LD ─────────
   updateSEOMeta(p) {
     const SITE = 'https://daledeal.com.ar';
-    const url  = `${SITE}/HTML/producto.html?id=${p.id}`;
-    const img  = p.images?.main || `${SITE}/IMG/LOGO-2.png`;
-    const previewDesc = (p.description || '').length > 160
-      ? (p.description || '').substring(0, 160) + '…'
-      : (p.description || '');
+    const url  = `${SITE}/producto?id=${p.id}`;
+    const img  = p.images?.main || `${SITE}/IMG/og-home.jpg`;
+    const plainDesc = DaleDeal.utils.htmlToText(p.description);
+    const previewDesc = plainDesc.length > 160 ? plainDesc.substring(0, 160) + '…' : plainDesc;
     const fullDesc = previewDesc
-      ? `${previewDesc} Compralo en Dale Deal con cuotas sin interés y envío a todo el país.`
+      ? `${previewDesc} Compralo en Dale Deal con Compra Protegida.`
       : `${p.title} disponible en Dale Deal. Marketplace argentino de productos y servicios.`;
     const titleSEO = `${p.title} | DALE DEAL`;
 
@@ -437,13 +452,14 @@ class ProductPage {
     const chatName   = document.getElementById('chatProviderName');
 
     if (avatar) {
-      const sellerName = encodeURIComponent(p.seller_name || 'Vendedor');
-      avatar.src = p.seller_avatar || `https://ui-avatars.com/api/?name=${sellerName}&background=D63031&color=fff&size=128`;
+      avatar.src = p.seller_avatar || window.DaleDeal.utils.initialsAvatar(p.seller_name || 'Vendedor');
       avatar.alt = p.seller_name || 'Vendedor';
     }
     if (name)     name.textContent = p.seller_name || 'Vendedor';
+    const badgesEl = document.getElementById('sellerCardBadges');
+    if (badgesEl) badgesEl.innerHTML = window.DaleDeal.utils.renderUserBadges(p.seller_badges);
     if (sold)     sold.textContent = `${p.stock > 0 ? 'En stock' : 'Sin stock'}`;
-    if (location) location.textContent = p.location || 'Argentina';
+    if (location) location.textContent = p.seller_location || 'Argentina';
 
     // Rating real del vendedor (todos sus productos sumados)
     this.loadSellerRating(p.seller_id);
@@ -519,20 +535,7 @@ class ProductPage {
     // pero acá voy por el fix mínimo.
     const esc = (s) => (window.DaleDeal?.utils?.escapeHtml ? DaleDeal.utils.escapeHtml(s) : String(s ?? ''));
     // Filtramos items sin id válido — antes generábamos `?id=0` que rompía.
-    grid.innerHTML = others
-      .filter(prod => Number.isFinite(Number(prod.id)) && Number(prod.id) > 0)
-      .map(prod => {
-        const pid = Number(prod.id);
-        const titleSafe = esc(prod.title);
-        const imgSrc    = String(prod.images?.main || prod.image || '').replace(/['"<>]/g, '');
-        return `
-          <div class="product-card-mini" onclick="location.href='producto.html?id=${pid}'" style="cursor:pointer;">
-            <img src="${imgSrc}" alt="${titleSafe}" loading="lazy" style="width:100%;height:140px;object-fit:cover;border-radius:8px;">
-            <p style="margin:8px 0 4px;font-size:13px;font-weight:600;">${titleSafe}</p>
-            <p style="color:var(--primary-red);font-weight:700;">$${(prod.price || prod.basePrice || 0).toLocaleString('es-AR')}</p>
-          </div>
-        `;
-      }).join('');
+    grid.innerHTML = others.map(prod => this.renderProductCard(prod)).join('');
 
     section.style.display = '';
   }
@@ -583,19 +586,20 @@ class ProductPage {
     // selectedStorage already set in loadProductData
   }
 
-  // ── Description tab — plain text del vendedor ────────────────────────────
+  // ── Description tab — HTML del editor del vendedor, sanitizado ───────────
   updateDescriptionTab() {
     const descContent = document.querySelector('.description-content');
     if (!descContent) return;
 
-    const p = document.createElement('p');
-    p.id = 'product-description-text';
-    p.style.whiteSpace = 'pre-line';
-    p.style.lineHeight = '1.8';
-    p.textContent = this.currentProduct.description || '';
+    // Viene del editor Quill de publicar (HTML): antes se mostraba con
+    // textContent y la ficha decía "<p>Vendo <strong>…".
+    const div = document.createElement('div');
+    div.id = 'product-description-text';
+    div.style.lineHeight = '1.8';
+    DaleDeal.utils.renderRichText(div, this.currentProduct.description || '');
 
     descContent.innerHTML = '';
-    descContent.appendChild(p);
+    descContent.appendChild(div);
   }
 
   // ── Specifications tab — dynamic ───────────────────────────────────────────
@@ -759,7 +763,10 @@ class ProductPage {
     // Rebuild installments text to avoid stale DOM references
     const installmentsEl = document.querySelector('.installments');
     if (installmentsEl) {
-      installmentsEl.innerHTML = `Hasta <strong>12 cuotas sin interés</strong> de ${this.formatPrice(totalPrice / 12)}`;
+      const inst = window.DaleDeal.utils.formatInstallments(totalPrice);
+      installmentsEl.innerHTML = inst.show
+        ? `Hasta <strong>${inst.count} cuotas sin interés</strong> de ${inst.monthlyFormatted}`
+        : '';
     }
   }
 
@@ -806,7 +813,7 @@ class ProductPage {
     // Chequear sesión antes de cualquier modal
     if (!localStorage.getItem('daledeal_token')) {
       this.showNotification('Tenés que iniciar sesión para comprar.', 'warning');
-      setTimeout(() => { window.location.href = './login.html'; }, 1500);
+      setTimeout(() => { window.location.href = '/login'; }, 1500);
       return;
     }
 
@@ -1076,16 +1083,16 @@ class ProductPage {
     if (!similarGrid || !this.currentProduct) return;
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 800));
-      const allProducts = window.getAllProducts ? window.getAllProducts() : [];
+      // Productos reales de la API (antes salían de product-data.js, que mezclaba
+      // productos de ejemplo si la sincronización no había terminado).
+      const allProducts = await window.DaleDeal.api.fetchProducts();
       let similar = allProducts
-        .filter(p => p.category === this.currentProduct.category && p.id !== this.currentProduct.id)
+        .filter(p => p.category === this.currentProduct.category && String(p.id) !== String(this.currentProduct.id))
         .slice(0, 4);
 
       if (similar.length === 0) {
         similar = allProducts
-          .filter(p => p.id !== this.currentProduct.id)
-          .sort(() => 0.5 - Math.random())
+          .filter(p => String(p.id) !== String(this.currentProduct.id))
           .slice(0, 4);
         this.renderSimilarProducts(similar, true);
       } else {
@@ -1107,151 +1114,29 @@ class ProductPage {
     const similarGrid = document.getElementById('similarProductsGrid');
     if (!similarGrid) return;
 
-    const pps = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 4;
-    const slides = [];
-    for (let i = 0; i < products.length; i += pps) {
-      const batch = products.slice(i, i + pps);
-      slides.push(`
-        <div class="carousel-item ${i === 0 ? 'active' : ''}">
-          <div class="row justify-content-center">
-            ${batch.map(p => this.renderProductCard(p)).join('')}
-          </div>
-          ${isRandom && i === 0 ? `
-            <div class="text-center mt-3">
-              <small class="text-muted">
-                <i class="bi bi-info-circle me-1"></i>
-                Productos recomendados
-              </small>
-            </div>` : ''}
-        </div>`);
+    const cards = products.map(p => this.renderProductCard(p)).filter(Boolean);
+    if (cards.length === 0) {
+      // Sin otros productos para mostrar, la sección entera no aporta nada.
+      similarGrid.closest('.similar-products-section')?.style.setProperty('display', 'none');
+      return;
     }
-    similarGrid.innerHTML = slides.join('');
-    this._toggleCarouselControls('similarProductsCarousel', slides.length);
+    // similarGrid es un .hs-track (carrusel con scroll-snap; flechas en utils.js)
+    similarGrid.innerHTML = cards.join('');
     setTimeout(() => window.favoritesManager?.updateFavoriteButtons(), 100);
   }
 
   // ── Reviews: carga real desde el backend ──────────────────────────────────
   async loadAndRenderReviews() {
-    const reviewsTab = document.querySelector('#reviews .reviews-content');
-    if (!reviewsTab || !this.currentProduct?.id) return;
+    if (!this.currentProduct?.id || !window.DaleDealReviews?.loadList) return;
 
-    try {
-      const api = window.DaleDeal?.api;
-      if (!api?.fetchReviews) return; // si la API no está cargada, dejamos el mock
+    await window.DaleDealReviews.loadList({
+      itemType: 'product',
+      itemId: this.currentProduct.id,
+    });
 
-      const res = await api.fetchReviews('product', this.currentProduct.id, { limit: 20 });
-      const reviews = res?.data || [];
-      const total   = res?.total || 0;
-      const avg     = res?.avgRating || 0;
-
-      this.renderReviewsTab(reviews, total, avg);
-
-      // Si el usuario está logueado, chequear si puede dejar una review
-      if (window.authManager?.isAuthenticated()) {
-        await this.checkReviewEligibility();
-      }
-    } catch (err) {
-      DaleDeal.warn('No se pudieron cargar reseñas:', err.message);
-      // Si falla, dejamos el contenido mock como fallback
+    if (window.authManager?.isAuthenticated()) {
+      await this.checkReviewEligibility();
     }
-  }
-
-  renderReviewsTab(reviews, total, avg) {
-    const reviewsTab = document.querySelector('#reviews .reviews-content');
-    if (!reviewsTab) return;
-
-    // Calcular breakdown por estrellas
-    const breakdown = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-    reviews.forEach(r => { breakdown[r.rating] = (breakdown[r.rating] || 0) + 1; });
-    const pct = (n) => total > 0 ? Math.round((n / total) * 100) : 0;
-
-    const stars = (rating) => {
-      let html = '';
-      for (let i = 1; i <= 5; i++) {
-        if (i <= rating)            html += '<i class="bi bi-star-fill" aria-hidden="true"></i>';
-        else if (i - 0.5 <= rating) html += '<i class="bi bi-star-half" aria-hidden="true"></i>';
-        else                         html += '<i class="bi bi-star" aria-hidden="true"></i>';
-      }
-      return html;
-    };
-
-    // Escape de los 5 chars HTML, no solo &<>. Necesario porque algunos lugares
-    // (ej. alt="${escape(name)}") usan el escape en atributos, donde " y ' rompen.
-    // Delegamos al helper global de utils.js cuando está disponible.
-    const escape = (s) => (
-      window.DaleDeal?.utils?.escapeHtml
-        ? DaleDeal.utils.escapeHtml(String(s ?? ''))
-        : String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;')
-    );
-    const fmtDate = (d) => {
-      if (!d) return '';
-      const date = new Date(d);
-      const days = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24));
-      if (days === 0) return 'Hoy';
-      if (days === 1) return 'Ayer';
-      if (days < 30) return `Hace ${days} días`;
-      return date.toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' });
-    };
-
-    const reviewsHTML = reviews.length === 0
-      ? `<div class="text-center py-5 text-muted">
-           <i class="bi bi-chat-dots" style="font-size:3rem;opacity:.3;"></i>
-           <p class="mt-3 mb-1 fw-semibold">Todavía no hay reseñas</p>
-           <p class="small">Sé el primero en dejar una opinión sobre este producto.</p>
-         </div>`
-      : reviews.map(r => `
-          <div class="review-item">
-            <div class="review-header">
-              <img src="${r.reviewer_avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(r.reviewer_name || 'U')}&background=D63031&color=fff&size=48`}"
-                   alt="${escape(r.reviewer_name)}"
-                   class="review-avatar" loading="lazy" decoding="async" width="48" height="48" />
-              <div class="review-info">
-                <h6>${escape(r.reviewer_name || 'Comprador')}</h6>
-                <div class="review-meta">
-                  <div class="review-rating">${stars(r.rating)}</div>
-                  <span class="review-date">${fmtDate(r.created_at)}</span>
-                </div>
-              </div>
-            </div>
-            ${(r.title || r.body) ? `
-              <div class="review-content">
-                ${r.title ? `<h6 class="review-title">${escape(r.title)}</h6>` : ''}
-                ${r.body ? `<p class="review-text">${escape(r.body)}</p>` : ''}
-              </div>
-            ` : ''}
-          </div>
-        `).join('');
-
-    reviewsTab.innerHTML = `
-      <div class="reviews-summary">
-        <div class="rating-overview">
-          <div class="overall-rating">
-            <span class="rating-number">${avg ? avg.toFixed(1) : '—'}</span>
-            <div class="rating-stars" role="img" aria-label="${avg} de 5 estrellas">
-              ${stars(avg)}
-            </div>
-            <div class="rating-count">${total.toLocaleString('es-AR')} reseñas</div>
-          </div>
-          <div class="rating-breakdown">
-            ${[5, 4, 3, 2, 1].map(n => `
-              <div class="rating-bar">
-                <span>${n}</span>
-                <div class="progress">
-                  <div class="progress-bar" style="width: ${pct(breakdown[n])}%"></div>
-                </div>
-                <span>${pct(breakdown[n])}%</span>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      </div>
-
-      <div id="review-cta-block"></div>
-
-      <div id="reviews-list">
-        ${reviewsHTML}
-      </div>
-    `;
   }
 
   // Verifica si el usuario actual puede dejar una review:
@@ -1315,7 +1200,7 @@ class ProductPage {
               <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-              <p class="small text-muted mb-3">${p.title}</p>
+              <p class="small text-muted mb-3">${DaleDeal.utils.escapeHtml(p.title)}</p>
 
               <div class="mb-3">
                 <label class="form-label fw-semibold">Tu calificación *</label>
@@ -1415,7 +1300,7 @@ class ProductPage {
   }
 
   // ── Recently viewed ────────────────────────────────────────────────────────
-  loadRecentlyViewed() {
+  async loadRecentlyViewed() {
     const grid = document.getElementById('recentlyViewedGrid');
     if (!grid) return;
     try {
@@ -1425,9 +1310,10 @@ class ProductPage {
 
       if (!recentIds.length) return;
 
-      const productsData = recentIds
-        .map(id => window.getProductById ? window.getProductById(parseInt(id)) : null)
-        .filter(Boolean);
+      // Desde la API (antes: product-data.js, con productos de ejemplo).
+      const productsData = (await Promise.all(
+        recentIds.map(id => window.DaleDeal.api.fetchProductById(parseInt(id, 10)).catch(() => null))
+      )).filter(Boolean);
 
       if (productsData.length) this.renderRecentlyViewed(productsData);
     } catch (err) {
@@ -1439,19 +1325,7 @@ class ProductPage {
     const grid = document.getElementById('recentlyViewedGrid');
     if (!grid) return;
 
-    const pps = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 4;
-    const slides = [];
-    for (let i = 0; i < products.length; i += pps) {
-      const batch = products.slice(i, i + pps);
-      slides.push(`
-        <div class="carousel-item ${i === 0 ? 'active' : ''}">
-          <div class="row justify-content-center">
-            ${batch.map(p => this.renderProductCard(p, true)).join('')}
-          </div>
-        </div>`);
-    }
-    grid.innerHTML = slides.join('');
-    this._toggleCarouselControls('recentlyViewedCarousel', slides.length);
+    grid.innerHTML = products.map(p => this.renderProductCard(p, true)).join('');
     setTimeout(() => window.favoritesManager?.updateFavoriteButtons(), 100);
   }
 
@@ -1468,18 +1342,24 @@ class ProductPage {
     if (!Number.isFinite(pidNum) || pidNum <= 0) return '';
     const pid = pidNum;
     const imgSrc = String(product.images?.main || '').replace(/['"<>]/g, '');
-    const desc = product.description
-      ? (product.description.length > 80 ? product.description.substring(0, 80) + '…' : product.description)
-      : 'Producto de alta calidad.';
+    // Texto plano (la descripción viene del editor como HTML) y sin frase de
+    // relleno cuando no hay descripción.
+    const plainDesc = window.DaleDeal.utils.htmlToText(product.description);
+    const desc = plainDesc.length > 80 ? plainDesc.substring(0, 80) + '…' : plainDesc;
     const descSafe = esc(desc);
+    // Igual que en el catálogo: sin reseñas dice "Sin reseñas aún", no "(0)".
+    const reviewCount = Number(product.reviewCount) || 0;
+    const reviewsHTML = reviewCount > 0
+      ? `<span class="reviews-count">(${reviewCount.toLocaleString('es-AR')})</span>`
+      : '<span class="reviews-count text-muted">Sin reseñas aún</span>';
     return `
-      <div class="col-12 col-md-6 col-lg-3 mb-4 d-flex">
-        <div class="product-card ${isRecent ? 'recent-product-card' : 'similar-product-card'} w-100"
+        <div class="product-card ${isRecent ? 'recent-product-card' : 'similar-product-card'}"
              data-id="${pid}" data-clickable="true">
           <div class="product-image-container">
             <img src="${imgSrc}" alt="${titleSafe}" class="product-image" loading="lazy" decoding="async" />
             ${product.discount ? `<div class="product-badges"><span class="badge-offer">-${Number(product.discount) || 0}%</span></div>` : ''}
             ${isRecent ? `<div class="recently-viewed-badge"><i class="bi bi-clock-history"></i></div>` : ''}
+            ${window.DaleDeal.utils.renderPostBadges(product.postBadges)}
             <div class="product-actions">
               <button class="action-heart" title="Agregar a favoritos" data-product-id="${pid}">
                 <i class="bi bi-heart"></i>
@@ -1492,8 +1372,13 @@ class ProductPage {
             <div class="product-meta-group">
               <div class="product-rating">
                 <div class="stars">${this.renderProductStars(product.rating)}</div>
-                <span class="reviews-count">(${product.reviewCount.toLocaleString('es-AR')})</span>
+                ${reviewsHTML}
               </div>
+              <div class="product-location">
+                <i class="bi bi-geo-alt-fill"></i>
+                <span>${esc(product.location || 'Argentina')}</span>
+              </div>
+              ${window.DaleDeal.utils.renderCardTags(product)}
             </div>
             <div class="product-pricing-wrapper">
               <div class="product-pricing">
@@ -1502,8 +1387,7 @@ class ProductPage {
               </div>
             </div>
           </div>
-        </div>
-      </div>`;
+        </div>`;
   }
 
   _toggleCarouselControls(carouselId, slideCount) {
@@ -1542,7 +1426,7 @@ class ProductPage {
   goToCategory() {
     // Navigate to productos.html filtered by category
     window.location.href =
-      `./productos.html?category=${encodeURIComponent(this.currentProduct.category)}`;
+      `/productos?category=${encodeURIComponent(this.currentProduct.category)}`;
   }
 
   // ── Stars renderer ─────────────────────────────────────────────────────────

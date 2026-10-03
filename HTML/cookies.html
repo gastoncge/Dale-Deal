@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Política de Cookies - DALE DEAL</title>
     <meta name="description" content="Política de cookies de Dale Deal. Qué cookies utilizamos y cómo gestionarlas." />
-    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
+    <link rel="icon" href="../IMG/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="../IMG/icon-192.png" type="image/png" sizes="192x192" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous" />
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" integrity="sha384-/rJKQnzOkEo+daG0jMjU1IwwY9unxt1NBw3Ef2fmOJ3PW/TfAg2KXVoWwMZQZtw9" crossorigin="anonymous" rel="stylesheet" />
@@ -112,7 +113,7 @@
               <li><strong>Safari:</strong> Preferencias → Privacidad</li>
               <li><strong>Edge:</strong> Configuración → Cookies y permisos del sitio</li>
             </ul>
-            <p>Ten en cuenta que deshabilitar cookies esenciales puede afectar el funcionamiento de la Plataforma.</p>
+            <p>Tené en cuenta que deshabilitar cookies esenciales puede afectar el funcionamiento de la Plataforma.</p>
           </div>
 
           <div class="legal-card" data-aos="fade-up" data-aos-delay="150">
@@ -140,12 +141,22 @@
 
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
     <script defer src="https://unpkg.com/aos@2.3.1/dist/aos.js" integrity="sha384-wziAfh6b/qT+3LrqebF9WeK4+J5sehS6FA10J1t3a866kJ/fvU5UwofWnQyzLtwu" crossorigin="anonymous"></script>
+    <script defer src="../JS/theme.js"></script>
     <script defer src="../JS/utils.js"></script>
+    <script defer src="../JS/search.js"></script>
     <script defer src="../JS/auth.js"></script>
     <script defer src="../JS/cart.js"></script>
     <script defer src="../JS/notifications.js"></script>
     <script defer src="../JS/dropdown-fix.js"></script>
     <script src="../JS/component-loader.js" defer></script>
-    <script>document.addEventListener('DOMContentLoaded', () => { if (window.AOS) AOS.init({ duration: 400, once: true }); });</script>
+    <!-- API: cart.js la necesita para "Ir a pagar" (crea la orden y abre
+         Mercado Pago); sin esto mostraba "API no disponible.". Mismo orden
+         que en productos.html. -->
+    <script defer src="../JS/api.js"></script>
+    <script defer src="../JS/api-messages.js"></script>
+    <script defer src="../JS/api-payments.js"></script>
+    <script>document.addEventListener('daledeal:header-loaded', () => { if (window.AOS) AOS.init({ duration: 400, once: true }); }, { once: true });</script>
+      <!-- Botón flotante de ayuda (?) — mismo widget que el resto del sitio -->
+    <script src="../JS/support-widget.js" defer></script>
   </body>
 </html>

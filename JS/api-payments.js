@@ -33,9 +33,12 @@
   // -------------------------------------------------------
   // GET /payments/:orderId/status
   // -------------------------------------------------------
-  async function getStatus(orderId) {
+  // paymentId: el que MP agrega a las back_urls (?payment_id=…). Con él el
+  // backend verifica el pago contra MP si el webhook todavía no llegó.
+  async function getStatus(orderId, paymentId) {
     if (!orderId) throw new Error('orderId es requerido');
-    return getApiFetch()(`/payments/${Number(orderId)}/status`);
+    const qs = /^\d{1,20}$/.test(String(paymentId || '')) ? `?payment_id=${paymentId}` : '';
+    return getApiFetch()(`/payments/${Number(orderId)}/status${qs}`);
   }
 
   // -------------------------------------------------------
@@ -110,6 +113,13 @@
     const order = orderRes?.order || orderRes;
     const orderId = order?.id;
     if (!orderId) throw new Error('No se pudo crear la orden.');
+
+    // Si el producto estaba en el carrito, ya es una orden: lo sacamos.
+    try {
+      const cart = window.cartManager;
+      const idx = cart?.items?.findIndex((i) => String(i.id) === String(product_id));
+      if (idx > -1) { cart.items.splice(idx, 1); cart.saveCart?.(); cart.updateCartDropdown?.(); }
+    } catch (_) {}
 
     // Guardar conversation_id por si volvemos después de pagar
     try {

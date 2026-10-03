@@ -3,12 +3,30 @@
  * Maneja el filtrado y búsqueda de productos
  */
 
+/**
+ * Minúsculas y sin tildes, para comparar texto como lo escribe la gente:
+ * "electronica" encuentra "Electrónica" y "Hogar y jardín" = "hogar y jardin".
+ */
+function normalizeText(value) {
+  return String(value ?? '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+}
+
 class ProductFilters {
   constructor() {
     this.currentCategory = 'all';
     this.currentSort = 'featured';
-    this.searchQuery = '';
+    // Término inicial desde la URL: ?q= (buscador del header) o ?search=
+    // (SearchAction del JSON-LD). Queda aplicado cuando el catálogo carga.
+    const params = new URLSearchParams(window.location.search);
+    this.searchQuery = normalizeText(params.get('q') || params.get('search') || '');
     this.onlyOffers = false;
+    this.minPrice = null;
+    this.maxPrice = null;
+    this.currentRating = 'all';
     this.products = [];
     this.originalProducts = [];
     this.init();
@@ -39,9 +57,11 @@ class ProductFilters {
     this.renderProducts();
   }
 
-  // Cargar productos desde el DOM
+  // Cargar productos desde el DOM. Solo los del catálogo (#productsGrid):
+  // con document.querySelectorAll también agarraba las cards de "Vistos
+  // recientemente" y "Lo más visto", y las clonaba adentro de destacados.
   loadProducts() {
-    const productCards = document.querySelectorAll('.product-card');
+    const productCards = document.querySelectorAll('#productsGrid .product-card');
     this.products = Array.from(productCards).map(card => {
       const id = card.dataset.id;
       const title = card.querySelector('.product-title')?.textContent || '';
@@ -169,8 +189,36 @@ class ProductFilters {
 
   // Manejar búsqueda
   handleSearch(e) {
-    this.searchQuery = e.target.value.toLowerCase().trim();
+    this.setSearchQuery(e.target.value);
+  }
+
+  // Aplica un término de búsqueda (lo usa también el buscador del header)
+  setSearchQuery(query) {
+    const q = normalizeText(query);
+    if (q === this.searchQuery) return;
+    this.searchQuery = q;
     this.filterAndRender();
+  }
+
+  // ¿El producto es de la categoría? currentCategory puede ser el slug de la
+  // API ("hogar-jardin", lo que traen los radios de productos.html) o el
+  // nombre ("Hogar y jardín", lo que se escribe en "Otros").
+  matchesCategory(product, category) {
+    const cat = normalizeText(category);
+    return normalizeText(product.category) === cat ||
+      normalizeText(product.categoryName) === cat;
+  }
+
+  // Búsqueda por palabras (todas tienen que aparecer) en título, descripción,
+  // categoría y badges. "bici trek" encuentra "Bicicleta de montaña Trek".
+  matchesSearch(product, query) {
+    const haystack = normalizeText([
+      product.title,
+      product.productData?.description,
+      product.categoryName,
+      ...(product.badges || []),
+    ].join(' '));
+    return query.split(/\s+/).every(word => haystack.includes(word));
   }
 
   // Filtrar productos
@@ -179,15 +227,26 @@ class ProductFilters {
 
     // Filtro por categoría
     if (this.currentCategory && this.currentCategory !== 'all') {
-      filtered = filtered.filter(product => product.category === this.currentCategory);
+      filtered = filtered.filter(product => this.matchesCategory(product, this.currentCategory));
     }
 
     // Filtro por búsqueda
     if (this.searchQuery) {
-      filtered = filtered.filter(product => 
-        product.title.toLowerCase().includes(this.searchQuery) ||
-        product.badges.some(badge => badge.toLowerCase().includes(this.searchQuery))
-      );
+      filtered = filtered.filter(product => this.matchesSearch(product, this.searchQuery));
+    }
+
+    // Filtro por precio (lo setea el panel de productos.html)
+    if (this.minPrice != null) {
+      filtered = filtered.filter(product => product.price >= this.minPrice);
+    }
+    if (this.maxPrice != null) {
+      filtered = filtered.filter(product => product.price <= this.maxPrice);
+    }
+
+    // Filtro por calificación mínima ("4" = 4 estrellas o más)
+    if (this.currentRating && this.currentRating !== 'all') {
+      const minRating = parseFloat(this.currentRating);
+      filtered = filtered.filter(product => (product.rating || 0) >= minRating);
     }
 
     // Filtro solo ofertas
@@ -204,9 +263,12 @@ class ProductFilters {
   // Ordenar productos
   sortProducts(products) {
     switch (this.currentSort) {
+      // price-low / price-high son los values del <select> de productos.html
       case 'price-asc':
+      case 'price-low':
         return products.sort((a, b) => a.price - b.price);
       case 'price-desc':
+      case 'price-high':
         return products.sort((a, b) => b.price - a.price);
       case 'rating':
         return products.sort((a, b) => b.rating - a.rating);
@@ -608,12 +670,17 @@ class ProductFilters {
       return;
     }
 
+    const esc = (v) => window.DaleDeal.utils.escapeHtml(String(v ?? ''));
     container.innerHTML = suggestions.map(location => `
-      <div class="location-suggestion" onclick="productFilters.selectLocation('${location}')">
+      <div class="location-suggestion" data-location="${esc(location)}" role="button">
         <i class="bi bi-geo-alt me-2"></i>
-        ${location}
+        ${esc(location)}
       </div>
     `).join('');
+    // listeners en vez de onclick inline (evita inyección en el string del onclick)
+    container.querySelectorAll('.location-suggestion').forEach(el => {
+      el.addEventListener('click', () => this.selectLocation(el.dataset.location));
+    });
     container.classList.add('active');
   }
 

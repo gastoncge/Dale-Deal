@@ -72,13 +72,13 @@ function fixHeaderPaths() {
   // Corregir logo link
   const homeLink = document.getElementById('homeLink');
   if (homeLink) {
-    homeLink.href = isRoot ? './index.html' : '../index.html';
+    homeLink.href = isRoot ? './index.html' : '/';
   }
 
   // Corregir logo image
   const logoImage = document.getElementById('logoImage');
   if (logoImage) {
-    logoImage.src = isRoot ? './IMG/LOGO-2.png' : '../IMG/LOGO-2.png';
+    logoImage.src = isRoot ? './IMG/logo-nav.png' : '../IMG/logo-nav.png';
   }
 
   if (isRoot) {
@@ -105,7 +105,7 @@ function fixFooterPaths() {
   // Always fix logo path explicitly
   const footerLogoImg = document.querySelector('#footer-placeholder .footer-logo-img');
   if (footerLogoImg) {
-    footerLogoImg.src = isRoot ? './IMG/LOGO-2.png' : '../IMG/LOGO-2.png';
+    footerLogoImg.src = isRoot ? './IMG/logo-blanco-sm.png' : '../IMG/logo-blanco-sm.png';
   }
 
   if (isRoot) {
@@ -198,7 +198,7 @@ function initializeHeaderComponents() {
 function fixPublicarLink() {
   const path = window.location.pathname.toLowerCase();
   const isInHtml = path.includes('/html/');
-  const base = isInHtml ? './publicar.html' : './HTML/publicar.html';
+  const base = isInHtml ? './publicar.html' : '/publicar';
 
   let href = base;
   if (path.includes('productos')) {
@@ -237,15 +237,30 @@ async function loadAllComponents() {
           window.authManager.updateUI();
         }
       } catch (_) {}
-      // Evento global por si otros módulos lo necesitan
+      // Evento global: también lo escucha init-aos.js para no llamar a
+      // AOS.init() hasta que el navbar (con sus [data-aos]) ya esté en el DOM.
       document.dispatchEvent(new CustomEvent('daledeal:header-loaded'));
     }, 100);
+  } else {
+    // Sin placeholder el navbar ya está en el DOM: lo inyectó build.js (sitio
+    // compilado / producción) o la página trae el suyo. El aviso se manda
+    // igual: 10 páginas esperan este evento para llamar a AOS.init() y, sin
+    // él, en el sitio compilado AOS no arrancaba nunca y todo lo que tiene
+    // data-aos (menú, textos del carrusel, títulos) quedaba invisible en
+    // pantallas de más de 768px. Con Live Server no se notaba porque ahí el
+    // placeholder existe.
+    document.dispatchEvent(new CustomEvent('daledeal:header-loaded'));
   }
 
   // Cargar footer
   const footerPlaceholder = document.getElementById('footer-placeholder');
   if (footerPlaceholder) {
-    await loadComponent(`${basePath}footer.html`, 'footer-placeholder');
+    // Si el build ya inyectó el footer (build.js → inlineFooterInHtmls) no lo
+    // pedimos de nuevo: en producción las páginas viven en URLs limpias y
+    // /HTML/components/footer.html redirige a un 404.
+    if (footerPlaceholder.children.length === 0) {
+      await loadComponent(`${basePath}footer.html`, 'footer-placeholder');
+    }
     // Esperar un poco para que el DOM se actualice
     setTimeout(() => {
       initializeNewsletterForm();

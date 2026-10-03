@@ -12,11 +12,25 @@ Disallow: /HTML/signup.html
 Disallow: /HTML/recuperar-contrasena.html
 Disallow: /HTML/notificaciones.html
 Disallow: /HTML/mis-ventas.html
+Disallow: /HTML/mis-publicaciones.html
 Disallow: /HTML/admin.html
 Disallow: /HTML/pago-exitoso.html
 Disallow: /HTML/pago-fallido.html
 Disallow: /HTML/pago-pendiente.html
 Disallow: /HTML/reportar-problema.html
+# Las mismas con URL limpia (así las sirve el sitio)
+Disallow: /login
+Disallow: /signup
+Disallow: /recuperar-contrasena
+Disallow: /notificaciones
+Disallow: /mis-ventas
+Disallow: /mis-publicaciones
+Disallow: /mi-cuenta
+Disallow: /admin
+Disallow: /pago-exitoso
+Disallow: /pago-fallido
+Disallow: /pago-pendiente
+Disallow: /reportar-problema
 
 # Bots de IA / scraping comercial — bloqueados por defecto
 User-agent: GPTBot

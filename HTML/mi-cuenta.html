@@ -7,7 +7,8 @@
 
     <!-- Página privada — no debe aparecer en buscadores. -->
     <meta name="robots" content="noindex, nofollow" />
-    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
+    <link rel="icon" href="../IMG/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="../IMG/icon-192.png" type="image/png" sizes="192x192" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous" />
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" integrity="sha384-/rJKQnzOkEo+daG0jMjU1IwwY9unxt1NBw3Ef2fmOJ3PW/TfAg2KXVoWwMZQZtw9" crossorigin="anonymous" rel="stylesheet" />
@@ -108,6 +109,10 @@
         <a href="./login.html?redirect=mi-cuenta.html" class="btn btn-primary btn-lg px-5">
           <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar sesión
         </a>
+        <p class="text-muted mt-4 mb-2">¿Todavía no tenés cuenta?</p>
+        <a href="./signup.html" class="btn btn-outline-primary btn-lg px-5">
+          <i class="bi bi-person-plus me-2"></i>Registrarse
+        </a>
       </div>
 
       <!-- Contenido — visible solo si hay sesión -->
@@ -203,6 +208,34 @@
           </div>
         </div>
 
+        <!-- Card: Verificá tu cuenta -->
+        <div class="account-card" id="verificacion">
+          <div class="account-card-header">
+            <div class="account-card-icon"><i class="bi bi-patch-check-fill"></i></div>
+            <div>
+              <h3 class="account-card-title">Verificá tu cuenta</h3>
+              <p class="account-card-subtitle">Las cuentas verificadas generan más confianza y se destacan en los servicios.</p>
+            </div>
+          </div>
+          <div class="account-card-body" id="verificationBody">
+            <div class="text-muted small">Cargando…</div>
+          </div>
+        </div>
+
+        <!-- Card: Datos de cobro (Compra Protegida: a dónde transferimos cuando se libera el pago de una venta) -->
+        <div class="account-card" id="datos-cobro">
+          <div class="account-card-header">
+            <div class="account-card-icon"><i class="bi bi-bank2"></i></div>
+            <div>
+              <h3 class="account-card-title">Datos de cobro</h3>
+              <p class="account-card-subtitle">A dónde te transferimos cuando se libera el pago de una venta.</p>
+            </div>
+          </div>
+          <div class="account-card-body" id="payoutBody">
+            <div class="text-muted small">Cargando…</div>
+          </div>
+        </div>
+
         <!-- Card: Mis publicaciones (links rápidos) -->
         <div class="account-card">
           <div class="account-card-header">
@@ -214,6 +247,9 @@
           </div>
           <div class="account-card-body">
             <div class="d-flex gap-2 flex-wrap">
+              <a href="./mis-publicaciones.html" class="btn btn-outline-secondary">
+                <i class="bi bi-collection me-2"></i>Mis publicaciones
+              </a>
               <a href="./mis-ventas.html" class="btn btn-outline-secondary">
                 <i class="bi bi-bag-check me-2"></i>Mis ventas
               </a>
@@ -244,7 +280,10 @@
     <script defer src="https://unpkg.com/aos@2.3.1/dist/aos.js" integrity="sha384-wziAfh6b/qT+3LrqebF9WeK4+J5sehS6FA10J1t3a866kJ/fvU5UwofWnQyzLtwu" crossorigin="anonymous"></script>
     <script defer src="../JS/theme.js"></script>
     <script defer src="../JS/utils.js"></script>
+    <script defer src="../JS/search.js"></script>
     <script defer src="../JS/auth.js"></script>
+    <script defer src="../JS/cart.js"></script>
+    <script defer src="../JS/verification-docs.js"></script>
     <script defer src="../JS/notifications.js"></script>
     <script defer src="../JS/dropdown-fix.js"></script>
     <script src="../JS/component-loader.js" defer></script>
@@ -253,8 +292,14 @@
       // Mi Cuenta — carga + guardado de perfil propio.
       // Diseño: si no hay sesión, mostramos "auth-required" + CTA login.
       //          Si hay sesión, GET /users/me, paint, PUT /users/me al guardar.
-      document.addEventListener('DOMContentLoaded', () => {
+      // AOS.init() esperando el navbar (ver comentario largo en contacto.html)
+      // en vez de DOMContentLoaded, que corre antes de que el fetch() async
+      // del header resuelva y dejaba el logo invisible para siempre.
+      document.addEventListener('daledeal:header-loaded', () => {
         if (typeof AOS !== 'undefined') AOS.init({ duration: 600, once: true, offset: 50 });
+      }, { once: true });
+
+      document.addEventListener('DOMContentLoaded', () => {
 
         const API_BASE = (window.DaleDeal?.CONFIG?.API_BASE_URL || 'https://daledeal-backend-production.up.railway.app').replace(/\/$/, '');
         const TOKEN_KEY = 'daledeal_token';
@@ -358,6 +403,7 @@
             if (res.status === 401 || res.status === 403) {
               localStorage.removeItem(TOKEN_KEY);
               sessionStorage.removeItem(TOKEN_KEY);
+              localStorage.removeItem('daledealer_user');
               loadingState.classList.add('d-none');
               authRequired.classList.remove('d-none');
               return;
@@ -450,6 +496,9 @@
         logoutBtn?.addEventListener('click', () => {
           localStorage.removeItem(TOKEN_KEY);
           sessionStorage.removeItem(TOKEN_KEY);
+          // auth.js guarda el usuario en "daledealer_user": sin borrarlo, el
+          // header seguía mostrando la sesión abierta después de salir.
+          localStorage.removeItem('daledealer_user');
           localStorage.removeItem('daledeal_user');
           location.href = './login.html';
         });
@@ -458,5 +507,220 @@
         loadProfile();
       });
     </script>
+
+    <script>
+      // Verificá tu cuenta — solicitar insignias (identidad / profesional) y ver estado.
+      // MVP manual: el equipo revisa por fuera (videollamada / matrícula en registro
+      // público) y aprueba/rechaza desde el admin. No se guardan documentos ni datos
+      // biométricos. Backend: migration 013 + /verifications. Tolerante si aún no está.
+      document.addEventListener('DOMContentLoaded', () => {
+        const API = (window.DaleDeal?.CONFIG?.API_BASE_URL || 'https://daledeal-backend-production.up.railway.app').replace(/\/$/, '');
+        const getToken = () => localStorage.getItem('daledeal_token') || sessionStorage.getItem('daledeal_token');
+        const body = document.getElementById('verificationBody');
+        if (!body) return;
+        const esc = (s) => (window.DaleDeal?.utils?.escapeHtml ? window.DaleDeal.utils.escapeHtml(String(s ?? '')) : String(s ?? ''));
+
+        const TYPES = [
+          { key: 'identity',     label: 'Identidad verificada (DNI + foto)', icon: 'bi-person-badge' },
+          { key: 'professional', label: 'Título verificado',      icon: 'bi-mortarboard' },
+          { key: 'background',   label: 'Antecedentes verificados', icon: 'bi-shield-check', ask: 'Sacá tu Certificado de Antecedentes Penales desde Mi Argentina (tarda minutos) y pasanos el código de verificación del certificado — lo validamos contra la fuente oficial, sin guardar el documento.' },
+        ];
+
+        async function load() {
+          const t = getToken();
+          if (!t) return; // la card vive dentro de accountContent (oculto sin sesión)
+          let data = { requests: [] };
+          try {
+            const r = await fetch(`${API}/verifications/me`, { headers: { Authorization: `Bearer ${t}` } });
+            if (r.ok) data = await r.json();
+          } catch (_) { /* sin conexión → dejamos el estado por defecto */ }
+          render(data || { requests: [] });
+        }
+
+        function render(data) {
+          const reqs = data.requests || [];
+          body.innerHTML = TYPES.map((tp, i) => {
+            const verified = data['verified_' + tp.key];
+            const pending  = reqs.find((r) => r.type === tp.key && r.status === 'pending');
+            let right;
+            if (verified)      right = '<span class="badge bg-success"><i class="bi bi-check-lg me-1"></i>Verificado</span>';
+            else if (pending)  right = '<span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>En revisión</span>';
+            else               right = `<button class="btn btn-sm btn-outline-primary" data-verif="${tp.key}">Solicitar</button>`;
+            return `<div class="d-flex align-items-center justify-content-between py-2 ${i < TYPES.length - 1 ? 'border-bottom' : ''}">
+                <div><i class="bi ${tp.icon} me-2" style="color:var(--primary-red)"></i><strong>${esc(tp.label)}</strong></div>
+                <div>${right}</div>
+              </div>`;
+          }).join('') + '<div id="verifFormArea" class="mt-2"></div>';
+          body.querySelectorAll('[data-verif]').forEach((b) => b.addEventListener('click', () => openForm(b.dataset.verif)));
+        }
+
+        // Identidad y título: con documentos (JS/verification-docs.js), igual que en el registro.
+        function openDocsForm(type) {
+          const area = document.getElementById('verifFormArea');
+          const kinds = type === 'identity' ? ['dni_front', 'dni_back', 'selfie'] : ['title'];
+          area.innerHTML = `
+            <div class="p-3 rounded" id="verifDocsBox" style="background:rgba(0,0,0,.03);border:1px solid var(--gray-200,#e5e7eb);">
+              <div class="vdoc-fields mb-2">${DDVerificationDocs.fieldsHTML('mc', kinds, { required: kinds })}</div>
+              <label class="vdoc-consent"><input type="checkbox" class="form-check-input" id="verifConsent"><span>Acepto que Dale Deal use estos documentos solo para verificar mi cuenta. No se publican.</span></label>
+              <div class="d-flex gap-2 mt-2">
+                <button class="btn btn-sm btn-primary" id="verifSend">Enviar</button>
+                <button class="btn btn-sm btn-outline-secondary" id="verifCancel">Cancelar</button>
+              </div>
+              <div class="small mt-2" id="verifFormMsg"></div>
+            </div>`;
+          document.getElementById('verifCancel').onclick = () => { area.innerHTML = ''; };
+          document.getElementById('verifSend').onclick = async () => {
+            const msg = document.getElementById('verifFormMsg');
+            const btn = document.getElementById('verifSend');
+            msg.className = 'small mt-2 text-danger';
+            if (!document.getElementById('verifConsent').checked) { msg.textContent = 'Tenés que aceptar el uso de los documentos.'; return; }
+            btn.disabled = true;
+            try {
+              const docs = await DDVerificationDocs.collect(document.getElementById('verifDocsBox'));
+              if (type === 'professional' && !docs.title) throw new Error('Subí la foto o el PDF de tu título.');
+              msg.className = 'small mt-2 text-muted'; msg.textContent = 'Enviando…';
+              await DDVerificationDocs.upload(docs);
+              await load();
+            } catch (err) {
+              msg.className = 'small mt-2 text-danger'; msg.textContent = err.message || 'No se pudo enviar.'; btn.disabled = false;
+            }
+          };
+        }
+
+        function openForm(type) {
+          if ((type === 'identity' || type === 'professional') && window.DDVerificationDocs) return openDocsForm(type);
+          const tp = TYPES.find((t) => t.key === type);
+          const area = document.getElementById('verifFormArea');
+          area.innerHTML = `
+            <div class="p-3 rounded" style="background:rgba(0,0,0,.03);border:1px solid var(--gray-200,#e5e7eb);">
+              <label class="form-label small fw-semibold" for="verifNote">${esc(tp.ask)}</label>
+              <textarea class="form-control mb-2" id="verifNote" rows="2" maxlength="500"></textarea>
+              <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-primary" id="verifSend">Enviar solicitud</button>
+                <button class="btn btn-sm btn-outline-secondary" id="verifCancel">Cancelar</button>
+              </div>
+              <div class="small mt-2" id="verifFormMsg"></div>
+            </div>`;
+          document.getElementById('verifCancel').onclick = () => { area.innerHTML = ''; };
+          document.getElementById('verifSend').onclick = () => send(type);
+        }
+
+        async function send(type) {
+          const note = document.getElementById('verifNote').value.trim();
+          const msg  = document.getElementById('verifFormMsg');
+          const btn  = document.getElementById('verifSend');
+          btn.disabled = true; msg.className = 'small mt-2 text-muted'; msg.textContent = 'Enviando…';
+          try {
+            const r = await fetch(`${API}/verifications`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+              body: JSON.stringify({ type, contact_note: note }),
+            });
+            const d = await r.json().catch(() => ({}));
+            if (!r.ok) { msg.className = 'small mt-2 text-danger'; msg.textContent = d.error || 'No se pudo enviar el pedido.'; btn.disabled = false; return; }
+            await load(); // refresca el estado (ahora "En revisión")
+          } catch (_) {
+            msg.className = 'small mt-2 text-danger'; msg.textContent = 'Error de conexión. Probá de nuevo.'; btn.disabled = false;
+          }
+        }
+
+        load();
+      });
+    </script>
+    <script>
+      // Datos de cobro — alias, CVU o CBU donde le transferimos al vendedor cuando se
+      // libera el pago de una venta (Compra Protegida). Backend: migration 017 +
+      // GET/PUT /users/me/payout-account. El servidor valida (incluye los dígitos del CBU).
+      document.addEventListener('DOMContentLoaded', () => {
+        const API = (window.DaleDeal?.CONFIG?.API_BASE_URL || 'https://daledeal-backend-production.up.railway.app').replace(/\/$/, '');
+        const getToken = () => localStorage.getItem('daledeal_token') || sessionStorage.getItem('daledeal_token');
+        const body = document.getElementById('payoutBody');
+        if (!body) return;
+        const esc = (s) => (window.DaleDeal?.utils?.escapeHtml ? window.DaleDeal.utils.escapeHtml(String(s ?? '')) : String(s ?? ''));
+        const fmtDate = (d) => (d ? new Date(d).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' }) : '');
+        let current = null;
+
+        async function load() {
+          const t = getToken();
+          if (!t) return; // la card vive dentro de accountContent (oculto sin sesión)
+          try {
+            const r = await fetch(`${API}/users/me/payout-account`, { headers: { Authorization: `Bearer ${t}` } });
+            current = r.ok ? await r.json() : null;
+          } catch (_) { current = null; }
+          render();
+          if (location.hash === '#datos-cobro') {
+            document.getElementById('datos-cobro')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            if (current && current.available && !current.account) document.getElementById('payoutAccount')?.focus({ preventScroll: true });
+          }
+        }
+
+        function render(flash) {
+          if (!current) { body.innerHTML = '<div class="text-muted small">No pudimos cargar tus datos de cobro. Probá de nuevo en un rato.</div>'; return; }
+          if (!current.available) { body.innerHTML = '<div class="text-muted small">Esta sección se está activando. Probá de nuevo en unos minutos.</div>'; return; }
+          if (!current.account) { renderForm(false); return; }
+          body.innerHTML = `
+            ${flash ? `<div class="alert alert-success py-2 small mb-3"><i class="bi bi-check-circle me-1"></i>${esc(flash)}</div>` : ''}
+            <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap">
+              <div>
+                <div class="fw-semibold" style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;">${esc(current.label || current.account)}</div>
+                <div class="small text-muted">Titular: ${esc(current.holder || '—')}${current.updated_at ? ` · Actualizado el ${esc(fmtDate(current.updated_at))}` : ''}</div>
+              </div>
+              <button class="btn btn-sm btn-outline-secondary" id="payoutEdit"><i class="bi bi-pencil me-1"></i>Cambiar</button>
+            </div>
+            <p class="small text-muted mt-3 mb-0">Cuando se libera el pago de una venta, te transferimos el neto a esta cuenta y te mandamos el comprobante por mail.</p>`;
+          document.getElementById('payoutEdit').onclick = () => renderForm(true);
+        }
+
+        function renderForm(editing) {
+          body.innerHTML = `
+            <p class="small text-muted mb-3">Cuando se libera el pago de una venta, te transferimos el neto a esta cuenta. Puede ser el alias o CVU de Mercado Pago o el CBU de tu banco, y tiene que estar a tu nombre.</p>
+            <div class="mb-3">
+              <label class="form-label small fw-semibold" for="payoutAccount">Alias, CVU o CBU</label>
+              <input class="form-control" id="payoutAccount" maxlength="30" autocomplete="off" spellcheck="false" placeholder="Ej: mi.alias.mp o los 22 números" value="${esc(editing && current && current.account ? current.account : '')}" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-semibold" for="payoutHolder">Titular de la cuenta</label>
+              <input class="form-control" id="payoutHolder" maxlength="120" autocomplete="name" placeholder="Nombre y apellido, como figura en la cuenta" value="${esc(current && current.holder ? current.holder : '')}" />
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-primary" id="payoutSave"><i class="bi bi-save me-1"></i>Guardar</button>
+              ${editing ? '<button class="btn btn-sm btn-outline-secondary" id="payoutCancel">Cancelar</button>' : ''}
+            </div>
+            <div class="small mt-2" id="payoutMsg" role="status"></div>`;
+          document.getElementById('payoutSave').onclick = save;
+          if (editing) document.getElementById('payoutCancel').onclick = () => render();
+        }
+
+        async function save() {
+          const account = document.getElementById('payoutAccount').value;
+          const holder  = document.getElementById('payoutHolder').value;
+          const msg = document.getElementById('payoutMsg');
+          const btn = document.getElementById('payoutSave');
+          btn.disabled = true; msg.className = 'small mt-2 text-muted'; msg.textContent = 'Guardando…';
+          try {
+            const r = await fetch(`${API}/users/me/payout-account`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+              body: JSON.stringify({ account, holder }),
+            });
+            const d = await r.json().catch(() => ({}));
+            if (!r.ok) {
+              msg.className = 'small mt-2 text-danger'; msg.textContent = d.error || 'No pudimos guardar tus datos de cobro.';
+              btn.disabled = false;
+              document.getElementById(d.field === 'holder' ? 'payoutHolder' : 'payoutAccount')?.focus();
+              return;
+            }
+            current = d;
+            render('Datos de cobro guardados. Te mandamos un mail de confirmación.');
+          } catch (_) {
+            msg.className = 'small mt-2 text-danger'; msg.textContent = 'Error de conexión. Probá de nuevo.'; btn.disabled = false;
+          }
+        }
+
+        load();
+      });
+    </script>
+      <!-- Botón flotante de ayuda (?) — mismo widget que el resto del sitio -->
+    <script src="../JS/support-widget.js" defer></script>
   </body>
 </html>

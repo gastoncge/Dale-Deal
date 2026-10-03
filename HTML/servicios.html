@@ -8,7 +8,7 @@
     <!-- SEO Meta Tags -->
     <meta
       name="description"
-      content="Descubre nuestros servicios profesionales: instalación técnica, reparaciones, gastronomía, construcción y más. Calidad garantizada en Dale Deal."
+      content="Descubrí nuestros servicios profesionales: instalación técnica, reparaciones, gastronomía, construcción y más. Calidad garantizada en Dale Deal."
     />
     <meta
       name="keywords"
@@ -24,18 +24,21 @@
     <meta property="og:title"       content="Servicios profesionales — Dale Deal" />
     <meta property="og:description" content="Plomeros, electricistas, gasistas, pintores, peluqueras y más. Profesionales matriculados verificados. Presupuesto sin cargo." />
     <meta property="og:url"         content="https://daledeal.com.ar/HTML/servicios.html" />
-    <meta property="og:image"       content="https://daledeal.com.ar/IMG/LOGO-2.png" />
+    <meta property="og:image"       content="https://daledeal.com.ar/IMG/og-home.jpg" />
+    <meta property="og:image:width"  content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:locale"      content="es_AR" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card"        content="summary_large_image" />
     <meta name="twitter:title"       content="Servicios profesionales — Dale Deal" />
     <meta name="twitter:description" content="Contratá profesionales verificados en Argentina." />
-    <meta name="twitter:image"       content="https://daledeal.com.ar/IMG/LOGO-2.png" />
+    <meta name="twitter:image"       content="https://daledeal.com.ar/IMG/og-home.jpg" />
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
-    <link rel="apple-touch-icon" href="../IMG/LOGO.png" />
+    <link rel="icon" href="../IMG/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="../IMG/icon-192.png" type="image/png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="../IMG/apple-touch-icon.png" />
     <link rel="manifest" href="../manifest.json" />
     <!-- Preconnect a CDNs externos: warmea conexiones DNS+TCP+TLS en paralelo al parse del HTML, ahorra 100-300ms. -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -1095,7 +1098,7 @@
 
       .results-count-container {
         font-size: 13px;
-        color: var(--gray-400);
+        color: var(--gray-500);
         font-weight: 500;
         background: var(--gray-100);
         padding: 6px 12px;
@@ -2296,6 +2299,39 @@
         font-size: var(--font-size-sm) !important;
       }
 
+      /* =====================================================================
+         FIX cascada mobile (va AL FINAL a propósito): la regla base
+         .filters-sidebar { position:sticky } está más arriba que el @media
+         de 992px, así que en el celu PISABA al drawer y el panel de filtros
+         quedaba fijo ocupando toda la pantalla (el primer servicio aparecía
+         recién a ~1066px). Al re-declarar el drawer acá abajo, gana por orden
+         de fuente — sin !important.
+         ===================================================================== */
+      @media (max-width: 991.98px) {
+        .filters-sidebar {
+          position: fixed;
+          top: 0;
+          left: -100%;
+          width: 85%;
+          max-width: 360px;
+          height: 100vh;
+          max-height: 100vh;
+          z-index: 1050;
+          transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 8px 0 24px rgba(0, 0, 0, 0.15);
+          border-right: none;
+        }
+        .filters-sidebar.active {
+          left: 0;
+        }
+        .btn-toggle-filters {
+          display: inline-flex;
+        }
+        .sidebar-overlay.active {
+          display: block;
+          opacity: 1;
+        }
+      }
     </style>
   </head>
 
@@ -2306,8 +2342,7 @@
       <div class="container-fluid px-4">
         <!-- Logo -->
         <a class="navbar-brand" href="../index.html" data-aos="fade-right">
-          <img src="../IMG/LOGO-2.png" alt="Dale Deal" class="logo-navbar" />
-          <span class="brand-text">DALE DEAL</span>
+          <img src="../IMG/logo-nav.png" alt="Dale Deal" class="logo-navbar" />
         </a>
 
         <!-- Search Bar -->
@@ -2349,6 +2384,12 @@
             <button class="theme-toggle" id="themeToggle" title="Cambiar tema">
               <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
             </button>
+          </div>
+          <!-- Mi Centro -->
+          <div class="action-item d-none d-md-flex">
+            <a href="./mi-cuenta.html" class="action-btn" id="miCentroBtn" title="Mi Centro" aria-label="Ir a Mi Centro">
+              <i class="bi bi-grid-fill" aria-hidden="true"></i>
+            </a>
           </div>
 
           <!-- Notifications -->
@@ -2422,7 +2463,7 @@
           <!-- Profile -->
           <div class="action-item dropdown">
             <button class="action-btn profile-btn" id="profileDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" title="Mi cuenta">
-              <img src="https://ui-avatars.com/api/?name=U&amp;background=d63031&amp;color=fff&amp;size=80&amp;font-size=0.5&amp;bold=true" alt="Mi perfil" class="profile-image" id="profileAvatar" />
+              <img src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2080%2080%22%3E%3Crect%20width%3D%2280%22%20height%3D%2280%22%20fill%3D%22%23d63031%22%2F%3E%3Ctext%20x%3D%2240%22%20y%3D%2240%22%20dy%3D%22.35em%22%20text-anchor%3D%22middle%22%20fill%3D%22%23fff%22%20font-family%3D%22Inter%2CArial%2Csans-serif%22%20font-size%3D%2234%22%20font-weight%3D%22700%22%3EU%3C%2Ftext%3E%3C%2Fsvg%3E" alt="Mi perfil" class="profile-image" id="profileAvatar" />
               <span class="profile-name">Usuario</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
@@ -2486,9 +2527,8 @@
               <h1 class="header-title">
                 Catálogo de Servicios
               </h1>
-              <p class="header-description">
-                <span class="badge-count" id="headerServiceCount">2000+ servicios</span>
-              </p>
+              <!-- Sin insignia de cantidad acá: la cifra real se muestra en
+                   "N servicios encontrados", arriba de la grilla. -->
             </div>
           </div>
         </div>
@@ -2899,7 +2939,8 @@
     <script defer src="../JS/favorites.js"></script>
     <script defer src="../JS/notifications.js"></script>
     <script defer src="../JS/dropdown-fix.js"></script>
-    <script defer src="../JS/services-data.js"></script>
+    <!-- services-data.js (servicios de ejemplo) ya no se carga acá: el
+         catálogo muestra solo servicios reales de la API. -->
     <script src="../JS/component-loader.js" defer></script>
     <script>
       window.onFooterLoaded = function() {
@@ -2918,7 +2959,7 @@
 
     <script>
       // Initialize AOS dentro de DOMContentLoaded — los scripts `defer`
-      // (AOS incluido) se evalúan ENTRE </body> y este evento. Sin esto,
+      // (AOS incluido) se evalúan entre el cierre del body y este evento. Sin esto,
       // AOS no está definido todavía y los [data-aos] quedan invisibles.
       document.addEventListener('DOMContentLoaded', function() {
         if (typeof AOS !== 'undefined') AOS.init({
@@ -2952,8 +2993,8 @@
             priceMax: null,
             rating: null,
             certified: false,
-            verified: false,
-            warranty: false
+            warranty: false,
+            available247: false
           };
 
           this.init();
@@ -2966,43 +3007,64 @@
             // se machacan mutuamente. Pendiente refactor de coordinación.
             this.showLoadingState();
 
-            // Intentar cargar desde la API real
-            if (window.DaleDeal?.api?.fetchServices) {
-              const apiServices = await window.DaleDeal.api.fetchServices();
-              if (apiServices && apiServices.length > 0) {
-                this.services = this.transformAPIServices(apiServices);
-                DaleDeal.log(`✅ ${this.services.length} servicios cargados desde la API`);
-              } else {
-                throw new Error('API sin datos, usando fallback');
-              }
-            } else {
-              throw new Error('API no disponible, usando fallback');
+            // Solo servicios reales de la API. Antes, si la API fallaba o
+            // devolvía 0, se mostraban los 13 servicios de ejemplo de
+            // services-data.js (con precios, calificaciones y "Certificado"
+            // inventados). Ahora: 0 servicios → estado vacío; error → aviso
+            // con "Reintentar".
+            if (!window.DaleDeal?.api?.fetchServices) {
+              throw new Error('API no disponible');
+            }
+            // limit=100 (máximo del backend): sin limit vienen 20
+            const apiServices = await window.DaleDeal.api.fetchServices({}, { all: true });
+            this.services = this.transformAPIServices(apiServices || []);
+            DaleDeal.log(`✅ ${this.services.length} servicios cargados desde la API`);
+
+            this.hideLoadingState();
+            if (this.services.length === 0) {
+              this.showEmptyCatalog();
+              return;
             }
 
             this.filteredServices = [...this.services];
-            this.hideLoadingState();
             this.bindFilterEvents();
             this.renderFilteredServices();
 
           } catch (error) {
-            DaleDeal.warn('Fallback a datos locales:', error.message);
-            // Fallback a datos hardcodeados si la API no responde
-            try {
-              if (typeof servicesData !== 'undefined') {
-                this.services = this.transformServicesData(servicesData);
-                this.filteredServices = [...this.services];
-                this.hideLoadingState();
-                this.bindFilterEvents();
-                this.renderFilteredServices();
-              } else {
-                this.hideLoadingState();
-                this.showError('No se pudieron cargar los servicios. Por favor, intentá nuevamente.');
-              }
-            } catch (fallbackError) {
-              this.hideLoadingState();
-              this.showError('Error al cargar los servicios. Por favor, intentá nuevamente.');
-            }
+            DaleDeal.warn('No se pudieron cargar los servicios:', error.message);
+            this.hideLoadingState();
+            this.showError('No pudimos cargar los servicios. Revisá tu conexión y probá de nuevo.');
+            const countEl = document.getElementById('resultsCount');
+            if (countEl) countEl.textContent = '';
           }
+        }
+
+        // Todavía no hay servicios publicados: estado vacío (no es un error)
+        showEmptyCatalog() {
+          const emptyStateContainer = document.getElementById('emptyStateContainer');
+          const grid = document.getElementById('servicesGrid');
+          const noResults = document.getElementById('noResults');
+          const loadMore = document.getElementById('loadMoreContainer');
+
+          if (grid) grid.style.display = 'none';
+          if (loadMore) loadMore.style.display = 'none';
+          if (emptyStateContainer) emptyStateContainer.style.display = 'flex';
+          if (noResults) {
+            noResults.style.display = 'block';
+            noResults.innerHTML = `
+              <div class="empty-state-icon">
+                <i class="bi bi-tools"></i>
+              </div>
+              <h3 class="empty-state-title">Todavía no hay servicios publicados</h3>
+              <p class="empty-state-text">¿Ofrecés un servicio? Publicalo y aparecé acá.</p>
+              <div class="empty-state-actions">
+                <a class="btn btn-primary" href="./publicar.html">
+                  <i class="bi bi-plus-circle me-2"></i>Publicar un servicio
+                </a>
+              </div>
+            `;
+          }
+          this.updateResultsCount();
         }
 
         showLoadingState() {
@@ -3033,10 +3095,16 @@
             priceTo: service.priceTo,
             category: this.mapCategoryFromSlug(service.category),
             image: service.image || 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=400&h=300&fit=crop',
-            rating: service.rating || 4.5,
+            // Calificación real; sin reseñas es 0 (antes 4.5 inventado: se
+            // veían 4,5 estrellas al lado de "Sin reseñas aún").
+            rating: service.rating || 0,
             reviewCount: service.reviewCount || 0,
             location: service.location || 'Argentina',
             badges: service.badges || [],
+            postBadges: service.postBadges || [],
+            certified: !!service.certified,
+            hasWarranty: !!service.hasWarranty,
+            available247: !!service.available247,
             featured: true,
             priceType: service.priceType || 'fixed',
             provider_id: service.provider_id,
@@ -3060,41 +3128,8 @@
           return map[slug] || 'consultation';
         }
 
-        // ===========================================
-        // DATA FETCHING & TRANSFORMATION
-        // ===========================================
-
-        transformServicesData(apiServices) {
-          return apiServices.map(service => ({
-            id: service.id,
-            title: service.title,
-            description: service.description || '',
-            price: service.price,
-            category: this.mapCategory(service.category),
-            image: service.image,
-            rating: service.rating,
-            reviewCount: service.reviewCount || 0,
-            location: service.location || 'CABA',
-            badges: service.badges || [],
-            featured: service.featured || false,
-            priceType: service.priceType || null,
-            topRated: service.topRated || false,
-            emergency: service.emergency || false,
-            nationwide: service.nationwide || false
-          }));
-        }
-
-        mapCategory(category) {
-          const categoryMap = {
-            'Instalación': 'installation',
-            'Reparación': 'repair',
-            'Mantenimiento': 'maintenance',
-            'Consultoría': 'consultation',
-            'Gastronomía': 'catering',
-            'Construcción': 'construction'
-          };
-          return categoryMap[category] || category?.toLowerCase() || 'general';
-        }
+        // (transformServicesData / mapCategory se fueron con el fallback a
+        // los servicios de ejemplo de services-data.js.)
 
         // ===========================================
         // FILTER EVENT BINDINGS
@@ -3153,9 +3188,11 @@
           });
 
           // --- Certification checkboxes ---
+          // Los ids vienen del catálogo de productos: freeShipping = Certificado,
+          // conditionNew = Con garantía, conditionUsed = Disponible 24/7.
           const certifiedCb = document.getElementById('freeShipping');
-          const verifiedCb = document.getElementById('conditionNew');
-          const warrantyCb = document.getElementById('conditionUsed');
+          const warrantyCb = document.getElementById('conditionNew');
+          const available247Cb = document.getElementById('conditionUsed');
 
           if (certifiedCb) {
             certifiedCb.addEventListener('change', (e) => {
@@ -3163,9 +3200,9 @@
               self.applyFilters();
             });
           }
-          if (verifiedCb) {
-            verifiedCb.addEventListener('change', (e) => {
-              self.filters.verified = e.target.checked;
+          if (available247Cb) {
+            available247Cb.addEventListener('change', (e) => {
+              self.filters.available247 = e.target.checked;
               self.applyFilters();
             });
           }
@@ -3298,21 +3335,9 @@
           }
 
           // Certifications
-          if (this.filters.certified) {
-            filtered = filtered.filter(s =>
-              s.badges?.some(b => b.includes('Certificado') || b.includes('Matriculado'))
-            );
-          }
-          if (this.filters.verified) {
-            filtered = filtered.filter(s =>
-              s.badges?.some(b => b.includes('Verificado')) || s.featured
-            );
-          }
-          if (this.filters.warranty) {
-            filtered = filtered.filter(s =>
-              s.badges?.some(b => b.includes('Garantía'))
-            );
-          }
+          if (this.filters.certified)    filtered = filtered.filter(s => s.certified);
+          if (this.filters.warranty)     filtered = filtered.filter(s => s.hasWarranty);
+          if (this.filters.available247) filtered = filtered.filter(s => s.available247);
 
           // Sort
           switch (this.currentSort) {
@@ -3347,8 +3372,8 @@
             priceMax: null,
             rating: null,
             certified: false,
-            verified: false,
-            warranty: false
+            warranty: false,
+            available247: false
           };
 
           // Reset UI elements
@@ -3571,9 +3596,9 @@
           ).join('');
           const badgesHTML = badgeSpans ? `<div class="service-badges">${badgeSpans}</div>` : '';
 
-          const shortDesc = service.description
-            ? (service.description.length > 80 ? service.description.substring(0, 80) + '...' : service.description)
-            : '';
+          // Texto plano: la descripción viene del editor como HTML.
+          const plainDesc = window.DaleDeal.utils.htmlToText(service.description);
+          const shortDesc = plainDesc.length > 80 ? plainDesc.substring(0, 80) + '...' : plainDesc;
 
           // Reseñas: si no hay reviews, "Sin reseñas aún" (matchea estilo cards productos)
           const reviewCount = service.reviewCount || 0;
@@ -3581,28 +3606,15 @@
             ? `<span class="reviews-count">(${reviewCount.toLocaleString('es-AR')})</span>`
             : `<span class="reviews-count text-muted">Sin reseñas aún</span>`;
 
-          // WhatsApp share — los servicios también son shareables
-          const shareUrl = `${window.location.origin}/HTML/servicio.html?id=${service.id}`;
-          const shareText = encodeURIComponent(`Mirá este servicio en Dale Deal: ${service.title} — ${shareUrl}`);
-          const whatsappHref = `https://wa.me/?text=${shareText}`;
-
           card.innerHTML = `
             <div class="product-image-container">
               <img src="${service.image}" alt="${titleSafe}" class="product-image active" loading="lazy" />
               ${badgesHTML}
+              ${window.DaleDeal.utils.renderPostBadges(service.postBadges)}
               <div class="product-actions">
                 <button class="action-heart" title="Agregar a favoritos" data-product-id="${service.id}">
                   <i class="bi bi-heart"></i>
                 </button>
-                <a href="${whatsappHref}"
-                   class="action-share"
-                   title="Compartir por WhatsApp"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   onclick="event.stopPropagation()"
-                   aria-label="Compartir ${titleSafe} por WhatsApp">
-                  <i class="bi bi-whatsapp"></i>
-                </a>
               </div>
             </div>
             <div class="product-info">
@@ -3617,6 +3629,7 @@
                   <i class="bi bi-geo-alt-fill"></i>
                   <span>${locationSafe}</span>
                 </div>
+                ${window.DaleDeal.utils.renderServiceFeatures(service)}
               </div>
               <div class="product-pricing-wrapper">
                 <div class="product-pricing">

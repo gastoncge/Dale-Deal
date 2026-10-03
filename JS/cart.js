@@ -178,8 +178,8 @@ class CartManager {
       // Detectar si estamos en HTML/* (path relativo a productos.html)
       // o en root (index.html). Sin esto el CTA navega a 404 desde root.
       const productosHref = window.location.pathname.includes('/HTML/')
-        ? './productos.html'
-        : './HTML/productos.html';
+        ? '/productos'
+        : '/productos';
       cartDropdownBody.innerHTML = `
         <div class="empty-state" style="padding: var(--spacing-8) var(--spacing-4);">
           <div class="empty-state-icon"><i class="bi bi-cart-x"></i></div>
@@ -205,23 +205,27 @@ class CartManager {
       cartFooter.style.display = 'block';
     }
 
+    // El carrito vive en localStorage: todo lo que venga de ahí se escapa.
+    const esc = (v) => DaleDeal.utils.escapeHtml(String(v ?? ""));
     const cartItemsHTML = this.items
       .map(
         (item) => `
-      <div class="cart-item" data-id="${item.id}">
-        <img src="${item.image}" alt="${item.title}" class="cart-item-image">
+      <div class="cart-item" data-id="${esc(item.id)}">
+        <a href="/producto?id=${encodeURIComponent(item.id)}" class="cart-item-link" tabindex="-1" aria-hidden="true">
+          <img src="${esc(item.image)}" alt="${esc(item.title)}" class="cart-item-image">
+        </a>
         <div class="cart-item-info">
-          <h6 class="cart-item-title">${item.title}</h6>
-          <div class="cart-item-price">${item.priceText || this.formatPrice(item.price)}</div>
+          <h6 class="cart-item-title"><a href="/producto?id=${encodeURIComponent(item.id)}" class="cart-item-link">${esc(item.title)}</a></h6>
+          <div class="cart-item-price">${esc(item.priceText || this.formatPrice(item.price))}</div>
           <div class="cart-item-controls">
             <div class="quantity-control">
-              <button class="quantity-btn btn-decrease" data-product-id="${item.id}" data-action="decrease" type="button">-</button>
-              <span class="quantity-display">${item.quantity}</span>
-              <button class="quantity-btn btn-increase" data-product-id="${item.id}" data-action="increase" type="button">+</button>
+              <button class="quantity-btn btn-decrease" data-product-id="${esc(item.id)}" data-action="decrease" type="button">-</button>
+              <span class="quantity-display">${esc(item.quantity)}</span>
+              <button class="quantity-btn btn-increase" data-product-id="${esc(item.id)}" data-action="increase" type="button">+</button>
             </div>
           </div>
         </div>
-        <button class="remove-item" data-product-id="${item.id}" data-action="remove" type="button" title="Eliminar">
+        <button class="remove-item" data-product-id="${esc(item.id)}" data-action="remove" type="button" title="Eliminar">
           <i class="bi bi-trash"></i>
         </button>
       </div>
@@ -277,7 +281,7 @@ class CartManager {
     // Eventos para botones del dropdown del carrito
     document.getElementById('viewFullCart')?.addEventListener('click', () => {
       const isInHtmlFolder = window.location.pathname.includes('/HTML/');
-      window.location.href = isInHtmlFolder ? './notificaciones.html' : './HTML/notificaciones.html';
+      window.location.href = isInHtmlFolder ? '/notificaciones' : '/notificaciones';
     });
 
     document.getElementById('proceedToCheckout')?.addEventListener('click', async () => {
@@ -288,96 +292,22 @@ class CartManager {
       // Chequear sesión
       if (!localStorage.getItem('daledeal_token')) {
         DaleDeal.utils?.showNotification?.('Tenés que iniciar sesión para comprar.', 'warning');
-        const goTo = window.location.pathname.includes('/HTML/') ? './login.html' : './HTML/login.html';
+        const goTo = window.location.pathname.includes('/HTML/') ? '/login' : '/login';
         setTimeout(() => { window.location.href = goTo; }, 1200);
         return;
       }
 
-      const apiFetch  = window.DaleDeal?.api?.apiFetch;
-      const payments  = window.DaleDeal?.payments;
-      if (!apiFetch) {
-        DaleDeal.utils?.showNotification?.('API no disponible.', 'error');
-        return;
+      // Cada compra necesita elegir envío o retiro (y la dirección): el backend
+      // rechaza una orden de un producto con envío sin esos datos. Antes se
+      // creaban todas las órdenes desde acá y fallaban con "Faltan datos de
+      // envío". Ahora vamos a la ficha del primer producto y se abre el mismo
+      // checkout que "Comprar ahora"; el resto queda en el carrito.
+      const item = this.items[0];
+      const params = new URLSearchParams({ id: String(item.id), comprar: "1", cantidad: String(item.quantity || 1) });
+      if (this.items.length > 1) {
+        DaleDeal.utils?.showNotification?.("Pagás un producto por vez: el resto queda en tu carrito.", "info");
       }
-
-      // Crear una orden por cada item — el backend abre una conversación
-      // con cada vendedor (hook en createOrder).
-      const createdOrders   = [];
-      const pendingOrderIds = [];
-      const errors          = [];
-      for (const item of this.items) {
-        try {
-          const res = await apiFetch('/orders', {
-            method: 'POST',
-            body: JSON.stringify({
-              product_id: parseInt(item.id, 10),
-              quantity:   item.quantity || 1,
-            }),
-          });
-          const orderId = res?.order?.id || res?.id;
-          if (orderId) {
-            createdOrders.push({
-              order_id:        orderId,
-              conversation_id: res?.conversation?.id || null,
-              title:           item.title,
-            });
-            pendingOrderIds.push(orderId);
-          }
-        } catch (err) {
-          errors.push(`${item.title || 'Producto'}: ${err.message}`);
-        }
-      }
-
-      if (createdOrders.length === 0) {
-        DaleDeal.utils?.showNotification?.(
-          'No se pudo crear ninguna orden. ' + (errors[0] || ''),
-          'error'
-        );
-        return;
-      }
-
-      if (errors.length > 0) {
-        DaleDeal.utils?.showNotification?.(
-          `Se crearon ${createdOrders.length} de ${this.items.length} órdenes. Vas a pagarlas una por una.`,
-          'warning'
-        );
-      }
-
-      // Vaciar carrito (las órdenes ya existen)
-      this.items = [];
-      this.saveCart?.();
-      this.updateCartDropdown?.();
-
-      // Si MP está disponible, empezamos el flujo de pago por la primera orden.
-      // Las restantes quedan guardadas en localStorage para que, al volver
-      // de pago-exitoso, el usuario vea las que le faltan.
-      if (payments?.redirectToCheckout) {
-        try {
-          // El resto va a localStorage — pago-exitoso.html las muestra.
-          const rest = pendingOrderIds.slice(1);
-          if (rest.length > 0) {
-            localStorage.setItem('dd_pending_orders', JSON.stringify(rest));
-          } else {
-            localStorage.removeItem('dd_pending_orders');
-          }
-          DaleDeal.utils?.showNotification?.('Redirigiendo a Mercado Pago…', 'info');
-          await payments.redirectToCheckout(pendingOrderIds[0]);
-          return; // redirect ya disparado
-        } catch (err) {
-          DaleDeal.error('Error al iniciar pago:', err);
-          DaleDeal.utils?.showNotification?.(
-            err.message || 'No pudimos iniciar el pago. Intentá desde el detalle de la orden.',
-            'error'
-          );
-        }
-      }
-
-      // Fallback (sin MP): abrir la primera conversación creada
-      const firstConv = createdOrders[0]?.conversation_id;
-      if (firstConv && window.DaleDeal?.chat) {
-        DaleDeal.utils?.showNotification?.('Abrimos el chat con el vendedor para coordinar el pago.', 'info');
-        setTimeout(() => window.DaleDeal.chat.openConversation(firstConv), 800);
-      }
+      setTimeout(() => { window.location.href = `/producto?${params}`; }, this.items.length > 1 ? 900 : 0);
     });
 
     // Manejar clics en el dropdown del carrito
@@ -457,7 +387,7 @@ class CartManager {
 
       // Imagen por defecto si no hay imagen
       if (!image || image === '') {
-        image = './IMG/LOGO.png'; // Usar logo como imagen por defecto
+        image = './IMG/isotipo.png'; // Usar isotipo como imagen por defecto
       }
 
       if (!title || !priceText) {

@@ -25,6 +25,18 @@ class ServicePage {
     this._updateSaveButton();
     this.loadRelatedServices();
     this.loadProviderServices();
+    this.loadAndRenderReviews();
+  }
+
+  async loadAndRenderReviews() {
+    if (!this.currentService?.id || !window.DaleDealReviews?.loadList) return;
+    const s = this.currentService;
+    await window.DaleDealReviews.loadList({
+      itemType: 'service',
+      itemId: s.id,
+      fallbackAvg: s.rating || 0,
+      fallbackTotal: s.reviewCount || 0,
+    });
   }
 
   // ── Cargar datos del servicio por ID (URL param o localStorage) ────────────
@@ -68,16 +80,11 @@ class ServicePage {
         try {
           service = await window.DaleDeal.api.fetchServiceById(serviceId);
         } catch (err) {
-          // Backend devolvió 404 o se cayó la red — caemos al lookup local
-          console.warn('[service] fetchServiceById falló, intentando data local:', err?.message);
+          console.warn('[service] fetchServiceById falló:', err?.message);
         }
       }
-
-      // 1.b — Fallback a data local (servicesData). Sin coerción `==` para
-      //       evitar matches accidentales (1 == '1' true pero queremos exacto).
-      if (!service && typeof servicesData !== 'undefined') {
-        service = servicesData.find(s => String(s.id) === String(serviceId));
-      }
+      // Sin fallback a servicesData: esa data de ejemplo mostraba fichas
+      // inventadas ("Alejandro R.", 4.9 con 127 reseñas) como si fueran reales.
     }
 
     if (!service) {
@@ -90,7 +97,7 @@ class ServicePage {
           main.innerHTML = '<div style="text-align:center;padding:80px 24px;"><h2>Servicio no encontrado</h2><p>Te llevamos al listado en un segundo…</p></div>';
         }
       }
-      setTimeout(() => { window.location.href = './servicios.html'; }, 2000);
+      setTimeout(() => { window.location.href = '/servicios'; }, 2000);
       return;
     }
 
@@ -101,103 +108,30 @@ class ServicePage {
 
   // ── Enriquecer datos del servicio con defaults ─────────────────────────────
   _enrichServiceData(service) {
-    const providerDefaults = {
-      'installation': { name: 'Alejandro R.', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face', memberSince: '2021', responseTime: '< 30 min', completedJobs: 312 },
-      'consultation': { name: 'Valentina G.', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face', memberSince: '2020', responseTime: '< 1h', completedJobs: 189 },
-      'catering': { name: 'Carlos M.', avatar: 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=80&h=80&fit=crop&crop=face', memberSince: '2019', responseTime: '< 2h', completedJobs: 456 },
-      'construction': { name: 'Roberto L.', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face', memberSince: '2018', responseTime: '< 3h', completedJobs: 278 },
-      'repair': { name: 'Miguel S.', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face', memberSince: '2020', responseTime: '< 1h', completedJobs: 534 },
-      'maintenance': { name: 'Lucía P.', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face', memberSince: '2022', responseTime: '< 2h', completedJobs: 145 },
+    // Solo datos reales del prestador. Antes, a un prestador real se le
+    // completaban campos con datos de ejemplo ("312 trabajos", "Responde en
+    // < 30 min", "Miembro desde 2021") y, sin prestador, se inventaba uno.
+    const real = service.provider || {};
+    const provider = {
+      name:          real.name || service.provider_name || 'Prestador',
+      avatar:        real.avatar || null,
+      memberSince:   real.memberSince || null,
+      responseTime:  null,   // el backend todavía no lo mide
+      completedJobs: null,   // ídem
+      verifiedIdentity:     !!real.verifiedIdentity,
+      verifiedProfessional: !!real.verifiedProfessional,
+      verifiedBackground:   !!real.verifiedBackground,
+      badges:        real.badges || [],
+      phone:         real.phone,
+      location:      real.location,
     };
 
-    const galleryDefaults = {
-      'installation': [
-        'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1609692814858-f7cd2f0afa4f?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=700&h=500&fit=crop',
-      ],
-      'consultation': [
-        'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1600518464441-9154a4dea21b?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=700&h=500&fit=crop',
-      ],
-      'catering': [
-        'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1547592180-85f173990554?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1555244162-803834f70033?w=700&h=500&fit=crop',
-      ],
-      'construction': [
-        'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=700&h=500&fit=crop',
-      ],
-      'repair': [
-        'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1631545804657-2c2f0b4122bf?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&h=500&fit=crop',
-      ],
-      'maintenance': [
-        'https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=700&h=500&fit=crop',
-        'https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=700&h=500&fit=crop',
-      ],
-    };
-
-    // Priorizar SIEMPRE los datos reales del backend (que llegan via
-    // transformService como service.provider y service.gallery). Solo si NO
-    // hay datos reales caemos al mock — y mapeamos category_slug del backend
-    // ('plomeria', 'electricidad'…) al key del mock ('repair', 'installation'…).
-    //
-    // Antes: el código pisaba SIEMPRE service.provider y service.gallery con
-    // el mock — la página de plomería se veía con datos del electricista.
-    const slugToMockCategory = {
-      'plomeria': 'repair',
-      'electricidad': 'installation',
-      'gasista': 'maintenance',
-      'peluqueria': 'consultation',
-      'limpieza': 'maintenance',
-      'pintura': 'installation',
-      'carpinteria': 'installation',
-      'mecanica': 'repair',
-      'informatica': 'consultation',
-      'otros-servicios': 'consultation',
-    };
-    const mockCatKey = slugToMockCategory[service.category]
-                       || (providerDefaults[service.category] ? service.category : 'consultation');
-
-    // Provider: priorizar real, sino mock por categoría
-    const realProvider = service.provider;
-    const mockProvider = providerDefaults[mockCatKey] || providerDefaults['consultation'];
-    const provider = realProvider ? {
-      name:         realProvider.name || mockProvider.name,
-      avatar:       realProvider.avatar || mockProvider.avatar,
-      // memberSince/responseTime/completedJobs no vienen del backend hoy,
-      // dejamos mock como placeholder hasta que se agreguen al endpoint.
-      memberSince:  realProvider.memberSince || mockProvider.memberSince,
-      responseTime: mockProvider.responseTime,
-      completedJobs: mockProvider.completedJobs,
-      verified:     realProvider.verified !== undefined ? realProvider.verified : true,
-      phone:        realProvider.phone,
-      location:     realProvider.location,
-    } : { ...mockProvider, verified: true };
-
-    // Galería: priorizar real (array del backend), sino mock por categoría
-    const realGallery = Array.isArray(service.gallery) && service.gallery.length > 0
+    // Galería: solo fotos del servicio. Antes, sin galería, se mostraban fotos
+    // de ejemplo de otros trabajos con la nota "Fotos reales de trabajos".
+    const gallery = Array.isArray(service.gallery) && service.gallery.length > 0
       ? service.gallery
-      : null;
-    const gallery = realGallery || galleryDefaults[mockCatKey] || galleryDefaults['consultation'];
-    const thumbnails = gallery.map(img => {
-      // El reemplazo de tamaño solo aplica a las URLs de Unsplash del mock
-      // (formato `?w=700&h=500`). Para imágenes reales con otro formato lo
-      // dejamos igual — sino quedaría sin reemplazo y la thumbnail es la full.
-      return img.replace('w=700&h=500', 'w=120&h=120');
-    });
+      : [service.image];
+    const thumbnails = gallery.slice();
 
     return {
       ...service,
@@ -217,8 +151,12 @@ class ServicePage {
 
     // SEO
     document.title = `${s.title} - DALE DEAL`;
+    // Canonical por servicio (el HTML trae uno fijo sin id y Google no indexaba
+    // cada servicio por separado).
+    document.querySelector('link[rel="canonical"]')
+      ?.setAttribute('href', `https://daledeal.com.ar/servicio?id=${encodeURIComponent(s.id)}`);
     document.querySelector('meta[name="description"]')?.setAttribute('content',
-      `${s.title} – ${s.description?.substring(0, 120) || ''} Contratá en Dale Deal.`
+      `${s.title} – ${DaleDeal.utils.htmlToText(s.description).substring(0, 120)} Contratá en Dale Deal.`
     );
 
     // Breadcrumb
@@ -227,9 +165,21 @@ class ServicePage {
 
     // Provider card
     const providerAvatar = document.getElementById('providerAvatar');
-    if (providerAvatar) { providerAvatar.src = p.avatar; providerAvatar.alt = p.name; }
+    if (providerAvatar) {
+      // Sin foto: queda el placeholder gris del HTML (no una cara de stock).
+      if (p.avatar) providerAvatar.src = p.avatar;
+      providerAvatar.alt = p.name;
+    }
 
     document.querySelectorAll('.provider-name-text').forEach(el => el.textContent = p.name);
+
+    // Insignias de verificación reales (identidad / profesional). Solo aparecen
+    // si el equipo aprobó la verificación del prestador (no inventamos confianza).
+    const badgesEl = document.getElementById('providerBadges');
+    if (badgesEl) {
+      // Verificado y título primero; al pasar el mouse se ven todas.
+      badgesEl.innerHTML = window.DaleDeal.utils.renderUserBadges(p);
+    }
 
     const providerStatEl = document.getElementById('providerStats');
     if (providerStatEl) {
@@ -238,17 +188,28 @@ class ServicePage {
         <strong>${s.rating}</strong> · ${s.reviewCount?.toLocaleString('es-AR') || 0} reseñas`;
     }
 
+    // Solo si hay un dato real (antes se inventaba "Responde en < 1h").
     const responseTimeEl = document.getElementById('providerResponseTime');
-    if (responseTimeEl) responseTimeEl.textContent = `Responde en ${p.responseTime || '< 1h'}`;
+    if (responseTimeEl) {
+      if (p.responseTime) responseTimeEl.textContent = `Responde en ${p.responseTime}`;
+      else responseTimeEl.closest('.provider-response-time')?.setAttribute('hidden', '');
+    }
 
-    const locationEl = document.getElementById('providerLocation');
-    if (locationEl) locationEl.textContent = s.location || 'CABA';
-
-    const memberSinceEl = document.getElementById('providerMemberSince');
-    if (memberSinceEl) memberSinceEl.textContent = `Miembro desde ${p.memberSince || '2021'}`;
-
-    const completedJobsEl = document.getElementById('providerCompletedJobs');
-    if (completedJobsEl) completedJobsEl.textContent = `${p.completedJobs || 0} trabajos`;
+    // Ubicación · miembro desde · trabajos: solo lo que es real.
+    const locationRow = document.querySelector('.provider-location');
+    if (locationRow) {
+      const parts = [
+        s.location || p.location,
+        p.memberSince ? `Miembro desde ${p.memberSince}` : null,
+        p.completedJobs ? `${p.completedJobs} trabajos` : null,
+      ].filter(Boolean);
+      const span = document.createElement('span');
+      span.id = 'providerLocation';
+      span.textContent = parts.join(' · ');
+      locationRow.innerHTML = '<i class="bi bi-geo-alt-fill" aria-hidden="true"></i> ';
+      locationRow.appendChild(span);
+      locationRow.hidden = parts.length === 0;
+    }
 
     // Service title + meta
     const titleEl = document.querySelector('.svc-title');
@@ -260,16 +221,21 @@ class ServicePage {
     const ratingStarsEl = document.querySelector('.service-rating .stars');
     if (ratingStarsEl) ratingStarsEl.innerHTML = this._renderStars(s.rating);
 
+    // Solo si hay reseñas (cada una es un servicio prestado); antes "+0 servicios prestados".
     const contractedEl = document.querySelector('.service-contracted span');
-    if (contractedEl) contractedEl.textContent = `+${s.reviewCount || 0} servicios prestados`;
+    if (contractedEl) {
+      if (s.reviewCount > 0) contractedEl.textContent = `+${s.reviewCount} servicios prestados`;
+      else contractedEl.closest('.service-contracted')?.setAttribute('hidden', '');
+    }
 
     // Badges/tags
     const tagsContainer = document.querySelector('.service-tags');
     if (tagsContainer && s.badges?.length) {
+      const esc = (v) => window.DaleDeal.utils.escapeHtml(String(v ?? ''));
       tagsContainer.innerHTML = s.badges
         .map(b => {
           const label = typeof b === 'object' ? b.text : b;
-          return `<span class="service-tag"><i class="bi bi-check-circle-fill me-1"></i>${label}</span>`;
+          return `<span class="service-tag"><i class="bi bi-check-circle-fill me-1"></i>${esc(label)}</span>`;
         })
         .join('');
     }
@@ -277,7 +243,8 @@ class ServicePage {
     // Availability
     const availEl = document.getElementById('serviceAvailability');
     if (availEl) {
-      availEl.innerHTML = `<span class="availability-dot available"></span> Disponible esta semana · Responde en ${p.responseTime || '< 1h'}`;
+      // Sin agenda real del prestador no prometemos disponibilidad.
+      availEl.innerHTML = `<span class="availability-dot available"></span> Consultale disponibilidad por chat`;
     }
 
     // Price
@@ -289,25 +256,27 @@ class ServicePage {
 
     const installmentsEl = document.querySelector('.service-installments');
     if (installmentsEl) {
-      installmentsEl.innerHTML = `Hasta <strong>6 cuotas sin interés</strong> de ${this._formatPrice(s.price / 6)}`;
+      const inst = window.DaleDeal.utils.formatInstallments(s.price);
+      installmentsEl.innerHTML = inst.show
+        ? `Hasta <strong>${inst.count} cuotas sin interés</strong> de ${inst.monthlyFormatted}`
+        : '';
     }
+
+    // Guardar en "vistos recientemente" (localStorage, para el carrusel del home)
+    window.DDRecentlyViewed?.track({
+      id: s.id, type: 'service', title: s.title, price: s.price, image: s.images?.main || s.image,
+      description: s.description, location: s.location, rating: s.rating, reviewCount: s.reviewCount, postBadges: s.postBadges,
+    });
 
     // Description tab
     const descEl = document.querySelector('.service-description-text');
     if (descEl) {
-      const isHTML = /<[a-z][\s\S]*>/i.test(s.description || '');
-      descEl.innerHTML = isHTML
-        ? s.description
-        : `<p style="white-space:pre-line;line-height:1.8;color:var(--gray-700)">${s.description || ''}</p>`;
+      // Sanitizar SIEMPRE: la descripción viene del editor Quill del prestador (HTML no confiable).
+      // DOMPurify preserva el formato seguro y elimina <script>/onerror/etc. Fallback: escapar.
+      // La API la devuelve con las entidades escapadas: renderRichText las
+      // decodifica antes de sanitizar (si no, se veían las etiquetas como texto).
+      DaleDeal.utils.renderRichText(descEl, s.description || '');
     }
-
-    // Reviews summary
-    const ratingNumEl = document.querySelector('.overall-rating .rating-number');
-    if (ratingNumEl) ratingNumEl.textContent = s.rating;
-    const reviewCountEl = document.querySelector('.overall-rating .rating-count');
-    if (reviewCountEl) reviewCountEl.textContent = `${s.reviewCount?.toLocaleString('es-AR') || 0} reseñas`;
-    const reviewStarsEl = document.querySelector('.overall-rating .rating-stars');
-    if (reviewStarsEl) reviewStarsEl.innerHTML = this._renderStars(s.rating);
   }
 
   // ── Galería de imágenes/videos ─────────────────────────────────────────────
@@ -728,7 +697,7 @@ class ServicePage {
 
     // Ver todos relacionados
     document.getElementById('viewAllRelatedBtn')?.addEventListener('click', () => {
-      window.location.href = `./servicios.html?category=${encodeURIComponent(this.currentService.category)}`;
+      window.location.href = `/servicios?category=${encodeURIComponent(this.currentService.category)}`;
     });
 
   }
@@ -783,15 +752,12 @@ class ServicePage {
     if (!section || !grid || !this.currentService) return;
 
     try {
-      await new Promise(r => setTimeout(r, 500));
-      const all = typeof servicesData !== 'undefined' ? servicesData : [];
-      const related = all
-        .filter(s => s.category === this.currentService.category && s.id !== this.currentService.id)
-        .slice(0, 8);
-
-      const items = related.length >= 2
-        ? related
-        : all.filter(s => s.id !== this.currentService.id).sort(() => 0.5 - Math.random()).slice(0, 8);
+      // Servicios reales de la API (antes salían de servicesData, con servicios
+      // y prestadores de ejemplo mezclados).
+      const all = await window.DaleDeal.api.fetchServices();
+      const others = all.filter(s => String(s.id) !== String(this.currentService.id));
+      const related = others.filter(s => s.category === this.currentService.category).slice(0, 8);
+      const items = related.length >= 2 ? related : others.slice(0, 8);
 
       if (items.length === 0) { section.style.display = 'none'; return; }
       section.style.display = '';
@@ -808,20 +774,13 @@ class ServicePage {
     if (!section || !grid || !this.currentService) return;
 
     try {
-      await new Promise(r => setTimeout(r, 300));
-      const all = typeof servicesData !== 'undefined' ? servicesData : [];
-      // Simular otros servicios del prestador por categorías relacionadas
-      const catMap = {
-        'installation': ['installation', 'repair'],
-        'repair': ['repair', 'installation', 'maintenance'],
-        'construction': ['construction', 'maintenance'],
-        'maintenance': ['maintenance', 'construction'],
-        'catering': ['catering'],
-        'consultation': ['consultation'],
-      };
-      const cats = catMap[this.currentService.category] || [this.currentService.category];
+      // Otros servicios REALES del mismo prestador (antes se "simulaban" con
+      // servicios de ejemplo de categorías parecidas).
+      const providerId = this.currentService.provider_id;
+      if (!providerId) { section.style.display = 'none'; return; }
+      const all = await window.DaleDeal.api.fetchServices();
       const providerServices = all
-        .filter(s => cats.includes(s.category) && s.id !== this.currentService.id)
+        .filter(s => String(s.provider_id) === String(providerId) && String(s.id) !== String(this.currentService.id))
         .slice(0, 8);
 
       if (providerServices.length === 0) { section.style.display = 'none'; return; }
@@ -833,46 +792,18 @@ class ServicePage {
   }
 
   // ── Construir carrusel de tarjetas de servicio ─────────────────────────────
-  _buildCarousel(carouselId, gridId, services, prevId, nextId) {
-    const carousel = document.getElementById(carouselId);
+  _buildCarousel(carouselId, gridId, services) {
     const grid = document.getElementById(gridId);
-    if (!carousel || !grid || !services.length) return;
-
-    const visible = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 3;
-    const cardPct = 100 / visible;
-    let current = 0;
-    const maxIndex = Math.max(0, services.length - visible);
-
-    const track = document.createElement('div');
-    track.className = 'carousel-track';
-    track.innerHTML = services.map(s =>
-      `<div class="carousel-slide-item" style="width:${cardPct}%">${this._renderServiceCard(s)}</div>`
-    ).join('');
-    grid.innerHTML = '';
-    grid.appendChild(track);
-    // El padre `.custom-carousel .carousel-inner` define `display: grid` con
-    // minmax(220px, 1fr) en product.css. Eso comprimía el `.carousel-track`
-    // (flex container) a 220px y todas las cards salían como tiritas verticales
-    // angostas. Forzamos display:block para que el track ocupe todo el ancho.
-    grid.style.display = 'block';
-
-    track.querySelectorAll('.product-card').forEach(card => {
+    if (!grid || !services.length) return;
+    // grid es un .hs-track (carrusel con scroll-snap; flechas en utils.js)
+    grid.innerHTML = services.map(s => this._renderServiceCard(s)).join('');
+    grid.querySelectorAll('.product-card').forEach(card => {
       card.addEventListener('click', (e) => {
         if (e.target.closest('.action-heart')) return;
         const id = card.dataset.serviceId;
-        if (id) window.location.href = `servicio.html?id=${id}`;
+        if (id) window.location.href = `/servicio?id=${id}`;
       });
     });
-
-    const updateTrack = () => {
-      track.style.transform = `translateX(-${current * cardPct}%)`;
-    };
-
-    const container = carousel.parentElement;
-    const prev = container?.querySelector(`#${prevId}`) || container?.querySelector('.section-nav-prev');
-    const next = container?.querySelector(`#${nextId}`) || container?.querySelector('.section-nav-next');
-    if (prev) prev.onclick = () => { current = Math.max(0, current - 1); updateTrack(); };
-    if (next) next.onclick = () => { current = Math.min(maxIndex, current + 1); updateTrack(); };
   }
 
   // ── Renderizar tarjeta de servicio ─────────────────────────────────────────
@@ -919,23 +850,31 @@ class ServicePage {
     if (service.emergency) extraBadges += ' <span class="shipping-badge"><i class="bi bi-lightning-charge-fill"></i> Urgencias</span>';
     if (service.nationwide) extraBadges += ' <span class="shipping-badge"><i class="bi bi-truck"></i> Cobertura nacional</span>';
 
-    const shortDesc = service.description
-      ? (service.description.length > 80 ? service.description.substring(0, 80) + '...' : service.description)
-      : '';
+    const plainDesc = DaleDeal.utils.htmlToText(service.description);
+    const shortDesc = plainDesc.length > 80 ? plainDesc.substring(0, 80) + '...' : plainDesc;
+
+    // Igual que en el catálogo: sin reseñas dice "Sin reseñas aún", no "(0)".
+    const reviewCount = service.reviewCount || 0;
+    const reviewsHTML = reviewCount > 0
+      ? `<span class="reviews-count">(${reviewCount.toLocaleString('es-AR')})</span>`
+      : '<span class="reviews-count text-muted">Sin reseñas aún</span>';
 
     const provider = service.provider || {};
+    // Sin foto cargada van las iniciales (antes quedaba una imagen rota).
+    const providerAvatar = provider.avatar || DaleDeal.utils.initialsAvatar(provider.name);
     const providerHTML = provider.name ? `
       <div class="product-provider">
-        <img src="${provider.avatar}" alt="${provider.name}" class="product-provider-avatar" />
-        <span class="product-provider-name">${provider.name}</span>
+        <img src="${esc(providerAvatar)}" alt="" class="product-provider-avatar" loading="lazy" />
+        <span class="product-provider-name">${esc(provider.name)}</span>
         ${provider.verified ? '<i class="bi bi-patch-check-fill product-provider-verified"></i>' : ''}
       </div>` : '';
 
     return `
-      <div class="product-card w-100" data-id="${service.id}" data-service-id="${service.id}" data-type="service" style="cursor:pointer;">
+      <div class="product-card" data-id="${service.id}" data-service-id="${service.id}" data-type="service" style="cursor:pointer;">
           <div class="product-image-container">
-            <img src="${service.image}" alt="${service.title}" class="product-image active" loading="lazy" />
+            <img src="${esc(service.image)}" alt="${esc(service.title)}" class="product-image active" loading="lazy" />
             ${badgesHTML}
+            ${window.DaleDeal.utils.renderPostBadges(service.postBadges)}
             <div class="product-actions">
               <button class="action-heart" title="Guardar">
                 <i class="bi bi-heart"></i>
@@ -943,19 +882,20 @@ class ServicePage {
             </div>
           </div>
           <div class="product-info">
-            <h3 class="product-title">${service.title}</h3>
+            <h3 class="product-title">${esc(service.title)}</h3>
             ${providerHTML}
-            <p class="product-description">${shortDesc}</p>
+            <p class="product-description">${esc(shortDesc)}</p>
             <div class="product-meta-group">
               <div class="product-rating">
                 <div class="stars">${starsHTML}</div>
-                <span class="reviews-count">(${(service.reviewCount || 0).toLocaleString('es-AR')})</span>
+                ${reviewsHTML}
                 ${extraBadges}
               </div>
               <div class="product-location">
                 <i class="bi bi-geo-alt-fill"></i>
-                <span>${service.location || 'CABA'}</span>
+                <span>${esc(service.location || 'CABA')}</span>
               </div>
+              ${window.DaleDeal.utils.renderServiceFeatures(service)}
             </div>
             <div class="product-pricing-wrapper">
               <div class="product-pricing">

@@ -170,12 +170,33 @@
 }
 
 /* ===== INFORMACIÓN DEL PRODUCTO ===== */
-.product-info {
+/* Siempre con .product-hero adelante: las tarjetas (similares, catálogo,
+   servicios) usan la misma clase .product-info y estas reglas, sueltas, les
+   corrían el texto y les abrían un hueco entre la foto y el título. */
+.product-hero .product-info {
   padding-left: var(--spacing-8);
 }
 
 .product-header {
-  margin-bottom: var(--spacing-8);
+  margin-bottom: var(--spacing-3);
+}
+
+/* El título de la ficha hereda de .product-title de las cards (components.css)
+ * un min-height de 2 líneas y el recorte a 2 líneas: acá no van, dejaban
+ * un hueco grande debajo de títulos de una línea. */
+.product-header .product-title {
+  min-height: 0;
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+  margin-bottom: var(--spacing-2);
+}
+
+.product-header .product-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-2) var(--spacing-4);
 }
 
 .product-title {
@@ -227,8 +248,8 @@
 
 /* ===== SECCIÓN DE PRECIO ===== */
 .price-section {
-  padding: var(--spacing-4) 0;
-  margin-bottom: var(--spacing-6);
+  padding: 0 0 var(--spacing-2);
+  margin-bottom: var(--spacing-4);
 }
 
 .current-price {
@@ -243,8 +264,8 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
-  margin-bottom: var(--spacing-3);
 }
+.price-details:has(> :not([style*="none"])) { margin-bottom: var(--spacing-3); }
 
 .original-price {
   font-size: var(--font-size-xl);
@@ -385,7 +406,7 @@
   background: var(--gray-100);
   border-radius: var(--radius-lg);
   padding: var(--spacing-1);
-  margin-bottom: var(--spacing-2);
+  margin-bottom: var(--spacing-5);
 }
 
 .quantity-btn {
@@ -453,7 +474,7 @@
 .purchase-actions {
   display: flex;
   gap: var(--spacing-4);
-  margin-bottom: var(--spacing-8);
+  margin-bottom: var(--spacing-5);
   flex-wrap: wrap;
 }
 
@@ -1080,6 +1101,7 @@
   font-size: var(--font-size-sm);
   line-height: 1.6;
   margin: 0;
+  white-space: pre-line; /* conserva los párrafos de la reseña */
 }
 
 .btn-load-more-reviews {
@@ -1322,7 +1344,7 @@
 
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 1200px) {
-  .product-info {
+  .product-hero .product-info {
     padding-left: var(--spacing-6);
   }
 }
@@ -1332,7 +1354,7 @@
     padding: var(--spacing-8) 0;
   }
 
-  .product-info {
+  .product-hero .product-info {
     padding-left: 0;
     /*
      * Con col-md-6, a 768–991px las columnas están LADO A LADO.
@@ -1364,9 +1386,23 @@
   }
 }
 
+/* Celular (columnas apiladas): sin el gutter de Bootstrap. El reset global
+   `* { max-width: 100% }` no deja que .row se pase del contenedor, y la foto,
+   los datos y los botones quedaban corridos a la izquierda, con ~35px de más
+   a la derecha. */
+@media (max-width: 767px) {
+  .product-hero > .container > .row {
+    --bs-gutter-x: 0;
+  }
+
+  .product-hero .product-info {
+    padding-right: 0;
+  }
+}
+
 @media (max-width: 768px) {
   /* col-md-6 se apilan: galería arriba, info abajo */
-  .product-info {
+  .product-hero .product-info {
     margin-top: var(--spacing-6);
     padding-left: 0;
   }
@@ -1692,12 +1728,11 @@
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-base);
   border: 1px solid var(--gray-200);
-  height: 100% !important;
-  min-height: 320px;
-  max-height: 320px;
+  /* Alto según el contenido: el max-height de 320px cortaba el precio */
+  height: 100%;
+  position: relative;
   display: flex;
   flex-direction: column;
-  width: 100% !important;
 }
 
 .similar-product-card:hover {
@@ -2010,13 +2045,11 @@
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-base);
   border: 1px solid var(--gray-200);
-  height: 100% !important;
-  min-height: 320px;
-  max-height: 320px;
+  /* Alto según el contenido: el max-height de 320px cortaba el precio */
+  height: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 100% !important;
 }
 
 .recent-product-card:hover {
@@ -2297,13 +2330,103 @@
   .chat-float-panel { width: calc(100vw - 32px); right: 16px; bottom: 16px; }
 }
 
+/* ===== RESEÑAS — skeleton de carga (producto + servicio) ===== */
+.reviews-content[aria-busy="true"] .reviews-summary--loading {
+  pointer-events: none;
+}
+
+.reviews-list-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5);
+  margin-top: var(--spacing-6);
+}
+
+.review-skeleton-item {
+  display: flex;
+  gap: var(--spacing-3);
+  align-items: flex-start;
+}
+
+.review-skeleton-item .sk-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.review-skeleton-item .sk-lines {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  min-width: 0;
+}
+
+.review-skeleton-item .sk-line {
+  height: 14px;
+  width: 100%;
+}
+
+.review-skeleton-item .sk-line--short { width: 35%; }
+.review-skeleton-item .sk-line--medium { width: 72%; }
+
+.sk-rating-num {
+  display: inline-block;
+  width: 52px;
+  height: 40px;
+  margin-bottom: var(--spacing-2);
+}
+
+.sk-rating-stars {
+  width: 120px;
+  height: 18px;
+  margin: 0 auto var(--spacing-2);
+}
+
+.sk-rating-count {
+  width: 96px;
+  height: 14px;
+  margin: 0 auto;
+}
+
+.rating-breakdown .sk-bar-label,
+.rating-breakdown .sk-bar-pct {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+}
+
+.rating-breakdown .progress .skeleton {
+  height: 8px;
+  width: 100%;
+}
+
+.reviews-content--error {
+  text-align: center;
+  padding: var(--spacing-10) var(--spacing-4);
+  color: var(--gray-600);
+}
+
+.reviews-content--error i {
+  font-size: 2.5rem;
+  opacity: 0.35;
+  display: block;
+  margin-bottom: var(--spacing-3);
+}
+
 /* ===== Carousel productos similares y recientes ===== */
+/* Solo la diapositiva activa: con display:flex en TODAS, las que Bootstrap
+   deja ocultas aparecían encimadas (margin-right: -100%). */
 #similarProductsCarousel .carousel-inner,
-#similarProductsCarousel .carousel-item {
+#similarProductsCarousel .carousel-item.active {
   display: flex;
   align-items: stretch;
 }
-#similarProductsCarousel .carousel-item .row { width: 100%; }
+#similarProductsCarousel .carousel-item.active { flex-wrap: wrap; }
+/* Márgenes en 0: con width:100% los márgenes negativos de .row corrían todas
+   las tarjetas hacia la izquierda y quedaban descentradas. */
+#similarProductsCarousel .carousel-item .row { width: 100%; margin-left: 0; margin-right: 0; }
 #similarProductsCarousel .carousel-item .col-lg-3 .product-card { height: 100%; }
 #similarProductsCarousel .carousel-control-prev,
 #similarProductsCarousel .carousel-control-next,
@@ -2311,4 +2434,27 @@
 #recentlyViewedCarousel .carousel-control-next {
   top: 160px;
   transform: translateY(-50%);
+}
+
+/* ===== FICHA EN CELULAR: SIMILARES Y "MÁS DEL VENDEDOR" DE A 2 POR FILA =====
+   El interior compacto de la tarjeta (foto cuadrada, título, precio) está en
+   responsive.css, bloque "CATÁLOGO EN CELULAR". */
+@media (max-width: 575px) {
+  #similarProductsCarousel .carousel-item {
+    min-height: 0;
+  }
+
+  #similarProductsCarousel .carousel-item .row {
+    --bs-gutter-x: var(--spacing-3);
+  }
+
+  .similar-product-card {
+    min-height: 0;
+    margin-bottom: 0;
+  }
+
+  .custom-carousel .carousel-inner {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-3);
+  }
 }

@@ -7,7 +7,8 @@
 
     <!-- Página privada/transaccional — no debe aparecer en buscadores. -->
     <meta name="robots" content="noindex, nofollow" />
-    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
+    <link rel="icon" href="../IMG/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="../IMG/icon-192.png" type="image/png" sizes="192x192" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous" />
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" integrity="sha384-/rJKQnzOkEo+daG0jMjU1IwwY9unxt1NBw3Ef2fmOJ3PW/TfAg2KXVoWwMZQZtw9" crossorigin="anonymous" rel="stylesheet" />
@@ -211,6 +212,7 @@
     <script defer src="https://unpkg.com/aos@2.3.1/dist/aos.js" integrity="sha384-wziAfh6b/qT+3LrqebF9WeK4+J5sehS6FA10J1t3a866kJ/fvU5UwofWnQyzLtwu" crossorigin="anonymous"></script>
     <script defer src="../JS/theme.js"></script>
     <script defer src="../JS/utils.js"></script>
+    <script defer src="../JS/search.js"></script>
     <script defer src="../JS/api.js"></script>
     <script defer src="../JS/auth.js"></script>
     <script defer src="../JS/cart.js"></script>
@@ -218,11 +220,12 @@
     <script defer src="../JS/dropdown-fix.js"></script>
     <script src="../JS/component-loader.js" defer></script>
     <script>
-      // AOS dentro de DOMContentLoaded — los `defer` corren ENTRE </body>
-      // y este evento, sino [data-aos] elements quedan invisibles.
-      document.addEventListener('DOMContentLoaded', function() {
+      // AOS.init() esperando el navbar, no DOMContentLoaded — DOMContentLoaded
+      // corre antes de que el fetch() async del header resuelva y dejaba
+      // el logo (data-aos) invisible para siempre.
+      document.addEventListener('daledeal:header-loaded', function() {
         if (typeof AOS !== 'undefined') AOS.init({ duration: 800, once: true, offset: 100 });
-      });
+      }, { once: true });
 
       // Selectores de tipo / gravedad — guardamos el seleccionado en data
       let selectedType = null;
@@ -335,5 +338,7 @@
         }
       });
     </script>
+      <!-- Botón flotante de ayuda (?) — mismo widget que el resto del sitio -->
+    <script src="../JS/support-widget.js" defer></script>
   </body>
 </html>

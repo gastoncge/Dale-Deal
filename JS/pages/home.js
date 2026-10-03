@@ -89,8 +89,11 @@ function renderProductCard(product) {
   const badges = (product.badges || []).filter(b =>
     BADGE_KEYWORDS.some(kw => b.toLowerCase().includes(kw))
   );
+  // Coacciona a string primero: escapeHtml() devuelve '' para no-strings (ej. id numérico),
+  // lo que vaciaría data-id y rompería navegación/favoritos.
+  const esc = (v) => window.DaleDeal.utils.escapeHtml(String(v ?? ''));
   const badgesHTML = badges.map(badge =>
-    `<span class="badge-offer">${badge}</span>`
+    `<span class="badge-offer">${esc(badge)}</span>`
   ).join('');
 
   // Renderizar imágenes
@@ -100,18 +103,18 @@ function renderProductCard(product) {
       <div class="product-image-carousel" data-current-image="0">
         ${product.images.gallery.map((img, index) => `
           <img
-            src="${img}"
-            alt="${product.title} - Vista ${index + 1}"
+            src="${esc(img)}"
+            alt="${esc(product.title)} - Vista ${index + 1}"
             class="product-image ${index === 0 ? 'active' : ''}"
             loading="lazy"
           />
         `).join('')}
 
         <!-- Controles de navegación -->
-        <button class="carousel-control carousel-prev" data-direction="prev" aria-label="Categoría anterior">
+        <button class="carousel-control carousel-prev" data-direction="prev" aria-label="Foto anterior">
           <i class="bi bi-chevron-left" aria-hidden="true"></i>
         </button>
-        <button class="carousel-control carousel-next" data-direction="next" aria-label="Categoría siguiente">
+        <button class="carousel-control carousel-next" data-direction="next" aria-label="Foto siguiente">
           <i class="bi bi-chevron-right" aria-hidden="true"></i>
         </button>
 
@@ -126,8 +129,8 @@ function renderProductCard(product) {
   } else {
     imagesHTML = `
       <img
-        src="${product.images.main}"
-        alt="${product.title}"
+        src="${esc(product.images.main)}"
+        alt="${esc(product.title)}"
         class="product-image"
         loading="lazy"
       />
@@ -137,55 +140,48 @@ function renderProductCard(product) {
   // Renderizar precio
   const priceHTML = `<span class="product-current-price">${window.DaleDeal.utils.formatCurrency(product.price)}</span>`;
 
-  // Cuotas sin interés — solo mostrar si la cuota mensual >= $1.000 (evita "12 cuotas de $42")
-  // 12 cuotas sin interés es el estándar de MercadoPago para vendedores en Argentina.
-  const installments = 12;
-  const monthlyAmount = product.price / installments;
-  const installmentsHTML = monthlyAmount >= 1000
-    ? `<div class="product-installments"><i class="bi bi-credit-card"></i> ${installments} cuotas sin interés de ${window.DaleDeal.utils.formatCurrency(Math.round(monthlyAmount))}</div>`
+  // Cuotas sin interés — helper único en utils.js (elige el mejor plan y evita "12 cuotas de $42")
+  const inst = window.DaleDeal.utils.formatInstallments(product.price);
+  const installmentsHTML = inst.show
+    ? `<div class="product-installments"><i class="bi bi-credit-card"></i> ${inst.count} cuotas sin interés de ${inst.monthlyFormatted}</div>`
+    : '';
+
+  // Stock bajo / urgencia honesta — solo con stock real entre 1 y 5 (sin inventar urgencia)
+  const lowStock = product.stock > 0 && product.stock <= 5;
+  const stockHTML = lowStock
+    ? `<div class="product-stock-low"><i class="bi bi-fire"></i> ${product.stock === 1 ? '¡Última unidad!' : `¡Quedan ${product.stock}!`}</div>`
     : '';
 
   // Reseñas: si no hay reviews, mostrar "Sin reseñas aún" en lugar de "(0)"
-  const reviewCount = product.reviewCount || 0;
+  // El catálogo (/productos) manda la cantidad como `reviews`: sin leer los dos
+  // nombres, ahí todas las tarjetas decían "Sin reseñas aún" aunque tuvieran.
+  const reviewCount = product.reviewCount ?? product.reviews ?? 0;
   const reviewsHTML = reviewCount > 0
     ? `<span class="reviews-count">(${reviewCount.toLocaleString('es-AR')})</span>`
     : `<span class="reviews-count text-muted">Sin reseñas aún</span>`;
 
-  // WhatsApp share — el link contiene URL del producto + título
-  const shareUrl = `${window.location.origin}/HTML/producto.html?id=${product.id}`;
-  const shareText = encodeURIComponent(`Mirá esto en Dale Deal: ${product.title} — ${shareUrl}`);
-  const whatsappHref = `https://wa.me/?text=${shareText}`;
-
-  // Renderizar descripción corta (primeras 80 caracteres)
-  const shortDescription = product.description
-    ? (product.description.length > 80
-        ? product.description.substring(0, 80) + '...'
-        : product.description)
-    : '';
+  // Descripción corta (primeros 80 caracteres) en texto plano: la descripción
+  // viene del editor como HTML y sin esto la tarjeta mostraba "<p>Vendo <strong>…".
+  const plainDescription = window.DaleDeal.utils.htmlToText(product.description);
+  const shortDescription = plainDescription.length > 80
+    ? plainDescription.substring(0, 80) + '...'
+    : plainDescription;
 
   return `
-    <div class="product-card ${hasDiscount ? 'has-offer' : ''}" data-id="${product.id}" data-clickable="true">
+    <div class="product-card ${hasDiscount ? 'has-offer' : ''}" data-id="${esc(product.id)}" data-clickable="true">
       <div class="product-image-container">
         ${imagesHTML}
         ${badgesHTML}
+        ${window.DaleDeal.utils.renderPostBadges(product.postBadges)}
         <div class="product-actions">
-          <button class="action-heart" title="Agregar a favoritos" data-product-id="${product.id}">
+          <button class="action-heart" title="Agregar a favoritos" data-product-id="${esc(product.id)}">
             <i class="bi bi-heart"></i>
           </button>
-          <a href="${whatsappHref}"
-             class="action-share"
-             title="Compartir por WhatsApp"
-             target="_blank"
-             rel="noopener noreferrer"
-             onclick="event.stopPropagation()"
-             aria-label="Compartir ${product.title} por WhatsApp">
-            <i class="bi bi-whatsapp"></i>
-          </a>
         </div>
       </div>
       <div class="product-info">
-        <h3 class="product-title">${product.title}</h3>
-        <p class="product-description">${shortDescription}</p>
+        <h3 class="product-title">${esc(product.title)}</h3>
+        <p class="product-description">${esc(shortDescription)}</p>
 
         <div class="product-meta-group">
           <div class="product-rating">
@@ -194,14 +190,16 @@ function renderProductCard(product) {
           </div>
           <div class="product-location">
             <i class="bi bi-geo-alt-fill"></i>
-            <span>CABA</span>
+            <span>${esc(product.location || 'Argentina')}</span>
           </div>
+          ${window.DaleDeal.utils.renderCardTags(product)}
         </div>
 
         <div class="product-pricing-wrapper">
           <div class="product-pricing">
             ${priceHTML}
             ${installmentsHTML}
+            ${stockHTML}
           </div>
         </div>
       </div>
@@ -224,9 +222,9 @@ async function loadTrending() {
   if (!section || !grid) return;
 
   try {
-    // 4 productos = 1 fila completa de 4 columnas en desktop
+    // Hasta 12 productos en carrusel (4 visibles en desktop)
     const apiBase = (window.DaleDeal?.CONFIG?.API_BASE_URL || 'https://daledeal-backend-production.up.railway.app').replace(/\/$/, '');
-    const res = await fetch(`${apiBase}/products?sort=views&order=desc&limit=4`);
+    const res = await fetch(`${apiBase}/products?sort=views&order=desc&limit=12`);
     const data = await res.json().catch(() => ({}));
     const items = (data.data || []).filter(p => (p.views || 0) > 0);
 
@@ -236,10 +234,7 @@ async function loadTrending() {
     }
 
     // Render con la misma función que usamos para destacados (consistencia visual)
-    grid.innerHTML = '';
-    const row = document.createElement('div');
-    row.className = 'products-row';
-    row.innerHTML = items.map(p => {
+    grid.innerHTML = items.map(p => {
       // El backend devuelve campos planos (images: [URL], views: N).
       // renderProductCard espera el shape de api.js transformProduct →
       // hacemos un mini-transform inline para no acoplar.
@@ -251,11 +246,12 @@ async function loadTrending() {
         images: { main: (p.images && p.images[0]) || '', gallery: p.images || [] },
         rating: p.avg_rating || 0,
         reviewCount: p.review_count || 0,
+        location: p.location,
         badges: [],
+        postBadges: window.DaleDeal.utils.parsePostBadges(p.badges),
       };
       return renderProductCard(product);
     }).join('');
-    grid.appendChild(row);
     section.style.display = '';
     initializeProductListeners();
     DaleDeal.log(`✓ Trending cargado: ${items.length} items`);
@@ -319,7 +315,10 @@ async function loadProducts() {
     DaleDeal.log(`✓ ${products.length} productos cargados en el home`);
 
   } catch (error) {
-    DaleDeal.warn('API no disponible, usando datos locales:', error.message);
+    // Sin API avisamos. Antes se pintaban los productos de ejemplo de
+    // product-data.js (iPhones, precios y descuentos que no existen) como si
+    // fueran publicaciones reales.
+    DaleDeal.warn('No se pudieron cargar los productos:', error.message);
 
     const loadingContainer = document.getElementById('loadingContainer');
     if (loadingContainer) loadingContainer.style.display = 'none';
@@ -327,40 +326,112 @@ async function loadProducts() {
     const productsGrid = document.getElementById('productsGrid');
     if (!productsGrid) return;
 
-    // Fallback: datos estáticos de product-data.js
-    const fallbackProducts = typeof window.getAllProducts === 'function'
-      ? window.getAllProducts()
-      : [];
+    productsGrid.innerHTML = `
+      <div class="col-12">
+        <div class="alert alert-warning" role="alert">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          No pudimos cargar los productos. Revisá tu conexión y probá de nuevo.
+          <button type="button" class="btn btn-sm btn-outline-secondary ms-2" onclick="window.HomePageLoader.loadProducts()">
+            <i class="bi bi-arrow-clockwise me-1"></i>Reintentar
+          </button>
+        </div>
+      </div>
+    `;
+  }
+}
 
-    if (!fallbackProducts.length) {
-      productsGrid.innerHTML = `
-        <div class="col-12">
-          <div class="alert alert-warning" role="alert">
-            <i class="bi bi-exclamation-triangle me-2"></i>
-            No se pudo conectar con el servidor. Intentá de nuevo más tarde.
+/**
+ * Renderiza una tarjeta de servicio de la home con datos reales de la API
+ * (transformService de api.js). Solo muestra lo que el backend confirma: las
+ * insignias salen de la verificación aprobada del prestador y la calificación
+ * de sus reseñas; sin reseñas dice "Sin reseñas aún".
+ */
+function renderServiceCard(service) {
+  const esc = (v) => window.DaleDeal.utils.escapeHtml(String(v ?? ''));
+  const provider = service.provider || {};
+
+  const badges = [];
+  // El título verificado ya sale abajo como "Certificado" (renderServiceFeatures)
+  if (provider.verifiedIdentity) badges.push('<span class="badge-certified">Identidad verificada</span>');
+  const badgesHTML = badges.length ? `<div class="service-badges">${badges.join('')}</div>` : '';
+
+  const reviewCount = service.reviewCount || 0;
+  const ratingHTML = reviewCount > 0
+    ? `<div class="stars">${renderStars(service.rating || 0)}</div>
+       <span class="service-rating-text">${(service.rating || 0).toFixed(1)} (${reviewCount.toLocaleString('es-AR')})</span>`
+    : '<span class="service-rating-text text-muted">Sin reseñas aún</span>';
+
+  // price_from del backend: por eso "Desde"
+  const priceText = service.price > 0
+    ? `Desde ${window.DaleDeal.utils.formatCurrency(service.price)}`
+    : 'Consultar precio';
+
+  const plainDescription = window.DaleDeal.utils.htmlToText(service.description);
+  const shortDescription = plainDescription.length > 90
+    ? plainDescription.substring(0, 90) + '...'
+    : plainDescription;
+
+  const href = `/servicio?id=${encodeURIComponent(service.id)}`;
+
+  // El título es un link real (teclado / lectores de pantalla); el resto de
+  // la card navega por JS. El overlay "Reservar cita" de las cards viejas
+  // no va: components.css lo oculta y no hay sistema de reservas.
+  return `
+    <div class="service-card" data-id="${esc(service.id)}">
+      <div class="service-image-container">
+        <img src="${esc(service.image)}" alt="${esc(service.title)}" class="service-image" loading="lazy" />
+        ${badgesHTML}
+        ${window.DaleDeal.utils.renderPostBadges(service.postBadges)}
+      </div>
+      <div class="service-info">
+        <h3 class="service-title"><a href="${esc(href)}" class="text-reset text-decoration-none">${esc(service.title)}</a></h3>
+        <p class="service-description">${esc(shortDescription)}</p>
+        <div class="service-meta">
+          <div class="service-rating">${ratingHTML}</div>
+          ${window.DaleDeal.utils.renderServiceFeatures(service)}
+          <div class="service-info-row">
+            <div class="service-location">
+              <i class="bi bi-geo-alt-fill"></i>
+              <span>${esc(service.location)}</span>
+            </div>
+            <span class="service-price-badge">${esc(priceText)}</span>
           </div>
         </div>
-      `;
-      return;
-    }
+      </div>
+    </div>
+  `;
+}
 
-    productsGrid.innerHTML = '';
-    const productsPerRow = 3;
-    for (let i = 0; i < Math.min(fallbackProducts.length, 6); i += productsPerRow) {
-      const row = document.createElement('div');
-      row.className = 'products-row';
-      row.innerHTML = fallbackProducts
-        .slice(i, i + productsPerRow)
-        .map(p => renderProductCard(p))
-        .join('');
-      productsGrid.appendChild(row);
-    }
+/**
+ * Servicios de la home: los últimos publicados (GET /services, mismo patrón
+ * y escape que los productos). Si la API falla o no hay servicios, la
+ * sección queda oculta: nunca mostramos servicios de ejemplo.
+ */
+async function loadHomeServices() {
+  const section = document.getElementById('servicesSection');
+  const grid = document.getElementById('servicesGrid');
+  if (!section || !grid || !window.DaleDeal?.api?.fetchServices) return;
 
-    initializeProductListeners();
-    document.dispatchEvent(new CustomEvent('products:loaded', {
-      detail: { count: Math.min(fallbackProducts.length, 6), source: 'fallback' }
-    }));
-    DaleDeal.log(`✓ ${Math.min(fallbackProducts.length, 6)} productos locales cargados como fallback`);
+  try {
+    // 6 = dos filas de 3 en desktop
+    const services = (await window.DaleDeal.api.fetchServices({ limit: 6 })).slice(0, 6);
+    if (services.length === 0) return;
+
+    grid.innerHTML = services.map(renderServiceCard).join('');
+
+    // Toda la card es clickeable (el título es un link real, para teclado)
+    grid.querySelectorAll('.service-card[data-id]').forEach(card => {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('a')) return;
+        window.location.href = `/servicio?id=${encodeURIComponent(card.dataset.id)}`;
+      });
+    });
+
+    section.style.display = '';
+    DaleDeal.log(`✓ ${services.length} servicios cargados en el home`);
+  } catch (err) {
+    DaleDeal.warn('No se pudieron cargar los servicios del home:', err.message);
   }
 }
 
@@ -403,24 +474,27 @@ function initializeProductListeners() {
 }
 
 /**
- * Inicializar cuando el DOM esté listo
+ * Inicializar cuando el DOM esté listo.
+ * productos.html también carga este archivo, pero solo por renderProductCard:
+ * ahí el grid es del catálogo de la página (isProductosPage, de search.js) y
+ * si lo cargáramos acá lo pisaríamos con otra copia de los productos.
  */
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    // Esperar a que la API esté disponible
-    if (window.DaleDeal?.api) {
-      loadProducts();
-    } else {
-      DaleDeal.error('API de productos no disponible');
-    }
-  });
-} else {
-  // DOM ya está listo
+function startHomeProducts() {
+  if (typeof isProductosPage === 'function' && isProductosPage()) return;
+  // Esperar a que la API esté disponible
   if (window.DaleDeal?.api) {
     loadProducts();
+    loadHomeServices();
   } else {
     DaleDeal.error('API de productos no disponible');
   }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startHomeProducts);
+} else {
+  // DOM ya está listo
+  startHomeProducts();
 }
 
 // Exportar para uso global
@@ -449,32 +523,17 @@ if (typeof window !== 'undefined') {
 
     // Botón ver todos los productos
     document.getElementById('viewAllProductsBtn')?.addEventListener('click', () => {
-      window.location.href = './HTML/productos.html';
+      window.location.href = '/productos';
     });
 
     // Botón ver todos los servicios (faltaba handler — el botón existía
     // en index.html pero no hacía nada al click)
     document.getElementById('viewAllServicesBtn')?.addEventListener('click', () => {
-      window.location.href = './HTML/servicios.html';
+      window.location.href = '/servicios';
     });
 
-    // Service cards estáticas del home — cada card tiene data-id con el slug
-    // del servicio (`installation-tech`, `tech-support`, etc.) que SÍ existe
-    // en servicesData (mock data local). El detalle de servicio busca primero
-    // en backend (si el id es numérico) y luego en local (el caso de estos).
-    //
-    // Antes: las cards no eran clickeables ni los botones "Reservar cita"
-    //        tenían handler. Click → nada pasaba.
-    // Ahora: todo el card es clickeable, excepto el corazón (favoritos).
-    document.querySelectorAll('.service-card[data-id]').forEach(card => {
-      const id = card.dataset.id;
-      if (!id) return;
-      card.style.cursor = 'pointer';
-      card.addEventListener('click', (e) => {
-        if (e.target.closest('.action-heart')) return; // no robar el click del corazón
-        window.location.href = `./HTML/servicio.html?id=${encodeURIComponent(id)}`;
-      });
-    });
+    // Las service cards ya no son estáticas: las pinta loadHomeServices()
+    // con servicios reales y ahí mismo les pone el click.
 
     // Newsletter forms — POST real al backend (antes era animación fake).
     // Si el backend falla o está caído, mostramos error visible.
@@ -539,57 +598,8 @@ if (typeof window !== 'undefined') {
     document.getElementById('newsletterForm')?.addEventListener('submit', handleNewsletterSubmit);
     document.getElementById('footerNewsletterForm')?.addEventListener('submit', handleNewsletterSubmit);
 
-    // Filtros de servicios en la home
-    class ServiceFilters {
-      constructor() {
-        this.currentCategory = 'all';
-        this.currentSort = 'featured';
-        this.services = [];
-        this.loadServices();
-        this.bindEvents();
-      }
-
-      loadServices() {
-        this.services = Array.from(document.querySelectorAll('.service-card')).map(card => ({
-          element: card,
-          category: card.dataset.serviceCategory,
-          price: parseInt(card.dataset.servicePrice) || 0,
-          title: card.querySelector('.service-title')?.textContent || ''
-        }));
-      }
-
-      bindEvents() {
-        document.querySelectorAll('.service-filter-tab').forEach(tab => {
-          tab.addEventListener('click', (e) => {
-            e.preventDefault();
-            document.querySelectorAll('.service-filter-tab').forEach(t => t.classList.remove('active'));
-            e.currentTarget.classList.add('active');
-            this.currentCategory = e.currentTarget.dataset.serviceCategory;
-            this.filterAndRender();
-          });
-        });
-        document.getElementById('serviceSortBtn')?.addEventListener('click', () => {
-          this.currentSort = this.currentSort === 'price-asc' ? 'price-desc' : 'price-asc';
-          this.filterAndRender();
-        });
-      }
-
-      filterAndRender() {
-        let filtered = [...this.services];
-        if (this.currentCategory && this.currentCategory !== 'all') {
-          filtered = filtered.filter(s => s.category === this.currentCategory);
-        }
-        if (this.currentSort === 'price-asc') filtered.sort((a, b) => a.price - b.price);
-        else if (this.currentSort === 'price-desc') filtered.sort((a, b) => b.price - a.price);
-        this.services.forEach(s => { s.element.style.display = 'none'; });
-        filtered.forEach((s, i) => {
-          s.element.style.display = 'block';
-          s.element.style.animationDelay = `${i * 0.1}s`;
-        });
-      }
-    }
-
-    new ServiceFilters();
+    // (ServiceFilters se fue con las service cards estáticas: filtraba por
+    // tabs .service-filter-tab que no existen en index.html.)
   }
 
   if (document.readyState === 'loading') {

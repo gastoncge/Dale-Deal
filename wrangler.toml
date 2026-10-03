@@ -1,9 +1,25 @@
 name = "dale-deal"
+# Worker script: maneja POST /api/upload y GET /img/* (fotos de publicar).
+# Lo que matchea un asset estático se sigue sirviendo directo desde dist/
+# SIN pasar por el script (run_worker_first=false por default) → _redirects,
+# _headers y URLs limpias no cambian. Solo las rutas sin asset (api/img/404)
+# llegan al script, que cae a env.ASSETS para conservar la página 404.
+main = "worker.js"
 compatibility_date = "2025-05-27"
 # account_id fijo para que `wrangler deploy` no necesite permiso de listar
 # todos los accounts del user (los tokens scoped a un solo Worker fallan
 # ese check). Sacado del dashboard CF.
 account_id = "b453287b1595aee108969bc617ecf4a0"
+# PRE-LANZAMIENTO: URLs de preview por versión APAGADAS. Con esto prendido,
+# cada versión vieja del worker sigue viva en
+# <versión>-dale-deal.<cuenta>.workers.dev, y las anteriores al filtro de
+# Próximamente muestran el sitio entero a cualquiera que tenga el link (pasaba
+# con la demo de agosto). Para probar algo antes de publicarlo se entra al
+# dominio real con la clave del equipo. Después del lanzamiento se puede
+# volver a poner en true.
+preview_urls = false
+# El sitio solo se sirve desde el dominio propio, no desde dale-deal.*.workers.dev.
+workers_dev = false
 
 # Custom domains — Cloudflare auto-crea el DNS record y mapea SSL.
 # IMPORTANTE: 'routes' debe ir ANTES de cualquier [tabla] (regla TOML).
@@ -14,9 +30,29 @@ routes = [
 
 [assets]
 directory = "./dist"
+# Binding para que worker.js pueda devolver assets (la 404, p.ej.).
+binding = "ASSETS"
 # 404-page: cuando una URL no matchea ningún asset, sirve dist/404.html
 # con status 404 (en lugar de "single-page-application" que servía
 # index.html con status 200 — el user veía la home pensando que estaba
 # en otra página y nos perdíamos analytics de URLs rotas).
 # dist/404.html lo genera build.js copiando HTML/404.html a la raíz del dist.
 not_found_handling = "404-page"
+# PRE-LANZAMIENTO: el script corre ANTES que los assets para las páginas, así
+# puede mostrar "Próximamente" (worker.js → comingSoonGate). CSS, JS e imágenes
+# siguen saliendo directo, sin pasar por el script. El día del lanzamiento se
+# borra esta línea junto con [vars] COMING_SOON.
+run_worker_first = ["/*", "!/CSS/*", "!/JS/*", "!/IMG/*"]
+
+# Fotos subidas desde publicar (ver worker.js). KV porque R2 no está
+# habilitado en la cuenta; si se habilita, migrar objetos y cambiar binding.
+[[kv_namespaces]]
+binding = "IMAGES"
+id = "4b6ebaf8d3a14d26aeccd02fa4f03151"
+
+# PRE-LANZAMIENTO: "1" = el público ve la página de Próximamente (coming-soon.js).
+# El equipo entra con https://daledeal.com.ar/?acceso=<clave>; la clave es el
+# secreto PREVIEW_KEY (npx wrangler secret put PREVIEW_KEY), no vive en el repo.
+# Para lanzar: borrar este bloque y el run_worker_first de [assets], y deployar.
+[vars]
+COMING_SOON = "1"

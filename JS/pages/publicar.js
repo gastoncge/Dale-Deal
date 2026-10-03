@@ -77,8 +77,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const target = tab.dataset.tab;
       document.getElementById('form-producto').style.display = target === 'producto' ? 'block' : 'none';
       document.getElementById('form-servicio').style.display = target === 'servicio' ? 'block' : 'none';
+      // Los planes de abajo acompañan a la pestaña elegida
+      const planesProducto = document.getElementById('planes-producto');
+      const planesServicio = document.getElementById('planes-servicio');
+      if (planesProducto) planesProducto.style.display = target === 'producto' ? '' : 'none';
+      if (planesServicio) planesServicio.style.display = target === 'servicio' ? '' : 'none';
     });
   });
+
+  // ?tab=servicio (desde el aviso de "Necesitás el plan Servicio")
+  if (new URLSearchParams(location.search).get('tab') === 'servicio') {
+    document.getElementById('tab-servicio')?.click();
+  }
+
+  // ── Cuenta verificada y plan Servicio ────────────────────────────────
+  document.getElementById('btnPlanCheckout')?.addEventListener('click', startServicePlanCheckout);
+  if (isLogged) initAccountGates();
 
   // ── Condición del producto ───────────────────────────────────────────
   document.querySelectorAll('.condition-btn').forEach(btn => {
@@ -204,6 +218,10 @@ async function submitProduct() {
   const title = document.getElementById('p-title').value.trim();
   const price = document.getElementById('p-price').value;
 
+  if (uploadsInFlight > 0) {
+    showError('product-error', 'Hay fotos subiéndose todavía — esperá unos segundos y volvé a intentar.');
+    return;
+  }
   if (!title || title.length < 3) {
     showError('product-error', 'El título debe tener al menos 3 caracteres.');
     return;
@@ -259,6 +277,7 @@ async function submitProduct() {
     offers_pickup:     shippingRequired && offersPickup,
     shipping_cost:     shippingRequired && offersDelivery ? parseFloat(shippingCostRaw) || 0 : null,
     pickup_address:    shippingRequired && offersPickup ? pickupAddress : null,
+    badges: readBadges('p'),
   };
 
   setLoading(btn, true, 'Publicando...');
@@ -273,6 +292,7 @@ async function submitProduct() {
       b.classList.toggle('active', i === 0);
     });
     resetImageList('p-photo-area');
+    uploadedPhotos['p-photo-area'] = [];
     document.getElementById('p-photo-previews').innerHTML = '';
     document.getElementById('p-video-previews').innerHTML = '';
     // Limpiar editor Quill (el form.reset() no lo toca)
@@ -300,6 +320,10 @@ async function submitService() {
   const btn = document.getElementById('btn-publish-service');
   const title = document.getElementById('s-title').value.trim();
 
+  if (uploadsInFlight > 0) {
+    showError('service-error', 'Hay fotos subiéndose todavía — esperá unos segundos y volvé a intentar.');
+    return;
+  }
   if (!title || title.length < 3) {
     showError('service-error', 'El título debe tener al menos 3 caracteres.');
     return;
@@ -337,6 +361,9 @@ async function submitService() {
     zones_covered: zones,
     images: getServiceImages(),
     currency: 'ARS',
+    badges: readBadges('s'),
+    has_warranty:   !!document.getElementById('s-warranty')?.checked,
+    available_24_7: !!document.getElementById('s-247')?.checked,
   };
 
   setLoading(btn, true, 'Publicando...');
@@ -351,6 +378,7 @@ async function submitService() {
       b.classList.toggle('active', i === 0);
     });
     resetImageList('s-photo-area');
+    uploadedPhotos['s-photo-area'] = [];
     document.getElementById('s-photo-previews').innerHTML = '';
     document.getElementById('s-video-previews').innerHTML = '';
     if (sDescriptionEditor) sDescriptionEditor.setText('');
@@ -362,21 +390,100 @@ async function submitService() {
 }
 
 // =====================================================
-// HELPERS DE IMÁGENES
+// HELPERS DE IMÁGENES — upload real
 // =====================================================
 //
-// Estado: el upload directo de archivos a un storage propio (S3/Cloudinary)
-// está en roadmap. Mientras tanto:
-//   1) El usuario puede seleccionar archivos: se muestran en preview pero
-//      NO se envían al backend (el data URL es muy pesado para guardar).
-//   2) Como fallback, hidratamos cada selección a un campo de URL editable
-//      por debajo del file picker. Si pegan URLs públicas (Imgur, Drive,
-//      etc.) ESAS sí se mandan al backend.
-//
-// Esto evita el bug de "publico sin imágenes" mientras no haya upload real.
+// Al elegir archivos se suben de una a POST /api/upload (Worker del mismo
+// dominio, guarda en Workers KV y devuelve la URL /img/<key>). El form
+// publica esas URLs. Si una subida falla (sin conexión, sesión vencida,
+// server local sin Worker), se abre el bloque de URLs pegadas como fallback.
 
-function getProductImages() { return readImageUrlsFromExtra('p-photo-area'); }
-function getServiceImages() { return readImageUrlsFromExtra('s-photo-area'); }
+const MAX_PHOTOS = 10;
+const MAX_PHOTO_BYTES = 8 * 1024 * 1024; // espejo del límite del Worker
+
+// URLs ya subidas, por área de upload
+const uploadedPhotos = {
+  'p-photo-area': [],
+  's-photo-area': [],
+};
+let uploadsInFlight = 0;
+
+function getProductImages() {
+  return uploadedPhotos['p-photo-area']
+    .concat(readImageUrlsFromExtra('p-photo-area'))
+    .slice(0, MAX_PHOTOS);
+}
+function getServiceImages() {
+  return uploadedPhotos['s-photo-area']
+    .concat(readImageUrlsFromExtra('s-photo-area'))
+    .slice(0, MAX_PHOTOS);
+}
+
+/** Sube un archivo al Worker y devuelve la URL pública (/img/<key>). */
+async function uploadImageFile(file) {
+  const token = localStorage.getItem('daledeal_token');
+  const res = await fetch('/api/upload', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token || ''}`,
+      'Content-Type': file.type,
+    },
+    body: file,
+  });
+  let data = null;
+  try { data = await res.json(); } catch (_) { /* respuesta no-JSON (p.ej. 404 en dev local) */ }
+  if (!res.ok || !data?.ok || !data.url) {
+    throw new Error(data?.error || 'No se pudo subir la imagen.');
+  }
+  return data.url;
+}
+
+/** Crea la card de preview y sube el archivo; refleja el estado en la card. */
+function uploadOnePhoto(file, areaId, previews) {
+  if (file.size > MAX_PHOTO_BYTES) {
+    alert(`"${file.name}" supera los 8 MB y no se puede subir.`);
+    return;
+  }
+
+  const objUrl = URL.createObjectURL(file);
+  const card = document.createElement('div');
+  card.className = 'media-preview-item';
+  card.style.cssText = 'display:inline-block;margin:6px;position:relative;';
+  card.innerHTML = `
+    <img src="${objUrl}" alt="${escapeAttr(file.name)}" style="width:120px;height:120px;object-fit:cover;border-radius:8px;opacity:.5;" />
+    <span class="upload-state spinner-border spinner-border-sm" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--primary-red,#d63031);"></span>
+  `;
+  previews.appendChild(card);
+
+  uploadsInFlight++;
+  uploadImageFile(file)
+    .then((url) => {
+      uploadedPhotos[areaId].push(url);
+      card.dataset.url = url;
+      const img = card.querySelector('img');
+      if (img) img.style.opacity = '1';
+      card.querySelector('.upload-state')?.remove();
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.textContent = '×';
+      remove.setAttribute('aria-label', 'Quitar foto');
+      remove.style.cssText = 'position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:none;background:#d63031;color:#fff;font-weight:700;line-height:1;cursor:pointer;';
+      remove.addEventListener('click', () => {
+        uploadedPhotos[areaId] = uploadedPhotos[areaId].filter(u => u !== url);
+        card.remove();
+      });
+      card.appendChild(remove);
+    })
+    .catch((err) => {
+      card.remove();
+      // Fallback: dejar pegar URLs públicas a mano
+      ensureExtraUrlBlock(areaId);
+      alert(`No pudimos subir "${file.name}": ${err.message}\nComo alternativa, pegá una URL pública de la foto en el campo de abajo.`);
+    })
+    .finally(() => {
+      uploadsInFlight--;
+    });
+}
 
 function readImageUrlsFromExtra(areaId) {
   // Buscamos un sub-bloque de URLs adicionales que se inyecta on-demand.
@@ -398,14 +505,14 @@ function ensureExtraUrlBlock(areaId) {
   wrap.id = id;
   wrap.className = 'mt-3';
   wrap.innerHTML = `
-    <label class="form-label small mb-1">URLs de fotos hosteadas (opcional, se publican)</label>
+    <label class="form-label small mb-1">URLs de fotos (alternativa)</label>
     <div class="image-url-list">
       <div class="image-url-row d-flex gap-2 align-items-center mb-2">
         <input type="url" class="form-control form-control-sm" placeholder="https://..." />
         <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addImageUrlRow('${id}')">+</button>
       </div>
     </div>
-    <div class="form-text">El upload directo está en beta. Por ahora pegá URLs públicas de tus fotos (Imgur, Drive, etc.).</div>
+    <div class="form-text">Si la subida directa falla, pegá acá la URL pública de tu foto (Imgur, Drive, etc.) — también se publica.</div>
   `;
   area.parentElement.appendChild(wrap);
   return wrap;
@@ -442,38 +549,49 @@ function resetImageList(areaIdSuffix) {
 // =====================================================
 
 /**
- * Lee los archivos elegidos en un <input type="file">, los muestra
- * en preview y abre el bloque de URLs adicionales (donde el usuario
- * puede pegar las URLs reales para publicar). Limita 10 fotos / 1 video.
+ * Maneja la selección de archivos en un <input type="file">.
+ * Fotos: las SUBE de verdad (POST /api/upload) y acumula las URLs que
+ * después publica el form. Video: solo preview local (no se publica aún).
  */
 function handleMediaUpload(input, previewId, type) {
   const previews = document.getElementById(previewId);
   if (!previews) return;
-  previews.innerHTML = '';
   const files = Array.from(input.files || []);
-  const max = type === 'video' ? 1 : 10;
-  const limited = files.slice(0, max);
-  if (files.length > max) {
-    alert(type === 'video'
-      ? 'Solo podés subir 1 video.'
-      : `Solo podés subir hasta ${max} fotos.`);
+
+  // Video: preview local únicamente
+  if (type === 'video') {
+    previews.innerHTML = '';
+    if (files.length > 1) alert('Solo podés subir 1 video.');
+    const file = files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      const el = document.createElement('div');
+      el.className = 'media-preview-item';
+      el.style.cssText = 'display:inline-block;margin:6px;position:relative;';
+      el.innerHTML = `<video src="${url}" controls style="max-width:160px;max-height:120px;border-radius:8px;"></video>`;
+      previews.appendChild(el);
+    }
+    return;
   }
-  limited.forEach(file => {
-    const url = URL.createObjectURL(file);
-    const el = document.createElement('div');
-    el.className = 'media-preview-item';
-    el.style.cssText = 'display:inline-block;margin:6px;position:relative;';
-    el.innerHTML = type === 'video'
-      ? `<video src="${url}" controls style="max-width:160px;max-height:120px;border-radius:8px;"></video>`
-      : `<img src="${url}" alt="${escapeAttr(file.name)}" style="width:120px;height:120px;object-fit:cover;border-radius:8px;" />`;
-    previews.appendChild(el);
-  });
-  // Abrir el bloque de URLs adicionales si seleccionó algo (para que sepa
-  // que tiene que pegar las URLs)
-  if (limited.length > 0) {
-    const areaId = input.closest('.media-upload-area')?.id;
-    if (areaId) ensureExtraUrlBlock(areaId);
+
+  // Fotos: subida real
+  const areaId = input.closest('.media-upload-area')?.id;
+  if (!areaId || !uploadedPhotos[areaId]) return;
+
+  if (!localStorage.getItem('daledeal_token')) {
+    alert('Necesitás iniciar sesión para subir fotos.');
+    input.value = '';
+    return;
   }
+
+  const room = MAX_PHOTOS - uploadedPhotos[areaId].length;
+  const selected = files.filter(f => f.type && f.type.startsWith('image/'));
+  const limited = selected.slice(0, Math.max(0, room));
+  if (selected.length > limited.length) {
+    alert(`Podés subir hasta ${MAX_PHOTOS} fotos por publicación.`);
+  }
+  limited.forEach(file => uploadOnePhoto(file, areaId, previews));
+  input.value = ''; // permite volver a elegir los mismos archivos
 }
 window.handleMediaUpload = handleMediaUpload;
 
@@ -481,6 +599,14 @@ window.handleMediaUpload = handleMediaUpload;
  * Actualiza el preview visual del cartel (badge) cuando el usuario
  * cambia el texto o el color en publicar.
  */
+/** Carteles cargados en el form (prefijo 'p' producto, 's' servicio). Los vacíos no van. */
+function readBadges(prefix) {
+  return [1, 2].map((n) => ({
+    text:  (document.getElementById(`${prefix}-badge-${n}-text`)?.value || '').trim(),
+    color: document.getElementById(`${prefix}-badge-${n}-color`)?.value || '#ef4444',
+  })).filter((b) => b.text);
+}
+
 function updateBadgePreview(badgeId) {
   const text  = document.getElementById(`${badgeId}-text`)?.value || 'VISTA';
   const color = document.getElementById(`${badgeId}-color`)?.value || '#ef4444';
@@ -496,11 +622,122 @@ window.updateBadgePreview = updateBadgePreview;
  * Por ahora todos los planes se cobran después del MVP — guardamos la
  * elección y la mostramos en el modal de pago.
  */
+// =====================================================
+// CUENTA VERIFICADA + PLAN SERVICIO
+// =====================================================
+// El backend es el que frena (requireVerified / PLAN_REQUIRED); acá solo
+// avisamos antes, para que nadie complete el formulario entero en vano.
+let accountState = null; // { verified, planActive, planUntil, admin }
+
+async function initAccountGates() {
+  const api = window.DaleDeal?.api;
+  if (!api?.apiFetch) return;
+
+  // Volviendo del checkout del plan: aplicar/consultar el pago primero.
+  await handlePlanReturn();
+
+  try {
+    const me = await api.apiFetch('/users/me', { _background: true });
+    accountState = {
+      admin: me.role === 'admin',
+      verified: me.role === 'admin' || me.verified_identity === true,
+      planActive: me.role === 'admin' || me.service_plan_active === true,
+      planUntil: me.service_plan_until || null,
+    };
+  } catch (_) {
+    return; // sin datos no bloqueamos: el backend igual valida al publicar
+  }
+  renderAccountGates();
+}
+
+function renderAccountGates() {
+  if (!accountState) return;
+  const { verified, planActive, planUntil, admin } = accountState;
+  const btnProduct = document.getElementById('btn-publish-product');
+  const btnService = document.getElementById('btn-publish-service');
+
+  const verifyWarning = document.getElementById('verifyWarning');
+  if (verifyWarning) verifyWarning.style.display = verified ? 'none' : 'flex';
+  if (!verified) btnProduct?.setAttribute('disabled', true);
+
+  const planWarning = document.getElementById('planWarning');
+  const planNote = document.getElementById('planActiveNote');
+  // Sin verificar ya lo dice verifyWarning; el plan se paga después.
+  if (planWarning) planWarning.style.display = verified && !planActive ? 'flex' : 'none';
+  if (planNote) {
+    planNote.hidden = !(planActive && !admin && planUntil);
+    if (!planNote.hidden) {
+      const fecha = new Date(planUntil).toLocaleDateString('es-AR', { day: 'numeric', month: 'long' });
+      planNote.querySelector('span').textContent = `Plan Servicio activo hasta el ${fecha}.`;
+    }
+  }
+  if (!verified || !planActive) btnService?.setAttribute('disabled', true);
+}
+
+async function startServicePlanCheckout() {
+  const api = window.DaleDeal?.api;
+  if (!localStorage.getItem('daledeal_token')) {
+    window.location.href = `./login.html?redirect=${encodeURIComponent(location.pathname + '?tab=servicio')}`;
+    return;
+  }
+  if (accountState && !accountState.verified) {
+    window.DaleDeal.utils.showAccessGate('NOT_VERIFIED');
+    return;
+  }
+  const btn = document.getElementById('btnPlanCheckout');
+  const original = btn?.innerHTML;
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Abriendo Mercado Pago…'; }
+  try {
+    const r = await api.apiFetch('/plans/service/checkout', { method: 'POST' });
+    const url = (r.is_sandbox && r.sandbox_init_point) || r.init_point;
+    if (!url) throw new Error('Mercado Pago no devolvió el link de pago.');
+    window.location.href = url;
+  } catch (err) {
+    // NOT_VERIFIED ya lo muestra apiFetch con su aviso
+    if (err.code !== 'NOT_VERIFIED') alert(err.message || 'No pudimos iniciar el pago del plan.');
+    if (btn) { btn.disabled = false; btn.innerHTML = original; }
+  }
+}
+
+/** Vuelta del checkout: ?plan=ok|error|pendiente&plan_payment=ID&payment_id=… */
+async function handlePlanReturn() {
+  const qs = new URLSearchParams(location.search);
+  const result = qs.get('plan');
+  const ppId = parseInt(qs.get('plan_payment'), 10);
+  if (!result || !Number.isInteger(ppId)) return;
+
+  document.getElementById('tab-servicio')?.click();
+  let msg;
+  try {
+    const paymentId = qs.get('payment_id') || qs.get('collection_id') || '';
+    const st = await window.DaleDeal.api.apiFetch(
+      `/plans/payments/${ppId}/status${paymentId ? `?payment_id=${encodeURIComponent(paymentId)}` : ''}`,
+      { _background: true }
+    );
+    if (st.status === 'approved') {
+      const fecha = st.plan_until ? new Date(st.plan_until).toLocaleDateString('es-AR', { day: 'numeric', month: 'long' }) : '';
+      msg = `¡Listo! Tu plan Servicio está activo${fecha ? ` hasta el ${fecha}` : ''}. Ya podés publicar tus servicios.`;
+    } else if (result === 'error' || st.status === 'rejected' || st.status === 'cancelled') {
+      msg = 'El pago del plan no se completó. Podés intentarlo de nuevo cuando quieras.';
+    } else {
+      msg = 'Estamos esperando la confirmación de Mercado Pago. Apenas se acredite, el plan se activa solo.';
+    }
+  } catch (_) {
+    msg = 'No pudimos confirmar el pago todavía. Si ya pagaste, el plan se activa apenas Mercado Pago lo confirme.';
+  }
+  // Limpiar la URL para que un refresh no repita el aviso
+  history.replaceState(null, '', location.pathname + '?tab=servicio');
+  setTimeout(() => alert(msg), 50);
+}
+
 function seleccionarPlan(nombrePlan, precio) {
   window.__daledealPlanSeleccionado = { nombre: nombrePlan, precio: Number(precio) || 0 };
   // Mostrar mensaje claro
-  if (precio > 0) {
-    const ok = confirm(`Plan "${nombrePlan}" ($${precio.toLocaleString('es-AR')}/mes).\n\nLa monetización de planes destacados está en activación. Por ahora podés seguir publicando con el plan Estándar (gratis). ¿Querés volver a la publicación gratuita?`);
+  if (nombrePlan === 'Servicio') {
+    // El plan Servicio se paga con Mercado Pago y habilita publicar servicios.
+    startServicePlanCheckout();
+  } else if (precio > 0) {
+    const ok = confirm(`Plan "${nombrePlan}" ($${precio.toLocaleString('es-AR')}/mes).\n\nLa monetización de los planes Premium está en activación. Por ahora podés seguir publicando con el plan base. ¿Querés volver al formulario de publicación?`);
     if (ok) document.querySelector('#publishTabs .nav-link.active')?.click();
   } else {
     alert(`Elegiste el plan "${nombrePlan}" — gratis. Completá el formulario y dale a "Publicar".`);

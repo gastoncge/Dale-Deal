@@ -132,7 +132,7 @@ class FavoritesManager {
         e.preventDefault();
         // fallback si el href es '#' (páginas no actualizadas)
         const path = window.location.pathname;
-        const base = path.includes('/HTML/') ? './notificaciones.html' : './HTML/notificaciones.html';
+        const base = path.includes('/HTML/') ? '/notificaciones' : '/notificaciones';
         window.location.href = base + '#favoritos';
       }
     });
@@ -454,7 +454,7 @@ class FavoritesManager {
     if (!modalEl) {
       // Redirigir a index con flag para auto-abrir
       const path = window.location.pathname;
-      const target = path.includes('/HTML/') ? '../index.html' : './index.html';
+      const target = path.includes('/HTML/') ? '/' : '/';
       window.location.href = `${target}?openFavorites=1`;
       return;
     }
@@ -519,36 +519,38 @@ class FavoritesManager {
 
   // Renderizar tarjeta de producto favorito
   renderFavoriteProduct(favorite) {
+    const esc = (v) => window.DaleDeal.utils.escapeHtml(String(v ?? ''));
+    const id = esc(favorite.id);
     return `
       <div class="col-md-6 col-lg-4 mb-4">
-        <div class="product-card favorite-product-card" data-id="${favorite.id}">
+        <div class="product-card favorite-product-card" data-id="${id}">
           <div class="product-image-container">
-            <img src="${favorite.imageUrl}" alt="${favorite.title}" class="product-image active">
+            <img src="${esc(favorite.imageUrl)}" alt="${esc(favorite.title)}" class="product-image active">
 
             <div class="product-actions-favorite">
-              <button class="action-remove-favorite" title="Eliminar de favoritos" onclick="event.stopPropagation(); window.favoritesManager.removeFromFavoritesModal('${favorite.id}')">
+              <button class="action-remove-favorite" title="Eliminar de favoritos" onclick="event.stopPropagation(); window.favoritesManager.removeFromFavoritesModal('${id}')">
                 <i class="bi bi-x"></i>
               </button>
             </div>
           </div>
 
           <div class="product-info">
-            <h3 class="product-title">${favorite.title}</h3>
+            <h3 class="product-title">${esc(favorite.title)}</h3>
 
             <div class="product-meta-group">
               <div class="product-rating">
                 <div class="stars">${this.renderStars(favorite.rating)}</div>
-                <span class="reviews-count">${favorite.ratingCount}</span>
+                <span class="reviews-count">${esc(favorite.ratingCount)}</span>
               </div>
             </div>
 
             <div class="product-pricing-wrapper">
               <div class="product-pricing">
-                <span class="product-current-price">${favorite.priceText}</span>
-                ${favorite.originalPriceText ? `<span class="product-original-price">${favorite.originalPriceText}</span>` : ''}
+                <span class="product-current-price">${esc(favorite.priceText)}</span>
+                ${favorite.originalPriceText ? `<span class="product-original-price">${esc(favorite.originalPriceText)}</span>` : ''}
               </div>
               <div class="favorite-actions-buttons">
-                <button class="btn-add-to-cart" onclick="event.stopPropagation(); window.favoritesManager.addToCartFromFavorites('${favorite.id}')">
+                <button class="btn-add-to-cart" onclick="event.stopPropagation(); window.favoritesManager.addToCartFromFavorites('${id}')">
                   <i class="bi bi-cart-plus me-2"></i>Agregar al carrito
                 </button>
               </div>
@@ -561,35 +563,37 @@ class FavoritesManager {
 
   // Renderizar tarjeta de servicio favorito
   renderFavoriteService(favorite) {
+    const esc = (v) => window.DaleDeal.utils.escapeHtml(String(v ?? ''));
+    const id = esc(favorite.id);
     return `
       <div class="col-md-6 col-lg-4 mb-4">
-        <div class="service-card favorite-service-card" data-id="${favorite.id}">
+        <div class="service-card favorite-service-card" data-id="${id}">
           <div class="service-image-container">
-            <img src="${favorite.imageUrl}" alt="${favorite.title}" class="service-image">
+            <img src="${esc(favorite.imageUrl)}" alt="${esc(favorite.title)}" class="service-image">
 
             <div class="product-actions-favorite">
-              <button class="action-remove-favorite" title="Eliminar de favoritos" onclick="event.stopPropagation(); window.favoritesManager.removeFromFavoritesModal('${favorite.id}')">
+              <button class="action-remove-favorite" title="Eliminar de favoritos" onclick="event.stopPropagation(); window.favoritesManager.removeFromFavoritesModal('${id}')">
                 <i class="bi bi-x"></i>
               </button>
             </div>
           </div>
 
           <div class="service-info">
-            <h3 class="service-title">${favorite.title}</h3>
+            <h3 class="service-title">${esc(favorite.title)}</h3>
 
             <div class="service-meta">
               <div class="service-rating">
                 <div class="stars">${this.renderStars(favorite.rating)}</div>
-                <span class="service-rating-text">${favorite.ratingCount}</span>
+                <span class="service-rating-text">${esc(favorite.ratingCount)}</span>
               </div>
               <div class="service-info-row">
                 ${favorite.location ? `
                   <div class="service-location">
                     <i class="bi bi-geo-alt-fill"></i>
-                    <span>${favorite.location}</span>
+                    <span>${esc(favorite.location)}</span>
                   </div>
                 ` : ''}
-                <span class="service-price-badge">${favorite.priceText}</span>
+                <span class="service-price-badge">${esc(favorite.priceText)}</span>
               </div>
             </div>
 
@@ -621,9 +625,9 @@ class FavoritesManager {
     if (path.includes('producto.html')) {
       window.location.href = window.location.pathname + '?id=' + productId;
     } else if (path.includes('/HTML/')) {
-      window.location.href = './producto.html?id=' + productId;
+      window.location.href = '/producto?id=' + productId;
     } else {
-      window.location.href = './HTML/producto.html?id=' + productId;
+      window.location.href = '/producto?id=' + productId;
     }
   }
 
@@ -631,7 +635,7 @@ class FavoritesManager {
   // Cloudflare strippea .html, así que matcheamos producto y producto.html
   goToHome() {
     if (/\/producto(\.html)?$/.test(window.location.pathname)) {
-      window.location.href = '../index.html';
+      window.location.href = '/';
     } else {
       // Ya estamos en el inicio, solo cerrar el modal y hacer scroll a productos
       const modal = bootstrap.Modal.getInstance(document.getElementById('favoritesModal'));

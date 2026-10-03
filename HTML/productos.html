@@ -8,7 +8,7 @@
     <!-- SEO Meta Tags -->
     <meta
       name="description"
-      content="Descubre miles de productos al mejor precio en Dale Deal. Electrónicos, hogar, moda y mucho más con envío rápido."
+      content="Descubrí miles de productos al mejor precio en Dale Deal. Electrónicos, hogar, moda y mucho más con envío rápido."
     />
     <meta
       name="keywords"
@@ -23,18 +23,21 @@
     <meta property="og:title"       content="Catálogo de productos — Dale Deal" />
     <meta property="og:description" content="Miles de productos al mejor precio: electrónica, hogar, moda, vehículos y más. Comprá fácil y seguro en el marketplace argentino." />
     <meta property="og:url"         content="https://daledeal.com.ar/HTML/productos.html" />
-    <meta property="og:image"       content="https://daledeal.com.ar/IMG/LOGO-2.png" />
+    <meta property="og:image"       content="https://daledeal.com.ar/IMG/og-home.jpg" />
+    <meta property="og:image:width"  content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:locale"      content="es_AR" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card"        content="summary_large_image" />
     <meta name="twitter:title"       content="Catálogo de productos — Dale Deal" />
     <meta name="twitter:description" content="Comprá productos en el marketplace argentino con envío rápido." />
-    <meta name="twitter:image"       content="https://daledeal.com.ar/IMG/LOGO-2.png" />
+    <meta name="twitter:image"       content="https://daledeal.com.ar/IMG/og-home.jpg" />
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
-    <link rel="apple-touch-icon" href="../IMG/LOGO.png" />
+    <link rel="icon" href="../IMG/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="../IMG/icon-192.png" type="image/png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="../IMG/apple-touch-icon.png" />
     <link rel="manifest" href="../manifest.json" />
     <!-- Preconnect a CDNs externos: warmea conexiones DNS+TCP+TLS en paralelo al parse del HTML, ahorra 100-300ms. -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -68,8 +71,7 @@
       <div class="container-fluid px-4">
         <!-- Logo -->
         <a class="navbar-brand" href="../index.html" data-aos="fade-right">
-          <img src="../IMG/LOGO-2.png" alt="Dale Deal" class="logo-navbar" />
-          <span class="brand-text">DALE DEAL</span>
+          <img src="../IMG/logo-nav.png" alt="Dale Deal" class="logo-navbar" />
         </a>
 
         <!-- Search Bar -->
@@ -116,6 +118,12 @@
             <button class="theme-toggle" id="themeToggle" title="Cambiar tema">
               <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
             </button>
+          </div>
+          <!-- Mi Centro -->
+          <div class="action-item d-none d-md-flex">
+            <a href="./mi-cuenta.html" class="action-btn" id="miCentroBtn" title="Mi Centro" aria-label="Ir a Mi Centro">
+              <i class="bi bi-grid-fill" aria-hidden="true"></i>
+            </a>
           </div>
 
           <!-- Notifications -->
@@ -189,7 +197,7 @@
           <!-- Profile -->
           <div class="action-item dropdown">
             <button class="action-btn profile-btn" id="profileDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" title="Mi cuenta">
-              <img src="https://ui-avatars.com/api/?name=U&amp;background=d63031&amp;color=fff&amp;size=80&amp;font-size=0.5&amp;bold=true" alt="Mi perfil" class="profile-image" id="profileAvatar" />
+              <img src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2080%2080%22%3E%3Crect%20width%3D%2280%22%20height%3D%2280%22%20fill%3D%22%23d63031%22%2F%3E%3Ctext%20x%3D%2240%22%20y%3D%2240%22%20dy%3D%22.35em%22%20text-anchor%3D%22middle%22%20fill%3D%22%23fff%22%20font-family%3D%22Inter%2CArial%2Csans-serif%22%20font-size%3D%2234%22%20font-weight%3D%22700%22%3EU%3C%2Ftext%3E%3C%2Fsvg%3E" alt="Mi perfil" class="profile-image" id="profileAvatar" />
               <span class="profile-name">Usuario</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
@@ -253,9 +261,8 @@
               <h1 class="header-title">
                 Catálogo de Productos
               </h1>
-              <p class="header-description">
-                <span class="badge-count" id="headerProductCount">2000+ productos</span>
-              </p>
+              <!-- Sin insignia de cantidad acá: la cifra real se muestra en
+                   "N productos encontrados", arriba de la grilla. -->
             </div>
           </div>
         </div>
@@ -564,8 +571,10 @@
                 </button>
               </div>
 
-              <!-- Products Grid -->
-              <div class="products-grid" id="productsGrid">
+              <!-- Products Grid — lo pinta ProductCatalog (script de abajo).
+                   data-catalog="inline" avisa a products.js y home.js que no
+                   carguen su propia copia de los productos acá. -->
+              <div class="products-grid" id="productsGrid" data-catalog="inline">
                 <!-- Products will be loaded here dynamically -->
               </div>
 
@@ -684,13 +693,14 @@
       window.onFooterLoaded = function() {
         const list = document.getElementById('footerCategoriesList');
         if (!list) return;
+        // Slugs reales de la API (los mismos values de los radios del filtro)
         list.innerHTML = `
           <li><a href="./productos.html">Todos los productos</a></li>
-          <li><a href="./productos.html?category=electronics">Electrónica</a></li>
-          <li><a href="./productos.html?category=home">Hogar y Jardín</a></li>
-          <li><a href="./productos.html?category=fashion">Moda y Belleza</a></li>
-          <li><a href="./productos.html?category=sports">Deportes</a></li>
-          <li><a href="./productos.html?category=toys">Juguetes</a></li>
+          <li><a href="./productos.html?category=electronica">Electrónica</a></li>
+          <li><a href="./productos.html?category=hogar-jardin">Hogar y jardín</a></li>
+          <li><a href="./productos.html?category=ropa-accesorios">Ropa y accesorios</a></li>
+          <li><a href="./productos.html?category=deportes">Deportes</a></li>
+          <li><a href="./productos.html?category=juguetes">Juguetes</a></li>
         `;
       };
     </script>
@@ -1788,7 +1798,7 @@
 
       .results-count-container {
         font-size: 13px;
-        color: var(--gray-400);
+        color: var(--gray-500);
         font-weight: 500;
         background: var(--gray-100);
         padding: 6px 12px;
@@ -2986,6 +2996,42 @@
         font-size: var(--font-size-sm) !important;
       }
 
+      /* =====================================================================
+         FIX cascada mobile (va AL FINAL a propósito): la regla base
+         .filters-sidebar { position:sticky } está más arriba que el @media
+         de 992px, así que en el celu PISABA al drawer y el panel de filtros
+         quedaba fijo ocupando toda la pantalla (el usuario no veía productos).
+         Al re-declarar el drawer acá abajo, gana por orden de fuente — sin
+         !important. Mismo motivo para mostrar el botón "Filtros".
+         ===================================================================== */
+      @media (max-width: 991.98px) {
+        .filters-sidebar {
+          position: fixed;
+          top: 0;
+          left: -100%;
+          width: 85%;
+          max-width: 360px;
+          height: 100vh;
+          max-height: 100vh;
+          z-index: 1050;
+          transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 8px 0 24px rgba(0, 0, 0, 0.15);
+          border-right: none;
+        }
+        .filters-sidebar.active {
+          left: 0;
+        }
+        .btn-toggle-filters {
+          display: inline-flex;
+        }
+        /* El overlay base es display:none y el .active solo cambiaba opacity
+           (nunca se mostraba). display:block SOLO cuando está activo — así no
+           bloquea los toques del catálogo cuando el drawer está cerrado. */
+        .sidebar-overlay.active {
+          display: block;
+          opacity: 1;
+        }
+      }
     </style>
 
     <script>
@@ -3042,8 +3088,11 @@
             // ProductFilters — pendiente.
             this.showLoading(true);
 
-            // Fetch products from API
-            const productsData = await window.DaleDeal.api.fetchProducts();
+            // Fetch products from API. limit=100 (el máximo del backend): sin
+            // limit la API devuelve 20 y el resto no aparecía en el catálogo ni
+            // en los filtros. Con más de 100 publicaciones va a hacer falta
+            // paginar del lado del servidor.
+            const productsData = await window.DaleDeal.api.fetchProducts({}, { all: true });
 
             // Transform API data to match expected format
             this.products = this.transformProductsData(productsData);
@@ -3064,50 +3113,26 @@
                 window.productFilters.originalProducts = [...window.productFilters.products];
 
                 // Aplicar filtro de ofertas si viene en la URL
-                const filterParam = new URLSearchParams(window.location.search).get('filter');
-                if (filterParam === 'ofertas') {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('filter') === 'ofertas') {
                   window.productFilters.onlyOffers = true;
                 }
+                // ?category= (links del footer y "Ver más" de la ficha). El
+                // término de ?q= / ?search= ya lo tomó ProductFilters al crearse.
+                this.applyCategoryFromURL(urlParams.get('category'));
                 window.productFilters.filterAndRender();
               }
             }, 100);
 
           } catch (error) {
-            DaleDeal.warn('API no disponible, usando datos locales:', error.message);
+            // Sin API: aviso con "Reintentar". Antes caía a los productos de
+            // ejemplo de product-data.js (iPhones, precios y descuentos que no
+            // existen) como si fueran publicaciones reales.
+            DaleDeal.warn('No se pudieron cargar los productos:', error.message);
             this.showLoading(false);
-
-            const fallback = typeof window.getAllProducts === 'function' ? window.getAllProducts() : [];
-            if (fallback.length) {
-              this.products = fallback.map(p => ({
-                id: p.id,
-                title: p.title,
-                description: p.description || '',
-                price: p.price,
-                originalPrice: p.originalPrice || p.price,
-                discount: p.discount || 0,
-                category: (p.category || '').toLowerCase(),
-                images: Array.isArray(p.images) ? p.images : [p.images?.main || p.images],
-                image: p.images?.main || (Array.isArray(p.images) ? p.images[0] : p.images),
-                rating: p.rating || 0,
-                reviews: p.reviewCount || 0,
-                featured: (p.badges || []).some(b => /premium|vendido/i.test(b)),
-                isOffer: (p.discount || 0) > 0,
-                shipping: p.shipping || { free: true, speed: 'tomorrow' }
-              }));
-              this.createProductCards();
-              this.updateResultsCount();
-              setTimeout(() => {
-                if (window.productFilters) {
-                  window.productFilters.products = this.createFilterableProducts();
-                  window.productFilters.originalProducts = [...window.productFilters.products];
-                  window.productFilters.renderProducts = () => this.renderFilteredProducts();
-                  window.productFilters.filterAndRender();
-                }
-              }, 100);
-              DaleDeal.log(`✓ ${this.products.length} productos locales cargados como fallback`);
-            } else {
-              this.showError('Error al cargar los productos. Por favor, intenta nuevamente.');
-            }
+            this.showError('No pudimos cargar los productos. Revisá tu conexión y probá de nuevo.');
+            const countEl = document.getElementById('resultsCount');
+            if (countEl) countEl.textContent = '';
           }
         }
 
@@ -3119,26 +3144,58 @@
             price: product.price,
             originalPrice: product.originalPrice,
             discount: product.discount,
-            category: this.mapCategory(product.category),
+            // category = slug de la API (category_slug, que api.js deja en
+            // subcategory): es lo que traen los radios del filtro. Antes se
+            // mapeaba el nombre ("Electrónica" → "electrónica") y ninguna
+            // categoría coincidía → 0 resultados.
+            category: this.categorySlug(product),
+            categoryName: product.category || '',
             images: product.images?.gallery || [product.images?.main],
             image: product.images?.main,
             rating: product.rating,
             reviews: product.reviewCount || 0,
+            location: product.location || '',
             featured: product.badges?.includes('Premium') || product.badges?.includes('MÁS VENDIDO') || false,
             isOffer: product.discount > 0,
-            shipping: product.shipping || { free: true, speed: 'tomorrow' }
+            shipping: product.shipping || null,
+            postBadges: product.postBadges || []
           }));
         }
 
-        mapCategory(category) {
-          const categoryMap = {
-            'Electrónicos': 'electronics',
-            'Moda': 'fashion',
-            'Hogar': 'home',
-            'Deportes': 'sports',
-            'Libros': 'books'
-          };
-          return categoryMap[category] || category.toLowerCase();
+        // Slug de la categoría: el de la API y, si no vino, uno armado con el
+        // nombre ("Hogar y jardín" → "hogar-y-jardin").
+        categorySlug(product) {
+          if (product.subcategory) return product.subcategory;
+          return (product.category || '').toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+        }
+
+        // ?category= puede venir con el slug ("electronica", links del footer)
+        // o con el nombre ("Electrónica", "Ver más" de la ficha). Marca el radio
+        // que corresponda; si no hay radio, lo busca como "Otros".
+        applyCategoryFromURL(param) {
+          if (!param || !window.productFilters) return;
+          const norm = (s) => (s || '').toString().toLowerCase().normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '').trim();
+          const wanted = norm(param);
+          const radios = [...document.querySelectorAll('input[name="category"]')];
+          const radio = radios.find(r => r.value !== 'all' && r.value !== 'otros' && (
+            norm(r.value) === wanted ||
+            norm(r.closest('label')?.querySelector('.option-text')?.textContent) === wanted
+          ));
+          if (radio) {
+            radio.checked = true;
+            window.productFilters.currentCategory = radio.value;
+            return;
+          }
+          const otros = document.getElementById('categoryOtros');
+          const otrosPanel = document.getElementById('otrosCategorySearch');
+          const otrosInput = document.getElementById('otrosCategoryInput');
+          if (otros) otros.checked = true;
+          if (otrosPanel) otrosPanel.style.display = 'block';
+          if (otrosInput) otrosInput.value = param;
+          window.productFilters.currentCategory = param;
         }
 
         showLoading(show) {
@@ -3240,6 +3297,7 @@
             priceText: `$${product.price.toLocaleString()}`,
             rating: product.rating,
             category: product.category,
+            categoryName: product.categoryName,
             imageUrl: product.image,
             isOffer: !!product.isOffer,
             badges: this.extractBadges(product),
@@ -3279,6 +3337,15 @@
               loading.style.display = 'none';
               noResults.style.display = 'block';
               loadMore.style.display = 'none';
+              // Catálogo vacío (no es que los filtros no coincidan)
+              if (this.products.length === 0) {
+                const title = noResults.querySelector('.empty-state-title');
+                const text = noResults.querySelector('.empty-state-text');
+                const actions = noResults.querySelector('.empty-state-actions');
+                if (title) title.textContent = 'Todavía no hay productos publicados';
+                if (text) text.textContent = '¿Tenés algo para vender? Publicalo gratis y aparecé acá.';
+                if (actions) actions.innerHTML = '<a class="btn btn-primary" href="./publicar.html"><i class="bi bi-plus-circle me-2"></i>Publicar un producto</a>';
+              }
               this.updateResultsCount();
               return;
             }
@@ -3437,11 +3504,10 @@
           `;
 
           // Descripción corta (si existe)
-          const shortDescription = product.description
-            ? (product.description.length > 80
-                ? product.description.substring(0, 80) + '...'
-                : product.description)
-            : '';
+          const plainDescription = window.DaleDeal.utils.htmlToText(product.description);
+          const shortDescription = plainDescription.length > 80
+            ? plainDescription.substring(0, 80) + '...'
+            : plainDescription;
 
           card.innerHTML = `
             <div class="product-image-container">
@@ -3536,41 +3602,17 @@
           catalog.loadMore();
         });
 
-        // Search functionality enhancement
-        const searchInput = document.getElementById('searchInput');
-        searchInput?.addEventListener('input', (e) => {
-          const searchTerm = e.target.value.toLowerCase();
-          if (window.productFilters) {
-            window.productFilters.searchTerm = searchTerm;
-            window.productFilters.filterAndRender();
-          }
-        });
-
-        // Category filter from URL params
+        // Búsqueda: el input del header lo escucha ProductFilters (filters.js),
+        // que además toma el término de la URL al crearse: ?q= (buscador del
+        // header, 404) o ?search= (SearchAction del JSON-LD del home). Lo
+        // aplica cuando el catálogo termina de cargar (ver init()), sin
+        // disparar eventos ni recargar. La categoría de ?category= se aplica
+        // en el mismo momento (applyCategoryFromURL).
         const urlParams = new URLSearchParams(window.location.search);
-        const categoryParam = urlParams.get('category');
-        if (categoryParam && window.productFilters) {
+        if (urlParams.get('q') || urlParams.get('search')) {
+          // Vino con un término → el user quiere ver los resultados, no la
+          // sidebar de filtros.
           setTimeout(() => {
-            const categoryTab = document.querySelector(`[data-category="${categoryParam}"]`);
-            if (categoryTab) {
-              categoryTab.click();
-            }
-          }, 500);
-        }
-
-        // Search from URL params (?search=iphone)
-        // Esto cierra el flow del SearchAction que declaramos en JSON-LD del
-        // home (Google ofrece "buscar en Dale Deal" → trae al user acá con
-        // ?search=lo-que-buscó). También sirve para deep linking desde el
-        // hero ("Ver productos similares" → ?search=iphone).
-        const searchParam = urlParams.get('search');
-        if (searchParam && searchInput) {
-          searchInput.value = searchParam;
-          setTimeout(() => {
-            // Trigger input event para que el handler de arriba corra
-            searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-            // Scroll a los resultados (porque la URL tenía el search → el user
-            // quiere ver los resultados, no la sidebar de filtros)
             document.getElementById('productsGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }, 500);
         }
@@ -3607,21 +3649,28 @@
           if (window.productFilters) {
             let selectedCategory = document.querySelector('input[name="category"]:checked')?.value || 'all';
 
-            // Si "otros" está seleccionado, usar el valor del input de búsqueda
+            // "Otros": si se escribió una categoría se busca esa (por nombre o
+            // slug); si no, la categoría "otros" de la API.
             if (selectedCategory === 'otros') {
               const otrosInput = document.getElementById('otrosCategoryInput');
-              const otrosVal = otrosInput?.value?.trim().toLowerCase();
-              selectedCategory = otrosVal || 'all';
+              const otrosVal = otrosInput?.value?.trim();
+              selectedCategory = otrosVal || 'otros';
             }
 
-            const minPrice = document.getElementById('minPrice')?.value;
-            const maxPrice = document.getElementById('maxPrice')?.value;
+            // Precios: solo dígitos. "100.000" (con punto de miles) es 100000;
+            // parseFloat lo leía como 100.
+            const parsePrice = (v) => {
+              const digits = (v || '').replace(/\D/g, '');
+              return digits ? parseInt(digits, 10) : null;
+            };
+            const minPrice = parsePrice(document.getElementById('minPrice')?.value);
+            const maxPrice = parsePrice(document.getElementById('maxPrice')?.value);
             const selectedRating = document.querySelector('input[name="rating"]:checked')?.value || 'all';
             const selectedSort = document.getElementById('sortSelect')?.value || 'featured';
 
             window.productFilters.currentCategory = selectedCategory;
-            window.productFilters.minPrice = minPrice ? parseFloat(minPrice) : null;
-            window.productFilters.maxPrice = maxPrice ? parseFloat(maxPrice) : null;
+            window.productFilters.minPrice = minPrice;
+            window.productFilters.maxPrice = maxPrice;
             window.productFilters.currentRating = selectedRating;
             window.productFilters.currentSort = selectedSort;
 
@@ -3675,6 +3724,12 @@
           if (minPrice) minPrice.value = '';
           if (maxPrice) maxPrice.value = '';
 
+          // Cerrar el buscador de "Otros"
+          const otrosInput = document.getElementById('otrosCategoryInput');
+          const otrosPanel = document.getElementById('otrosCategorySearch');
+          if (otrosInput) otrosInput.value = '';
+          if (otrosPanel) otrosPanel.style.display = 'none';
+
           // Reset sort
           const sortSelect = document.getElementById('sortSelect');
           if (sortSelect) sortSelect.value = 'featured';
@@ -3684,9 +3739,21 @@
             window.productFilters.currentCategory = 'all';
             window.productFilters.minPrice = null;
             window.productFilters.maxPrice = null;
+            window.productFilters.currentRating = 'all';
             window.productFilters.currentSort = 'featured';
             window.productFilters.filterAndRender();
           }
+        });
+
+        // "Limpiar filtros" del estado vacío: además de los filtros borra el
+        // término buscado (si no, con una búsqueda sin resultados el botón no
+        // sacaba al usuario del estado vacío). No tenía listener.
+        document.getElementById('clearFilters')?.addEventListener('click', () => {
+          const searchInput = document.getElementById('searchInput');
+          if (searchInput) searchInput.value = '';
+          if (window.searchManager?.filterInPlace) window.searchManager.filterInPlace('');
+          else window.productFilters?.setSearchQuery?.('');
+          document.getElementById('clearAllFilters')?.click();
         });
       });
 
@@ -3697,15 +3764,13 @@
         const input       = document.getElementById('otrosCategoryInput');
         const suggestions = document.getElementById('otrosSuggestions');
 
+        // Sugerencias con el nombre de la categoría ("Hogar y jardín"), no el
+        // slug; ProductFilters matchea por cualquiera de los dos.
         function getCategories(query) {
           const catalogProds = window.productCatalog?.products || [];
           const filterProds = window.productFilters?.originalProducts || [];
-          let cats;
-          if (catalogProds.length) {
-            cats = [...new Set(catalogProds.map(p => p.category).filter(Boolean))];
-          } else {
-            cats = [...new Set(filterProds.map(p => p.category).filter(Boolean))];
-          }
+          const source = catalogProds.length ? catalogProds : filterProds;
+          const cats = [...new Set(source.map(p => p.categoryName || p.category).filter(Boolean))];
           return query
             ? cats.filter(c => c.toLowerCase().includes(query.toLowerCase()))
             : cats;

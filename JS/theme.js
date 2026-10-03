@@ -51,14 +51,14 @@
   document.addEventListener('DOMContentLoaded', function () {
     initTheme(); // Re-aplicar cuando el DOM esté listo (el icon puede no existir aún)
 
-    // Botón toggle en navbar desktop
-    const btn = document.getElementById('themeToggle');
-    if (btn) btn.addEventListener('click', toggleTheme);
-
-    // Botón toggle en menú mobile — delegación porque el header se carga dinámicamente
+    // Botones toggle (navbar desktop y menú mobile) — delegación porque el
+    // header se inyecta después de DOMContentLoaded: con getElementById el
+    // botón todavía no existía y no hacía nada.
     document.addEventListener('click', function(e) {
-      if (e.target.closest('#themeToggleMobile')) toggleTheme();
+      if (e.target.closest('#themeToggle, #themeToggleMobile')) toggleTheme();
     });
+    // El ícono (luna/sol) llega con el header: actualizarlo cuando aparece.
+    document.addEventListener('daledeal:header-loaded', initTheme);
 
     // Escuchar cambios del sistema en tiempo real
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {

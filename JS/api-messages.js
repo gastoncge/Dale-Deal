@@ -87,6 +87,8 @@
    * Total de mensajes no leídos del usuario (para badge global).
    */
   async function getUnreadCount() {
+    // Sin sesión no hay mensajes: evitamos un 401 por cada página que se abre.
+    if (!localStorage.getItem('daledeal_token')) return 0;
     try {
       const res = await apiFetch('/messages/unread-count');
       return res.unread || 0;

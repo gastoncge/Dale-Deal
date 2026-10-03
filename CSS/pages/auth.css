@@ -34,7 +34,7 @@
 }
 
 .auth-logo {
-  height: 60px;
+  height: 96px;
   width: auto;
   filter: drop-shadow(var(--shadow-sm));
   transition: transform var(--transition-base);
@@ -540,7 +540,14 @@
   text-align: center;
   font-size: var(--font-size-xs);
   color: var(--gray-500);
+  /* 5 links: en celular bajan de renglón centrados, sin cortar un link */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 8px;
+  line-height: 1.6;
 }
+.auth-footer-links a { white-space: nowrap; }
 
 .auth-footer-links a {
   color: var(--gray-500);
@@ -651,7 +658,7 @@
 .auth-element-1 {
   width: 70px;
   height: 70px;
-  top: 34%;
+  top: 12%;  /* arriba del texto: en 34% tapaba la descripción */
   right: 10%;
   font-size: var(--font-size-xl);
   animation-delay: 0s;
@@ -660,7 +667,7 @@
 .auth-element-2 {
   width: 55px;
   height: 55px;
-  top: 72%;
+  top: 84%;  /* debajo de la lista: en 72% tapaba el último beneficio */
   left: 15%;
   font-size: var(--font-size-lg);
   animation-delay: 1.5s;

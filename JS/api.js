@@ -74,6 +74,11 @@ async function apiFetch(path, options = {}) {
     const err = new Error(friendlyError(res.status, errBody?.error));
     err.status = res.status;
     err.body   = errBody;
+    err.code   = errBody?.code;
+    // Cuenta sin DNI aprobado o sin plan Servicio: aviso con el paso a seguir.
+    if ((err.code === 'NOT_VERIFIED' || err.code === 'PLAN_REQUIRED') && options._background !== true) {
+      window.DaleDeal?.utils?.showAccessGate?.(err.code, errBody.error);
+    }
     // Auto-logout si el token expiró + flash + redirect a login.
     // Antes solo limpiaba el token y dejaba al usuario en el aire (la página
     // seguía rota porque su UI era para usuario loggeado). Ahora le avisamos
@@ -92,13 +97,13 @@ async function apiFetch(path, options = {}) {
       // request en background (ej. el polling de notificaciones — si redirige
       // por cada poll cuando token caducó, el user no puede ni ver el aviso).
       const path = window.location.pathname;
-      const onAuthPage = /\/(login|signup|recuperar-contrasena)\.html$/.test(path);
+      const onAuthPage = /\/(login|signup|recuperar-contrasena)(\.html)?$/.test(path);
       const isBackground = options._background === true;
       if (!onAuthPage && !isBackground) {
         const ret = encodeURIComponent(path + window.location.search);
         const loginUrl = path.includes('/HTML/')
           ? `./login.html?redirect=${ret}`
-          : `./HTML/login.html?redirect=${ret}`;
+          : `/login?redirect=${ret}`;
         // Pequeño defer para que el throw se propague y el caller pueda
         // limpiar antes de la navegación.
         setTimeout(() => { window.location.href = loginUrl; }, 100);
@@ -111,6 +116,18 @@ async function apiFetch(path, options = {}) {
   if (res.status === 204) return null;
   return res.json();
 }
+
+// Texto de usuarios: el backend lo guarda con & < > " ' escapados. Lo
+// devolvemos a lo que escribieron; al mostrarlo va con textContent o con
+// escapeHtml (nunca interpolado crudo en innerHTML).
+const decodeText = (v) => (v == null ? v : (window.DaleDeal?.utils?.decodeEntities?.(v) ?? v));
+
+// Los listados traen la descripción cortada a 160 caracteres (LEFT en el SQL)
+// y todavía escapada: el corte puede caer en medio de una entidad y dejar un
+// resto al final ("…Nuevo &l", "…&amp"). Se descarta antes de decodificar.
+const decodeDescription = (v) => decodeText(
+  v == null ? v : String(v).replace(/&(?:a|am|amp|l|lt|g|gt|q|qu|quo|quot|#|#3|#39|#x|#x2|#x27)?$/, '')
+);
 
 // =====================================================
 // TRANSFORMAR PRODUCTO (formato backend → formato frontend)
@@ -126,10 +143,10 @@ function transformProduct(p) {
 
   return {
     id: p.id,
-    title: p.title,
-    category: p.category_name || 'Sin categoría',
+    title: decodeText(p.title),
+    category: decodeText(p.category_name) || 'Sin categoría',
     subcategory: p.category_slug || '',
-    description: p.description || '',
+    description: decodeDescription(p.description) || '',
     price: parseFloat(p.price),
     originalPrice: null,
     discount: null,
@@ -138,10 +155,11 @@ function transformProduct(p) {
     soldCount: 0,
     stock: p.stock || 0,
     condition: p.condition || 'new',
-    location: p.location || 'Argentina',
+    location: decodeText(p.location) || 'Argentina',
     seller_id: p.seller_id,
-    seller_name: p.seller_name,
+    seller_name: decodeText(p.seller_name),
     seller_avatar: p.seller_avatar,
+    seller_badges: { verifiedIdentity: !!p.seller_verified_identity, verifiedProfessional: !!p.seller_verified_professional, badges: Array.isArray(p.seller_badges) ? p.seller_badges : [] },
     images: {
       main: mainImage,
       gallery: images.length > 0 ? images : [mainImage],
@@ -152,13 +170,16 @@ function transformProduct(p) {
     features: [],
     specifications: {},
     badges: (p.stock > 0 && p.stock < 5) ? ['Stock limitado'] : [],
-    shipping: { free: parseFloat(p.price) > 50000 },
+    postBadges: window.DaleDeal.utils.parsePostBadges(p.badges),
+    // "Envío gratis" solo si el vendedor ofrece envío y no lo cobra (antes se
+    // inventaba para todo lo que costara más de $50.000).
+    shipping: { free: !!p.shipping_required && !!p.offers_delivery && p.shipping_cost != null && parseFloat(p.shipping_cost) === 0 },
     // Campos de envío del sprint logística (migración 003)
     shipping_required: !!p.shipping_required,
     offers_delivery:   !!p.offers_delivery,
     offers_pickup:     !!p.offers_pickup,
     shipping_cost:     p.shipping_cost != null ? parseFloat(p.shipping_cost) : null,
-    pickup_address:    p.pickup_address || null,
+    pickup_address:    decodeText(p.pickup_address) || null,
   };
 }
 
@@ -177,12 +198,18 @@ function transformService(s) {
   const hasProvider = !!(s.provider_name || s.provider_avatar);
   const provider = hasProvider ? {
     id:           s.provider_id,
-    name:         s.provider_name,
+    name:         decodeText(s.provider_name),
     avatar:       s.provider_avatar,
     phone:        s.provider_phone,
-    location:     s.provider_location,
+    location:     decodeText(s.provider_location),
     memberSince:  s.provider_since ? String(s.provider_since).slice(0, 4) : null,
-    verified:     true,
+    // Insignias reales del backend (migrations 013/014). Solo true si el equipo
+    // aprobó la verificación; nunca inventamos confianza.
+    verifiedIdentity:     !!s.provider_verified_identity,
+    verifiedProfessional: !!s.provider_verified_professional,
+    verifiedBackground:   !!s.provider_verified_background,
+    verified:     !!(s.provider_verified_identity || s.provider_verified_professional || s.provider_verified_background),
+    badges:       Array.isArray(s.provider_badges) ? s.provider_badges : [],
   } : null;
 
   // Galería REAL del backend — si el servicio tiene 1 sola imagen, no caemos
@@ -192,8 +219,8 @@ function transformService(s) {
 
   return {
     id: s.id,
-    title: s.title,
-    description: s.description || '',
+    title: decodeText(s.title),
+    description: decodeDescription(s.description) || '',
     category: s.category_slug || 'otros-servicios',
     price: parseFloat(s.price_from) || 0,
     priceFrom: parseFloat(s.price_from) || null,
@@ -201,13 +228,19 @@ function transformService(s) {
     priceType: s.price_type || 'fixed',
     rating: realRating,
     reviewCount: realCount,
-    location: s.location || 'Argentina',
+    location: decodeText(s.location) || 'Argentina',
     image: images[0] || 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=400&h=300&fit=crop',
     gallery,                          // ← array real o null (no más mock)
     badges: [],
+    postBadges: window.DaleDeal.utils.parsePostBadges(s.badges),
+    // Certificaciones (cards y filtros de /servicios). "Certificado" = título
+    // aprobado por el equipo; garantía y 24/7 los marca el prestador (020).
+    certified:    !!s.provider_verified_professional,
+    hasWarranty:  !!s.has_warranty,
+    available247: !!s.available_24_7,
     provider,                         // ← objeto real o null
     provider_id: s.provider_id,       // campos planos para retrocompat
-    provider_name: s.provider_name,
+    provider_name: decodeText(s.provider_name),
     featured: true,
   };
 }
@@ -216,12 +249,26 @@ function transformService(s) {
 // PRODUCTOS
 // =====================================================
 
-async function fetchProducts(filters = {}) {
+// El backend devuelve 20 por defecto y hasta 100 por página. Con all = true
+// (el catálogo) se piden las páginas siguientes hasta traer todo (tope: 10
+// páginas), para que el listado no se corte al pasar las 100 publicaciones.
+async function fetchPaged(path, filters, all) {
+  const rows = [];
+  for (let page = 1; page <= (all ? 10 : 1); page++) {
+    const params = new URLSearchParams({ limit: 100, ...filters, ...(all ? { page } : {}) }).toString();
+    const data = await apiFetch(`${path}?${params}`);
+    const batch = data.data || [];
+    rows.push(...batch);
+    if (batch.length < 100) break;
+  }
+  return rows;
+}
+
+async function fetchProducts(filters = {}, { all = false } = {}) {
   try {
-    const params = new URLSearchParams(filters).toString();
-    const data = await apiFetch(`/products${params ? '?' + params : ''}`);
-    DaleDeal.log(`${(data.data || []).length} productos cargados desde la API`);
-    return (data.data || []).map(transformProduct);
+    const rows = await fetchPaged('/products', filters, all);
+    DaleDeal.log(`${rows.length} productos cargados desde la API`);
+    return rows.map(transformProduct);
   } catch (error) {
     DaleDeal.error('Error al cargar productos:', error.message);
     throw new Error('No se pudo conectar con el servidor. Verificá tu conexión.');
@@ -259,11 +306,9 @@ async function createProduct(productData) {
 // SERVICIOS
 // =====================================================
 
-async function fetchServices(filters = {}) {
+async function fetchServices(filters = {}, { all = false } = {}) {
   try {
-    const params = new URLSearchParams(filters).toString();
-    const data = await apiFetch(`/services${params ? '?' + params : ''}`);
-    return (data.data || []).map(transformService);
+    return (await fetchPaged('/services', filters, all)).map(transformService);
   } catch (error) {
     DaleDeal.error('Error al cargar servicios:', error.message);
     throw error;

@@ -11,6 +11,31 @@
 // (Railway: daledeal-backend-production.up.railway.app).
 const __HOST = window.location.hostname;
 const __IS_LOCAL = __HOST === "localhost" || __HOST === "127.0.0.1" || __HOST === "";
+// Carruseles .hs: las flechas avanzan una "página" y se apagan en los bordes.
+// Delegado en document, así sirve para carruseles que se llenan después.
+(function () {
+  const sync = (track) => {
+    const wrap = track.closest('.hs');
+    if (!wrap) return;
+    const max = track.scrollWidth - track.clientWidth - 2;
+    wrap.querySelector('[data-hs="prev"]')?.toggleAttribute('disabled', track.scrollLeft <= 2);
+    wrap.querySelector('[data-hs="next"]')?.toggleAttribute('disabled', track.scrollLeft >= max);
+  };
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-hs]');
+    const track = btn?.closest('.hs')?.querySelector('.hs-track');
+    if (!track) return;
+    track.scrollBy({ left: (btn.dataset.hs === 'next' ? 1 : -1) * track.clientWidth, behavior: 'smooth' });
+  });
+  document.addEventListener('scroll', (e) => {
+    if (e.target.classList?.contains('hs-track')) sync(e.target);
+  }, true);
+  const syncAll = () => document.querySelectorAll('.hs-track').forEach(sync);
+  new MutationObserver(() => requestAnimationFrame(syncAll))
+    .observe(document.documentElement, { childList: true, subtree: true });
+  window.addEventListener('resize', syncAll);
+})();
+
 window.DaleDeal = {
   CONFIG: {
     DEBUG: __IS_LOCAL,
@@ -68,6 +93,44 @@ DaleDeal.utils.formatPrice = (price) => {
 
 // Alias usado en home.js y servicios.html
 DaleDeal.utils.formatCurrency = DaleDeal.utils.formatPrice;
+
+/**
+ * Calcula el mejor plan de cuotas sin interés para un precio.
+ * Elige el MAYOR número de cuotas (de [max,9,6,3]) cuya cuota mensual siga
+ * siendo >= minMonthly, para no mostrar "12 cuotas de $42". Si ni la opción
+ * más baja llega al mínimo, devuelve { show:false }.
+ *
+ * Fuente única de verdad — usar en card (home.js), ficha de producto y servicio.
+ * (En la Etapa 2, el nº de cuotas saldrá de la config por publicación + Mercado Pago.)
+ *
+ * @param {number} price
+ * @param {object} [opts] - { max=12, minMonthly=1000 }
+ * @returns {{show:boolean, count?:number, monthly?:number, monthlyFormatted?:string}}
+ */
+// "N cuotas sin interés" es una promesa: solo es cierta si la cuenta de Mercado
+// Pago de Dale Deal absorbe el interés (con interés, la Res. 915/2017 exige
+// informar CFT y TEA). Apagado hasta que se confirme; con true vuelve en toda
+// la web (cards, ficha de producto y de servicio).
+DaleDeal.utils.CUOTAS_SIN_INTERES = false;
+
+DaleDeal.utils.formatInstallments = (price, opts = {}) => {
+  if (!DaleDeal.utils.CUOTAS_SIN_INTERES) return { show: false };
+  const max = opts.max || 12;
+  const minMonthly = opts.minMonthly || 1000;
+  if (!price || price <= 0) return { show: false };
+  for (const n of [max, 9, 6, 3].filter((c) => c <= max)) {
+    const monthly = price / n;
+    if (monthly >= minMonthly) {
+      return {
+        show: true,
+        count: n,
+        monthly,
+        monthlyFormatted: DaleDeal.utils.formatPrice(Math.round(monthly)),
+      };
+    }
+  }
+  return { show: false };
+};
 
 // ===== UTILIDADES DE VALIDACIÓN =====
 DaleDeal.utils.calculatePasswordStrength = (password) => {
@@ -218,7 +281,7 @@ DaleDeal.utils.showToast = (message, type, config) => {
       <div class="d-flex">
         <div class="toast-body">
           <i class="bi bi-${icon} me-2"></i>
-          ${message}
+          ${DaleDeal.utils.escapeHtml(String(message ?? ''))}
         </div>
         <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
       </div>
@@ -264,7 +327,7 @@ DaleDeal.utils.showAlert = (message, type, config) => {
     <div class="d-flex align-items-center">
       <i class="bi bi-${icon} me-2"></i>
       <div class="flex-grow-1">
-        <div>${message}</div>
+        <div>${DaleDeal.utils.escapeHtml(String(message ?? ''))}</div>
       </div>
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
     </div>
@@ -382,17 +445,86 @@ DaleDeal.utils.getBootstrapAlertClass = (type) => {
 
 // ===== UTILIDADES DE SEGURIDAD =====
 /**
+ * El backend guarda el texto de los usuarios con & < > " ' escapados
+ * (sanitizeBody). Esto lo devuelve a lo que escribió el usuario, para mostrarlo
+ * con textContent sin que se vea "&amp;" o "&quot;". Solo esas 5 entidades, en
+ * el orden inverso al del backend (&amp; al final).
+ */
+DaleDeal.utils.decodeEntities = (str) => {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#0?39;/g, "'")
+    .replace(/&amp;/g, '&');
+};
+
+/**
  * Escapa caracteres HTML para evitar XSS en interpolaciones de innerHTML.
  * Usar siempre que se inserte texto de usuario en innerHTML.
+ * Decodifica primero: así un texto que ya vino escapado de la API no se ve
+ * como "&amp;amp;" y uno crudo queda igual de protegido.
  */
 DaleDeal.utils.escapeHtml = (str) => {
-  if (typeof str !== 'string') return '';
-  return str
+  if (str == null || typeof str === 'object') return '';
+  return DaleDeal.utils.decodeEntities(str)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+};
+
+/**
+ * Descripciones del editor (Quill): llegan como HTML y, desde la API, con las
+ * entidades escapadas. Se decodifican y se sanitizan con DOMPurify dejando solo
+ * formato básico. Sin DOMPurify se muestran como texto plano (nunca HTML crudo).
+ */
+DaleDeal.utils.renderRichText = (el, value) => {
+  if (!el) return;
+  const html = DaleDeal.utils.decodeEntities(value);
+  el.style.whiteSpace = 'pre-line';
+  if (window.DOMPurify) {
+    el.innerHTML = window.DOMPurify.sanitize(html, {
+      ALLOWED_TAGS: ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 's', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'blockquote', 'a'],
+      ALLOWED_ATTR: ['href'],
+      ALLOWED_URI_REGEXP: /^https?:\/\//i,
+    });
+    el.querySelectorAll('a').forEach((a) => {
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer nofollow ugc';
+    });
+    return;
+  }
+  // Documento inerte: no ejecuta scripts ni carga imágenes.
+  const doc = new DOMParser().parseFromString(
+    html.replace(/<\/(p|li|h[1-6]|blockquote)>|<br\s*\/?>/gi, '$&\n'), 'text/html');
+  el.textContent = (doc.body.textContent || '').replace(/\n{3,}/g, '\n\n').trim();
+};
+
+/**
+ * Texto plano de una descripción del editor (para extractos y meta tags).
+ */
+DaleDeal.utils.htmlToText = (value) => {
+  const html = DaleDeal.utils.decodeEntities(value);
+  if (!/[<&]/.test(html)) return html.trim();
+  const doc = new DOMParser().parseFromString(html.replace(/<\/(p|li|h[1-6])>|<br\s*\/?>/gi, "$& "), "text/html");
+  return (doc.body.textContent || "").replace(/\s+/g, " ").trim();
+};
+
+/**
+ * Avatar con iniciales generado en el navegador (SVG en data URI). Antes se
+ * pedía a ui-avatars.com: un tercero recibía el nombre de cada usuario y, si
+ * estaba lento o caído, las páginas tardaban en terminar de cargar.
+ */
+DaleDeal.utils.initialsAvatar = (name, bg = '#d63031') => {
+  const initials = String(name || 'U').trim().split(/\s+/).slice(0, 2)
+    .map((w) => w[0] || '').join('').toUpperCase() || 'U';
+  // width/height: sin tamaño propio, un <img> sin CSS lo estira a todo el ancho disponible.
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><rect width="80" height="80" fill="${bg}"/>`
+    + `<text x="40" y="40" dy=".35em" text-anchor="middle" fill="#fff" font-family="Inter,Arial,sans-serif" font-size="34" font-weight="700">${DaleDeal.utils.escapeHtml(initials)}</text></svg>`;
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 };
 
 // ===== UTILIDADES DE UI =====
@@ -415,6 +547,161 @@ DaleDeal.utils.renderStars = (rating) => {
 
 // ===== FALLBACK DE IMAGEN ROTA =====
 // SVG placeholder mostrado cuando una imagen de producto/servicio no carga
+/**
+ * Carteles de la publicación (hasta 2, los carga el vendedor en Publicar):
+ * [{ text, color }] → HTML para poner adentro de .product-image-container.
+ * El color solo pasa si es hex, para que no se cuele CSS.
+ */
+DaleDeal.utils.renderPostBadges = function (list) {
+  if (!Array.isArray(list) || !list.length) return '';
+  const esc = (v) => DaleDeal.utils.escapeHtml(String(v ?? ''));
+  const spans = list.slice(0, 2)
+    .filter((b) => b && b.text)
+    .map((b) => {
+      const color = /^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(b.color || '') ? b.color : '#ef4444';
+      return `<span class="post-badge" style="background:${color}">${esc(b.text)}</span>`;
+    }).join('');
+  return spans ? `<div class="post-badges">${spans}</div>` : '';
+};
+
+/**
+ * Renglón de las cards con el estado (Nuevo / Usado) y cómo llega el
+ * producto: envío gratis / con costo, retiro, o "a coordinar" cuando el
+ * vendedor no cargó envío (lo arreglan por chat).
+ * Usa los campos de transformProduct (condition, shipping_required…).
+ */
+DaleDeal.utils.renderCardTags = function (p) {
+  if (!p) return '';
+  const condition = p.condition === 'used'
+    ? '<span class="card-tag-condition">Usado</span>'
+    : '<span class="card-tag-condition is-new">Nuevo</span>';
+
+  let icon = 'bi-chat-dots';
+  let text = 'Entrega a coordinar';
+  let cls = '';
+  if (p.shipping_required && p.offers_delivery) {
+    const cost = Number(p.shipping_cost) || 0;
+    icon = 'bi-truck';
+    text = cost > 0 ? `Envío ${DaleDeal.utils.formatCurrency(cost)}` : 'Envío gratis';
+    if (cost === 0) cls = ' is-free';
+    if (p.offers_pickup) text += ' · o retiro';
+  } else if (p.shipping_required && p.offers_pickup) {
+    icon = 'bi-shop';
+    text = 'Retiro en persona';
+  }
+  const shipping = `<span class="card-tag-shipping${cls}"><i class="bi ${icon}" aria-hidden="true"></i><span>${text}</span></span>`;
+
+  return `<div class="product-card-tags">${condition}${shipping}</div>`;
+};
+
+/**
+ * Certificaciones de un servicio para las cards: mismas que los filtros de
+ * /servicios (Certificado, Con garantía, Disponible 24/7). Usa los campos de
+ * transformService (certified, hasWarranty, available247).
+ */
+DaleDeal.utils.renderServiceFeatures = function (s) {
+  if (!s) return '';
+  const items = [];
+  if (s.certified)    items.push(['is-certified', 'bi-patch-check-fill', 'Certificado']);
+  if (s.hasWarranty)  items.push(['is-warranty',  'bi-shield-fill-check', 'Con garantía']);
+  if (s.available247) items.push(['is-247',       'bi-clock-fill',        'Disponible 24/7']);
+  if (!items.length) return '';
+  return `<div class="service-certs">${items.map(([cls, icon, text]) =>
+    `<span class="service-feature ${cls}"><i class="bi ${icon}" aria-hidden="true"></i>${text}</span>`
+  ).join('')}</div>`;
+};
+
+/**
+ * Aviso cuando el backend frena una acción por la cuenta:
+ *  - NOT_VERIFIED: sin DNI aprobado no se compra, vende ni contrata.
+ *  - PLAN_REQUIRED: sin plan Servicio activo no se publican servicios.
+ * Lo dispara apiFetch con el `code` de la respuesta; también se puede llamar
+ * antes de intentar (publicar.js lo usa al cargar).
+ */
+DaleDeal.utils.showAccessGate = function (code, message) {
+  const inHtml = window.location.pathname.includes('/HTML/');
+  const link = (page, hash) => (inHtml ? `./${page}.html` : `/${page}`) + hash;
+  const cfg = code === 'PLAN_REQUIRED'
+    ? { icon: 'bi-megaphone-fill', title: 'Necesitás el plan Servicio',
+        text: message || 'Para publicar servicios necesitás el plan Servicio activo ($3.000 por mes).',
+        cta: 'Ver el plan Servicio', href: link('publicar', '?tab=servicio#planes-servicio') }
+    : { icon: 'bi-person-badge', title: 'Tu cuenta todavía no está verificada',
+        text: message || 'Cuando aprobemos tu DNI vas a poder comprar, vender y contratar.',
+        cta: 'Ver mi verificación', href: link('mi-cuenta', '#verificacion') };
+
+  document.getElementById('dd-access-gate')?.remove();
+  const esc = (v) => DaleDeal.utils.escapeHtml(String(v ?? ''));
+  const wrap = document.createElement('div');
+  wrap.id = 'dd-access-gate';
+  wrap.className = 'dd-gate-backdrop';
+  wrap.innerHTML = `
+    <div class="dd-gate" role="dialog" aria-modal="true" aria-labelledby="dd-gate-title">
+      <i class="bi ${cfg.icon} dd-gate-icon" aria-hidden="true"></i>
+      <h3 id="dd-gate-title">${esc(cfg.title)}</h3>
+      <p>${esc(cfg.text)}</p>
+      <div class="dd-gate-actions">
+        <a class="btn btn-primary" href="${esc(cfg.href)}">${esc(cfg.cta)}</a>
+        <button type="button" class="btn btn-outline-secondary" data-close>Ahora no</button>
+      </div>
+    </div>`;
+  const close = () => wrap.remove();
+  wrap.addEventListener('click', (e) => { if (e.target === wrap || e.target.closest('[data-close]')) close(); });
+  document.addEventListener('keydown', function onKey(e) {
+    if (e.key === 'Escape') { close(); document.removeEventListener('keydown', onKey); }
+  });
+  document.body.appendChild(wrap);
+  wrap.querySelector('.btn-primary')?.focus();
+};
+
+/** Normaliza los carteles que vienen de la API (texto escapado por el backend). */
+DaleDeal.utils.parsePostBadges = function (raw) {
+  if (!Array.isArray(raw)) return [];
+  const decode = DaleDeal.utils.decodeEntities || ((t) => { const el = document.createElement('textarea'); el.innerHTML = t; return el.value; });
+  return raw.filter((b) => b && b.text).slice(0, 2).map((b) => ({ text: decode(String(b.text)), color: b.color }));
+};
+
+/**
+ * Insignias de usuario. "verificado" y "titulo" salen de la verificación
+ * aprobada (DNI / título); el resto las asigna un admin (backend:
+ * USER_BADGES en adminController.js — mismas claves).
+ */
+DaleDeal.utils.USER_BADGES = {
+  verificado:         { label: 'Verificado',            icon: 'bi-patch-check-fill', color: '#1d9bf0', desc: 'Validó su identidad con DNI' },
+  titulo:             { label: 'Título verificado',     icon: 'bi-mortarboard-fill', color: '#7c3aed', desc: 'Comprobamos que su título coincide con su DNI' },
+  ceo:                { label: 'CEO',                   icon: 'bi-star-fill',        color: '#111827', desc: 'CEO de Dale Deal' },
+  fundador:           { label: 'Fundador',              icon: 'bi-gem',              color: '#d63031', desc: 'Fundador de Dale Deal' },
+  equipo:             { label: 'Equipo Dale Deal',      icon: 'bi-people-fill',      color: '#d63031', desc: 'Parte del equipo de Dale Deal' },
+  vendedor_fundador:  { label: 'Vendedor Fundador',     icon: 'bi-award-fill',       color: '#f59e0b', desc: 'De los primeros vendedores de Dale Deal' },
+  empresa_verificada: { label: 'Empresa verificada',    icon: 'bi-building-check',   color: '#0ea5e9', desc: 'Validamos los datos de la empresa' },
+  mejor_vendedor:     { label: 'Mejor vendedor',        icon: 'bi-trophy-fill',      color: '#f59e0b', desc: 'Destacado por sus ventas y reseñas' },
+  mejor_servicio_mes: { label: 'Mejor servicio del mes', icon: 'bi-stars',           color: '#10b981', desc: 'Elegido el mejor servicio del mes' },
+  top_ventas:         { label: 'Top ventas',            icon: 'bi-graph-up-arrow',   color: '#ef4444', desc: 'Entre los que más venden' },
+  respuesta_rapida:   { label: 'Responde rápido',       icon: 'bi-lightning-charge-fill', color: '#f97316', desc: 'Contesta las consultas enseguida' },
+  envios_rapidos:     { label: 'Envíos rápidos',        icon: 'bi-truck',            color: '#14b8a6', desc: 'Despacha antes de las 48 hs' },
+};
+
+/**
+ * Insignias de un usuario: muestra la principal (Verificado si lo está) y un
+ * "+N"; al pasar el mouse (o tocar/enfocar) se abre la lista completa.
+ * user = { verifiedIdentity, verifiedProfessional, badges: ['fundador', …] }
+ */
+DaleDeal.utils.renderUserBadges = function (user) {
+  if (!user) return '';
+  const C = DaleDeal.utils.USER_BADGES;
+  const keys = [];
+  if (user.verifiedIdentity) keys.push('verificado');
+  if (user.verifiedProfessional) keys.push('titulo');
+  (Array.isArray(user.badges) ? user.badges : []).forEach((k) => { if (C[k] && !keys.includes(k)) keys.push(k); });
+  if (!keys.length) return '';
+  const main = C[keys[0]];
+  const rest = keys.length - 1;
+  const items = keys.map((k) => `<li><i class="bi ${C[k].icon}" style="color:${C[k].color}" aria-hidden="true"></i><span><strong>${C[k].label}</strong><small>${C[k].desc}</small></span></li>`).join('');
+  return `<span class="user-badges" tabindex="0" aria-label="Insignias: ${keys.map((k) => C[k].label).join(', ')}">
+      <span class="user-badge-main" style="--ub:${main.color}"><i class="bi ${main.icon}" aria-hidden="true"></i>${main.label}</span>${rest ? `<span class="user-badge-more">+${rest}</span>` : ''}
+      <span class="user-badges-pop" role="tooltip"><span class="user-badges-pop-title">Insignias</span><ul>${items}</ul></span>
+    </span>`;
+};
+
 DaleDeal.utils.PLACEHOLDER_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%23f0f0f0'/%3E%3Crect x='150' y='90' width='100' height='80' rx='8' fill='%23d0d0d0'/%3E%3Ccircle cx='175' cy='115' r='12' fill='%23b0b0b0'/%3E%3Cpolygon points='150,170 190,130 220,155 250,120 300,170' fill='%23b0b0b0'/%3E%3Ctext x='200' y='210' text-anchor='middle' font-family='sans-serif' font-size='14' fill='%23999'%3EImagen no disponible%3C/text%3E%3C/svg%3E";
 
 /**
@@ -486,8 +773,8 @@ window.goToProduct = function(productId) {
   if (path.includes('producto.html')) {
     window.location.href = window.location.pathname + '?id=' + productId;
   } else if (path.includes('/HTML/')) {
-    window.location.href = './producto.html?id=' + productId;
+    window.location.href = '/producto?id=' + productId;
   } else {
-    window.location.href = './HTML/producto.html?id=' + productId;
+    window.location.href = '/producto?id=' + productId;
   }
 };

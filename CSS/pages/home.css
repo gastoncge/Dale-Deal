@@ -14,20 +14,61 @@
   display: flex;
   align-items: center;
   position: relative;
-  padding: var(--spacing-12) 0;
+  padding: var(--spacing-8) 0;
 }
 
+/* Carrusel más compacto (pedido del equipo: "achicá el carrusel").
+   Antes: 600px@768 / 700px@1024 con padding spacing-16/20 — ocupaba toda
+   la pantalla. Ahora ~30% más bajo, deja ver el contenido de abajo antes. */
 @media (min-width: 768px) {
   .hero-slide {
-    min-height: 600px;
-    padding: var(--spacing-16) 0;
+    min-height: 420px;
+    padding: var(--spacing-10) 0;
   }
 }
 
 @media (min-width: 1024px) {
   .hero-slide {
-    min-height: 700px;
-    padding: var(--spacing-20) 0;
+    min-height: 480px;
+    padding: var(--spacing-12) 0;
+  }
+}
+
+/* Altura pareja entre slides. Cada slide medía distinto (según cuánto texto
+   lleva y cómo se parte en cada pantalla) y, al rotar, el carrusel crecía o se
+   achicaba y empujaba la página. Todos los slides se apilan en la misma celda
+   de una grilla: la celda mide lo que el slide más alto, en cualquier ancho.
+   Bootstrap los sigue moviendo con transform; los que no están en pantalla
+   quedan invisibles en vez de display:none. */
+#heroCarousel .carousel-inner {
+  display: grid;
+}
+
+#heroCarousel .carousel-item {
+  grid-area: 1 / 1;
+  display: block;
+  float: none;
+  margin-right: 0;
+  visibility: hidden;
+}
+
+#heroCarousel .carousel-item.active,
+#heroCarousel .carousel-item-next,
+#heroCarousel .carousel-item-prev {
+  visibility: visible;
+}
+
+#heroCarousel .hero-slide {
+  height: 100%;
+}
+
+/* Hasta 991px el texto y la foto van apilados. Sin el gutter de Bootstrap: el
+   reset global `* { max-width: 100% }` (responsive.css) no deja que .row se
+   pase del contenedor, y todo quedaba ~11px corrido a la izquierda en vez de
+   centrado. */
+@media (max-width: 991px) {
+  #heroCarousel .hero-slide > .container > .row {
+    --bs-gutter-x: 0;
   }
 }
 
@@ -205,6 +246,53 @@
   gap: var(--spacing-4);
   flex-wrap: wrap;
   margin-bottom: var(--spacing-8);
+}
+
+/* Botón secundario del hero ("Ver servicios"). El btn-outline-light de
+ * Bootstrap se perdía sobre el fondo naranja: le damos fondo translúcido
+ * "glass" + borde más marcado para que se lea bien. El selector por id gana
+ * por especificidad sobre .btn-outline-light (no hace falta !important). */
+#heroServicesBtn {
+  background-color: rgba(255, 255, 255, 0.10);
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  color: #fff;
+  border-radius: 50rem;
+  position: relative;
+  overflow: hidden;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition: background-color var(--transition-base),
+    border-color var(--transition-base);
+}
+
+/* Shine sweep en hover (mismo efecto que .btn-primary, para que combinen). */
+#heroServicesBtn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transition: left 0.5s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+#heroServicesBtn:hover::before {
+  left: 100%;
+}
+
+#heroServicesBtn:hover,
+#heroServicesBtn:focus-visible {
+  background-color: rgba(255, 255, 255, 0.22);
+  border-color: #fff;
+  color: #fff;
 }
 
 .hero-image img {
@@ -924,6 +1012,15 @@
   max-width: calc(33.333% - var(--spacing-4));
 }
 
+/* ===== VISTOS RECIENTEMENTE =====
+   Es un carrusel .hs (components.css) con las mismas cards que "Lo más visto":
+   las cards llevan descripción, estrellas, ubicación y carteles. */
+#recentlyViewedGrid .rv-card {
+  min-height: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
 /* ===== SERVICE CARDS EN HOME ===== */
 .services-section .services-grid {
   display: grid;
@@ -993,7 +1090,11 @@
   width: auto !important;
 }
 
-/* ===== RESPONSIVE PARA CARDS EN HOME ===== */
+/* ===== RESPONSIVE PARA CARDS EN HOME =====
+   OJO: hasta 991px la grilla de productos la arma responsive.css (bloque
+   "CATÁLOGO EN CELULAR": 2 tarjetas por fila, .products-row con
+   display:contents). Las reglas de .products-row de acá abajo quedan solo como
+   respaldo y los comentarios que hablan de "1 columna" son de antes de eso. */
 @media (max-width: 1200px) {
   .services-section .services-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1041,7 +1142,7 @@
     font-size: var(--font-size-lg);
   }
 
-  /* Servicios: pasar a 1 columna a 576px, no a 768px */
+  /* Servicios: siguen de a 2 por fila (también en celular) */
   .services-section .service-card {
     min-height: 380px;
   }
@@ -1064,9 +1165,11 @@
 }
 
 @media (max-width: 576px) {
+  /* 2 por fila también en celular (antes 1); la tarjeta compacta está en
+     responsive.css. */
   .services-section .services-grid {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-4);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-3);
   }
 }
 
@@ -1075,6 +1178,13 @@
   .products-section .products-row {
     gap: var(--spacing-4);
     margin-bottom: var(--spacing-4);
+  }
+
+  /* Pisa el calc(50%) del bloque ≤768 (misma especificidad, declarado después).
+     Sin esto, las cards quedaban a media pantalla apiladas en columna. */
+  .products-section .products-row .product-card {
+    max-width: 100%;
+    flex: 1 1 auto;
   }
 
   /* En 1 columna el ancho es 100%, no necesitamos min-height artificial */
@@ -1294,4 +1404,174 @@
   opacity: 1 !important;
   visibility: visible !important;
   transform: none !important;
+}
+
+/* ===== CÓMO FUNCIONA (home) =====
+ * Mismo lenguaje visual que la sección "how it works" de services.css, pero
+ * en formato tarjeta y replicado acá porque el home no carga services.css. */
+.how-it-works-section {
+  padding: var(--spacing-16) 0;
+  background: linear-gradient(135deg, var(--gray-50), var(--white));
+}
+
+.how-it-works-section .section-subtitle {
+  font-size: var(--font-size-lg);
+  color: var(--gray-600);
+}
+
+/* Pestañas de "Cómo funciona" */
+.how-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-2);
+  margin: 0 auto var(--spacing-4);
+}
+.how-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+  color: var(--gray-700);
+  font-weight: 700;
+  font-size: .92rem;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.how-tab:hover { border-color: var(--primary-red); color: var(--primary-red); }
+.how-tab.active { background: var(--gradient-primary); border-color: transparent; color: #fff; }
+.how-panel-lead {
+  text-align: center;
+  color: var(--gray-600);
+  margin: 0 auto var(--spacing-8);
+}
+@media (max-width: 575px) {
+  .how-tabs { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; padding-bottom: 4px; scrollbar-width: none; }
+  .how-tabs::-webkit-scrollbar { display: none; }
+  .how-tab { flex: none; padding: 8px 14px; font-size: .85rem; }
+}
+
+.how-it-works-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: var(--spacing-6);
+  max-width: 1160px;
+  margin: 0 auto;
+}
+
+.how-it-works-card {
+  position: relative;
+  text-align: center;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-2xl);
+  padding: var(--spacing-8) var(--spacing-6);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-base),
+    box-shadow var(--transition-base), border-color var(--transition-base);
+}
+
+.how-it-works-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--primary-red-light);
+}
+
+.how-step-number {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gradient-primary);
+  color: #fff;
+  border-radius: 50%;
+  font-weight: 800;
+  box-shadow: var(--shadow-md);
+}
+
+.how-step-icon {
+  width: 72px;
+  height: 72px;
+  margin: var(--spacing-4) auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: var(--primary-red);
+  background: var(--primary-yellow-light);
+  border-radius: 50%;
+}
+
+.how-step-title {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: var(--spacing-2);
+}
+
+.how-step-description {
+  color: var(--gray-600);
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+/* ===== A) Títulos con degradé animado =====
+ * El .accent de los títulos de sección fluye con el degradé de marca
+ * (naranja→rojo). Solo background-position se anima (barato para la GPU).
+ * El guard global de prefers-reduced-motion lo frena automáticamente. */
+.section-title .accent {
+  background: linear-gradient(
+    90deg,
+    var(--primary-yellow),
+    var(--primary-red),
+    var(--primary-yellow)
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: accentGradientFlow 6s linear infinite;
+}
+
+@keyframes accentGradientFlow {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* ===== B) Hover vivo en las cards "Cómo funciona" =====
+ * Ícono que hace un pop (escala + leve giro) y anillo pulsante en el número. */
+.how-step-icon {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background-color 0.35s ease, color 0.35s ease;
+}
+
+.how-it-works-card:hover .how-step-icon {
+  transform: scale(1.12) rotate(-6deg);
+  background: var(--primary-red-light);
+  color: var(--primary-red);
+}
+
+/* Aro que pulsa al pasar el mouse: box-shadow en el mismo círculo, así
+ * queda siempre centrado (el ::after escalado se veía corrido/ovalado). */
+.how-it-works-card:hover .how-step-number {
+  animation: stepRingPulse 1.3s ease-out infinite;
+}
+
+@keyframes stepRingPulse {
+  0% {
+    box-shadow: var(--shadow-md), 0 0 0 0 rgba(255, 198, 41, 0.75);
+  }
+  100% {
+    box-shadow: var(--shadow-md), 0 0 0 14px rgba(255, 198, 41, 0);
+  }
 }

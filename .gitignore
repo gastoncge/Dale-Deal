@@ -9,3 +9,11 @@ dist/
 test-results/
 playwright-report/
 .playwright/
+
+# Repos que viven adentro de la carpeta del proyecto (el backend y copias
+# viejas). El 15/04 entraron al repo como "submódulos" sin .gitmodules y desde
+# entonces cada publicación de GitHub Pages fallaba. No van en este repo.
+/dale-deal-backend/
+/dale-deal-front/
+/dale-deal-gaston/
+/Dale-Deal-main 2/

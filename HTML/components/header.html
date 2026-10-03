@@ -10,8 +10,7 @@
   <div class="container-fluid px-4">
     <!-- Logo -->
     <a class="navbar-brand" href="./index.html" id="homeLink" data-aos="fade-right">
-      <img src="./IMG/LOGO-2.png" alt="Dale Deal" class="logo-navbar" id="logoImage" />
-      <span class="brand-text">DALE DEAL</span>
+      <img src="./IMG/logo-nav.png" alt="Dale Deal" class="logo-navbar" id="logoImage" />
     </a>
 
     <!-- Hamburger (visible < 768px, oculto en desktop con d-md-none).
@@ -78,6 +77,12 @@
         <button class="theme-toggle" id="themeToggle" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">
           <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
         </button>
+      </div>
+      <!-- Mi Centro -->
+      <div class="action-item d-none d-md-flex">
+        <a href="./mi-cuenta.html" class="action-btn" id="miCentroBtn" title="Mi Centro" aria-label="Ir a Mi Centro">
+          <i class="bi bi-grid-fill" aria-hidden="true"></i>
+        </a>
       </div>
 
       <!-- Notifications -->
@@ -187,7 +192,7 @@
           title="Mi cuenta"
         >
           <img
-            src="https://ui-avatars.com/api/?name=U&background=d63031&color=fff&size=80&font-size=0.5&bold=true"
+            src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2080%2080%22%3E%3Crect%20width%3D%2280%22%20height%3D%2280%22%20fill%3D%22%23d63031%22%2F%3E%3Ctext%20x%3D%2240%22%20y%3D%2240%22%20dy%3D%22.35em%22%20text-anchor%3D%22middle%22%20fill%3D%22%23fff%22%20font-family%3D%22Inter%2CArial%2Csans-serif%22%20font-size%3D%2234%22%20font-weight%3D%22700%22%3EU%3C%2Ftext%3E%3C%2Fsvg%3E"
             alt="Mi perfil"
             class="profile-image"
             id="profileAvatar"
@@ -207,6 +212,11 @@
           <li>
             <a class="dropdown-item" href="./notificaciones.html#favoritos" id="favoritesLink">
               <i class="bi bi-heart me-2"></i>Favoritos
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="./mis-publicaciones.html">
+              <i class="bi bi-collection me-2"></i>Mis Publicaciones
             </a>
           </li>
           <li>
@@ -264,6 +274,10 @@
       <a href="./notificaciones.html#favoritos" class="nav-mobile-link">
         <i class="bi bi-heart" aria-hidden="true"></i>
         Favoritos
+      </a>
+      <a href="./mis-publicaciones.html" class="nav-mobile-link">
+        <i class="bi bi-collection" aria-hidden="true"></i>
+        Mis Publicaciones
       </a>
       <a href="./mis-ventas.html" class="nav-mobile-link">
         <i class="bi bi-bag-check" aria-hidden="true"></i>

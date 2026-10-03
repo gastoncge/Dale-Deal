@@ -17,6 +17,9 @@
       ? `#loginLink { display: none !important; }`
       : `.profile-dropdown, #logoutBtn { display: none !important; }
          .profile-name { visibility: hidden; }`;
+    // Sin sesión, el menú de usuario solo muestra Iniciar sesión / Registrarse
+    // (components.css: html.dd-guest). updateUI() lo mantiene al día.
+    document.documentElement.classList.toggle('dd-guest', !hasToken);
     const style = document.createElement('style');
     style.id = 'daledeal-auth-flash-fix';
     style.textContent = css;
@@ -61,6 +64,20 @@ class AuthManager {
 
   getCurrentUser() {
     return this.currentUser;
+  }
+
+  /** Agrega "Registrarse" debajo de "Iniciar sesión" en el menú de usuario
+   *  (los navbars propios de algunas páginas no lo traen). */
+  ensureSignupLink(loginLink) {
+    const li = loginLink?.closest('li');
+    if (!li) return;
+    li.classList.add('guest-item');
+    if (li.parentElement.querySelector('#signupLink')) return;
+    const href = loginLink.getAttribute('href').replace(/login(\.html)?$/, (m, ext) => 'signup' + (ext || ''));
+    const item = document.createElement('li');
+    item.className = 'guest-item';
+    item.innerHTML = `<a class="dropdown-item fw-semibold" href="${href}" id="signupLink"><i class="bi bi-person-plus me-2"></i>Registrarse</a>`;
+    li.after(item);
   }
 
   isAuthenticated() {
@@ -253,17 +270,22 @@ class AuthManager {
     try {
       const params = new URLSearchParams(window.location.search);
       const redirect = params.get('redirect');
-      // Validación: solo paths internos (empiezan con /) para evitar open
-      // redirect a sitios externos vía ?redirect=https://evil.com
-      if (redirect && redirect.startsWith('/') && !redirect.startsWith('//')) {
-        window.location.href = redirect;
-        return;
+      // Solo rutas del mismo sitio (evita open redirect vía ?redirect=https://evil.com).
+      // Resolvemos la URL y comparamos el origen: el chequeo anterior
+      // (startsWith("/")) dejaba pasar "/\evil.com", que el navegador toma como
+      // //evil.com. También acepta rutas relativas como "mis-ventas".
+      if (redirect) {
+        const target = new URL(redirect, window.location.origin + '/');
+        if (target.origin === window.location.origin) {
+          window.location.href = target.pathname + target.search + target.hash;
+          return;
+        }
       }
     } catch (_) { /* ignore parse errors */ }
 
     const currentPath = window.location.pathname;
     if (currentPath.includes("/HTML/")) {
-      window.location.href = "../index.html";
+      window.location.href = "/";
     } else {
       window.location.href = "./index.html";
     }
@@ -274,7 +296,7 @@ class AuthManager {
     if (currentPath.includes("/HTML/")) {
       window.location.href = "./login.html";
     } else {
-      window.location.href = "./HTML/login.html";
+      window.location.href = "/login";
     }
   }
 
@@ -293,6 +315,9 @@ class AuthManager {
     const loginLinkMobile   = document.getElementById("loginLinkMobile");
     const logoutBtnMobile   = document.getElementById("logoutBtnMobile");
     const profileDropdown   = document.querySelector(".profile-dropdown");
+
+    document.documentElement.classList.toggle('dd-guest', !this.isAuthenticated());
+    this.ensureSignupLink(loginLink);
 
     if (this.isAuthenticated()) {
       // Usuario autenticado
@@ -322,11 +347,11 @@ class AuthManager {
     if (!this.isAuthenticated()) return;
 
     const name = this.currentUser.name || 'Usuario';
-    // Fallback de avatar a ui-avatars.com con iniciales — si el usuario no
-    // subió avatar propio (typical), generamos uno consistente con la marca
-    // (background rojo, iniciales blancas). Nunca queda src vacío/roto.
+    // Fallback de avatar con iniciales — si el usuario no subió avatar propio
+    // (typical), generamos uno consistente con la marca (background rojo,
+    // iniciales blancas) en el navegador. Nunca queda src vacío/roto.
     const avatarUrl = this.currentUser.avatar
-      || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=d63031&color=fff&size=80&font-size=0.5&bold=true`;
+      || window.DaleDeal.utils.initialsAvatar(name);
 
     // Actualiza TODOS los .profile-name del DOM (desktop dropdown trigger +
     // cualquier otro que aparezca). Antes usaba querySelector singular y solo
@@ -599,6 +624,25 @@ class AuthManager {
       return;
     }
 
+    // Documentos de verificación (DNI frente/dorso + cara obligatorios, título
+    // opcional). Se leen ANTES de crear la cuenta: si falta algo, no se crea.
+    const docsBox = form.querySelector('#signupVerification');
+    const docsErr = form.querySelector('#signupDocsError');
+    let docs = null;
+    if (docsBox && window.DDVerificationDocs) {
+      if (docsErr) docsErr.textContent = '';
+      try {
+        if (!form.querySelector('#docsConsent')?.checked) {
+          throw new Error('Tenés que aceptar el uso de las fotos para verificar tu identidad.');
+        }
+        docs = await window.DDVerificationDocs.collect(docsBox);
+      } catch (err) {
+        if (docsErr) docsErr.textContent = err.message;
+        docsBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+    }
+
     // Mostrar loading
     this.setButtonLoading(submitBtn, true);
 
@@ -606,9 +650,29 @@ class AuthManager {
       const result = await this.register(userData);
 
       if (result.success) {
+        // Con la cuenta creada (ya hay token), subimos los documentos.
+        let docsOk = true;
+        if (docs) {
+          try {
+            await window.DDVerificationDocs.upload(docs);
+          } catch (err) {
+            docsOk = false;
+            DaleDeal.warn('No se pudieron subir los documentos:', err.message);
+          }
+        }
+
         // Limpiar formulario
         form.reset();
         this.clearAllValidations(form);
+
+        if (!docsOk) {
+          this.showNotification('Tu cuenta se creó, pero no pudimos subir los documentos. Subilos desde Mi Centro → Verificá tu cuenta.', 'warning');
+          setTimeout(() => { window.location.href = '/mi-cuenta#verificacion'; }, 2500);
+          return;
+        }
+        if (docs) {
+          this.showNotification('¡Listo! Recibimos tus documentos: te avisamos cuando tu cuenta esté verificada.', 'success');
+        }
 
         // Redirigir después de un breve delay
         setTimeout(() => {
@@ -915,7 +979,7 @@ class AuthManager {
       // Redirigir a home (mismo flow que login normal)
       setTimeout(() => {
         const inHtmlFolder = window.location.pathname.includes('/HTML/');
-        window.location.href = inHtmlFolder ? '../index.html' : './index.html';
+        window.location.href = inHtmlFolder ? '/' : './index.html';
       }, 1000);
     } catch (err) {
       console.error("[auth] Google callback falló:", err);
@@ -938,7 +1002,7 @@ function initializeAuth() {
 
   // Setup específico según la página.
   // Cloudflare Pages sirve URLs limpias (sin .html), así que matcheamos
-  // ambas variantes: /HTML/login y /HTML/login.html
+  // ambas variantes: /HTML/login y /login
   const currentPage = window.location.pathname;
   const isLogin = /\/login(\.html)?$/.test(currentPage);
   const isSignup = /\/signup(\.html)?$/.test(currentPage);
@@ -981,6 +1045,9 @@ document.addEventListener('submit', function(e) {
   setTimeout(() => { form.dataset.daledealNewsletterHandled = ''; }, 1000);
 
   e.preventDefault();
+  // Este handler es el único: los de cada página (home, productos) quedaban
+  // duplicados o solo simulaban la suscripción.
+  e.stopImmediatePropagation();
   const emailInput = form.querySelector('#newsletterEmail') || form.querySelector('input[type="email"]');
   const email = (emailInput?.value || '').trim();
   if (!email) return;
@@ -989,29 +1056,34 @@ document.addEventListener('submit', function(e) {
   const originalHTML = btn ? btn.innerHTML : '';
   if (btn) {
     btn.disabled = true;
-    btn.innerHTML = '<i class="bi bi-check-circle"></i>';
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
   }
-  // TODO: hacer un POST real cuando exista /newsletter en el backend.
-  // Por ahora, persistimos local y mostramos confirmación.
-  try {
-    const list = JSON.parse(localStorage.getItem('daledeal_newsletter_subs') || '[]');
-    if (!list.includes(email)) list.push(email);
-    localStorage.setItem('daledeal_newsletter_subs', JSON.stringify(list));
-  } catch (_) {}
+  const notify = (msg, type) => window.DaleDeal?.utils?.showNotification?.(msg, type);
+  const body = JSON.stringify({ email, source: 'footer' });
+  const apiFetch = window.DaleDeal?.api?.apiFetch;
+  const request = apiFetch
+    ? apiFetch('/newsletter/subscribe', { method: 'POST', body })
+    : fetch(`${/^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:3000' : 'https://api.daledeal.com.ar'}/newsletter/subscribe`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body,
+      }).then((r) => r.json().then((data) => {
+        if (!r.ok || data.ok === false) throw new Error(data.error || 'HTTP ' + r.status);
+        return data;
+      }));
 
-  setTimeout(() => {
-    if (btn) {
-      btn.innerHTML = originalHTML;
-      btn.disabled = false;
-    }
-    form.reset();
-    if (window.DaleDeal?.utils?.showNotification) {
-      window.DaleDeal.utils.showNotification(
-        '¡Gracias por suscribirte! Te vamos a avisar de las mejores ofertas.',
-        'success'
-      );
-    }
-  }, 1200);
+  request
+    .then(() => {
+      form.reset();
+      notify('¡Gracias por suscribirte! Te vamos a avisar de las novedades.', 'success');
+    })
+    .catch((err) => {
+      notify(err?.message === 'Email inválido' ? 'Revisá el email.' : 'No pudimos suscribirte. Probá de nuevo en un rato.', 'error');
+    })
+    .finally(() => {
+      if (btn) {
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+      }
+    });
 }, true);
 
 // Exportar clase

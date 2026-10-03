@@ -19,8 +19,9 @@
     />
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
-    <link rel="apple-touch-icon" href="../IMG/LOGO.png" />
+    <link rel="icon" href="../IMG/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="../IMG/icon-192.png" type="image/png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="../IMG/apple-touch-icon.png" />
     <link rel="manifest" href="../manifest.json" />
     <!-- Preconnect a CDNs externos: warmea conexiones DNS+TCP+TLS en paralelo al parse del HTML, ahorra 100-300ms. -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -60,13 +61,12 @@
         <div class="auth-form-wrapper">
           <!-- Logo Section -->
           <div class="auth-logo-section">
-            <img src="../IMG/LOGO-2.png" alt="Dale Deal" class="auth-logo" />
+            <img src="../IMG/logo-color.png" alt="Dale Deal" class="auth-logo" />
           </div>
 
           <!-- Welcome Section -->
           <div class="auth-welcome-section">
-            <p class="auth-welcome-title">Sumate a</p>
-            <h1 class="auth-brand-name">DALE DEAL</h1>
+            <h1 class="auth-brand-name">Sumate</h1>
             <p class="auth-welcome-subtitle">Creá tu cuenta y empezá a comprar</p>
           </div>
 
@@ -166,6 +166,19 @@
               <div class="invalid-feedback"></div>
             </div>
 
+            <!-- Verificación de identidad (historia "Creá tu cuenta" · paso 2 y 3).
+                 Los campos los arma JS/verification-docs.js. -->
+            <fieldset class="vdoc-section" id="signupVerification">
+              <legend class="vdoc-title"><i class="bi bi-shield-check"></i> Verificá tu identidad</legend>
+              <p class="vdoc-lead">Así sabemos que detrás de cada cuenta hay una persona real y todos compran y venden más tranquilos.</p>
+              <div class="vdoc-fields" id="signupDocFields"></div>
+              <label class="vdoc-consent">
+                <input type="checkbox" class="form-check-input" id="docsConsent" />
+                <span>Acepto que Dale Deal use estas fotos solo para verificar mi identidad. Las ve únicamente el equipo de verificación y no se publican.</span>
+              </label>
+              <div class="vdoc-error" id="signupDocsError" role="alert"></div>
+            </fieldset>
+
             <!-- Terms Checkbox -->
             <div class="auth-terms-check">
               <input
@@ -175,10 +188,11 @@
                 name="acceptTerms"
                 required
               />
+              <!-- En pestaña nueva para no perder lo cargado en el formulario -->
               <label class="form-check-label" for="acceptTerms">
                 Acepto los
-                <a href="#" class="auth-terms-link">Términos y Condiciones</a> y la
-                <a href="#" class="auth-terms-link">Política de Privacidad</a>
+                <a href="./terminos.html" class="auth-terms-link" target="_blank" rel="noopener">Términos y Condiciones</a> y la
+                <a href="./privacidad.html" class="auth-terms-link" target="_blank" rel="noopener">Política de Privacidad</a>
               </label>
               <div class="invalid-feedback"></div>
             </div>
@@ -230,11 +244,15 @@
 
           <!-- Footer Links -->
           <div class="auth-footer-links">
-            <a href="#">Términos de Servicio</a>
+            <a href="./terminos.html">Términos y Condiciones</a>
             <span>•</span>
-            <a href="#">Política de Privacidad</a>
+            <a href="./privacidad.html">Política de Privacidad</a>
             <span>•</span>
-            <a href="#">Ayuda</a>
+            <a href="./cookies.html">Política de Cookies</a>
+            <span>•</span>
+            <a href="./arrepentimiento.html">Botón de arrepentimiento</a>
+            <span>•</span>
+            <a href="./centro-ayuda.html">Ayuda</a>
           </div>
         </div>
       </div>
@@ -243,31 +261,34 @@
       <div class="auth-info-panel">
         <div class="auth-info-content">
           <div class="auth-info-section">
-            <h2 class="auth-info-title">Comienza tu aventura</h2>
+            <h2 class="auth-info-title">Comenzá tu aventura</h2>
             <p class="auth-info-description">
-              Únete a miles de usuarios que ya disfrutan de la mejor experiencia
-              de compra online en Argentina.
+              Creá tu cuenta para comprar, vender y contratar servicios en
+              Argentina.
             </p>
           </div>
 
+          <!-- Solo lo que la cuenta permite hoy. Antes: "Descuentos para
+               nuevos usuarios", "Programa de puntos y recompensas" y "miles
+               de usuarios", que no existen. -->
           <div class="auth-features-section">
-            <h3 class="auth-features-title">Beneficios exclusivos</h3>
+            <h3 class="auth-features-title">Con tu cuenta podés</h3>
             <ul class="auth-features-list">
               <li>
-                <i class="bi bi-percent"></i>
-                <span>Descuentos especiales para nuevos usuarios</span>
+                <i class="bi bi-shield-check"></i>
+                <span>Comprar con Compra Protegida</span>
               </li>
               <li>
-                <i class="bi bi-bell"></i>
-                <span>Notificaciones de ofertas personalizadas</span>
+                <i class="bi bi-megaphone"></i>
+                <span>Publicar tus productos gratis con el plan Estándar</span>
+              </li>
+              <li>
+                <i class="bi bi-chat-dots"></i>
+                <span>Chatear con vendedores y prestadores</span>
               </li>
               <li>
                 <i class="bi bi-bookmark-heart"></i>
-                <span>Lista de favoritos ilimitada</span>
-              </li>
-              <li>
-                <i class="bi bi-award"></i>
-                <span>Programa de puntos y recompensas</span>
+                <span>Guardar tus favoritos</span>
               </li>
             </ul>
           </div>
@@ -309,7 +330,16 @@
     <script defer src="../JS/utils.js"></script>
     <script defer src="../JS/sentry.js"></script>
     <script defer src="../JS/api.js"></script>
+    <script defer src="../JS/verification-docs.js"></script>
     <script defer src="../JS/auth.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const box = document.getElementById('signupDocFields');
+        if (box && window.DDVerificationDocs) {
+          box.innerHTML = DDVerificationDocs.fieldsHTML('su', ['dni_front', 'dni_back', 'selfie', 'title'], { required: ['dni_front', 'dni_back', 'selfie'] });
+        }
+      });
+    </script>
     <!-- signup.js NO existe — toda la lógica del formulario vive en auth.js
          (setupSignupForm). Antes este <script> tiraba 404 → Cloudflare devolvía
          el HTML del SPA fallback → el parser lo leía como JS y rompía con
@@ -321,5 +351,7 @@
         window.location.replace('./contacto.html?tipo=empresa');
       }
     </script>
+      <!-- Botón flotante de ayuda (?) — mismo widget que el resto del sitio -->
+    <script src="../JS/support-widget.js" defer></script>
   </body>
 </html>

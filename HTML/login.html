@@ -19,8 +19,9 @@
     />
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
-    <link rel="apple-touch-icon" href="../IMG/LOGO.png" />
+    <link rel="icon" href="../IMG/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="../IMG/icon-192.png" type="image/png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="../IMG/apple-touch-icon.png" />
     <link rel="manifest" href="../manifest.json" />
     <!-- Preconnect a CDNs externos: warmea conexiones DNS+TCP+TLS en paralelo al parse del HTML, ahorra 100-300ms. -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -60,13 +61,12 @@
         <div class="auth-form-wrapper">
           <!-- Logo Section -->
           <div class="auth-logo-section">
-            <img src="../IMG/LOGO-2.png" alt="Dale Deal" class="auth-logo" />
+            <img src="../IMG/logo-color.png" alt="Dale Deal" class="auth-logo" />
           </div>
 
           <!-- Welcome Section -->
           <div class="auth-welcome-section">
-            <p class="auth-welcome-title">Bienvenido a</p>
-            <h1 class="auth-brand-name">DALE DEAL</h1>
+            <h1 class="auth-brand-name">Bienvenido</h1>
             <p class="auth-welcome-subtitle">Iniciá sesión para continuar</p>
           </div>
 
@@ -124,7 +124,7 @@
                   >Recordarme</label
                 >
               </div>
-              <a href="#" class="auth-forgot-password-link"
+              <a href="./recuperar-contrasena.html" class="auth-forgot-password-link"
                 >¿Olvidaste tu contraseña?</a
               >
             </div>
@@ -168,11 +168,15 @@
 
           <!-- Footer Links -->
           <div class="auth-footer-links">
-            <a href="#">Términos de Servicio</a>
+            <a href="./terminos.html">Términos y Condiciones</a>
             <span>•</span>
-            <a href="#">Política de Privacidad</a>
+            <a href="./privacidad.html">Política de Privacidad</a>
             <span>•</span>
-            <a href="#">Ayuda</a>
+            <a href="./cookies.html">Política de Cookies</a>
+            <span>•</span>
+            <a href="./arrepentimiento.html">Botón de arrepentimiento</a>
+            <span>•</span>
+            <a href="./centro-ayuda.html">Ayuda</a>
           </div>
         </div>
       </div>
@@ -181,31 +185,37 @@
       <div class="auth-info-panel">
         <div class="auth-info-content">
           <div class="auth-info-section">
-            <h2 class="auth-info-title">Tu marketplace favorito</h2>
+            <h2 class="auth-info-title">Comprá, vendé y contratá en un solo lugar</h2>
             <p class="auth-info-description">
-              Descubre miles de productos, conecta con vendedores de confianza y
-              disfruta de una experiencia de compra única.
+              Productos y servicios de todo el país, con tu plata protegida hasta
+              que recibís lo que compraste.
             </p>
           </div>
 
+          <!-- Solo beneficios reales (ver Centro de Ayuda). Antes: "Envío gratis
+               en miles de productos", "Devoluciones hasta 30 días" y "Atención 24/7". -->
           <div class="auth-features-section">
-            <h3 class="auth-features-title">¿Por qué elegir Dale Deal?</h3>
+            <h3 class="auth-features-title">Todo lo que te da Dale Deal</h3>
             <ul class="auth-features-list">
               <li>
                 <i class="bi bi-shield-check"></i>
-                <span>Compras 100% seguras con protección al comprador</span>
+                <span><strong>Tu plata, protegida.</strong> El vendedor cobra recién cuando confirmás que te llegó.</span>
               </li>
               <li>
-                <i class="bi bi-truck"></i>
-                <span>Envío gratis en miles de productos</span>
+                <i class="bi bi-x-circle"></i>
+                <span><strong>2 horas para cancelar</strong> cualquier compra, con reembolso total.</span>
               </li>
               <li>
-                <i class="bi bi-arrow-return-left"></i>
-                <span>Devoluciones fáciles hasta 30 días</span>
+                <i class="bi bi-patch-check"></i>
+                <span><strong>Prestadores verificados</strong> con su DNI, y con título en los servicios certificados.</span>
               </li>
               <li>
-                <i class="bi bi-headset"></i>
-                <span>Atención al cliente 24/7</span>
+                <i class="bi bi-chat-dots"></i>
+                <span><strong>Chat privado</strong> con el vendedor para coordinar la entrega.</span>
+              </li>
+              <li>
+                <i class="bi bi-megaphone"></i>
+                <span><strong>Vendé gratis:</strong> publicás sin costo y pagás solo el 3% cuando vendés.</span>
               </li>
             </ul>
           </div>
@@ -244,5 +254,7 @@
     <script defer src="../JS/api.js"></script>
     <script defer src="../JS/auth.js"></script>
     <script src="../JS/component-loader.js" defer></script>
+      <!-- Botón flotante de ayuda (?) — mismo widget que el resto del sitio -->
+    <script src="../JS/support-widget.js" defer></script>
   </body>
 </html>

@@ -8,8 +8,9 @@
     <!-- Página privada/transaccional — no debe aparecer en buscadores. -->
     <meta name="robots" content="noindex, nofollow" />
 
-    <link rel="shortcut icon" href="../IMG/LOGO.png" type="image/x-icon" />
-    <link rel="apple-touch-icon" href="../IMG/LOGO.png" />
+    <link rel="icon" href="../IMG/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="../IMG/icon-192.png" type="image/png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="../IMG/apple-touch-icon.png" />
     <link rel="manifest" href="../manifest.json" />
     <!-- Preconnect a CDNs externos: warmea conexiones DNS+TCP+TLS en paralelo al parse del HTML, ahorra 100-300ms. -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -83,7 +84,11 @@
         border-color: var(--primary-red);
         box-shadow: 0 0 0 3px var(--primary-red-light);
       }
-      .form-text { color: var(--gray-400); font-size: 0.8rem; }
+      .form-text { color: var(--gray-500); font-size: 0.8rem; }
+      /* El .form-check global del sitio es flex-row: acá los switches tienen
+         texto de ayuda largo y quedaban en 2 columnas apretadas. Block = el
+         layout Bootstrap normal (label arriba, ayuda abajo, ancho completo). */
+      .publish-card .form-check.form-switch { display: block; }
 
       .price-type-selector { display: flex; gap: 0.75rem; flex-wrap: wrap; }
       .price-type-btn {
@@ -235,10 +240,14 @@
         display: none;
         align-items: center;
         gap: 1rem;
+        flex-wrap: wrap;
         margin-bottom: 1.5rem;
       }
       .auth-warning i { font-size: 1.5rem; color: var(--warning); }
       .auth-warning a { color: var(--primary-red); font-weight: 600; }
+      .auth-warning .btn { flex-shrink: 0; }
+      .plan-active-note { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; font-weight: 600; color: var(--success); }
+      .plan-active-note[hidden] { display: none; }
 
       .success-msg {
         background: var(--success-light);
@@ -284,14 +293,24 @@
       .plan-icon-red { background: var(--primary-red-light); color: var(--primary-red); }
       .plan-name { font-weight: 700; font-size: 1.1rem; color: var(--gray-800); margin-bottom: 0.5rem; }
       .plan-price { font-size: 1.8rem; font-weight: 800; color: var(--gray-900); }
-      .plan-price span { font-size: 0.9rem; font-weight: 400; color: var(--gray-400); }
+      .plan-price span { font-size: 0.9rem; font-weight: 400; color: var(--gray-500); }
       .plan-features { list-style: none; padding: 0; margin: 0 0 1.5rem; flex: 1; }
-      .plan-features li { display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 0; font-size: 0.9rem; color: var(--gray-600); }
+      .plan-features li { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.4rem 0; font-size: 0.9rem; color: var(--gray-600); }
       .plan-features li i { font-size: 0.9rem; flex-shrink: 0; }
+      .plan-features li i { margin-top: 0.2rem; }
+      .plan-meta { margin: 0.35rem 0 0; font-size: 0.85rem; font-weight: 600; color: var(--primary-red); }
+      .plan-includes { margin: -0.75rem 0 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--gray-700); }
+      .plan-legal-box { max-width: 760px; margin: 0 auto 2rem; }
+      .plan-legal-title { font-size: 1rem; font-weight: 700; color: var(--gray-700); margin-bottom: 0.5rem; }
+      .plan-legal { list-style: none; max-width: 760px; margin: 0 auto; padding: 0; }
+      .plan-legal li { display: flex; gap: 0.6rem; padding: 0.35rem 0; font-size: 0.85rem; color: var(--gray-500); }
+      .plan-legal li i { color: var(--gray-400); margin-top: 0.15rem; }
       .plan-btn { width: 100%; padding: 0.7rem; border-radius: 10px; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; }
       .plan-btn-outline { background: none; border: 2px solid var(--gray-200); color: var(--gray-400); cursor: default; }
       .plan-btn-primary { background: #e8f4fd; color: #009ee3; }
       .plan-btn-primary:hover { background: #009ee3; color: white; }
+      .plan-btn-soon { background: var(--gray-100); color: var(--gray-500); cursor: not-allowed; }
+      [data-theme="dark"] .plan-btn-soon { background: rgba(255,255,255,.08); color: var(--gray-500); }
       .plan-btn-red { background: var(--gradient-primary); color: white; position: relative; overflow: hidden; }
       .plan-btn-red:hover { transform: translateY(-2px); box-shadow: var(--shadow-xl); }
       .plan-btn-red::before { content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s; pointer-events: none; z-index: 1; }
@@ -309,7 +328,7 @@
       .payment-content { display: flex; align-items: center; gap: 0.75rem; flex: 1; }
       .payment-content div { display: flex; flex-direction: column; }
       .payment-content strong { font-size: 0.9rem; }
-      .payment-content small { color: var(--gray-400); font-size: 0.8rem; }
+      .payment-content small { color: var(--gray-500); font-size: 0.8rem; }
       .payment-icon { font-size: 1.5rem; }
       .payment-check { display: none; color: var(--primary-red); font-size: 1.1rem; }
       .badge-custom-preview {
@@ -453,8 +472,7 @@
       <div class="container-fluid px-4">
         <!-- Logo -->
         <a class="navbar-brand" href="../index.html">
-          <img src="../IMG/LOGO-2.png" alt="Dale Deal" class="logo-navbar" />
-          <span class="brand-text">DALE DEAL</span>
+          <img src="../IMG/logo-nav.png" alt="Dale Deal" class="logo-navbar" />
         </a>
 
         <!-- Search Bar -->
@@ -489,6 +507,12 @@
             <button class="theme-toggle" id="themeToggle" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">
               <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
             </button>
+          </div>
+          <!-- Mi Centro -->
+          <div class="action-item d-none d-md-flex">
+            <a href="./mi-cuenta.html" class="action-btn" id="miCentroBtn" title="Mi Centro" aria-label="Ir a Mi Centro">
+              <i class="bi bi-grid-fill" aria-hidden="true"></i>
+            </a>
           </div>
 
           <!-- Notifications -->
@@ -559,7 +583,7 @@
           <!-- Profile -->
           <div class="action-item dropdown">
             <button class="action-btn profile-btn" id="profileDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" title="Mi cuenta">
-              <img src="https://ui-avatars.com/api/?name=U&amp;background=d63031&amp;color=fff&amp;size=80&amp;font-size=0.5&amp;bold=true" alt="Mi perfil" class="profile-image" id="profileAvatar" />
+              <img src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2080%2080%22%3E%3Crect%20width%3D%2280%22%20height%3D%2280%22%20fill%3D%22%23d63031%22%2F%3E%3Ctext%20x%3D%2240%22%20y%3D%2240%22%20dy%3D%22.35em%22%20text-anchor%3D%22middle%22%20fill%3D%22%23fff%22%20font-family%3D%22Inter%2CArial%2Csans-serif%22%20font-size%3D%2234%22%20font-weight%3D%22700%22%3EU%3C%2Ftext%3E%3C%2Fsvg%3E" alt="Mi perfil" class="profile-image" id="profileAvatar" />
               <span class="profile-name">Usuario</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
@@ -608,6 +632,15 @@
         <div>
           <strong>Necesitás iniciar sesión para publicar.</strong>
           <br><a href="./login.html">Iniciá sesión</a> o <a href="./signup.html">creá tu cuenta gratis</a>.
+        </div>
+      </div>
+
+      <!-- Sin DNI aprobado no se publica (publicar.js lo muestra con /users/me) -->
+      <div class="auth-warning" id="verifyWarning">
+        <i class="bi bi-person-badge"></i>
+        <div>
+          <strong>Tu cuenta todavía no está verificada.</strong>
+          <br>Para vender, comprar y contratar necesitamos aprobar tu DNI. <a href="./mi-cuenta.html#verificacion">Ver mi verificación</a>
         </div>
       </div>
 
@@ -823,7 +856,7 @@
 
                 <div class="success-msg" id="product-success">
                   <i class="bi bi-check-circle-fill"></i>
-                  <div><strong>¡Publicado!</strong><br><span id="product-success-msg"></span></div>
+                  <div><strong>¡Publicado!</strong><br><span id="product-success-msg"></span> <a href="./mis-publicaciones.html">Ver mis publicaciones</a></div>
                 </div>
 
                 <div id="product-error" class="alert alert-danger d-none small"></div>
@@ -848,6 +881,18 @@
       <!-- FORMULARIO SERVICIO -->
       <!-- ============================================================ -->
       <div id="form-servicio" style="display:none;">
+        <!-- Publicar servicios requiere el plan Servicio activo (publicar.js) -->
+        <div class="auth-warning mb-4" id="planWarning">
+          <i class="bi bi-megaphone-fill"></i>
+          <div class="flex-grow-1">
+            <strong>Para publicar servicios necesitás el plan Servicio activo.</strong>
+            <br>Cuesta $3.000 por mes y se renueva hasta el día 10 de cada mes. Los servicios no pagan comisión.
+          </div>
+          <button type="button" class="btn btn-primary btn-sm" id="btnPlanCheckout">Contratar plan Servicio</button>
+        </div>
+        <div class="plan-active-note mb-4" id="planActiveNote" hidden>
+          <i class="bi bi-check-circle-fill"></i> <span></span>
+        </div>
         <form id="serviceForm" novalidate>
           <div class="row g-4">
 
@@ -891,6 +936,19 @@
                   <label class="form-label">Zonas de cobertura</label>
                   <input type="text" class="form-control" id="s-zones" placeholder="Ej: CABA, GBA Norte, GBA Sur" />
                   <div class="form-text">Separadas por coma</div>
+                </div>
+
+                <div class="mt-3">
+                  <label class="form-label">Lo que ofrecés</label>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="s-warranty" />
+                    <label class="form-check-label" for="s-warranty">Con garantía en el trabajo</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="s-247" />
+                    <label class="form-check-label" for="s-247">Disponible 24/7 (urgencias)</label>
+                  </div>
+                  <div class="form-text">Se muestran en tu publicación. "Certificado" aparece solo cuando verificamos tu título desde tu perfil.</div>
                 </div>
               </div>
 
@@ -1006,7 +1064,7 @@
 
                 <div class="success-msg" id="service-success">
                   <i class="bi bi-check-circle-fill"></i>
-                  <div><strong>¡Publicado!</strong><br><span id="service-success-msg"></span></div>
+                  <div><strong>¡Publicado!</strong><br><span id="service-success-msg"></span> <a href="./mis-publicaciones.html">Ver mis publicaciones</a></div>
                 </div>
 
                 <div id="service-error" class="alert alert-danger d-none small"></div>
@@ -1017,7 +1075,7 @@
 
                 <hr class="my-3">
                 <div class="text-muted small">
-                  <i class="bi bi-credit-card text-warning me-1"></i> Publicar requiere un plan mensual<br>
+                  <i class="bi bi-credit-card text-warning me-1"></i> Publicar requiere un plan mensual (desde $3.000)<br>
                   <i class="bi bi-people text-info me-1 mt-1"></i> Miles de usuarios buscan servicios
                 </div>
               </div>
@@ -1038,65 +1096,92 @@
           <div class="text-center mb-5">
             <span class="promo-badge"><i class="bi bi-bag me-2"></i>Planes para productos</span>
             <h2 class="promo-title">Publicá tu producto y llegá a más compradores</h2>
-            <p class="promo-subtitle">Todos los planes incluyen la publicación. Sumá visibilidad con los planes superiores.</p>
+            <p class="promo-subtitle">Publicar es gratis. En todos los planes pagás una comisión del 3% + impuestos solo cuando vendés. Los planes Premium suman visibilidad y herramientas durante 1 mes.</p>
+            <p class="promo-subtitle small mb-0"><i class="bi bi-calendar-check me-1"></i>Tenés hasta el <strong>día 10</strong> de cada mes para renovar; si no renovás, el plan se da de baja.</p>
           </div>
           <div class="row g-4 justify-content-center mb-5">
 
-            <!-- Producto: Plan Estándar -->
-            <div class="col-md-4 col-lg-3">
+            <div class="col-md-6 col-lg-3">
               <div class="plan-card">
                 <div class="plan-header">
                   <div class="plan-icon"><i class="bi bi-box-seam"></i></div>
-                  <h3 class="plan-name">Estándar</h3>
+                  <h3 class="plan-name">Producto Estándar</h3>
                   <div class="plan-price">Gratis<span></span></div>
+                  <p class="plan-meta">Publicación común</p>
                 </div>
                 <ul class="plan-features">
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Publicación activa de tu producto</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Visible en el catálogo</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Hasta 10 fotos y videos</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Consultas de compradores</li>
-                  <li><i class="bi bi-x-circle-fill text-muted"></i> Sin posición prioritaria</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Publicaciones activas en el catálogo y en las búsquedas</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Hasta 10 fotos y videos por publicación</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Consultas de compradores desde la publicación</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Chat privado con el comprador después de la venta</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Pago protegido: el dinero se libera al confirmarse la entrega</li>
+                  <li><i class="bi bi-percent text-warning"></i> Comisión del 3% + impuestos solo cuando vendés</li>
                 </ul>
-                <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Estándar Producto', 0)">Seleccionar</button>
+                <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Estándar Producto', 0)">Seleccioná</button>
               </div>
             </div>
 
-            <!-- Producto: Plan Destacado -->
-            <div class="col-md-4 col-lg-3">
+            <div class="col-md-6 col-lg-3">
               <div class="plan-card">
                 <div class="plan-header">
                   <div class="plan-icon plan-icon-blue"><i class="bi bi-rocket"></i></div>
-                  <h3 class="plan-name">Destacado</h3>
-                  <div class="plan-price">$4.999<span>/mes</span></div>
+                  <h3 class="plan-name">Producto Premium</h3>
+                  <div class="plan-price">$4.990<span>/mes</span></div>
+                  <p class="plan-meta">Más visibilidad para tus publicaciones</p>
                 </div>
+                <p class="plan-includes">Todo lo de Estándar, más:</p>
                 <ul class="plan-features">
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Todo lo del plan Estándar</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Etiqueta "Destacado"</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Mejor posición en búsquedas</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas básicas</li>
-                  <li><i class="bi bi-x-circle-fill text-muted"></i> Sin publicidad ni banner</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Mejor ubicación que una publicación común en búsquedas y en tu categoría</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Insignia Premium en tus publicaciones</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas por publicación: visitas, consultas y ventas</li>
+                  <li><i class="bi bi-percent text-warning"></i> Comisión del 3% + impuestos por venta</li>
                 </ul>
-                <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Destacado Producto', 4999)">Contratar</button>
+                <button class="plan-btn plan-btn-soon" type="button" disabled title="Los planes de visibilidad llegan muy pronto">Próximamente</button>
               </div>
             </div>
 
-            <!-- Producto: Plan Pro -->
-            <div class="col-md-4 col-lg-3">
+            <div class="col-md-6 col-lg-3">
               <div class="plan-card plan-card-featured">
-                <div class="plan-badge-rec">Recomendado</div>
+                <div class="plan-badge-rec">Más elegido</div>
+                <div class="plan-header">
+                  <div class="plan-icon plan-icon-blue"><i class="bi bi-lightning-charge-fill"></i></div>
+                  <h3 class="plan-name">Producto Premium Plus</h3>
+                  <div class="plan-price">$9.990<span>/mes</span></div>
+                  <p class="plan-meta">Más prioridad y herramientas para vender</p>
+                </div>
+                <p class="plan-includes">Todo lo de Premium, más:</p>
+                <ul class="plan-features">
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Prioridad por encima de Premium en los resultados</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Presencia en el carrusel de la home</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Insignia Premium Plus en tus publicaciones</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas de conversión (de visitas a ventas) y comparación semana a semana</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Respuestas rápidas guardadas para consultas frecuentes</li>
+                  <li><i class="bi bi-percent text-warning"></i> Comisión del 3% + impuestos por venta</li>
+                </ul>
+                <button class="plan-btn plan-btn-soon" type="button" disabled title="Los planes de visibilidad llegan muy pronto">Próximamente</button>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+              <div class="plan-card">
                 <div class="plan-header">
                   <div class="plan-icon plan-icon-red"><i class="bi bi-star-fill"></i></div>
-                  <h3 class="plan-name">Pro</h3>
-                  <div class="plan-price">$7.999<span>/mes</span></div>
+                  <h3 class="plan-name">Producto Premium Pro</h3>
+                  <div class="plan-price">$19.990<span>/mes</span></div>
+                  <p class="plan-meta">La máxima visibilidad de la plataforma</p>
                 </div>
+                <p class="plan-includes">Todo lo de Premium Plus, más:</p>
                 <ul class="plan-features">
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Todo lo del plan Destacado</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Publicidad en páginas de búsqueda</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Banner en página de inicio</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Prioridad máxima en búsquedas</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas avanzadas</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> La mayor prioridad de ubicación disponible en la plataforma</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Mayor frecuencia en el carrusel de la home</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Insignia Premium Pro en tus publicaciones</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas avanzadas: de dónde llegan tus visitas, en qué horarios y exportación a planilla</li>
+                  <li><i class="bi bi-instagram text-danger"></i> 1 historia al mes en nuestro Instagram @daledeal.ar con una de tus publicaciones (exclusivo de este plan)</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Descuentos y ofertas programadas en tus publicaciones</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Atención prioritaria en el horario de soporte</li>
+                  <li><i class="bi bi-percent text-warning"></i> Comisión del 3% + impuestos por venta</li>
                 </ul>
-                <button class="plan-btn plan-btn-red" onclick="seleccionarPlan('Pro Producto', 7999)">Contratar</button>
+                <button class="plan-btn plan-btn-soon" type="button" disabled title="Los planes de visibilidad llegan muy pronto">Próximamente</button>
               </div>
             </div>
 
@@ -1108,69 +1193,88 @@
           <div class="text-center mb-5">
             <span class="promo-badge"><i class="bi bi-megaphone-fill me-2"></i>Planes para servicios</span>
             <h2 class="promo-title">Publicá tu servicio y llegá a más clientes</h2>
-            <p class="promo-subtitle">Todos los planes incluyen la publicación. Sumá visibilidad con los planes superiores.</p>
+            <p class="promo-subtitle">Ofrecé tus servicios y conseguí más clientes en tu zona. Los servicios no pagan comisión: solo pagás la mensualidad de tu plan para publicar.</p>
+            <p class="promo-subtitle small mb-0"><i class="bi bi-calendar-check me-1"></i>Tenés hasta el <strong>día 10</strong> de cada mes para renovar; si no renovás, el plan se da de baja.</p>
           </div>
           <div class="row g-4 justify-content-center mb-5">
 
-            <!-- Servicio: Plan Estándar -->
-            <div class="col-md-4 col-lg-3">
+            <div class="col-md-6 col-lg-3">
               <div class="plan-card">
                 <div class="plan-header">
                   <div class="plan-icon"><i class="bi bi-tools"></i></div>
-                  <h3 class="plan-name">Estándar</h3>
+                  <h3 class="plan-name">Servicio</h3>
                   <div class="plan-price">$3.000<span>/mes</span></div>
+                  <p class="plan-meta">Tus servicios publicados</p>
                 </div>
                 <ul class="plan-features">
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Publicación activa de tu servicio</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Visible en el catálogo</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Hasta 10 fotos y videos</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Contacto directo con clientes</li>
-                  <li><i class="bi bi-x-circle-fill text-muted"></i> Sin posición prioritaria</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Publicación de tus servicios en el catálogo y en las búsquedas</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Descripción, rubro y zona de cobertura en cada publicación</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Fotos y videos de trabajos realizados</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Días y horarios de atención visibles en la publicación</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Consultas de clientes desde la publicación</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Insignia de verificado si cargás tu título (opcional)</li>
                 </ul>
-                <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Estándar Servicio', 3000)">Contratar</button>
+                <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Servicio', 3000)">Contratar</button>
               </div>
             </div>
 
-            <!-- Servicio: Plan Destacado -->
-            <div class="col-md-4 col-lg-3">
-              <div class="plan-card">
+            <div class="col-md-6 col-lg-3">
+              <div class="plan-card plan-card-featured">
+                <div class="plan-badge-rec">Más elegido</div>
                 <div class="plan-header">
                   <div class="plan-icon plan-icon-blue"><i class="bi bi-rocket"></i></div>
-                  <h3 class="plan-name">Destacado</h3>
-                  <div class="plan-price">$5.999<span>/mes</span></div>
+                  <h3 class="plan-name">Servicio Premium</h3>
+                  <div class="plan-price">$6.990<span>/mes</span></div>
+                  <p class="plan-meta">Más visibilidad en tu rubro y zona</p>
                 </div>
+                <p class="plan-includes">Todo lo de Servicio, más:</p>
                 <ul class="plan-features">
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Todo lo del plan Estándar</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Etiqueta "Destacado"</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Mejor posición en búsquedas</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas básicas</li>
-                  <li><i class="bi bi-x-circle-fill text-muted"></i> Sin publicidad ni banner</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Mejor ubicación en las búsquedas de tu rubro y zona</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Insignia Servicio Premium en tus publicaciones</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas por publicación: visitas, consultas y clics en contacto</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Respuestas rápidas guardadas para consultas frecuentes</li>
                 </ul>
-                <button class="plan-btn plan-btn-primary" onclick="seleccionarPlan('Destacado Servicio', 5999)">Contratar</button>
+                <button class="plan-btn plan-btn-soon" type="button" disabled title="Los planes de visibilidad llegan muy pronto">Próximamente</button>
               </div>
             </div>
 
-            <!-- Servicio: Plan Pro -->
-            <div class="col-md-4 col-lg-3">
-              <div class="plan-card plan-card-featured">
-                <div class="plan-badge-rec">Recomendado</div>
+            <div class="col-md-6 col-lg-3">
+              <div class="plan-card">
                 <div class="plan-header">
                   <div class="plan-icon plan-icon-red"><i class="bi bi-star-fill"></i></div>
-                  <h3 class="plan-name">Pro</h3>
-                  <div class="plan-price">$9.999<span>/mes</span></div>
+                  <h3 class="plan-name">Servicio Premium Pro</h3>
+                  <div class="plan-price">$11.990<span>/mes</span></div>
+                  <p class="plan-meta">Máxima exposición profesional</p>
                 </div>
+                <p class="plan-includes">Todo lo de Servicio Premium, más:</p>
                 <ul class="plan-features">
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Todo lo del plan Destacado</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Publicidad en páginas de búsqueda</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Banner en página de inicio</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Prioridad máxima en búsquedas</li>
-                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas avanzadas</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> La mayor prioridad de ubicación disponible en tu rubro y zona</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Presencia en el carrusel de servicios de la home</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Insignia Servicio Premium Pro en tus publicaciones</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Estadísticas avanzadas: de dónde llegan tus visitas y en qué horarios</li>
+                  <li><i class="bi bi-instagram text-danger"></i> 1 historia al mes en nuestro Instagram @daledeal.ar con uno de tus servicios (exclusivo de este plan)</li>
+                  <li><i class="bi bi-check-circle-fill text-success"></i> Atención prioritaria en el horario de soporte</li>
                 </ul>
-                <button class="plan-btn plan-btn-red" onclick="seleccionarPlan('Pro Servicio', 9999)">Contratar</button>
+                <button class="plan-btn plan-btn-soon" type="button" disabled title="Los planes de visibilidad llegan muy pronto">Próximamente</button>
               </div>
             </div>
 
           </div>
+        </div>
+
+        <!-- Letra chica: vale para los planes de productos y de servicios -->
+        <div class="plan-legal-box">
+          <h3 class="plan-legal-title">Condiciones y letra chica</h3>
+          <ul class="plan-legal">
+            <li><i class="bi bi-calendar-check"></i> Todos los planes duran 1 mes. Hay tiempo hasta el día 10 de cada mes para renovar; si no se renueva, el plan se da de baja.</li>
+            <li><i class="bi bi-star-half"></i> Pagar un plan no compra reputación ni garantiza ventas o resultados.</li>
+            <li><i class="bi bi-patch-check"></i> La insignia de verificado no se vende: depende de la verificación de identidad y, en servicios, de cargar el título.</li>
+            <li><i class="bi bi-instagram"></i> La historia en Instagram es exclusiva del plan más alto de cada tipo: Premium Pro en productos y Servicio Premium Pro en servicios. Ningún otro plan la incluye. Es solo historia: no hay publicaciones en el feed.</li>
+            <li><i class="bi bi-clock-history"></i> La historia se solicita dentro del mes del plan y no se acumula. Dale Deal la diseña con su plantilla y la publica en @daledeal.ar.</li>
+            <li><i class="bi bi-shield-x"></i> Dale Deal puede rechazar contenido que no cumpla las políticas de la plataforma.</li>
+            <li><i class="bi bi-graph-up"></i> No se promete alcance ni cantidad de visitas.</li>
+            <li><i class="bi bi-stars"></i> Los beneficios que todavía no estén desarrollados se suman como "Nuevo" cuando estén disponibles, nunca antes.</li>
+          </ul>
         </div>
 
         <!-- Modal de pago -->
@@ -1274,12 +1378,11 @@
             <div class="col-lg-4 col-md-6 mb-4">
               <div class="footer-section">
                 <div class="footer-logo">
-                  <img src="../IMG/LOGO-2.png" alt="Dale Deal" class="footer-logo-img" />
-                  <span class="footer-brand-text">DALE DEAL</span>
+                  <img src="../IMG/logo-blanco-sm.png" alt="Dale Deal" class="footer-logo-img" />
                 </div>
                 <p class="footer-description">
                   Tu marketplace de productos y servicios en Argentina.
-                  Compra, vende productos y contrata servicios profesionales de calidad.
+                  Comprá, vendé productos y contratá servicios profesionales de calidad.
                 </p>
                 <div class="footer-social">
                   <a href="https://www.instagram.com/daledeal.ar/" class="social-link" title="Instagram" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram"></i></a>
@@ -1344,17 +1447,8 @@
                     <span>Buenos Aires, Argentina</span>
                   </div>
                 </div>
-                <div class="footer-apps mt-3">
-                  <p class="footer-apps-title">Descarga la app</p>
-                  <div class="app-links">
-                    <a href="#" class="app-link">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" class="app-badge" loading="lazy">
-                    </a>
-                    <a href="#" class="app-link">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" class="app-badge" loading="lazy">
-                    </a>
-                  </div>
-                </div>
+                <!-- Badges de Google Play / App Store eliminados (href="#"):
+                     no hay app, igual que en el footer compartido. -->
               </div>
             </div>
           </div>
@@ -1364,19 +1458,46 @@
             <div class="row align-items-center">
               <div class="col-md-6">
                 <h5 class="newsletter-title">
-                  <i class="bi bi-bell me-2"></i>Mantente actualizado
+                  <i class="bi bi-bell me-2"></i>Mantenete actualizado
                 </h5>
-                <p class="newsletter-subtitle">Recibe las mejores ofertas y novedades de Dale Deal</p>
+                <p class="newsletter-subtitle">Recibí las mejores ofertas y novedades de Dale Deal</p>
               </div>
               <div class="col-md-6">
                 <form class="newsletter-form" id="footerNewsletterForm">
                   <div class="input-group">
-                    <input type="email" class="form-control newsletter-input" placeholder="Ingresa tu email" id="footerNewsletterEmail" required>
+                    <input type="email" class="form-control newsletter-input" placeholder="Ingresá tu email" id="footerNewsletterEmail" required>
                     <button class="btn btn-primary newsletter-btn" type="submit">
                       <i class="bi bi-arrow-right"></i>
                     </button>
                   </div>
                 </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- Compliance argentina (e-commerce — Resolución 424/2020 SCI):
+               publicar tiene footer propio, así que estos links van copiados
+               tal cual del componente (HTML/components/footer.html). -->
+          <div class="footer-compliance mt-3 pt-3" style="border-top:1px solid rgba(255,255,255,.1);font-size:13px;">
+            <div class="row align-items-center">
+              <div class="col-md-7 mb-2 mb-md-0">
+                <a href="./arrepentimiento.html"
+                   class="legal-link me-3"
+                   title="Botón de arrepentimiento — derecho a desistir de la compra dentro de 10 días corridos">
+                  <i class="bi bi-arrow-counterclockwise me-1"></i>
+                  Botón de arrepentimiento
+                </a>
+                <a href="https://www.argentina.gob.ar/produccion/defensadelconsumidor/formulario"
+                   class="legal-link"
+                   target="_blank" rel="noopener noreferrer"
+                   title="Sitio oficial de Defensa de las y los Consumidores">
+                  <i class="bi bi-shield-check me-1"></i>
+                  Defensa de las y los Consumidores
+                </a>
+              </div>
+              <div class="col-md-5 text-md-end">
+                <!-- No usar .text-muted acá: sobre el footer oscuro queda ilegible -->
+                <span style="color:rgba(255,255,255,.6);">Defensa del consumidor: <strong style="color:rgba(255,255,255,.85);">0800-666-1518</strong></span>
               </div>
             </div>
           </div>
@@ -1388,7 +1509,7 @@
                 <div class="col-md-8">
                   <div class="footer-copyright">
                     <div class="copyright-main">
-                      <span class="copyright-year">© 2025</span>
+                      <span class="copyright-year">© 2026</span>
                       <span class="copyright-brand">Dale Deal</span>
                       <span class="copyright-text">Todos los derechos reservados.</span>
                     </div>
@@ -1418,6 +1539,7 @@
     <script defer src="https://unpkg.com/aos@2.3.1/dist/aos.js" integrity="sha384-wziAfh6b/qT+3LrqebF9WeK4+J5sehS6FA10J1t3a866kJ/fvU5UwofWnQyzLtwu" crossorigin="anonymous"></script>
     <script defer src="../JS/theme.js"></script>
     <script defer src="../JS/utils.js"></script>
+    <script defer src="../JS/search.js"></script>
     <script defer src="../JS/sentry.js"></script>
     <script defer src="../JS/api.js"></script>
     <script defer src="../JS/api-messages.js"></script>

@@ -1,0 +1,13 @@
+# GitHub Pages (gastoncge.github.io/Dale-Deal) NO publica el sitio.
+#
+# El sitio vive en Cloudflare (daledeal.com.ar), detrás de "Próximamente".
+# Este repo tiene GitHub Pages prendido sobre la rama feat/mejoras-ui y
+# mostraba a cualquiera una copia vieja del sitio, sin el filtro. Con todo
+# excluido, Pages publica un sitio vacío: cualquier URL de github.io da 404.
+#
+# Para apagarlo del todo (lo puede hacer el dueño del repo):
+#   GitHub → Settings → Pages → Unpublish site.
+#
+# Este archivo no afecta a Cloudflare: build.js no lo copia a dist/.
+exclude:
+  - "*"
