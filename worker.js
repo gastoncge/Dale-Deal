@@ -170,16 +170,21 @@ async function serveImage(request, env, url) {
 // El público ve la página de Próximamente en cualquier página del sitio; los
 // estilos, scripts, imágenes y fotos pasan igual. El equipo entra con
 //   https://daledeal.com.ar/?acceso=<PREVIEW_KEY>
-// (queda una cookie por 30 días) y sale con ?acceso=salir.
+// (queda una cookie por 12 horas) y sale con ?acceso=salir.
 // PREVIEW_KEY es un secreto de Cloudflare (npx wrangler secret put PREVIEW_KEY):
 // no vive en el repo. Sin PREVIEW_KEY no entra nadie, ni el equipo.
 // ============================================================
 const PREVIEW_COOKIE = 'dd_preview';
-const PREVIEW_DAYS = 30;
+// Antes la cookie duraba 30 días: quien abría el link una vez seguía viendo el
+// sitio semanas después y parecía que Próximamente "no estaba". Ahora dura 12 h.
+const PREVIEW_HOURS = 12;
+// Cambiar la versión invalida TODAS las cookies ya entregadas (el 02/10 se pasó
+// a v2: los accesos de antes dejaron de valer y todos volvieron a ver Próximamente).
+const PREVIEW_TOKEN_VERSION = 'v2';
 
 async function comingSoonGate(request, env, url) {
   const key = String(env.PREVIEW_KEY || '').trim();
-  const token = key ? await sha256Hex('dd-preview:' + key) : null;
+  const token = key ? await sha256Hex(`dd-preview-${PREVIEW_TOKEN_VERSION}:` + key) : null;
   const acceso = url.searchParams.get('acceso');
 
   if (acceso !== null) {
@@ -192,7 +197,7 @@ async function comingSoonGate(request, env, url) {
       return redirectWithCookie(clean, `${PREVIEW_COOKIE}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax${secure}${domain}`);
     }
     if (token && await sameSecret(acceso, key)) {
-      return redirectWithCookie(clean, `${PREVIEW_COOKIE}=${token}; Path=/; Max-Age=${PREVIEW_DAYS * 86400}; HttpOnly; SameSite=Lax${secure}${domain}`);
+      return redirectWithCookie(clean, `${PREVIEW_COOKIE}=${token}; Path=/; Max-Age=${PREVIEW_HOURS * 3600}; HttpOnly; SameSite=Lax${secure}${domain}`);
     }
     // Clave incorrecta: sigue como cualquier visitante.
   }
